@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eventty.businessservice.domains.event.domain.EventRepository">
+
+    <select id="selectEventById" resultMap="EventResultMap" parameterType="java.lang.Long">
+        SELECT * FROM events WHERE _ID = #{id}
+    </select>
+
+    <select id="selectAllEvents" resultMap="EventResultMap">
+        SELECT * FROM events
+    </select>
+
+<!--    <insert id="insertEvent" parameterType="com.eventty.businessservice.entity.EventEntityEntity">-->
+<!--        INSERT INTO events (_ID, CONTENT, APPLY_START_AT, APPLY_END_AT, PARTICIPATE_NUM, LOCATE, VIEWS, DELETE_DATE, UPDATE_DATE, CREATE_DATE)-->
+<!--        VALUES (#{id}, #{content}, #{applyStartAt}, #{applyEndAt}, #{participateNum}, #{locate}, #{views}, #{deleteDate}, #{updateDate}, #{createDate})-->
+<!--    </insert>-->
+
+<!--    <update id="updateEvent" parameterType="com.eventty.businessservice.entity.EventEntityEntity">-->
+<!--        UPDATE events-->
+<!--        SET CONTENT = #{content},-->
+<!--            APPLY_START_AT = #{applyStartAt},-->
+<!--            APPLY_END_AT = #{applyEndAt},-->
+<!--            PARTICIPATE_NUM = #{participateNum},-->
+<!--            LOCATE = #{locate},-->
+<!--            VIEWS = #{views},-->
+<!--            DELETE_DATE = #{deleteDate},-->
+<!--            UPDATE_DATE = #{updateDate},-->
+<!--            CREATE_DATE = #{createDate}-->
+<!--        WHERE _ID = #{id}-->
+<!--    </update>-->
+
+<!--    <delete id="deleteEvent" parameterType="java.lang.Long">-->
+<!--        DELETE FROM events WHERE _ID = #{id}-->
+<!--    </delete>-->
+
+</mapper>
