@@ -1,5 +1,7 @@
-package com.eventty.businessservice.domains.event.application;
+package com.eventty.businessservice.domains.event.application.serviceImpl;
 
+import com.eventty.businessservice.domains.event.application.dto.EventDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.service.EventDetailService;
 import com.eventty.businessservice.domains.event.domain.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.EventDetailRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +17,8 @@ public class EventDetailServiceImpl implements EventDetailService {
 
     @Override
     public EventDetailResponseDTO findEventDetailById(Long id){
-        EventDetailEntity event = eventDetailRepository.selectEventDetailById(id);
-        return EventDetailResponseDTO.fromEntity(event);
+        EventDetailEntity detail = eventDetailRepository.selectEventDetailById(id);
+        return EventDetailResponseDTO.fromEntity(detail);
     }
 
-    /*
-    @Override
-    public List<EventDetailResponseDTO> findAllEvents() {
-        List<EventDetailEntity> events = eventDetailRepository.selectAllEvents();
-        return events.stream()
-            .map(EventDetailResponseDTO::fromEntity)
-            .collect(Collectors.toList());
-    }
-
-     */
 }

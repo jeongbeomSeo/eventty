@@ -1,9 +1,9 @@
-package com.eventty.businessservice.domains.event.application;
+package com.eventty.businessservice.domains.event.application.dto;
 
 import com.eventty.businessservice.domains.event.domain.EventDetailEntity;
 import lombok.*;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -14,12 +14,12 @@ import java.util.Date;
 public class EventDetailResponseDTO {
     private Long id;
     private String content;
-    private Date applyStartAt;
-    private Date applyEndAt;
+    private Timestamp applyStartAt;
+    private Timestamp applyEndAt;
     private Long views;
-    private Date deleteDate;
-    private Date updateDate;
-    private Date createDate;
+    private Timestamp deleteDate;
+    private Timestamp updateDate;
+    private Timestamp createDate;
 
     public static EventDetailResponseDTO fromEntity(EventDetailEntity eventDetailEntity) {
         return EventDetailResponseDTO.builder()

@@ -1,19 +1,22 @@
 package com.eventty.businessservice.domains.event.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Getter
-public class EventEntity {
+@AllArgsConstructor
+@Builder
+public class EventDetailEntity {
     private Long id;
     private String content;
-    private Date applyStartAt;
-    private Date applyEndAt;
-    private Long participateNum;
-    private String locate;
+    private Timestamp applyStartAt;
+    private Timestamp applyEndAt;
     private Long views;
-    private Date deleteDate;
-    private Date updateDate;
-    private Date createDate;
+    private Timestamp deleteDate;
+    private Timestamp updateDate;
+    private Timestamp createDate;
 }
