@@ -1,0 +1,35 @@
+export interface ISignup {
+    email: string;
+    password: string;
+    passwordConfirm: string;
+    name: string;
+    phone: string;
+    address: string;
+}
+
+export interface ILogin {
+    email: string;
+    password: string;
+}
+
+export interface IUser {
+    email: string;
+    password: string;
+    name: string;
+    isHost: boolean;
+}
+
+export interface IUsers {
+    users: IUser[];
+}
+
+export interface IMyInfo {
+    name: string;
+    phone: string;
+    address: string;
+}
+
+export interface IChangePW {
+    currentPassword: string;
+    newPassword: string;
+}
