@@ -7,10 +7,11 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Getter
 @AllArgsConstructor
-public class BusinessException extends RuntimeException{
+public class BusinessException extends RuntimeException {
 
     private ErrorCode errorCode;
     private List<ErrorResponseDTO.FieldError> errors = new ArrayList<>();
@@ -24,5 +25,4 @@ public class BusinessException extends RuntimeException{
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
-
 }

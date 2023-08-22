@@ -6,7 +6,6 @@
 
     <resultMap id="EventResultMap" type="com.eventty.businessservice.domains.event.domain.EventEntity">
         <id property="id" column="id"/>
-        <result property="eventId" column="event_id"/>
         <result property="hostId" column="host_id"/>
         <result property="title" column="title"/>
         <result property="image" column="image"/>

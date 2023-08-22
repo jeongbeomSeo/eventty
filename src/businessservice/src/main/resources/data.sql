@@ -1,8 +1,7 @@
 -- 테이블 생성
 
 CREATE TABLE IF NOT EXISTS events (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  event_id BIGINT,
+  id BIGINT PRIMARY KEY,
   host_id BIGINT,
   title VARCHAR(255),
   image VARCHAR(255),
@@ -30,7 +29,7 @@ CREATE TABLE IF NOT EXISTS event_details (
 -- 더미데이터 삽입
 
 -- events 테이블 더미 데이터 삽입
-INSERT INTO events (event_id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category)
+INSERT INTO events (id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category)
 VALUES
     (1, 1, 'Event 1', 'image1.jpg', '2023-08-20 10:00:00', '2023-08-21 18:00:00', 100, 'Location A', 'Category X'),
     (2, 2, 'Event 2', 'image2.jpg', '2023-08-22 14:00:00', '2023-08-23 22:00:00', 150, 'Location B', 'Category Y'),

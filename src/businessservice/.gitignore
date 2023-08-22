@@ -1,5 +1,5 @@
 HELP.md
-.gradle
+src/businessservice/.gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -37,5 +37,5 @@ out/
 .vscode/
 
 ### application.yml ###
-application-dev.yml
-application-test.yml
+src/businessservice/src/main/resources/application-dev.yml
+src/businessservice/src/main/resources/application-test.yml

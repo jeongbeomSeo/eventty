@@ -4,7 +4,7 @@ import com.eventty.businessservice.domains.event.application.dto.EventResponseDT
 import com.eventty.businessservice.domains.event.application.serviceImpl.EventServiceImpl;
 import com.eventty.businessservice.domains.event.domain.EventEntity;
 import com.eventty.businessservice.domains.event.domain.EventRepository;
-import com.eventty.businessservice.domains.event.exception.EventNotFoundException;
+import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +41,7 @@ public class EventServiceImplTest {
         EventResponseDTO responseDTO = eventService.findEventById(eventId);
 
         // Then
-        assertEquals(mockEventEntity.getEventId(), responseDTO.getEventId());
+        assertEquals(mockEventEntity.getId(), responseDTO.getId());
         assertEquals(mockEventEntity.getTitle(), responseDTO.getTitle());
         verify(eventRepository, times(1)).selectEventById(eventId);
     }
@@ -76,7 +76,6 @@ public class EventServiceImplTest {
     private static EventEntity createEventEntity(Long i){
         return EventEntity.builder()
             .id(i)
-            .eventId(i)
             .hostId(i)
             .title("Sample Event")
             .image("sample.jpg")

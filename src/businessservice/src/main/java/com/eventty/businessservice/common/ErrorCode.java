@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCode {
 
     // Common
-    INTERNAL_ERROR(500, "C001", "Internal server error"),
-    DATA_ACCESS_ERROR(500, "C000", "Data access error"),
+    INTERNAL_ERROR(500, "C000", "Internal server error"),
+    DATA_ACCESS_ERROR(500, "C001", "Data access error"),
     INVALID_INPUT_VALUE(400, "C002", "Invalid input type"),
     METHOD_NOT_ALLOWED(405, "C003", "Method not allowed"),
     INVALID_TYPE_VALUE(400, "C004", "Invalid type value"),
@@ -17,16 +17,16 @@ public enum ErrorCode {
 
     // Event
     EVENT_NOT_FOUND(404, "E001", "Event is not found"),
-    EVENT_ALREADY_EXIST(409, "E002", "Event already exists"),
-    EVENT_DATE_CONFLICT(400, "E003", "Event date conflicts with another event"),
+    EVENT_DETAIL_NOT_FOUND(404, "E002", "Event detail info is not found"),
+    EVENT_ALREADY_EXIST(409, "E003", "Event already exists"),
 
     // Apply
     // 수정 예정
-    APPLY_CONFLICT(409, "B001", "Reservation conflict detected"),
+    APPLY_CONFLICT(409, "A001", "Reservation conflict detected"),
 
     // Auth
     // 수정 예정
-    UNAUTHORIZED(401, "M001", "User unauthorized");
+    UNAUTHORIZED(401, "U001", "User unauthorized");
 
     private final int status;
     private final String code;

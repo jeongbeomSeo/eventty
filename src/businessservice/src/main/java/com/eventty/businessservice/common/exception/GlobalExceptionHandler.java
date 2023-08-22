@@ -2,8 +2,10 @@ package com.eventty.businessservice.common.exception;
 
 import com.eventty.businessservice.common.dto.ErrorResponseDTO;
 import com.eventty.businessservice.common.ErrorCode;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,13 +20,6 @@ import static com.eventty.businessservice.common.ErrorCode.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // HTTP 요청 메서드와 관련된 예외 처리
-    @ExceptionHandler
-    protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        final ErrorResponseDTO response = ErrorResponseDTO.of(e);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
     // 지원하지 않는 HTTP 요청 메서드에 대한 예외 처리
     @ExceptionHandler
     protected ResponseEntity<ErrorResponseDTO> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
@@ -32,10 +27,31 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    // @Valid, @Validated 에서 발생한 binding error 에 대한 예외 처리
+    // @Validated 에서 발생한 binding error 에 대한 예외 처리
+    @ExceptionHandler
+    protected ResponseEntity<ErrorResponseDTO> handleBindException(ConstraintViolationException e) {
+        final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE, e.getConstraintViolations());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    // @Valid 에서 발생한 binding error 에 대한 예외 처리
+    @ExceptionHandler
+    protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE, e.getBindingResult());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    // binding error 에 대한 예외 처리 (주로 MVC 에서 @ModelAttribute 에서 발생)
     @ExceptionHandler
     protected ResponseEntity<ErrorResponseDTO> handleBindException(BindException e) {
         final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE, e.getBindingResult());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    // enum type 일치하지 않아서 발생하는 binding error 대한 예외 처리 (주로 @PathVariable 시 잘못된 type 데이터가 들어왔을 때 에러)
+    @ExceptionHandler
+    protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        final ErrorResponseDTO response = ErrorResponseDTO.of(e);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

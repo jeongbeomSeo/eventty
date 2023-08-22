@@ -30,7 +30,7 @@ public class EventRepositoryTest {
         EventEntity event = eventRepository.selectEventById(eventId);
         // then
         assertNotNull(event);
-        assertEquals(event.getEventId(), eventId);
+        assertEquals(event.getId(), eventId);
         assertEquals(event.getTitle(), "Event 1");
     }
 

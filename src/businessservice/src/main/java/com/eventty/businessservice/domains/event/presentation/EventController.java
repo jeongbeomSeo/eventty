@@ -9,8 +9,9 @@ import com.eventty.businessservice.domains.event.application.service.EventDetail
 import com.eventty.businessservice.domains.event.application.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping( "/api/events")
 @Tag(name = "Event", description = "Event API")
@@ -33,7 +35,12 @@ public class EventController {
      */
     @GetMapping( "/{eventId}")
     @Operation(summary = "특정 행사 조회")
-    public SuccessResponseDTO<EventFullResponseDTO> findEventById(@PathVariable @Valid Long eventId){
+    public SuccessResponseDTO<EventFullResponseDTO> findEventById(@PathVariable @Min(1) Long eventId){
+
+        /*
+        아래 내용은 서비스 단에서 처리하기
+         */
+
         // 행사 기본 정보 (Event)
         EventResponseDTO event = eventService.findEventById(eventId);
 

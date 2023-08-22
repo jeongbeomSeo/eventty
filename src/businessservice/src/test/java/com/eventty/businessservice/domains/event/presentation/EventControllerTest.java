@@ -45,9 +45,8 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("E001"))
-                .andExpect(jsonPath("$.message").value("Event retrieved successfully"))
-                .andExpect(jsonPath("$.data.eventResponseDTO.eventId", equalTo(eventId.intValue())))
+                .andExpect(jsonPath("$.code").value("0"))
+                .andExpect(jsonPath("$.data.eventResponseDTO.id", equalTo(eventId.intValue())))
                 .andExpect(jsonPath("$.data.eventResponseDTO.title", equalTo("Sample Event")));
 
         verify(eventService, times(1)).findEventById(eventId);
@@ -66,7 +65,7 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("E001"))
+                .andExpect(jsonPath("$.code").value("0"))
                 .andExpect(jsonPath("$.message").value("Event retrieved successfully"))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(mockEventList.size()));
@@ -77,7 +76,6 @@ public class EventControllerTest {
     private static EventResponseDTO createEventResponseDTO(Long id){
         return EventResponseDTO.builder()
             .id(id)
-            .eventId(id)
             .hostId(1L)
             .title("Sample Event")
             .image("sample.jpg")

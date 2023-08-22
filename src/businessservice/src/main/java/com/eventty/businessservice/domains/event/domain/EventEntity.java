@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 @Builder
 public class EventEntity {
     private Long id;
-    private Long eventId;
     private Long hostId;
     private String title;
     private String image;

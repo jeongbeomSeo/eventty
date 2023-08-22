@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domains.event.exception;
+package com.eventty.businessservice.domains.event.domain.exception;
 
 import com.eventty.businessservice.common.exception.BusinessException;
 import com.eventty.businessservice.common.ErrorCode;

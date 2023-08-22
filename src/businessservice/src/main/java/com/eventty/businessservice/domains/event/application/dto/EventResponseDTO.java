@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 @ToString
 public class EventResponseDTO {
     private Long id;
-    private Long eventId;
     private Long hostId;
     private String title;
     private String image;
@@ -28,7 +27,6 @@ public class EventResponseDTO {
     public static EventResponseDTO fromEntity(EventEntity eventEntity) {
         return EventResponseDTO.builder()
             .id(eventEntity.getId())
-            .eventId(eventEntity.getEventId())
             .hostId(eventEntity.getHostId())
             .title(eventEntity.getTitle())
             .image(eventEntity.getImage())

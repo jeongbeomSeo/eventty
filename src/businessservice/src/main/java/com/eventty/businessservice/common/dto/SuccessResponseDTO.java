@@ -6,7 +6,7 @@ import lombok.Getter;
 /** 성공 시 응답 객체 예시
 {
     "success": true,
-    "code": "E001,
+    "code": "0",
     "message": "OK",
     "data": [
         1,
@@ -19,10 +19,11 @@ import lombok.Getter;
 @Getter
 public class SuccessResponseDTO<T> extends ResponseDTO {
 
+    // code 번호 0으로 고정
     private final T data;
 
     private SuccessResponseDTO(T data, SuccessCode successCode) {
-        super(true, successCode.getCode(), successCode.getMessage());
+        super(true, "0", successCode.getMessage());
         this.data = data;
     }
 
