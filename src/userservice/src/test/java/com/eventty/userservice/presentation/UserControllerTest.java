@@ -1,7 +1,8 @@
-package com.eventty.userservice.controller;
+package com.eventty.userservice.presentation;
 
-import com.eventty.userservice.dto.UserCreateRequestDTO;
-import com.eventty.userservice.service.UserService;
+import com.eventty.userservice.application.dto.UserCreateRequestDTO;
+import com.eventty.userservice.domain.code.SuccessCode;
+import com.eventty.userservice.application.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,9 +43,9 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("[API][POST] 회원가입")
-    public void registerTest() throws Exception {
-        //given -- 전역변수로
+    @DisplayName("[API][POST] 회원가입 성공")
+    public void registerSuccessTest() throws Exception {
+        // Assignment -- 전역변수로
         String name = "길동";
         String address = "서울특별시 도봉구 도봉동 1";
         LocalDate birth = LocalDate.of(1998, 06, 23);
@@ -51,6 +53,7 @@ public class UserControllerTest {
         String phone = "01012345678";
         String image = "/url/url/url.jpeg";
         String url = "http://localhost:8000/api/users/register";
+        SuccessCode successCode = SuccessCode.USER_INFO_INSERT;
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
                 .builder()
@@ -64,12 +67,29 @@ public class UserControllerTest {
 
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
 
-        // when
+        // Act
         final ResultActions response = mockMvc.perform(post("/api/users/register").contentType(MediaType.APPLICATION_JSON).content(requestBody));
 
-        // then
+        // Assert
         response
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("message").value("회원가입에 성공했습니다."));
+                .andExpect(jsonPath("message").value(successCode.getMessage()));
+    }
+
+    @Test
+    @DisplayName("[API][GET] 조회")
+    public void myInfoTest() throws Exception {
+        // Assignment -- 전역변수로
+        Long userId = 2L;
+        SuccessCode successCode = SuccessCode.USER_INFO_FIND_BY_ID;
+        String url = "http://localhost:8000/api/users/myInfo/" + userId;
+
+        // Act
+        final ResultActions response = mockMvc.perform(get(url).contentType(MediaType.APPLICATION_JSON));
+
+        // Assert
+        response
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("message").value(successCode.getMessage()));
     }
 }

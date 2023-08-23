@@ -1,6 +1,6 @@
-package com.eventty.userservice.dto;
+package com.eventty.userservice.application.dto;
 
-import com.eventty.userservice.entity.User;
+import com.eventty.userservice.domain.User;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ public class UserCreateRequestDTO {
     private String name;
     private String address;
     private LocalDate birth;
-    private boolean isHost;
+    private Boolean isHost;
     private String image;
     private String phone;
 

@@ -1,5 +1,6 @@
-package com.eventty.userservice.entity;
+package com.eventty.userservice.domain;
 
+import com.eventty.userservice.config.BooleanToYNConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 
 @Entity @Builder @AllArgsConstructor
 @Getter @NoArgsConstructor
+@Table(name = "user")
 public class User {
-    // Wrapper class로
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                    // PK값
@@ -27,7 +28,8 @@ public class User {
     private LocalDate birth;            // 생일
 
     @Column(nullable = false)
-    private boolean isHost;             // 주최 여부(주최자 일 경우 : true/참여자 일 경우 : false)
+    @Convert(converter = BooleanToYNConverter.class)
+    private Boolean isHost;             // 주최 여부(주최자 일 경우 : true/참여자 일 경우 : false)
 
     private String image;               // 유저 사진
 
