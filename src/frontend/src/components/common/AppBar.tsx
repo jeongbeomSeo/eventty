@@ -5,30 +5,32 @@ import Logo from "./Logo";
 import customStyle from "../../styles/customStyle";
 import SideNavigator from "./SideNavigator";
 import {useMediaQuery} from "react-responsive";
+import React from "react";
 
 const HEADER_HEIGHT = "65px";
+const NAV_LIST = [
+    {name: "목록", link: "/events"},
+    {name: "SUB2", link: ""},
+    {name: "SUB3", link: ""},
+]
+
 
 function AppBar() {
     const theme = useMantineTheme();
-    const mobile = useMediaQuery({query: `(max-width:${theme.breakpoints.sm})`});
-
+    const mobile = useMediaQuery({query: `(max-width:${theme.breakpoints.xs})`});
     const {classes} = customStyle();
 
     return (
-        <Header height={HEADER_HEIGHT}
-                style={{position: "sticky", zIndex: 2, boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)"}}>
+        <Header height={HEADER_HEIGHT} className={classes["header"]}>
             <Container style={{height: "100%", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                <Group spacing={"lg"}>
+                <Group spacing={"lg"} align={"center"}>
                     <Link to={"/"}>
                         <Logo fill={"var(--primary)"} height={"2rem"}/>
                     </Link>
                     {!mobile &&
                         <Group>
-                            <Link to={"/"}>MENU1</Link>
-                            <Divider orientation="vertical"/>
-                            <Link to={"/"}>MENU2</Link>
-                            <Divider orientation="vertical"/>
-                            <Link to={"/"}>MENU3</Link>
+                            <Link to={"/events"} className={classes["web-nav-link"]}>행사</Link>
+                            <Link to={""}>SUB1</Link>
                         </Group>
                     }
                 </Group>

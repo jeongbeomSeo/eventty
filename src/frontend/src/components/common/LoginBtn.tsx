@@ -1,12 +1,14 @@
 import React from "react";
 import {Button} from "@mantine/core";
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {loginState} from "../../states/loginState";
 import customStyles from "../../styles/customStyle";
 import {userState} from "../../states/userState";
 
 function LoginBtn() {
+    const navigate = useNavigate();
+    const {pathname} = useLocation();
     const isLoggedIn = useRecoilValue(loginState);
     const userStateValue = useRecoilValue(userState);
     const loginLink = isLoggedIn ?
@@ -25,7 +27,12 @@ function LoginBtn() {
                     주최하기
                 </Button>
             }
-            <Button component={Link} to={loginLink.to} className={classes["btn-primary"]}>{loginLink.value}</Button>
+            <Button
+                className={classes["btn-primary"]}
+                onClick={() => navigate(loginLink.to, {state:pathname})}
+            >
+                {loginLink.value}
+            </Button>
         </div>
     );
 }

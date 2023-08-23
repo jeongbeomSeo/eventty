@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Avatar, Burger, Container, Drawer, Flex, Group} from "@mantine/core";
+import {Avatar, Burger, Container, Drawer, Flex, Group, Navbar} from "@mantine/core";
 
 function SideNavigator() {
     const [opened, setOpened] = useState(false);
@@ -12,7 +12,7 @@ function SideNavigator() {
             <Drawer.Root opened={opened}
                          onClose={handleOpenSideNavigator}
                          title={"사이드 메뉴"}
-                         position={"right"}
+                         position={"left"}
                          size={"70%"}
                          style={{zIndex:1}}
             >

@@ -1,5 +1,5 @@
 import React from 'react'
-import { createBrowserRouter } from 'react-router-dom';
+import {createBrowserRouter} from 'react-router-dom';
 import Login from './pages/Login';
 import Test from './pages/Test';
 import Main from './pages/Main';
@@ -12,58 +12,75 @@ import PrivateRoute from './components/PrivateRoute';
 import SignupMember from './pages/signup/Member';
 import Error from './pages/Error';
 import Layout from "./components/common/Layout";
+import WebList from "./pages/events/WebList";
+import Detail from "./pages/events/Detail";
+import {loader as eventsLoader} from "./routes/events";
+import Events from "./pages/Events";
+import ScrollToTop from "./components/common/ScrollToTop";
+import {useMediaQuery} from "react-responsive";
+import {useMantineTheme} from "@mantine/core";
 
 const Router = createBrowserRouter([
     {
         path: "",
-        element: <Layout />,
-        errorElement: <Error />,
+        element: (
+            <>
+                <ScrollToTop/>
+                <Layout/>
+            </>
+        ),
+        errorElement: <Error/>,
         children: [
             {
                 path: "",
-                element: <Main />,
+                element:<Main/>,
+            },
+            {
+                path: "events",
+                element: <Events/>,
+                // loader: eventsLoader,
+            },
+            {
+                path: "events/:eventId",
+                element: <Detail/>,
             }
         ],
     },
     {
-        element: <PublicRoute />,
+        element: <PublicRoute/>,
         children: [
             {
                 path: "/login",
-                element: <Login />,
+                element: <Login/>,
             },
             {
                 path: "/signup",
-                element: <Signup />,
+                element: <Signup/>,
                 children: [
                     {
                         path: "",
-                        element: <SignupMain />
+                        element: <SignupMain/>
                     },
                     {
                         path: "member",
-                        element: <SignupMember />
+                        element: <SignupMember/>
                     },
                     {
                         path: "host",
-                        element: <SignupHost />
+                        element: <SignupHost/>
                     },
                 ]
             },
         ]
     },
     {
-        element: <PrivateRoute />,
+        element: <PrivateRoute/>,
         children: [
             {
                 path: "/logout",
-                element: <Logout />,
+                element: <Logout/>,
             },
         ]
-    },
-    {
-        path: "/test",
-        element: <Test />
     },
 ])
 

@@ -1,11 +1,11 @@
 import { Container, Grid, Card, Flex, Title } from "@mantine/core";
-import { ICard } from "../../types/ICard";
+import { IComponent } from "../../types/IComponent";
 import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { cardTitleState } from "../../states/cardTitleState";
 import Logo from "../common/Logo";
 
-function CardForm({ children }: ICard) {
+function CardForm({ children }: IComponent) {
     const cardTitleValue = useRecoilValue(cardTitleState);
 
     return (

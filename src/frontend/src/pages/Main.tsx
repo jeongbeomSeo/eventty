@@ -1,11 +1,12 @@
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {userState} from '../states/userState';
 import {loginState} from '../states/loginState';
 import {Container, Stack, useMantineTheme} from "@mantine/core";
 import WebCarousel from "../components/main/WebCarousel";
-import SearchBox from "../components/SearchBox";
+import SearchBox from "../components/common/SearchBox";
 import MobileCarousel from "../components/main/MobileCarousel";
 import {useMediaQuery} from "react-responsive";
+import {navBarState} from "../states/navBarState";
 
 function Main() {
     const userStateValue = useRecoilValue(userState);

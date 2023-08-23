@@ -1,7 +1,7 @@
-import { Stack, Button, TextInput, Flex } from "@mantine/core";
+import {Stack, Button, TextInput, Flex, Divider} from "@mantine/core";
 import CardForm from "../components/signup/CardForm";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import GoogleBtn from "../components/signup/GoogleBtn";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { cardTitleState } from '../states/cardTitleState';
@@ -13,7 +13,6 @@ import {ILogin} from "../types/IUser";
 import {postLogin} from "../service/user/fetchUser";
 
 function Login() {
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
     const [loading, setLoading] = useState(false);
     const userStateValue = useRecoilValue(userState);
@@ -24,12 +23,11 @@ function Login() {
         if (data.email === userStateValue.email && data.password === userStateValue.password) {
             setIsLoggedIn((prev) => !prev);
             alert("로그인 성공");
-            navigate("/");
         } else {
             alert("실패");
         }
 
-        try {
+        /*try {
             postLogin(data)
                 .then(() => {
                     setIsLoggedIn(true);
@@ -42,7 +40,7 @@ function Login() {
                 })
         }catch (e) {
             console.log(e);
-        }
+        }*/
     };
 
     const { classes } = customStyle();
@@ -82,7 +80,8 @@ function Login() {
                         <Link to={""}>계정 찾기</Link>|
                         <Link to={""}>비밀번호 찾기</Link>
                     </Flex>
-                    <p style={{ textAlign: "center", fontSize: "0.8rem" }}>SNS 로그인</p>
+                    <Divider my={"xs"} labelPosition={"center"} label={"SNS 로그인"}
+                             className={classes["signup-divider"]}/>
                     <GoogleBtn>Google 계정 로그인</GoogleBtn>
                 </Stack>
             </form>

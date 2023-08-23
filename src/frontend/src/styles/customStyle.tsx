@@ -1,6 +1,11 @@
 import {createStyles} from '@mantine/core';
 
 const customStyle = createStyles((theme) => ({
+    "header": {
+        zIndex: 99,
+        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+        position: "sticky",
+    },
     "input": {
         input: {
             borderColor: "rgba(0, 0, 0, 0.2)",
@@ -52,13 +57,35 @@ const customStyle = createStyles((theme) => ({
     "signup-footer": {
         fontSize: "0.8rem",
         color: "rgba(0, 0, 0, 0.6)",
+        paddingTop: "1rem",
     },
-    "search-box":{
+    "signup-divider": {
+        textAlign: "center",
+        whiteSpace: "pre-line",
+        padding: "3rem 0 1rem 0",
+        color: "rgba(0, 0, 0, 0.6)",
+    },
+    "web-nav-link": {
+        fontWeight: "bold",
+        ":hover": {
+            opacity: "0.7",
+        }
+    },
+    "mobile-nav-link":{
+        color: "rgba(0, 0, 0, 0.6)",
+        ":active":{
+            color: "var(--primary)",
+        },
+        "&.active":{
+            color: "var(--primary)",
+        },
+    },
+    "search-box": {
         width: "80%",
         [theme.fn.smallerThan("sm")]: {
             width: "100%",
         },
-        input:{
+        input: {
             borderColor: "var(--primary) !important",
             fontSize: "1.1rem",
             borderWidth: "2px",

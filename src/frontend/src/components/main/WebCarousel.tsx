@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {Container, Title, useMantineTheme} from "@mantine/core";
+import {Container, Image, Title, useMantineTheme} from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import {Carousel} from "@mantine/carousel";
 import {useMediaQuery} from "react-responsive";
@@ -26,17 +26,27 @@ function WebCarousel() {
     ));
 
     return (
-            <Carousel slideSize={"100%"}
-                      height={CAROUSEL_HEIGHT}
-                      sx={{flex: 1}}
-                      draggable
-                      withControls={false}
-                      withIndicators
-                      loop
-                      plugins={[autoPlay.current]}
-            >
-                {items}
-            </Carousel>
+        <Carousel slideSize={"100%"}
+                  height={CAROUSEL_HEIGHT}
+                  sx={{flex: 1}}
+                  draggable
+                  withControls
+                  withIndicators
+                  loop
+                  plugins={[autoPlay.current]}
+                  styles={{
+                      indicator: {
+                          width: "0.5rem",
+                          height: "0.5rem",
+                          transition: "width 250ms ease",
+                          "&[data-active]": {
+                              width: "2.5rem",
+                          },
+                      },
+                  }}
+        >
+            {items}
+        </Carousel>
     );
 }
 

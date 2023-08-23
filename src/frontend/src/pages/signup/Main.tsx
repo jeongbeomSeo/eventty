@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mantine/core";
+import {Button, Divider, Stack} from "@mantine/core";
 import { Link } from "react-router-dom";
 import GoogleBtn from "../../components/signup/GoogleBtn";
 import { useSetRecoilState } from 'recoil';
@@ -24,9 +24,8 @@ function SignupMain() {
                 주최자 회원가입
             </Button>
 
-            <p style={{ textAlign: "center", fontSize: "0.8rem" }}>
-                또는<br />SNS 가입하기
-            </p>
+            <Divider my={"xs"} labelPosition={"center"} label={`또는 \n SNS 가입하기`}
+                     className={classes["signup-divider"]}/>
 
             <GoogleBtn>Google 계정 가입</GoogleBtn>
         </Stack>

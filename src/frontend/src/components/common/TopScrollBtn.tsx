@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {ActionIcon, Button} from "@mantine/core";
 import {IconArrowBigUpLinesFilled} from "@tabler/icons-react";
 
-const SCROLL_Y = 400;
+const SCROLL_Y = 370;
 
 function TopScrollBtn() {
     const [showButton, setShowButton] = useState(false);
@@ -37,7 +37,9 @@ function TopScrollBtn() {
                         right: "1rem",
                         width: "50px",
                         height: "50px",
-                        opacity: "0.5",
+                        opacity: "0.4",
+                        zIndex: "98",
+                        background: "white",
                     }}>
                     <IconArrowBigUpLinesFilled/>
                 </ActionIcon>

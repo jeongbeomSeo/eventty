@@ -1,5 +1,5 @@
 import React from "react";
 
-export interface ICard {
+export interface IComponent {
     children: React.ReactNode;
 }
