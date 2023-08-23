@@ -1,5 +1,7 @@
 package com.eventty.businessservice.domains.event.presentation;
 
+import com.eventty.businessservice.domains.event.application.dto.EventDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.EventFullResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.EventResponseDTO;
 import com.eventty.businessservice.domains.event.application.service.EventDetailService;
 import com.eventty.businessservice.domains.event.application.service.EventService;
@@ -37,7 +39,8 @@ public class EventControllerTest {
     public void findEventByIdTest() throws Exception {
         // Given
         Long eventId = 1L;
-        EventResponseDTO MockEvent = createEventResponseDTO(eventId);
+        EventFullResponseDTO MockEvent = new EventFullResponseDTO(
+                createEventResponseDTO(eventId), createEventDetailDTO(eventId));
         when(eventService.findEventById(eventId)).thenReturn(MockEvent);
 
         // When & Then
@@ -50,7 +53,6 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.data.eventResponseDTO.title", equalTo("Sample Event")));
 
         verify(eventService, times(1)).findEventById(eventId);
-        verify(eventDetailService, times(1)).findEventDetailById(eventId);
     }
 
     @Test
@@ -87,6 +89,19 @@ public class EventControllerTest {
             .isActive(true)
             .isDeleted(false)
             .build();
+    }
+
+    private static EventDetailResponseDTO createEventDetailDTO(Long id){
+        return EventDetailResponseDTO.builder()
+                .id(id)
+                .content("Sample content")
+                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
+                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .views(100L)
+                .deleteDate(Timestamp.valueOf("2023-08-21 12:00:00"))
+                .updateDate(Timestamp.valueOf("2023-08-21 13:00:00"))
+                .createDate(Timestamp.valueOf("2023-08-21 10:30:00"))
+                .build();
     }
 
     private static List<EventResponseDTO> createEventRespnseDTOList(Long count) {

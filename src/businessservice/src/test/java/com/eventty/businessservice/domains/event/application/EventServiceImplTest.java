@@ -1,6 +1,9 @@
 package com.eventty.businessservice.domains.event.application;
 
+import com.eventty.businessservice.domains.event.application.dto.EventDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.EventFullResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.EventResponseDTO;
+import com.eventty.businessservice.domains.event.application.service.EventDetailService;
 import com.eventty.businessservice.domains.event.application.serviceImpl.EventServiceImpl;
 import com.eventty.businessservice.domains.event.domain.EventEntity;
 import com.eventty.businessservice.domains.event.domain.EventRepository;
@@ -26,6 +29,9 @@ public class EventServiceImplTest {
     @Mock
     private EventRepository eventRepository;
 
+    @Mock
+    private EventDetailService eventDetailService;
+
     @InjectMocks
     private EventServiceImpl eventService;
 
@@ -35,15 +41,20 @@ public class EventServiceImplTest {
         // Given
         Long eventId = 1L;
         EventEntity mockEventEntity = createEventEntity(eventId);
+        EventDetailResponseDTO mockEventDetailResponseDTO = createEventDetailDTO(eventId);
         when(eventRepository.selectEventById(eventId)).thenReturn(mockEventEntity);
+        when(eventDetailService.findEventDetailById(eventId)).thenReturn(mockEventDetailResponseDTO);
 
         // When
-        EventResponseDTO responseDTO = eventService.findEventById(eventId);
+        EventFullResponseDTO responseDTO = eventService.findEventById(eventId);
 
         // Then
-        assertEquals(mockEventEntity.getId(), responseDTO.getId());
-        assertEquals(mockEventEntity.getTitle(), responseDTO.getTitle());
+        assertEquals(mockEventEntity.getId(), responseDTO.getEventResponseDTO().getId());
+        assertEquals(mockEventEntity.getTitle(), responseDTO.getEventResponseDTO().getTitle());
+        assertEquals(mockEventDetailResponseDTO.getContent(), responseDTO.getEventDetailResponseDTO().getContent());
+
         verify(eventRepository, times(1)).selectEventById(eventId);
+        verify(eventDetailService, times(1)).findEventDetailById(eventId);
     }
 
     @Test
@@ -87,6 +98,19 @@ public class EventServiceImplTest {
             .isActive(true)
             .isDeleted(false)
             .build();
+    }
+
+    private static EventDetailResponseDTO createEventDetailDTO(Long id){
+        return EventDetailResponseDTO.builder()
+                .id(id)
+                .content("Sample content")
+                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
+                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .views(100L)
+                .deleteDate(Timestamp.valueOf("2023-08-21 12:00:00"))
+                .updateDate(Timestamp.valueOf("2023-08-21 13:00:00"))
+                .createDate(Timestamp.valueOf("2023-08-21 10:30:00"))
+                .build();
     }
 
     private static List<EventEntity> createEventEntityList(Long count) {
