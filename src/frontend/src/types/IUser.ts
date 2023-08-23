@@ -19,10 +19,6 @@ export interface IUser {
     isHost: boolean;
 }
 
-export interface IUsers {
-    users: IUser[];
-}
-
 export interface IMyInfo {
     name: string;
     phone: string;

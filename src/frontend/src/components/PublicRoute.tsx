@@ -6,7 +6,7 @@ function PublicRoute() {
     const {state} = useLocation();
     const isLoggedIn = useRecoilValue(loginState);
 
-    return isLoggedIn ? <Navigate to={`${state}`} /> : <Outlet />
+    return isLoggedIn ? <Navigate to={state} /> : <Outlet />
 }
 
 export default PublicRoute;

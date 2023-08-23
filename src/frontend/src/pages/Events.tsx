@@ -13,9 +13,9 @@ function Events() {
         <Container>
             <Stack align={"center"} style={{margin: "2rem 0 4rem"}}>
                 <SearchBox/>
-                <CategoryBtn/>
+                {/*<CategoryBtn/>*/}
             </Stack>
-            {mobile ? <MobileList/> : <WebList/>}
+            {mobile ? <MobileList /> : <WebList />}
         </Container>
     );
 }

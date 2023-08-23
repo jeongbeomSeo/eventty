@@ -1,12 +1,13 @@
-const GATEWAY = "";
 const MY_HEADERS = new Headers({"Content-Type": "application/json"},);
 
-export const getEvent = (eventId: string) => {
-    return fetch(`${GATEWAY}/api/events/${eventId}`)
-        .then((res) => res.json());
+export const getEvent = async (eventId: string) => {
+    return await fetch(`/api/events/${eventId}`)
+        .then((res) => res.json())
+        .then((res) => res.data);
 }
 
-export const getEvents = () => {
-    return fetch(`${GATEWAY}/api/events`)
-        .then((res) => res.json());
+export const getEvents = async () => {
+    return await fetch("/api/events")
+        .then((res) => res.json())
+        .then((res) => res.data);
 }

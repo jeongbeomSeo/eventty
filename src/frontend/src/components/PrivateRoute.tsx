@@ -7,7 +7,7 @@ function PrivateRoute() {
     const {state} = useLocation();
     const isLoggedIn = useRecoilValue(loginState);
 
-    return isLoggedIn ? <Outlet /> : <Navigate to={`${state}`} />
+    return isLoggedIn ? <Outlet /> : <Navigate to={state} />
 }
 
 export default PrivateRoute;
