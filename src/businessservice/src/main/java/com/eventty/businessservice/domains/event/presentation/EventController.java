@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static com.eventty.businessservice.common.SuccessCode.*;
 
 @RestController
 @Validated
@@ -31,40 +34,33 @@ public class EventController {
     /**
      * 특정 행사 조회
      *
-     * @return SuccessResponseDTO<EventFullResponseDTO>
      */
     @GetMapping( "/{eventId}")
     @Operation(summary = "특정 행사 조회")
-    public SuccessResponseDTO<EventFullResponseDTO> findEventById(@PathVariable @Min(1) Long eventId){
+    public ResponseEntity<SuccessResponseDTO<EventFullResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId){
+        // 행사 기본 정보 + 상세 정보
+        EventFullResponseDTO event = eventService.findEventById(eventId);
 
-        /*
-        아래 내용은 서비스 단에서 처리하기
-         */
-
-        // 행사 기본 정보 (Event)
-        EventResponseDTO event = eventService.findEventById(eventId);
-
-        // 행사 상세 정보 (EventDetail)
-        EventDetailResponseDTO eventDetail = eventDetailService.findEventDetailById(eventId);
-
-        // 행사 전체 정보 (기본 정보 + 상세 정보)
-        EventFullResponseDTO eventFullResponseDTO = new EventFullResponseDTO(event, eventDetail);
-
-        return SuccessResponseDTO.of(eventFullResponseDTO, SuccessCode.GET_EVENT_INFO_SUCCESS);
+        SuccessCode code = GET_EVENT_INFO_SUCCESS;
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(SuccessResponseDTO.of(event, code));
     }
 
     /**
      * 행사 전체 조회
      *
-     * @return SuccessResponseDTO<List<EventResponseDTO>>
      */
     @GetMapping( "")
     @Operation(summary = "행사 전체 조회")
-    public SuccessResponseDTO<List<EventResponseDTO>> findAllEvents() {
+    public ResponseEntity<SuccessResponseDTO<List<EventResponseDTO>>> findAllEvents() {
         // 행사 기본 정보 (Event) 만 열거
         List<EventResponseDTO> eventList = eventService.findAllEvents();
 
-        return SuccessResponseDTO.of(eventList, SuccessCode.GET_EVENT_INFO_SUCCESS);
+        SuccessCode code = GET_EVENT_INFO_SUCCESS;
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(SuccessResponseDTO.of(eventList, code));
     }
 
 }
