@@ -7,6 +7,7 @@ import SearchBox from "../components/common/SearchBox";
 import MobileCarousel from "../components/main/MobileCarousel";
 import {useMediaQuery} from "react-responsive";
 import {navBarState} from "../states/navBarState";
+import CategoryBtn from "../components/event/CategoryBtn";
 
 function Main() {
     const userStateValue = useRecoilValue(userState);
@@ -18,19 +19,20 @@ function Main() {
         <>
             {mobile ? <MobileCarousel/> : <WebCarousel/>}
             <Container>
-                <Stack align={"center"} style={{marginTop:"3rem"}}>
-                <SearchBox/>
-                {isLoggedIn &&
-                    <ul>
-                        <li>email: {userStateValue.email}</li>
-                        <li>password: {userStateValue.password}</li>
-                        <li>name: {userStateValue.name}</li>
-                        <li>phone: {userStateValue.phone}</li>
-                        <li>address: {userStateValue.address}</li>
-                        <li>isHost: {String(userStateValue.isHost)}</li>
-                    </ul>
-                }
-                <p style={{height: "100vh"}}>스크롤바 테스트</p>
+                <Stack align={"center"} style={{marginTop: "3rem"}}>
+                    <SearchBox/>
+                    <CategoryBtn/>
+                    {isLoggedIn &&
+                        <ul>
+                            <li>email: {userStateValue.email}</li>
+                            <li>password: {userStateValue.password}</li>
+                            <li>name: {userStateValue.name}</li>
+                            <li>phone: {userStateValue.phone}</li>
+                            <li>address: {userStateValue.address}</li>
+                            <li>isHost: {String(userStateValue.isHost)}</li>
+                        </ul>
+                    }
+                    <p style={{height: "100vh"}}>스크롤바 테스트</p>
                 </Stack>
             </Container>
         </>

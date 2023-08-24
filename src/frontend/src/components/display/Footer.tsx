@@ -1,6 +1,6 @@
 import React from "react";
 import {Container, useMantineTheme} from "@mantine/core";
-import Logo from "./Logo";
+import Logo from "../common/Logo";
 import {useMediaQuery} from "react-responsive";
 
 function Footer() {

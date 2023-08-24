@@ -1,9 +1,9 @@
 import React from "react";
 import {Badge, Card, Group, Image, SimpleGrid, Stack, Text, Title,} from "@mantine/core";
 import {Link, useLoaderData} from "react-router-dom";
-import {IEvent} from "../../types/IEvent";
+import {IEvent} from "../../../types/IEvent";
 
-function WebList() {
+function WebEventList() {
     const EVENT_LIST = useLoaderData() as IEvent[];
 
     const items = EVENT_LIST?.map((item) => {
@@ -50,4 +50,4 @@ return (
 );
 }
 
-export default WebList;
+export default WebEventList;

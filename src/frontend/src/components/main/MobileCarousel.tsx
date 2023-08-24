@@ -39,6 +39,7 @@ function WebCarousel() {
                   withControls
                   loop
                   plugins={[autoPlay.current]}
+                  style={{marginTop: "3vh"}}
         >
             {items}
         </Carousel>

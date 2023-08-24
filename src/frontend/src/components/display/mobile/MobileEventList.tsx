@@ -12,11 +12,11 @@ import {
     useMantineTheme
 } from "@mantine/core";
 import {Link, useLoaderData} from "react-router-dom";
-import SearchBox from "../../components/common/SearchBox";
+import SearchBox from "../../common/SearchBox";
 import {useMediaQuery} from "react-responsive";
-import {IEvent} from "../../types/IEvent";
+import {IEvent} from "../../../types/IEvent";
 
-function MobileList() {
+function MobileEventList() {
     const EVENT_LIST = useLoaderData() as IEvent[];
 
     const items = EVENT_LIST?.map((item) => {
@@ -64,4 +64,4 @@ function MobileList() {
     );
 }
 
-export default MobileList;
+export default MobileEventList;

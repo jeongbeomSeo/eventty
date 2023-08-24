@@ -6,10 +6,9 @@ import {useForm} from "react-hook-form";
 import customStyles from "../../styles/customStyle";
 import {useState} from "react";
 import {ISignup} from "../../types/IUser";
-
 function SignupForm(props: { isHost: boolean }) {
     const navigate = useNavigate();
-    const [userStateValue, setuserStateValue] = useRecoilState(userState);
+    const [userStateValue, setUserStateValue] = useRecoilState(userState);
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
     const nameRegEX = /^[가-힣]{2,}$/;
@@ -20,7 +19,7 @@ function SignupForm(props: { isHost: boolean }) {
 
     const onSubmit = (data: ISignup) => {
         if (isEmailValid) {
-            setuserStateValue({
+            setUserStateValue({
                 ...data,
                 ...props
             });

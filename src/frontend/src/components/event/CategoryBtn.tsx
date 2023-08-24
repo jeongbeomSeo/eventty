@@ -1,19 +1,30 @@
 import React from "react";
-import {Button, Group, Stack} from "@mantine/core";
+import {Button, Group, SimpleGrid, Stack, Text, UnstyledButton, useMantineTheme} from "@mantine/core";
 import {Link} from "react-router-dom";
 import customStyle from "../../styles/customStyle";
-import {IconCategoryFilled} from "@tabler/icons-react";
+import {
+    IconBallBaseball, IconBook,
+    IconCategoryFilled, IconCode,
+    IconHandRock,
+    IconHorseToy, IconMovie,
+    IconPalette, IconPiano, IconPresentation,
+    IconTent
+} from "@tabler/icons-react";
+import {useMediaQuery} from "react-responsive";
+
+const ICON_SIZE = "40px"
 
 const CATEGORY_LIST = [
-    {category: "카", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "테", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "고", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "리", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "버", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "튼", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "테", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "스", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
-    {category: "트", link: "", icon: <IconCategoryFilled size={"3rem"}/>},
+    {category: "콘서트", link: "", icon: <IconHandRock size={ICON_SIZE}/>},
+    {category: "클래식", link: "", icon: <IconPiano size={ICON_SIZE}/>},
+    {category: "전시", link: "", icon: <IconPalette size={ICON_SIZE}/>},
+    {category: "스포츠", link: "", icon: <IconBallBaseball size={ICON_SIZE}/>},
+    {category: "레저/캠핑", link: "", icon: <IconTent size={ICON_SIZE}/>},
+    {category: "아동/가족", link: "", icon: <IconHorseToy size={ICON_SIZE}/>},
+    {category: "영화", link: "", icon: <IconMovie size={ICON_SIZE}/>},
+    {category: "IT", link: "", icon: <IconCode size={ICON_SIZE}/>},
+    {category: "교양", link: "", icon: <IconBook size={ICON_SIZE}/>},
+    {category: "TOPIC", link: "", icon: <IconPresentation size={ICON_SIZE}/>},
 ]
 
 function CategoryBtn() {
@@ -21,18 +32,21 @@ function CategoryBtn() {
 
     const items = CATEGORY_LIST.map((item) => (
 
-        <Link to={item.link}>
-            <Stack align={"center"}>
-            {item.icon}
-            {item.category}
-            </Stack>
-        </Link>
+        <UnstyledButton component={Link} to={item.link} key={item.category} style={{textAlign:"center"}}>
+                {item.icon}
+                <Text fz={"xs"}>{item.category}</Text>
+        </UnstyledButton>
     ));
 
     return (
-        <Group>
+        <SimpleGrid
+            cols={10}
+            breakpoints={[
+                {maxWidth: "xs", cols: 6}
+            ]}
+        >
             {items}
-        </Group>
+        </SimpleGrid>
     );
 }
 

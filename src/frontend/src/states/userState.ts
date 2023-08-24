@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
 export const userState = atom({
-    key: "signupState",
+    key: "userState",
     default: {
         email: "a@a.com",
         password: "a",
@@ -9,6 +9,6 @@ export const userState = atom({
         name: "",
         phone: "",
         address: "",
-        isHost: true,
+        isHost: false,
     },
 })

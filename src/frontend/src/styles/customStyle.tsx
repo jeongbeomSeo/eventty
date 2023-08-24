@@ -3,15 +3,16 @@ import {createStyles} from '@mantine/core';
 const customStyle = createStyles((theme) => ({
     "header": {
         zIndex: 99,
-        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-        position: "sticky",
+        boxShadow: "0 2px 6px #e6e6e6",
+        "&.mobile-event-detail":{
+            position: "sticky",
+        }
     },
     "input": {
         input: {
-            borderColor: "rgba(0, 0, 0, 0.2)",
+            borderColor: "#cdcdcd",
             "::placeholder": {
-                color: "rgba(0, 0, 0, 0.2)",
-                fontWeight: "bold",
+                color: "#cdcdcd",
             },
             ":focus": {
                 borderColor: "var(--primary)",
@@ -20,17 +21,24 @@ const customStyle = createStyles((theme) => ({
     },
     "input-error": {
         input: {
-            color: "rgba(0, 0, 0, 1) !important",
+            color: "#000000 !important",
             "::placeholder": {
-                color: "rgba(0, 0, 0, 0.2) !important",
+                color: "#cdcdcd !important",
             },
         }
     },
     "btn-primary": {
-        backgroundColor: "var(--primary) !important",
+        backgroundColor: "var(--primary)",
         ":hover": {
+            backgroundColor: "var(--primary)",
             filter: "brightness(0.98)",
-        }
+        },
+        "&.disable":{
+            background: "#e6e6e6",
+            color: "#b3b3b3",
+            fontWeight: 800,
+            cursor: "default",
+        },
     },
     "btn-primary-outline": {
         backgroundColor: "white !important",
@@ -41,29 +49,29 @@ const customStyle = createStyles((theme) => ({
         }
     },
     "btn-gray": {
-        backgroundColor: "rgba(0, 0, 0, 0.3) !important",
+        backgroundColor: "#b3b3b3 !important",
         ":hover": {
             filter: "brightness(0.98)",
         }
     },
     "btn-gray-outline": {
         backgroundColor: "white !important",
-        borderColor: "rgba(0, 0, 0, 0.3) !important",
-        color: "rgba(0, 0, 0, 0.6) !important",
+        borderColor: "#b3b3b3 !important",
+        color: "#666666 !important",
         ":hover": {
             filter: "brightness(0.98)",
         }
     },
     "signup-footer": {
         fontSize: "0.8rem",
-        color: "rgba(0, 0, 0, 0.6)",
+        color: "#666666",
         paddingTop: "1rem",
     },
     "signup-divider": {
         textAlign: "center",
         whiteSpace: "pre-line",
         padding: "3rem 0 1rem 0",
-        color: "rgba(0, 0, 0, 0.6)",
+        color: "#666666",
     },
     "web-nav-link": {
         fontWeight: "bold",
@@ -72,7 +80,8 @@ const customStyle = createStyles((theme) => ({
         }
     },
     "mobile-nav-link":{
-        color: "rgba(0, 0, 0, 0.6)",
+        color: "#666666",
+        textAlign: "center",
         ":active":{
             color: "var(--primary)",
         },
@@ -91,6 +100,13 @@ const customStyle = createStyles((theme) => ({
             borderWidth: "2px",
         },
     },
+    "ticket-select":{
+        ":hover":{
+            cursor:"pointer",
+            borderColor: "var(--primary)",
+            transition: "0.25s ease"
+        }
+    }
 }))
 
 export default customStyle;

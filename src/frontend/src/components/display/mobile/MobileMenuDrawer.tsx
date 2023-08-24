@@ -1,19 +1,26 @@
 import React, {useState} from "react";
-import {Avatar, Burger, Container, Drawer, Flex, Group, Navbar} from "@mantine/core";
+import {Avatar, Burger, Container, Drawer, Flex, Group, Navbar, Stack, Text, UnstyledButton} from "@mantine/core";
+import {Link} from "react-router-dom";
+import {IconMenu2} from "@tabler/icons-react";
+import customStyle from "../../../styles/customStyle";
+import {useRecoilState} from "recoil";
+import {menuDrawerState} from "../../../states/menuDrawerState";
 
-function SideNavigator() {
-    const [opened, setOpened] = useState(false);
-    const handleOpenSideNavigator = () => {
+function MobileMenuDrawer() {
+    const {classes} = customStyle();
+    const [opened, setOpened] = useRecoilState(menuDrawerState);
+    const handleMenuDrawer = () => {
         setOpened((prev) => !prev);
     }
 
     return (
         <>
             <Drawer.Root opened={opened}
-                         onClose={handleOpenSideNavigator}
+                         onClose={handleMenuDrawer}
                          title={"사이드 메뉴"}
                          position={"left"}
                          size={"70%"}
+                         transitionProps={{duration: 400}}
                          style={{zIndex:1}}
             >
                 <Drawer.Overlay opacity={0.5} blur={2}/>
@@ -29,9 +36,8 @@ function SideNavigator() {
                     </Container>
                 </Drawer.Content>
             </Drawer.Root>
-            <Burger opened={opened} onClick={handleOpenSideNavigator}/>
         </>
     );
 }
 
-export default SideNavigator;
+export default MobileMenuDrawer;

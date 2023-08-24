@@ -14,7 +14,6 @@ import {postLogin} from "../service/user/fetchUser";
 
 function Login() {
     const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
-    const [loading, setLoading] = useState(false);
     const userStateValue = useRecoilValue(userState);
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
