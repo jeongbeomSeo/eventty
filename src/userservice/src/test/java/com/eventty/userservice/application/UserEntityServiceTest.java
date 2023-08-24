@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class UserServiceTest {
+public class UserEntityServiceTest {
     @Autowired
     private UserService userService;
 
@@ -22,7 +22,7 @@ public class UserServiceTest {
     @DisplayName("[Success] 회원가입")
     @Transactional
     public void userCreateSuccessTest(){
-        // Assignment
+        // Given
         String name = "홍박사";
         String address = "서울특별시 강남구 테헤란로";
         LocalDate birth = LocalDate.of(1988, 5, 3);
@@ -40,10 +40,10 @@ public class UserServiceTest {
                                                     .phone(phone)
                                                     .build();
 
-        // Act
+        // When
         UserCreateResponseDTO response =  userService.userCreate(request);
 
-        // Assert
+        // Then
         assertTrue(response.getId() instanceof Long);
     }
 
@@ -51,13 +51,13 @@ public class UserServiceTest {
     @DisplayName("[Success] 내 정보 조회")
     @Transactional
     public void userFindByIdTest(){
-        // Assignment
-        Long userId = 2L;
+        // Given
+        Long userId = 1L;
 
-        // Act
+        // When
         UserFindByIdResponseDTO response =  userService.userFindById(userId);
 
-        // Assert
+        // Then
         assertNotNull(response);
         assertEquals(userId, response.getId());
     }

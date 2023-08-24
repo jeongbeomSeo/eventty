@@ -7,6 +7,7 @@ import com.eventty.userservice.application.dto.UserCreateRequestDTO;
 import com.eventty.userservice.application.dto.UserFindByIdResponseDTO;
 import com.eventty.userservice.presentation.dto.SuccessResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<SuccessResponseDTO> register(@RequestBody UserCreateRequestDTO userCreateRequestDTO){
+    public ResponseEntity<SuccessResponseDTO> register(@RequestBody @Valid UserCreateRequestDTO userCreateRequestDTO){
         UserCreateResponseDTO response =  userService.userCreate(userCreateRequestDTO);
 
         SuccessCode successCode = SuccessCode.USER_INFO_INSERT;

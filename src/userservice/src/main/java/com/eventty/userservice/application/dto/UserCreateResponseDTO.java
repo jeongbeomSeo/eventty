@@ -1,6 +1,7 @@
 package com.eventty.userservice.application.dto;
 
-import com.eventty.userservice.domain.User;
+import com.eventty.userservice.domain.UserEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Setter
@@ -10,9 +11,10 @@ import lombok.*;
 @Builder
 @ToString
 public class UserCreateResponseDTO {
+    @NotNull
     private Long id;
 
-    public UserCreateResponseDTO(User user){
-        this.id = user.getId();
+    public UserCreateResponseDTO(UserEntity userEntity){
+        this.id = userEntity.getId();
     }
 }

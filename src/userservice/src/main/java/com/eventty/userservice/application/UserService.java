@@ -23,14 +23,6 @@ public class UserService {
      * @return void
      */
     public UserCreateResponseDTO userCreate(UserCreateRequestDTO userCreateRequestDTO){
-        
-        // 필수값 예외처리
-        if (userCreateRequestDTO.getName() == null){
-            throw new PropertyValueException("", "USER", "name");
-        }else if(userCreateRequestDTO.getIsHost() == null){
-            throw new PropertyValueException("", "USER", "isHost");
-        }
-
         return new UserCreateResponseDTO(userJPARepository.save(userCreateRequestDTO.toEntity()));
     }
 

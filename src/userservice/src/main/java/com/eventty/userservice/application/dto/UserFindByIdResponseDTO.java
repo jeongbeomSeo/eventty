@@ -1,6 +1,6 @@
 package com.eventty.userservice.application.dto;
 
-import com.eventty.userservice.domain.User;
+import com.eventty.userservice.domain.UserEntity;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -17,13 +17,13 @@ public class UserFindByIdResponseDTO {
     private String image;               // 유저 사진
     private String phone;               // 유저 전화번호
 
-    public UserFindByIdResponseDTO(User user){
-        this.id = user.getId();
-        this.name = user.getName();
-        this.address = user.getAddress();
-        this.birth = user.getBirth();
-        this.hostYn = user.getIsHost();
-        this.image = user.getImage();
-        this.phone = user.getPhone();
+    public UserFindByIdResponseDTO(UserEntity userEntity){
+        this.id = userEntity.getId();
+        this.name = userEntity.getName();
+        this.address = userEntity.getAddress();
+        this.birth = userEntity.getBirth();
+        this.hostYn = userEntity.getIsHost();
+        this.image = userEntity.getImage();
+        this.phone = userEntity.getPhone();
     }
 }

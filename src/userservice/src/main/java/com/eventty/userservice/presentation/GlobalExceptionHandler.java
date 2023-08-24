@@ -28,16 +28,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    @ExceptionHandler(PropertyValueException.class)
-    protected ResponseEntity<ErrorResponseDTO> handler(PropertyValueException e){
-        log.error("Entity : " + e.getEntityName() + ", column : " + e.getPropertyName());
-        final ErrorResponseDTO response = ErrorResponseDTO.of(NOTNULL_PROPERTY_ERROR);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
     // @Validated 에서 발생한 binding error 에 대한 예외 처리
     @ExceptionHandler
-    protected ResponseEntity<ErrorResponseDTO> handleBindException(ConstraintViolationException e) {
+    protected ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(ConstraintViolationException e) {
         final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE, e.getConstraintViolations());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

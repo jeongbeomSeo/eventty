@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum SuccessCode {
-    USER_INFO_INSERT(HttpStatus.CREATED.value(), "SignUp successful"),
+    // Create
+    USER_INFO_INSERT    (HttpStatus.CREATED.value(), "SignUp successful"),
+
+    // OK
     USER_INFO_FIND_BY_ID(HttpStatus.OK.value(), "User information find successful");
 
     private final int status;

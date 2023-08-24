@@ -2,6 +2,8 @@ package com.eventty.userservice.domain;
 
 import com.eventty.userservice.config.BooleanToYNConverter;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,19 +17,19 @@ import java.time.LocalDateTime;
 @Entity @Builder @AllArgsConstructor
 @Getter @NoArgsConstructor
 @Table(name = "user")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                    // PK값
 
-    @Column(nullable = false)
+    @NotNull
     private String name;                // 이름
 
     private String address;             // 주소
 
     private LocalDate birth;            // 생일
 
-    @Column(nullable = false)
+    @NotNull
     @Convert(converter = BooleanToYNConverter.class)
     private Boolean isHost;             // 주최 여부(주최자 일 경우 : true/참여자 일 경우 : false)
 
