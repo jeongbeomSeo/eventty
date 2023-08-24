@@ -1,6 +1,9 @@
 package com.eventty.businessservice.domains.event.application.serviceImpl;
 
+import com.eventty.businessservice.domains.event.application.dto.EventDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.EventFullResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.EventResponseDTO;
+import com.eventty.businessservice.domains.event.application.service.EventDetailService;
 import com.eventty.businessservice.domains.event.application.service.EventService;
 import com.eventty.businessservice.domains.event.domain.EventRepository;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
@@ -18,12 +21,21 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
+    private final EventDetailService eventDetailService;
 
     @Override
-    public EventResponseDTO findEventById(Long id){
-        return Optional.ofNullable(eventRepository.selectEventById(id))
-            .map(EventResponseDTO::fromEntity)
-            .orElseThrow(()->EventNotFoundException.EXCEPTION);
+    public EventFullResponseDTO findEventById(Long eventId){
+        // 행사 기본 정보 (Event)
+        EventResponseDTO event = Optional.ofNullable(eventRepository.selectEventById(eventId))
+                .map(EventResponseDTO::fromEntity)
+                .orElseThrow(()->EventNotFoundException.EXCEPTION);
+
+        // 행사 상세 정보 (EventDetail)
+        EventDetailResponseDTO eventDetail = Optional.ofNullable(eventDetailService.findEventDetailById(eventId))
+                .orElseThrow(()->EventNotFoundException.EXCEPTION);
+
+        // 행사 전체 정보 (기본 정보 + 상세 정보)
+        return new EventFullResponseDTO(event, eventDetail);
     }
 
     @Override
