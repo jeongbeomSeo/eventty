@@ -1,0 +1,18 @@
+server:
+  port: 8001
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: userservice-server
+          # ?? URL (??? http://userservice:8000/ ?? ??)
+          uri: http://localhost:8000/
+          predicates:
+            - Path=/api/users/**
+        - id: event-server
+          # ?? URL (??? http://eventservice:8000/ ?? ??)
+          uri: http://localhost:80/
+          predicates:
+            - Path=/api/events/**
+

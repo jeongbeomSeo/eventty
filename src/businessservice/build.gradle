@@ -43,7 +43,6 @@ dependencies {
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2")

@@ -37,5 +37,8 @@ out/
 .vscode/
 
 ### application.yml ###
-src/businessservice/src/main/resources/application-dev.yml
-src/businessservice/src/main/resources/application-test.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-test.yml
+
+### Docker ###
+Dockerfile
