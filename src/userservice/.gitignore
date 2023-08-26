@@ -38,6 +38,3 @@ out/
 
 ### Properties ###
 application-db.yml
-
-### Docker ###
-Dockerfile
