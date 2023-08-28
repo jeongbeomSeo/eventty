@@ -11,21 +11,39 @@ const customStyle = createStyles((theme) => ({
     "input": {
         input: {
             borderColor: "#cdcdcd",
-            "::placeholder": {
-                color: "#cdcdcd",
-            },
-            ":focus": {
-                borderColor: "var(--primary)",
-            },
-        }
-    },
-    "input-error": {
-        input: {
             color: "#000000 !important",
             "::placeholder": {
                 color: "#cdcdcd !important",
             },
-        }
+            ":focus": {
+                borderColor: "var(--primary)",
+            },
+        },
+        "&.error":{
+            input:{
+                ":focus":{
+                    borderColor: "red",
+                },
+            },
+        },
+    },
+    "input-date":{
+        ".mantine-DatePickerInput-input":{
+            ":active, :focus": {
+                borderColor: "var(--primary)",
+            },
+        },
+        ".mantine-DatePickerInput-day":{
+            "&[data-selected], &[data-selected]:hover":{
+                background: "var(--primary)",
+            },
+            "&[data-items='5']":{
+                background: "red",
+            }
+        },
+        ".mantine-DatePickerInput-placeholder":{
+            color: "#cdcdcd !important",
+        },
     },
     "btn-primary": {
         backgroundColor: "var(--primary)",
@@ -36,8 +54,7 @@ const customStyle = createStyles((theme) => ({
         "&.disable":{
             background: "#e6e6e6",
             color: "#b3b3b3",
-            fontWeight: 800,
-            cursor: "default",
+            pointerEvents: "none",
         },
     },
     "btn-primary-outline": {
@@ -45,7 +62,7 @@ const customStyle = createStyles((theme) => ({
         borderColor: "var(--primary) !important",
         color: "var(--primary) !important",
         ":hover": {
-            filter: "brightness(0.98)",
+            filter: "brightness(0.95)",
         }
     },
     "btn-gray": {
@@ -104,7 +121,15 @@ const customStyle = createStyles((theme) => ({
         ":hover":{
             cursor:"pointer",
             borderColor: "var(--primary)",
-            transition: "0.25s ease"
+            transition: "0.1s ease"
+        }
+    },
+    "category-scroll":{
+        overflowX: "scroll",
+        msOverflowStyle:"none",
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar":{
+            width: 0,
         }
     }
 }))

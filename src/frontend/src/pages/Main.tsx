@@ -22,16 +22,6 @@ function Main() {
                 <Stack align={"center"} style={{marginTop: "3rem"}}>
                     <SearchBox/>
                     <CategoryBtn/>
-                    {isLoggedIn &&
-                        <ul>
-                            <li>email: {userStateValue.email}</li>
-                            <li>password: {userStateValue.password}</li>
-                            <li>name: {userStateValue.name}</li>
-                            <li>phone: {userStateValue.phone}</li>
-                            <li>address: {userStateValue.address}</li>
-                            <li>isHost: {String(userStateValue.isHost)}</li>
-                        </ul>
-                    }
                     <p style={{height: "100vh"}}>스크롤바 테스트</p>
                 </Stack>
             </Container>

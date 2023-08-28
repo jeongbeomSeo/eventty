@@ -63,7 +63,7 @@ function Login() {
                     })}
                         placeholder="이메일"
                         error={errors.email && errors.email?.message}
-                        className={errors.email ? classes["input-error"] : classes.input}
+                        className={`${classes["input"]} ${errors.email && "error"}`}
                     />
                     <TextInput {...register("password", {
                         required: "비밀번호를 입력해주세요",
@@ -71,7 +71,7 @@ function Login() {
                         type="password"
                         placeholder="비밀번호"
                         error={errors.password && errors.password?.message}
-                        className={errors.password ? classes["input-error"] : classes.input}
+                        className={`${classes["input"]} ${errors.email && "error"}`}
                     />
                     <Button type="submit" className={classes["btn-primary"]}>로그인</Button>
                     <Flex gap={"xs"} align={"center"} justify={"center"} className={classes["signup-footer"]}>

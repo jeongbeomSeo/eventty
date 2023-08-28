@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {ActionIcon, Button, LoadingOverlay} from "@mantine/core";
-import {IconArrowBigUpLinesFilled} from "@tabler/icons-react";
-import {useNavigation} from "react-router-dom";
+import {ActionIcon, useMantineTheme} from "@mantine/core";
+import {IconArrowBarToUp} from "@tabler/icons-react";
+import {useMediaQuery} from "react-responsive";
 
 const SCROLL_Y = 370;
 
 function TopScrollBtn() {
+    const mobile = useMediaQuery({query: `(max-width:${useMantineTheme().breakpoints.xs})`});
     const [showButton, setShowButton] = useState(false);
     const scrollToTop = () => {
         window.scrollTo({
@@ -33,16 +34,13 @@ function TopScrollBtn() {
                     radius={"xl"}
                     onClick={scrollToTop}
                     style={{
-                        position: "fixed",
-                        bottom: "1rem",
-                        right: "1rem",
-                        width: "50px",
-                        height: "50px",
+                        width: `${mobile ? "13vw" : "50px"}`,
+                        height: `${mobile ? "13vw" : "50px"}`,
                         opacity: "0.4",
                         zIndex: "98",
                         background: "white",
                     }}>
-                    <IconArrowBigUpLinesFilled/>
+                    <IconArrowBarToUp/>
                 </ActionIcon>
             }
         </>

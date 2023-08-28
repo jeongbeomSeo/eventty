@@ -1,5 +1,5 @@
 import React from "react";
-import {Group, Text, UnstyledButton} from "@mantine/core";
+import {Flex, Grid, Group, SimpleGrid, Text, UnstyledButton} from "@mantine/core";
 import {Link} from "react-router-dom";
 import {IconConfetti, IconHome, IconMenu2, IconSearch, IconUser} from "@tabler/icons-react";
 import customStyle from "../../../../styles/customStyle";
@@ -20,16 +20,16 @@ function MobileNavBar() {
         {value: "행사", link: "/events", icon: <IconConfetti size={ICON_SIZE}/>},
         {value: "홈", link: "/", icon: <IconHome size={ICON_SIZE}/>},
         {value: "검색", link: "", icon: <IconSearch size={ICON_SIZE}/>},
-        {value: "마이이벤티", link: "/user", icon: <IconUser size={ICON_SIZE}/>},
+        {value: "내정보", link: "/user", icon: <IconUser size={ICON_SIZE}/>},
     ];
 
     const items = MENU_LIST.map((item) => (
-        item.link !== "" ?
+            item.link !== "" ?
             <UnstyledButton component={Link}
                             to={item.link}
                             className={classes["mobile-nav-link"]}>
                 {item.icon}
-                <Text fz={"xs"}>{item.value}</Text>
+                <Text fz={"0.7rem"}>{item.value}</Text>
             </UnstyledButton> :
             <UnstyledButton className={classes["mobile-nav-link"]}
                             onClick={() => {
@@ -38,16 +38,14 @@ function MobileNavBar() {
                                     setSearchDrawerValue(true)
                             }}>
                 {item.icon}
-                <Text fz={"xs"}>{item.value}</Text>
+                <Text fz={"0.7rem"}>{item.value}</Text>
             </UnstyledButton>
     ));
 
     return (
-        <Group position={"apart"} style={{width: "100%", padding: "0 2rem"}}>
-            <MobileMenuDrawer/>
-            <MobileSearchDrawer/>
+        <SimpleGrid cols={5} style={{width:"100%", alignItems:"flex-end", padding: "0 3vw"}}>
             {items}
-        </Group>
+        </SimpleGrid>
     );
 }
 

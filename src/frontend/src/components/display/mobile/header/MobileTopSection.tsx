@@ -6,7 +6,7 @@ import EventDetailHeader from "./EventDetailHeader";
 import MobileHeader from "./MobileHeader";
 
 function MobileTopSection() {
-    const HEADER_HEIGHT = "65px";
+    const HEADER_HEIGHT = "6vh";
     const {pathname} = useLocation();
     const {classes} = customStyle();
 

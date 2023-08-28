@@ -1,13 +1,17 @@
 import {Container, Group, Header, Menu, UnstyledButton,} from "@mantine/core";
 import {Link} from "react-router-dom";
-import LoginBtn from "./LoginBtn";
-import Logo from "../../common/Logo";
-import customStyle from "../../../styles/customStyle";
+import WebLoginBtn from "./WebLoginBtn";
+import Logo from "../../../common/Logo";
+import customStyle from "../../../../styles/customStyle";
 import React from "react";
+import {useRecoilValue} from "recoil";
+import {loginState} from "../../../../states/loginState";
+import WebUserInfoBtn from "./WebUserInfoBtn";
 
 const HEADER_HEIGHT = "65px";
 
 function WebHeader() {
+    const isLoggedIn = useRecoilValue(loginState);
     const {classes} = customStyle();
 
     return (
@@ -21,7 +25,7 @@ function WebHeader() {
                         <UnstyledButton component={Link} to={"/events"} className={classes["web-nav-link"]}>
                             행사
                         </UnstyledButton>
-                        <Menu trigger={"hover"}>
+                        <Menu trigger={"hover"} shadow={"sm"}>
                             <Menu.Target>
                                 <UnstyledButton className={classes["web-nav-link"]}>더보기</UnstyledButton>
                             </Menu.Target>
@@ -34,7 +38,7 @@ function WebHeader() {
                         </Menu>
                     </Group>
                 </Group>
-                <LoginBtn/>
+                {isLoggedIn ? <WebUserInfoBtn/> : <WebLoginBtn/>}
             </Container>
         </Header>
     )

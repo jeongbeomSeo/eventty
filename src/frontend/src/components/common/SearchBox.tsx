@@ -12,7 +12,7 @@ function SearchBox() {
             <TextInput
                 className={classes["search-box"]}
                 size={"md"}
-                radius={"md"}
+                radius={"sm"}
                 rightSection={
                     <ActionIcon component={Link} to={"/"} variant={"transparent"}>
                         <IconSearch/>

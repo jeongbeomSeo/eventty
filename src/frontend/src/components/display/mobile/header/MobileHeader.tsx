@@ -5,7 +5,7 @@ import React from "react";
 function MobileHeader() {
     return (
         <Link to={"/"}>
-            <Logo fill={"var(--primary)"} height={"2rem"}/>
+            <Logo fill={"var(--primary)"} height={"4vh"}/>
         </Link>
     )
 }

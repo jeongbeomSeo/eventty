@@ -3,8 +3,8 @@ export interface IEvent {
     hostId: number;
     title: string;
     image: string;
-    eventStartAt: number;
-    eventEndAt: number;
+    eventStartAt: Date;
+    eventEndAt: Date;
     participateNum: number;
     location: string;
     category: string;

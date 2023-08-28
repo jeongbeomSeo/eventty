@@ -14,15 +14,17 @@ import WebLayout from "./components/display/web/WebLayout";
 import Detail from "./pages/events/Detail";
 import {loader as eventListLoader} from "./routes/events";
 import Events from "./pages/Events";
-import ScrollToTop from "./components/common/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop";
 import {loader as eventLoader} from "./routes/event";
 import Layout from "./components/display/Layout";
+import RootSetStates from "./components/RootSetStates";
+import Test from "./pages/Test";
 
 const Router = createBrowserRouter([
     {
         path: "",
         element: (
-            <ScrollToTop/>
+            <RootSetStates/>
         ),
         errorElement: <Error/>,
         children: [
@@ -79,6 +81,10 @@ const Router = createBrowserRouter([
                         path: "/logout",
                         element: <Logout/>,
                     },
+                    {
+                        path:"events/:eventId/ticket",
+                        element: <Test/>,
+                    }
                 ]
             },
         ],

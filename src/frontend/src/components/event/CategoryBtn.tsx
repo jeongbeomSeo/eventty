@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Group, SimpleGrid, Stack, Text, UnstyledButton, useMantineTheme} from "@mantine/core";
+import {Button, Flex, Group, SimpleGrid, Stack, Text, UnstyledButton, useMantineTheme} from "@mantine/core";
 import {Link} from "react-router-dom";
 import customStyle from "../../styles/customStyle";
 import {
@@ -32,9 +32,9 @@ function CategoryBtn() {
 
     const items = CATEGORY_LIST.map((item) => (
 
-        <UnstyledButton component={Link} to={item.link} key={item.category} style={{textAlign:"center"}}>
-                {item.icon}
-                <Text fz={"xs"}>{item.category}</Text>
+        <UnstyledButton component={Link} to={item.link} key={item.category} style={{textAlign: "center"}}>
+            {item.icon}
+            <Text fz={"xs"}>{item.category}</Text>
         </UnstyledButton>
     ));
 

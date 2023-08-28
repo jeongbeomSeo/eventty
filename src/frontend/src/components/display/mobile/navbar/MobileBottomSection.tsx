@@ -13,7 +13,7 @@ function MobileBottomSection() {
                 zIndex: 99,
                 position: "fixed",
                 background: "white",
-                height: "6.5vh",
+                height: "7vh",
                 width: "100%",
                 bottom: "0",
                 boxShadow: "2px 0 6px rgba(0, 0, 0, 0.1)",
