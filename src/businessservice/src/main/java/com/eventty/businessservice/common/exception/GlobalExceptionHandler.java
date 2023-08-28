@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
 
     // 기타 예외처리
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponseDTO> handleException(Exception e) {
+    protected ResponseEntity<ErrorResponseDTO> handleException(Exception e) { 
         log.error("Exception: ", e);
         final ErrorResponseDTO response = ErrorResponseDTO.of(INTERNAL_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
