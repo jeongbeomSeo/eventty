@@ -1,17 +1,16 @@
 package com.eventty.authservice.presentation;
 
-import com.eventty.authservice.applicaiton.dto.IsUserDuplicateDTO;
+import com.eventty.authservice.presentation.dto.IsUserDuplicateRequestDTO;
 import com.eventty.authservice.applicaiton.service.UserService;
 import com.eventty.authservice.common.Enum.SuccessCode;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eventty.authservice.applicaiton.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
 import com.eventty.authservice.common.response.ResponseDTO;
 import com.eventty.authservice.common.response.SuccessResponseDTO;
 
@@ -48,9 +47,9 @@ public class AuthController {
      * 이메일 검증
      */
     @PostMapping("/email")
-    public ResponseEntity<ResponseDTO> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateDTO isUserDuplicateDTO) {
+    public ResponseEntity<ResponseDTO> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
 
-        userService.isEmailDuplicate(isUserDuplicateDTO.getEmail());
+        userService.isEmailDuplicate(isUserDuplicateRequestDTO.getEmail());
 
         SuccessCode code = SuccessCode.EMAIL_IS_VALID;
         return ResponseEntity

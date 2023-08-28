@@ -1,4 +1,4 @@
-package com.eventty.authservice.applicaiton.dto;
+package com.eventty.authservice.presentation.dto;
 
 import com.eventty.authservice.api.dto.UserCreateRequestDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
@@ -35,6 +35,7 @@ public class FullUserCreateRequestDTO {
     private String image;
     private String phone;
 
+    // Interface PasswordEncoder로 받으면서 상황에 맞는 Encoder를 받을 수 있도록 설정
     public AuthUserEntity toAuthUserEntity(PasswordEncoder encoder) {
         return AuthUserEntity.builder()
                 .email(this.email)

@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.eventty.authservice.domain.exception.DuplicateEmailException;
-import com.eventty.authservice.applicaiton.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
 import com.eventty.authservice.applicaiton.service.UserService;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.repository.AuthUserRepository;

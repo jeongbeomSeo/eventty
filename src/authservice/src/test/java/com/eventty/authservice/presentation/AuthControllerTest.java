@@ -13,11 +13,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.eventty.authservice.applicaiton.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
 import com.eventty.authservice.applicaiton.service.UserService;
 import com.eventty.authservice.common.Enum.ErrorCode;
 import com.eventty.authservice.common.Enum.SuccessCode;
-import com.eventty.authservice.config.BasicSecurityConfig;
+import com.eventty.authservice.infrastructure.config.BasicSecurityConfig;
 import com.eventty.authservice.domain.exception.DuplicateEmailException;
 
 import java.time.LocalDate;

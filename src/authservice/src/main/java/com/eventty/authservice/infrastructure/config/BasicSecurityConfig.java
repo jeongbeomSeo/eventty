@@ -1,4 +1,4 @@
-package com.eventty.authservice.config;
+package com.eventty.authservice.infrastructure.config;
 
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class BasicSecurityConfig {
         return http
                 .authorizeHttpRequests(authorizationConfig -> {
                     authorizationConfig
-                            .requestMatchers(PathRequest.toH2Console())
+                            .requestMatchers(PathRequest.toH2Console()) // H2가 나의 로컬 DB 접근할 수 있도록 허용
                             .permitAll()
                             .anyRequest()
                             .permitAll();
@@ -33,7 +33,7 @@ public class BasicSecurityConfig {
                 })
                 .headers(headers -> headers
                         .frameOptions(frameOptions -> frameOptions
-                                .disable())
+                                .disable()) // X-Frame-Options 비활성화
                 )
                 .build();
     }

@@ -1,4 +1,4 @@
-package com.eventty.authservice.applicaiton.dto;
+package com.eventty.authservice.presentation.dto;
 
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Builder
-public class IsUserDuplicateDTO {
+public class IsUserDuplicateRequestDTO {
     @Email
     String email;
 }

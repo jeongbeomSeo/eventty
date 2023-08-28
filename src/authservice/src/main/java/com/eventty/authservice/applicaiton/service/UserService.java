@@ -1,33 +1,37 @@
 package com.eventty.authservice.applicaiton.service;
 
-import com.eventty.authservice.applicaiton.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.dto.IsUserDuplicateDTO;
-import com.eventty.authservice.common.Enum.SuccessCode;
-import com.eventty.authservice.common.response.ResponseDTO;
-import com.eventty.authservice.common.response.SuccessResponseDTO;
+import com.eventty.authservice.api.dto.UserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.DuplicateEmailException;
 import com.eventty.authservice.domain.repository.AuthUserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.beans.Encoder;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     private final AuthUserRepository userRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    // 예외 처리로 할 경우 return void // Boolean 검증으로 처리할 경우 return boolean
+    /*
+     대부분의 경우 BCryptPasswordEncoder는 빈의 초기화가 무거운 작업일 수 있고 항상 필요하지 않기 때문에,
+     필요한 시점에 생성되도록 @Lazy 사용
+     */
+    @Autowired
+    public UserService(AuthUserRepository userRepository,
+                       @Lazy BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+
     public void isEmailDuplicate(String email) {
         Optional<AuthUserEntity> existingUser = userRepository.findByEmail(email);
 
@@ -45,6 +49,9 @@ public class UserService {
         userRepository.save(newUser);
 
         // API 요청 로직 + compensating Transaction
+
+        UserCreateRequestDTO userCreateRequestDTO = fullUserCreateRequestDTO.toUserCreateRequestDTO();
+
 
     }
 }
