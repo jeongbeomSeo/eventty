@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity @Builder @Getter
 @AllArgsConstructor @DynamicUpdate
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "user")
 public class UserEntity {
