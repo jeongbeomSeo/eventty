@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  businessservice:
+    image: event:1.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/app
+networks:
+  backend:
+    driver: bridge

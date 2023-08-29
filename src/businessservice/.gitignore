@@ -39,3 +39,7 @@ out/
 ### application.yml ###
 src/businessservice/src/main/resources/application-dev.yml
 src/businessservice/src/main/resources/application-test.yml
+
+### Docker
+Dockerfile
+docker-compose.yml

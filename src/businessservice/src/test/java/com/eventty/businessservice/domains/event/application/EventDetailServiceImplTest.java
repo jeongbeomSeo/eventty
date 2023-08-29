@@ -1,9 +1,9 @@
 package com.eventty.businessservice.domains.event.application;
 
-import com.eventty.businessservice.domains.event.application.dto.EventDetailResponseDTO;
-import com.eventty.businessservice.domains.event.application.serviceImpl.EventDetailServiceImpl;
-import com.eventty.businessservice.domains.event.domain.EventDetailEntity;
-import com.eventty.businessservice.domains.event.domain.EventDetailRepository;
+import com.eventty.businessservice.application.dto.response.EventDetailResponseDTO;
+import com.eventty.businessservice.application.serviceImpl.EventDetailServiceImpl;
+import com.eventty.businessservice.domain.EventDetailEntity;
+import com.eventty.businessservice.domain.EventDetailRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

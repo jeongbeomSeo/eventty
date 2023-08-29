@@ -1,6 +1,6 @@
-package com.eventty.businessservice.domains.event.application.dto;
+package com.eventty.businessservice.application.dto.response;
 
-import com.eventty.businessservice.domains.event.domain.EventDetailEntity;
+import com.eventty.businessservice.domain.EventDetailEntity;
 import lombok.*;
 
 import java.sql.Timestamp;

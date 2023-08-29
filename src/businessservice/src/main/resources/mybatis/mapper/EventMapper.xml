@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domains.event.domain.EventRepository">
+<mapper namespace="com.eventty.businessservice.domain.EventRepository">
 
-    <resultMap id="EventResultMap" type="com.eventty.businessservice.domains.event.domain.EventEntity">
+    <resultMap id="EventResultMap" type="com.eventty.businessservice.domain.EventEntity">
         <id property="id" column="id"/>
         <result property="hostId" column="host_id"/>
         <result property="title" column="title"/>

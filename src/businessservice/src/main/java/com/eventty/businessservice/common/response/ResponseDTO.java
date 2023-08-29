@@ -1,4 +1,4 @@
-package com.eventty.businessservice.common.dto;
+package com.eventty.businessservice.common.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

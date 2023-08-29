@@ -1,6 +1,6 @@
-package com.eventty.businessservice.common.dto;
+package com.eventty.businessservice.common.response;
 
-import com.eventty.businessservice.common.SuccessCode;
+import com.eventty.businessservice.common.Enum.SuccessCode;
 import lombok.Getter;
 
 /** 성공 시 응답 객체 예시

@@ -1,5 +1,7 @@
 package com.eventty.businessservice.domains.event.domain;
 
+import com.eventty.businessservice.domain.EventDetailEntity;
+import com.eventty.businessservice.domain.EventDetailRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

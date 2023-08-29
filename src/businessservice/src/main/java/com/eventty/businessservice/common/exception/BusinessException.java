@@ -1,13 +1,12 @@
 package com.eventty.businessservice.common.exception;
 
-import com.eventty.businessservice.common.ErrorCode;
-import com.eventty.businessservice.common.dto.ErrorResponseDTO;
+import com.eventty.businessservice.common.Enum.ErrorCode;
+import com.eventty.businessservice.common.response.ErrorResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 @Getter
 @AllArgsConstructor

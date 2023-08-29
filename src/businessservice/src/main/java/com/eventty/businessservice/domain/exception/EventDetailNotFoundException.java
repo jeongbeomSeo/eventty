@@ -1,6 +1,6 @@
-package com.eventty.businessservice.domains.event.domain.exception;
+package com.eventty.businessservice.domain.exception;
 
-import com.eventty.businessservice.common.ErrorCode;
+import com.eventty.businessservice.common.Enum.ErrorCode;
 import com.eventty.businessservice.common.exception.BusinessException;
 
 

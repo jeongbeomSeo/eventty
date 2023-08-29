@@ -1,7 +1,7 @@
 package com.eventty.businessservice.common.exception;
 
-import com.eventty.businessservice.common.dto.ErrorResponseDTO;
-import com.eventty.businessservice.common.ErrorCode;
+import com.eventty.businessservice.common.response.ErrorResponseDTO;
+import com.eventty.businessservice.common.Enum.ErrorCode;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import static com.eventty.businessservice.common.ErrorCode.*;
+import static com.eventty.businessservice.common.Enum.ErrorCode.*;
 
 @Slf4j
 @RestControllerAdvice

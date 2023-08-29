@@ -1,12 +1,12 @@
-package com.eventty.businessservice.domains.event.application.serviceImpl;
+package com.eventty.businessservice.application.serviceImpl;
 
-import com.eventty.businessservice.domains.event.application.dto.EventDetailResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.EventFullResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.EventResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventDetailService;
-import com.eventty.businessservice.domains.event.application.service.EventService;
-import com.eventty.businessservice.domains.event.domain.EventRepository;
-import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.application.dto.response.EventDetailResponseDTO;
+import com.eventty.businessservice.application.dto.response.EventFullResponseDTO;
+import com.eventty.businessservice.application.dto.response.EventResponseDTO;
+import com.eventty.businessservice.application.service.EventDetailService;
+import com.eventty.businessservice.application.service.EventService;
+import com.eventty.businessservice.domain.EventRepository;
+import com.eventty.businessservice.domain.exception.EventNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

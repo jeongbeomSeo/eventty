@@ -1,6 +1,6 @@
-package com.eventty.businessservice.common.dto;
+package com.eventty.businessservice.common.response;
 
-import com.eventty.businessservice.common.ErrorCode;
+import com.eventty.businessservice.common.Enum.ErrorCode;
 import jakarta.validation.ConstraintViolation;
 import lombok.AccessLevel;
 import lombok.Getter;

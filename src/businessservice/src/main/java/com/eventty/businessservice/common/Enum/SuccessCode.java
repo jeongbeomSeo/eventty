@@ -1,4 +1,4 @@
-package com.eventty.businessservice.common;
+package com.eventty.businessservice.common.Enum;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

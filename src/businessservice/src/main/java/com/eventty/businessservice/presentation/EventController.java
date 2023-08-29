@@ -1,12 +1,11 @@
-package com.eventty.businessservice.domains.event.presentation;
+package com.eventty.businessservice.presentation;
 
-import com.eventty.businessservice.common.SuccessCode;
-import com.eventty.businessservice.common.dto.SuccessResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.EventDetailResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.EventFullResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.EventResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventDetailService;
-import com.eventty.businessservice.domains.event.application.service.EventService;
+import com.eventty.businessservice.common.Enum.SuccessCode;
+import com.eventty.businessservice.common.response.SuccessResponseDTO;
+import com.eventty.businessservice.application.dto.response.EventFullResponseDTO;
+import com.eventty.businessservice.application.dto.response.EventResponseDTO;
+import com.eventty.businessservice.application.service.EventDetailService;
+import com.eventty.businessservice.application.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.eventty.businessservice.common.SuccessCode.*;
+import static com.eventty.businessservice.common.Enum.SuccessCode.*;
 
 @RestController
 @Validated
