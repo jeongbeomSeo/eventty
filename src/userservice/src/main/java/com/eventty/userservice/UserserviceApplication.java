@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @OpenAPIDefinition(info = @Info(title = "Eventty API 명세서",
 		description = "API 명세서",
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 	)
 )
 @SpringBootApplication
+@EnableJpaAuditing
 public class UserserviceApplication {
 
 	public static void main(String[] args) {

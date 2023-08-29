@@ -1,4 +1,4 @@
-package com.eventty.userservice.application.dto;
+package com.eventty.userservice.application.dto.request;
 
 import com.eventty.userservice.domain.UserEntity;
 import jakarta.validation.constraints.NotBlank;

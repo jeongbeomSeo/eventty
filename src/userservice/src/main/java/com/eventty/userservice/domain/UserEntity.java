@@ -2,20 +2,22 @@ package com.eventty.userservice.domain;
 
 import com.eventty.userservice.config.BooleanToYNConverter;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity @Builder @AllArgsConstructor
-@Getter @NoArgsConstructor
+@Entity @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@DynamicUpdate
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "user")
 public class UserEntity {
     @Id
@@ -37,9 +39,11 @@ public class UserEntity {
 
     private String phone;               // 유저 전화번호
 
-    @CreationTimestamp
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createDate;   // 회원가입 일자
 
-    @UpdateTimestamp
+    @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime updateDate;   // 회원 정보 수정 일자
 }

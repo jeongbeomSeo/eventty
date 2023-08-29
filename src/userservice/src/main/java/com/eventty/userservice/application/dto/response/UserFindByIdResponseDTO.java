@@ -1,4 +1,4 @@
-package com.eventty.userservice.application.dto;
+package com.eventty.userservice.application.dto.response;
 
 import com.eventty.userservice.domain.UserEntity;
 import lombok.*;
