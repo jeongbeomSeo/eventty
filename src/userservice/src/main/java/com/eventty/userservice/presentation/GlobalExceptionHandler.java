@@ -3,11 +3,13 @@ package com.eventty.userservice.presentation;
 import com.eventty.userservice.domain.code.ErrorCode;
 import com.eventty.userservice.domain.exception.UserException;
 import com.eventty.userservice.presentation.dto.ErrorResponseDTO;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.PropertyValueException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,36 +30,31 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    // @Validated 에서 발생한 binding error 에 대한 예외 처리
+    // @Validated 에서 발생한 binding error 에 대한 예외 처리(DB관련)
     @ExceptionHandler
     protected ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(ConstraintViolationException e) {
         final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE, e.getConstraintViolations());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // @Valid 에서 발생한 binding error 에 대한 예외 처리
+    // @Valid 에서 조건이 맞지 않았을 경우(Rest API 파라미터 관련)
     @ExceptionHandler
     protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE, e.getBindingResult());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // binding error 에 대한 예외 처리 (주로 MVC 에서 @ModelAttribute 에서 발생)
+    // JSON을 파싱하다 문제가 발생한 경우(Request Body와 형식이 맞지 않는 경우, JSON 형태가 지켜지지 않았을 경우)
     @ExceptionHandler
-    protected ResponseEntity<ErrorResponseDTO> handleBindException(BindException e) {
-        final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE, e.getBindingResult());
+    protected ResponseEntity<ErrorResponseDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
+        log.error("\ndetail message=>" + e.getMessage());
+        final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_JSON);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // enum type 일치하지 않아서 발생하는 binding error 대한 예외 처리 (주로 @PathVariable 시 잘못된 type 데이터가 들어왔을 때 에러)
-    @ExceptionHandler
-    protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        final ErrorResponseDTO response = ErrorResponseDTO.of(e);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
+    // 유저 정보가 존재하지 않을 경우 예외처리
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorResponseDTO> handleUserNotFoundException(UserException e) {
+    public ResponseEntity<ErrorResponseDTO> handleUserInfoNotFoundException(UserException e) {
         ErrorCode errorCode = e.getErrorCode();
         return ResponseEntity
                 .status(errorCode.getStatus())

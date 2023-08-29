@@ -46,23 +46,23 @@ public class UserEntityControllerTest {
 
     @Test
     @DisplayName("[API][POST] 회원가입 성공")
-    public void registerSuccessTest() throws Exception {
+    public void postMeSuccessTest() throws Exception {
         // Given
+        Long authId = 1L;
         String name = "길동";
         String address = "서울특별시 도봉구 도봉동 1";
         LocalDate birth = LocalDate.of(1998, 06, 23);
-        boolean isHost = true;
         String phone = "01012345678";
         String image = "/url/url/url.jpeg";
-        String url = "http://localhost:8000/api/users/register";
+        String url = "/api/users/me";
         SuccessCode successCode = SuccessCode.USER_INFO_INSERT;
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
                 .builder()
+                .authId(authId)
                 .name(name)
                 .address(address)
                 .birth(birth)
-                .isHost(isHost)
                 .phone(phone)
                 .image(image)
                 .build();
@@ -70,7 +70,7 @@ public class UserEntityControllerTest {
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
 
         // When
-        final ResultActions response = mockMvc.perform(post("/api/users/register").contentType(MediaType.APPLICATION_JSON).content(requestBody));
+        final ResultActions response = mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(requestBody));
 
         // Then
         response
@@ -80,21 +80,21 @@ public class UserEntityControllerTest {
 
     @Test
     @DisplayName("[API][POST] 회원가입 실패 - 필수값 부재")
-    public void registerNullParameterTest() throws Exception {
+    public void postMeNullParameterTest() throws Exception {
         // Given -- 전역변수로
+        Long authId = 1L;
         String address = "서울특별시 도봉구 도봉동 1";
         LocalDate birth = LocalDate.of(1998, 06, 23);
-        boolean isHost = true;
         String phone = "01012345678";
         String image = "/url/url/url.jpeg";
-        String url = "http://localhost:8000/api/users/register";
+        String url = "/api/users/me";
         ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
                 .builder()
+                .authId(authId)
                 .address(address)
                 .birth(birth)
-                .isHost(isHost)
                 .phone(phone)
                 .image(image)
                 .build();
@@ -102,11 +102,12 @@ public class UserEntityControllerTest {
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
 
         // When
-        final ResultActions response = mockMvc.perform(post("/api/users/register").contentType(MediaType.APPLICATION_JSON).content(requestBody));
+        final ResultActions response = mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(requestBody));
 
         // Then
         response
                 .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("success").value(false))
                 .andExpect(jsonPath("code").value(errorCode.getCode()))
                 .andExpect(jsonPath("message").value(errorCode.getMessage()));
     }
@@ -117,7 +118,7 @@ public class UserEntityControllerTest {
         // Given
         Long userId = 1L;
         SuccessCode successCode = SuccessCode.USER_INFO_FIND_BY_ID;
-        String url = "http://localhost:8000/api/users/myInfo/" + userId;
+        String url = "/api/users/me/" + userId;
 
         // When
         final ResultActions response = mockMvc.perform(get(url).contentType(MediaType.APPLICATION_JSON));
@@ -136,9 +137,8 @@ public class UserEntityControllerTest {
         String name = "아항";
         String address = "인천 남동구 장아산로 64 1, 2층";
         LocalDate birth = LocalDate.of(2000, 6, 8);
-        String phone = "01012345678";
-        String image = "";
-        String url = "http://localhost:8000/api/users/myInfo/" + userId;
+
+        String url = "/api/users/me/" + userId;
         SuccessCode successCode = SuccessCode.USER_INFO_UPDATE;
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
@@ -146,8 +146,6 @@ public class UserEntityControllerTest {
                 .name(name)
                 .address(address)
                 .birth(birth)
-                .phone(phone)
-                .image(image)
                 .build();
 
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);

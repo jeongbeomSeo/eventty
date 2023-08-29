@@ -1,6 +1,5 @@
 package com.eventty.userservice.domain;
 
-import com.eventty.userservice.config.BooleanToYNConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -12,11 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@DynamicUpdate
+@Entity @Builder @Getter
+@AllArgsConstructor @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "user")
 public class UserEntity {
@@ -25,15 +21,14 @@ public class UserEntity {
     private Long id;                    // PK값
 
     @NotNull
+    private Long authId;                // auth Server에 저장 후 받을 FK값
+
+    @NotNull
     private String name;                // 이름
 
     private String address;             // 주소
 
     private LocalDate birth;            // 생일
-
-    @NotNull
-    @Convert(converter = BooleanToYNConverter.class)
-    private Boolean isHost;             // 주최 여부(주최자 일 경우 : true/참여자 일 경우 : false)
 
     private String image;               // 유저 사진
 

@@ -15,8 +15,8 @@ public enum ErrorCode {
     INVALID_INPUT_VALUE (HttpStatus.BAD_REQUEST.value(), "C002", "Invalid input type"),
     INVALID_TYPE_VALUE  (HttpStatus.BAD_REQUEST.value(), "C004", "Invalid type value"),
     BAD_CREDENTIALS     (HttpStatus.BAD_REQUEST.value(), "C005", "Bad credentials"),
-
-
+    INVALID_JSON        (HttpStatus.BAD_REQUEST.value(), "C010", "JSON parse error"),
+    
     // User
     USER_INFO_NOT_FOUND (HttpStatus.BAD_REQUEST.value(), "U001", "User information does not exist");
 

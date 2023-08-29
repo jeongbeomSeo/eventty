@@ -6,43 +6,38 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
-@NoArgsConstructor
+@Setter @Getter @Builder @ToString
 @AllArgsConstructor
-@Builder
-@ToString
 public class UserUpdateDTO {
 
     private Long id;
+    private Long authId;
     private String name;
     private String phone;
     private LocalDate birth;
     private String address;
     private String image;
-    private Boolean isHost;
-    private UserUpdateDTO userUpdateDTO;
 
     public UserUpdateDTO(UserEntity user){
         this.id = user.getId();
+        this.authId = user.getAuthId();
         this.name = user.getName();
         this.phone = user.getPhone();
         this.birth = user.getBirth();
         this.address = user.getAddress();
         this.image = user.getImage();
-        this.isHost = user.getIsHost();
     }
 
     public UserEntity toEntity(UserUpdateRequestDTO dto){
         return UserEntity
                 .builder()
-                .id(dto.getId() != null ? dto.getId() : this.id)
+                .id(this.getId())
+                .authId(this.authId)
                 .name(dto.getName() != null ? dto.getName() : this.name)
                 .phone(dto.getPhone() != null ? dto.getPhone() : this.phone)
                 .birth(dto.getBirth() != null ? dto.getBirth() : this.birth)
                 .address(dto.getAddress() != null ? dto.getAddress() : this.address)
                 .image(dto.getImage() != null ? dto.getImage() : this.image)
-                .isHost(this.isHost)
                 .build();
     }
 }

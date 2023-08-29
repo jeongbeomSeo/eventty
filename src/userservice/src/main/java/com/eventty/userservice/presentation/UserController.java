@@ -23,22 +23,16 @@ public class UserController {
 
     private final UserService userService;
 
-    public <T> ResponseEntity<SuccessResponseDTO> makeResponse(T response, SuccessCode successCode){
-        return ResponseEntity
-                .status(successCode.getStatus())
-                .body(SuccessResponseDTO.of(response, successCode));
-    }
-
     /**
      * 회원가입
      *
      * @author khg
      * @param userCreateRequestDTO
-     * @return void
+     * @return ResponseEntity<SuccessResponseDTO>
      */
-    @PostMapping("/register")
-    public ResponseEntity<SuccessResponseDTO> register(@RequestBody @Valid UserCreateRequestDTO userCreateRequestDTO){
-        UserCreateAndUpdateResponseDTO response =  userService.userCreate(userCreateRequestDTO);
+    @PostMapping("/me")
+    public ResponseEntity<SuccessResponseDTO> postMe(@RequestBody @Valid UserCreateRequestDTO userCreateRequestDTO){
+        UserCreateAndUpdateResponseDTO response =  userService.createUser(userCreateRequestDTO);
 
         SuccessCode successCode = SuccessCode.USER_INFO_INSERT;
         return makeResponse(response, successCode);
@@ -49,17 +43,17 @@ public class UserController {
      *
      * @author khg
      * @param userId
-     * @return ResponseEntity<UserFindByIdResponseDTO>
+     * @return ResponseEntity<SuccessResponseDTO>
      */
     // 우선 Test 할 동안만 파라미터로 받겠습니다!
     // 차후 수정 예정
-    @GetMapping("/myInfo/{userId}")
-    public ResponseEntity<SuccessResponseDTO> getMyInfo(@PathVariable Long userId){
+    @GetMapping("/me/{userId}")
+    public ResponseEntity<SuccessResponseDTO> getMe(@PathVariable Long userId){
 
         // 토큰 내에 있는 정보 UserId Get!
         // Source 추가
 
-        UserFindByIdResponseDTO response = userService.userFindById(userId);
+        UserFindByIdResponseDTO response = userService.findUserById(userId);
 
         SuccessCode successCode = SuccessCode.USER_INFO_FIND_BY_ID;
         return makeResponse(response, successCode);
@@ -71,17 +65,23 @@ public class UserController {
      * @author khg
      * @param userId
      * @param userUpdateRequestDTO
-     * @return ResponseEntity<UserFindByIdResponseDTO>
+     * @return ResponseEntity<SuccessResponseDTO>
      */
-    @PatchMapping("/myInfo/{userId}")
-    public ResponseEntity<SuccessResponseDTO> patchMyInfo(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
+    @PatchMapping("/me/{userId}")
+    public ResponseEntity<SuccessResponseDTO> patchMe(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
         // 토큰 내에 있는 정보 UserId Get!
         // Source 추가
 
-        UserCreateAndUpdateResponseDTO response = userService.userUpdate(userId, userUpdateRequestDTO);
+        UserCreateAndUpdateResponseDTO response = userService.updateUser(userId, userUpdateRequestDTO);
 
         SuccessCode successCode = SuccessCode.USER_INFO_UPDATE;
         return makeResponse(response, successCode);
+    }
+
+    private  <T> ResponseEntity<SuccessResponseDTO> makeResponse(T response, SuccessCode successCode){
+        return ResponseEntity
+                .status(successCode.getStatus())
+                .body(SuccessResponseDTO.of(response, successCode));
     }
 
 }

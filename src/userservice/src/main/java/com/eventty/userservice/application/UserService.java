@@ -22,30 +22,26 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
     private final EntityManager em;
-
     private final UserJPARepository userJPARepository;
 
-
-
     @Transactional
-    public UserCreateAndUpdateResponseDTO userCreate(UserCreateRequestDTO userCreateRequestDTO){
+    public UserCreateAndUpdateResponseDTO createUser(UserCreateRequestDTO userCreateRequestDTO){
         return new UserCreateAndUpdateResponseDTO(userJPARepository.save(userCreateRequestDTO.toEntity()));
     }
 
     @Transactional
-    public UserFindByIdResponseDTO userFindById(Long id){
-        return new UserFindByIdResponseDTO(UserEntityFindById(id));
+    public UserFindByIdResponseDTO findUserById(Long id){
+        return new UserFindByIdResponseDTO(findUserByEMAndDB(id));
     }
 
     @Transactional
-    public UserCreateAndUpdateResponseDTO userUpdate(Long id, UserUpdateRequestDTO userUpdateRequestDTO){
-        UserUpdateDTO userUpdateDTO = new UserUpdateDTO(UserEntityFindById(id));
+    public UserCreateAndUpdateResponseDTO updateUser(Long id, UserUpdateRequestDTO userUpdateRequestDTO){
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO(findUserByEMAndDB(id));
         return new UserCreateAndUpdateResponseDTO(userJPARepository.save(userUpdateDTO.toEntity(userUpdateRequestDTO)));
     }
 
-    private UserEntity UserEntityFindById(Long id){
+    private UserEntity findUserByEMAndDB(Long id){
         return Optional.ofNullable(em.find(UserEntity.class, id)).orElseThrow(() -> UserInfoNotFoundException.EXCEPTION);
     }
 }
