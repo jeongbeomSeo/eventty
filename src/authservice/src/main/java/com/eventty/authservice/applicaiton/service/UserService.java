@@ -36,7 +36,7 @@ public class UserService {
         Optional<AuthUserEntity> existingUser = userRepository.findByEmail(email);
 
         if (existingUser.isPresent()) {
-            throw new DuplicateEmailException();
+            throw DuplicateEmailException.EXCEPTION;
         }
     }
 

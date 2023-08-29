@@ -1,8 +1,10 @@
 package com.eventty.authservice.common.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import com.eventty.authservice.common.Enum.ErrorCode;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
  */
 
 @Getter
+@NoArgsConstructor
 public class AuthException extends RuntimeException{
 
     private ErrorCode errorCode;
@@ -24,8 +27,12 @@ public class AuthException extends RuntimeException{
         this.errorCode = errorcode;
     }
 
+    /*
+    Customizing 예외는 메세지 작성하는 것을 기본으로 작업 진행해 주세요
+
     protected AuthException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
+    */
 }

@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class UserCreateRequestDTO {
+    private String authId;
     private String name;
     private String address;
     private LocalDate birth;

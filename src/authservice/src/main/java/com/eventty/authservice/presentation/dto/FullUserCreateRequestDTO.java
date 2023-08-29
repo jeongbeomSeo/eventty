@@ -22,16 +22,13 @@ public class FullUserCreateRequestDTO {
     @NotNull @Email
     private String email;
     private String password;
-
     @NotNull
-    private String nickname;
-
+    private Boolean isHost;
+    
     @NotNull
     private String name;
     private String address;
     private LocalDate birth;
-    @NotNull
-    private Boolean isHost;
     private String image;
     private String phone;
 

@@ -79,7 +79,7 @@ public class AuthControllerTest {
         String email = createEmail(id);
 
         // Arrange: UserService의 isEmailDuplicate 메서드가 DuplicateEmailException을 던질 것을 모킹
-        doThrow(new DuplicateEmailException()).when(userService).isEmailDuplicate(email);
+        doThrow(DuplicateEmailException.EXCEPTION).when(userService).isEmailDuplicate(email);
 
         // When & Then
         mockMvc.perform(post("/api/auth/email")
@@ -103,7 +103,6 @@ public class AuthControllerTest {
         return FullUserCreateRequestDTO.builder()
                 .email(email)
                 .password("123123")
-                .nickname("eventty0")
                 .name("eventty0")
                 .address("서울시 강남")
                 .birth(LocalDate.now())

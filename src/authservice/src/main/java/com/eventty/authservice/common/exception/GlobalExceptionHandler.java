@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponseDTO> handleConflictException(DataIntegrityViolationException e) {
         log.error("DataIntegrityViolationException Occurred: {}", e.getMessage());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.CONFLICT);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(CONFLICT);
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
