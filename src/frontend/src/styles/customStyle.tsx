@@ -4,7 +4,7 @@ const customStyle = createStyles((theme) => ({
     "header": {
         zIndex: 99,
         boxShadow: "0 2px 6px #e6e6e6",
-        "&.mobile-event-detail":{
+        "&.mobile-event-detail": {
             position: "sticky",
         }
     },
@@ -19,29 +19,48 @@ const customStyle = createStyles((theme) => ({
                 borderColor: "var(--primary)",
             },
         },
-        "&.error":{
-            input:{
-                ":focus":{
+        "&.error": {
+            input: {
+                ":focus": {
                     borderColor: "red",
                 },
             },
         },
     },
-    "input-date":{
-        ".mantine-DatePickerInput-input":{
+    "input-textarea":{
+        ".mantine-Textarea-input": {
+            borderColor: "#cdcdcd",
+            color: "#000000 !important",
+            "::placeholder": {
+                color: "#cdcdcd !important",
+            },
+            ":focus": {
+                borderColor: "var(--primary)",
+            },
+        },
+        "&.error": {
+            ".mantine-Textarea-input": {
+                ":focus": {
+                    borderColor: "red",
+                },
+            },
+        },
+    },
+    "input-date": {
+        ".mantine-DatePickerInput-input": {
             ":active, :focus": {
                 borderColor: "var(--primary)",
             },
         },
-        ".mantine-DatePickerInput-day":{
-            "&[data-selected], &[data-selected]:hover":{
+        ".mantine-DatePickerInput-day": {
+            "&[data-selected], &[data-selected]:hover": {
                 background: "var(--primary)",
             },
-            "&[data-items='5']":{
+            "&[data-items='5']": {
                 background: "red",
             }
         },
-        ".mantine-DatePickerInput-placeholder":{
+        ".mantine-DatePickerInput-placeholder": {
             color: "#cdcdcd !important",
         },
     },
@@ -51,7 +70,7 @@ const customStyle = createStyles((theme) => ({
             backgroundColor: "var(--primary)",
             filter: "brightness(0.98)",
         },
-        "&.disable":{
+        "&.disable": {
             background: "#e6e6e6",
             color: "#b3b3b3",
             pointerEvents: "none",
@@ -90,48 +109,59 @@ const customStyle = createStyles((theme) => ({
         padding: "3rem 0 1rem 0",
         color: "#666666",
     },
+    "signup-checkbox": {
+        ".mantine-Checkbox-input:checked": {
+            background: "var(--primary)",
+            borderColor: "var(--primary)",
+        },
+        label: {
+            fontSize: "0.5rem",
+        },
+    },
     "web-nav-link": {
         fontWeight: "bold",
         ":hover": {
             opacity: "0.7",
         }
     },
-    "mobile-nav-link":{
+    "mobile-nav-link": {
         color: "#666666",
         textAlign: "center",
-        ":active":{
+        ":active": {
             color: "var(--primary)",
         },
-        "&.active":{
+        "&.active": {
             color: "var(--primary)",
         },
     },
     "search-box": {
-        width: "80%",
-        [theme.fn.smallerThan("sm")]: {
-            width: "100%",
-        },
+        width: "100%",
         input: {
             borderColor: "var(--primary) !important",
             fontSize: "1.1rem",
             borderWidth: "2px",
         },
     },
-    "ticket-select":{
-        ":hover":{
-            cursor:"pointer",
+    "ticket-select": {
+        ":hover": {
+            cursor: "pointer",
             borderColor: "var(--primary)",
             transition: "0.1s ease"
         }
     },
-    "category-scroll":{
+    "category-scroll": {
         overflowX: "scroll",
-        msOverflowStyle:"none",
+        msOverflowStyle: "none",
         scrollbarWidth: "none",
-        "&::-webkit-scrollbar":{
+        "&::-webkit-scrollbar": {
             width: 0,
         }
-    }
+    },
+    "tabs-primary": {
+        ".mantine-Tabs-tab[data-active]": {
+            borderBottom: "3px solid var(--primary) !important",
+        },
+    },
 }))
 
 export default customStyle;

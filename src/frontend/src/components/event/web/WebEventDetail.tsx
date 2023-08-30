@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
 import {
     Avatar,
@@ -20,7 +20,7 @@ import {userState} from "../../../states/userState";
 import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
-import AlertModal from "../../common/AlertModal";
+import EventDetailModal from "../EventDetailModal";
 
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
@@ -36,33 +36,17 @@ function WebEventDetail() {
     const [modalOpened, setModalOpened] = useState(false);
     const {classes} = customStyle();
 
-    const handleModalOpened = () => {
-        setModalOpened(prev => !prev);
-    }
-
     const onClickTicket = () => {
         if (isLoggedIn) {
             navigate("ticket", {state: pathname});
         } else {
-            handleModalOpened();
+            setModalOpened(prev => !prev);
         }
     }
 
     return (
         <>
-            <Modal opened={modalOpened}
-                   onClose={handleModalOpened}
-                   withCloseButton={false}
-                   centered
-                   padding={"4rem"}
-                   style={{textAlign: "center"}}>
-                <Flex align={"center"} direction={"column"} gap={"1rem"} >
-                    <Text align={"center"}>로그인 후 이용해주세요</Text>
-                    <Button onClick={() => navigate("/login", {state: pathname})}
-                            className={classes["btn-primary"]}>확인</Button>
-                </Flex>
-            </Modal>
-
+            <EventDetailModal open={modalOpened}/>
             <Container>
                 <Grid style={{marginTop: "5vh"}} gutter={"xl"}>
                     <Grid.Col span={8}>

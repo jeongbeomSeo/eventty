@@ -7,6 +7,7 @@ export interface ISignup {
     nickname: string;
     birth: Date;
     address: string;
+    termsOfService: boolean;
 }
 
 export interface ILogin {

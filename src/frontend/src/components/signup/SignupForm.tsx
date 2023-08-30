@@ -1,4 +1,4 @@
-import {Button, Grid, Stack, TextInput} from "@mantine/core";
+import {Button, Checkbox, Grid, Stack, TextInput} from "@mantine/core";
 import {useNavigate} from "react-router-dom";
 import {useRecoilState} from "recoil";
 import {userState} from "../../states/userState";
@@ -8,6 +8,8 @@ import {ChangeEvent, useState} from "react";
 import {ISignup} from "../../types/IUser";
 import {DatePickerInput} from "@mantine/dates";
 import "dayjs/locale/ko";
+import CalendarPicker from "../common/CalendarPicker";
+import PhoneNumberInput from "../common/PhoneNumberInput";
 
 function SignupForm(props: { isHost: boolean }) {
     const navigate = useNavigate();
@@ -136,7 +138,7 @@ function SignupForm(props: { isHost: boolean }) {
                     placeholder="비밀번호"
                     label="비밀번호"
                     error={errors.password && errors.password?.message}
-                    className={`${classes["input"]} ${errors.email && "error"}`}/>
+                    className={`${classes["input"]} ${errors.password && "error"}`}/>
                 <TextInput {...register("passwordConfirm", {
                     required: "비밀번호를 다시 입력해주세요",
                     validate: {
@@ -150,7 +152,7 @@ function SignupForm(props: { isHost: boolean }) {
                            type="password"
                            placeholder="비밀번호 확인"
                            error={errors.passwordConfirm && errors.passwordConfirm?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}/>
+                           className={`${classes["input"]} ${errors.passwordConfirm && "error"}`}/>
                 <TextInput {...register("name", {
                     required: "이름을 입력해주세요",
                     pattern: {
@@ -161,7 +163,7 @@ function SignupForm(props: { isHost: boolean }) {
                            placeholder="이름"
                            label="이름"
                            error={errors.name && errors.name?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}/>
+                           className={`${classes["input"]} ${errors.name && "error"}`}/>
                 <TextInput {...register("phone", {
                     required: "휴대폰 번호를 입력해주세요",
                     pattern: {
@@ -173,7 +175,7 @@ function SignupForm(props: { isHost: boolean }) {
                            label="휴대폰 번호"
                            maxLength={13}
                            error={errors.phone && errors.phone?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}
+                           className={`${classes["input"]} ${errors.phone && "error"}`}
                            onInput={handlePhoneInputChange}/>
                 <Grid>
                     <Grid.Col span={"auto"}>
@@ -187,7 +189,7 @@ function SignupForm(props: { isHost: boolean }) {
                                    placeholder={"닉네임"}
                                    label={"닉네임"}
                                    error={errors.nickname && errors.nickname?.message}
-                                   className={`${classes["input"]} ${errors.email && "error"}`}/>
+                                   className={`${classes["input"]} ${errors.nickname && "error"}`}/>
                     </Grid.Col>
                     <Grid.Col span={"content"}>
                         <Button className={classes["btn-primary"]} style={{marginTop: "24px"}}
@@ -198,28 +200,11 @@ function SignupForm(props: { isHost: boolean }) {
                             name={"birth"}
                             rules={{required: "날짜를 선택해주세요"}}
                             render={({field}) => (
-                                <DatePickerInput
-                                    placeholder="생년월일"
-                                    label="생년월일"
-                                    error={errors.birth && errors.birth?.message}
-                                    valueFormat="YYYY-MM-DD"
-                                    onChange={(date) => field.onChange(date)}
-                                    value={field.value}
-                                    firstDayOfWeek={0}
-                                    getDayProps={(date) => {
-                                        if (date.getDay() === 6) {
-                                            return {
-                                                sx: () => ({
-                                                    color: "#3381ff",
-                                                }),
-                                            };
-                                        }
-                                        return {};
-                                    }}
-                                    weekendDays={[0]}
-                                    locale={"ko"}
-                                    className={classes["input-date"]}
-                                />
+                                <CalendarPicker label={"생년월일"}
+                                                placeholder={"생년월일"}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                error={errors.birth && errors.birth?.message}/>
                             )}/>
                 <TextInput {...register("address", {
                     required: "주소를 입력해주세요"
@@ -227,7 +212,14 @@ function SignupForm(props: { isHost: boolean }) {
                            placeholder="주소"
                            label="주소"
                            error={errors.address && errors.address?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}/>
+                           className={`${classes["input"]} ${errors.address && "error"}`}/>
+                <Checkbox {...register("termsOfService",{
+                    required: "약관에 동의해주세요"
+                })}
+                          label={"서비스 이용 약관과 개인정보 취급 방침 및 개인정보 3자 제공 동의"}
+                          error={errors.termsOfService && errors.termsOfService?.message}
+                          className={classes["signup-checkbox"]}
+                />
                 <Button type="submit" className={classes["btn-primary"]}>
                     회원가입
                 </Button>

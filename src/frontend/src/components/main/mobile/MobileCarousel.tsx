@@ -13,7 +13,7 @@ const CAROUSEL_ITEMS = [
     {color: "#939597", value: "Ultimate Gray"}
 ];
 
-function WebCarousel() {
+function MobileCarousel() {
     const autoPlay = useRef(Autoplay({delay: CAROUSEL_DELAY}));
 
     const items = CAROUSEL_ITEMS.map((item) => (
@@ -46,4 +46,4 @@ function WebCarousel() {
     );
 }
 
-export default WebCarousel;
+export default MobileCarousel;

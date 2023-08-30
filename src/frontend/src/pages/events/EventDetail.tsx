@@ -24,7 +24,7 @@ import {useMediaQuery} from "react-responsive";
 import WebEventDetail from "../../components/event/web/WebEventDetail";
 import MobileEventDetail from "../../components/event/mobile/MobileEventDetail";
 
-function Detail() {
+function EventDetail() {
     const mobile = useMediaQuery({query: `(max-width:${useMantineTheme().breakpoints.xs})`});
 
     return (
@@ -34,4 +34,4 @@ function Detail() {
     );
 }
 
-export default Detail;
+export default EventDetail;

@@ -21,7 +21,7 @@ function SignupMain() {
                 개인 회원가입
             </Button>
             <Button className={classes["btn-gray-outline"]} component={Link} to={"host"}>
-                주최자 회원가입
+                <span style={{color:"var(--primary)"}}>주최자&nbsp;</span> 회원가입
             </Button>
 
             <Divider my={"xs"} labelPosition={"center"} label={`또는 \n SNS 가입하기`}

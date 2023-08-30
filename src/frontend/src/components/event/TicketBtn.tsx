@@ -1,9 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import {Badge, Divider, Group, Paper, Stack, Text} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
+import EventDetailModal from "./EventDetailModal";
+import {CheckLogin} from "../../util/CheckLogin";
+import {useLocation, useNavigate} from "react-router-dom";
 
 function TicketBtn(props: {title: string, content: string, price: number, left:number}) {
     const {classes} = customStyle();
+
     return (
         <>
             <Paper p={"md"} withBorder

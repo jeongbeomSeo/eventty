@@ -9,7 +9,7 @@ function CardForm({ children }: IComponent) {
     const cardTitleValue = useRecoilValue(cardTitleState);
 
     return (
-        <Container style={{ marginTop: "10vh" }}>
+        <Container style={{ margin: "10vh auto" }}>
             <Flex justify={"center"}>
                 <Link to={"/"}>
                     <Logo fill={"var(--primary)"} height={"2rem"}/>

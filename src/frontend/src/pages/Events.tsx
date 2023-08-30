@@ -4,9 +4,11 @@ import SearchBox from "../components/common/SearchBox";
 import WebEventList from "../components/event/web/WebEventList";
 import {useMediaQuery} from "react-responsive";
 import MobileEventList from "../components/event/mobile/MobileEventList";
-import CategoryBtn from "../components/event/CategoryBtn";
+import WebCategoryBtn from "../components/event/web/WebCategoryBtn";
 import MobileCategoryBtn from "../components/event/mobile/MobileCategoryBtn";
 import customStyle from "../styles/customStyle";
+import MobileEvents from "../components/event/mobile/MobileEvents";
+import WebEvents from "../components/event/web/WebEvents";
 
 function Events() {
     const {classes} = customStyle();
@@ -14,15 +16,7 @@ function Events() {
 
     return (
         <Container>
-            <Stack align={"center"} style={{margin: "2rem 0 3vh"}}>
-                <SearchBox/>
-                <Box style={{width: "100%", height: "auto"}}>
-                    <Flex gap={"5vw"} className={classes["category-scroll"]}>
-                        <MobileCategoryBtn/>
-                    </Flex>
-                </Box>
-            </Stack>
-            {mobile ? <MobileEventList/> : <WebEventList/>}
+            {mobile ? <MobileEvents/> : <WebEvents/>}
         </Container>
     );
 }

@@ -1,7 +1,7 @@
 import {useRecoilState, useRecoilValue, useResetRecoilState} from 'recoil';
 import { loginState } from '../states/loginState';
 import { useEffect } from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {Navigate, useLocation, useNavigate} from 'react-router-dom';
 import {userState} from "../states/userState";
 
 function Logout() {
@@ -14,7 +14,9 @@ function Logout() {
     }, [])
 
     return (
-        <></>
+        <>
+             <Navigate to={"/"}/>
+        </>
     );
 }
 

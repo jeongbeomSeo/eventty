@@ -1,34 +1,44 @@
-import React from "react";
-import {Button, Drawer, Flex, Group, Stack, Title} from "@mantine/core";
+import React, {useState} from "react";
+import {Button, Drawer, Flex, Grid, Group, Stack, Title} from "@mantine/core";
 import {useRecoilState} from "recoil";
 import {searchDrawerState} from "../../../states/searchDrawerState";
 import {IconChevronLeft, IconX} from "@tabler/icons-react";
 import SearchBox from "../../common/SearchBox";
-import CategoryBtn from "../../event/CategoryBtn";
+import WebCategoryBtn from "../../event/web/WebCategoryBtn";
 import MobileCategoryBtn from "../../event/mobile/MobileCategoryBtn";
 import customStyle from "../../../styles/customStyle";
 
 function MobileSearchDrawer() {
     const {classes} = customStyle();
     const [opened, setOpened] = useRecoilState(searchDrawerState);
+
+    const [lastestHistory, setLastestHistory] = useState([
+        {key: 1, value: "AAAAAAA"},
+        {key: 2, value: "BB"},
+        {key: 3, value: "CCDDDD"},
+        {key: 4, value: "EEE!2"},
+    ])
+
     const handleOpened = () => {
         setOpened(prev => !prev);
     }
 
-    const LASTEST_HISTORY = [
-        {value: "AAAAAAA"},
-        {value: "BB"},
-        {value: "CCDDDD"},
-        {value: "EEE!2"},
-    ];
-
-    const items = LASTEST_HISTORY.map((item) => (
-        <Button rightIcon={<IconX/>}
+    const items = lastestHistory.map((item) => (
+        <Button key={item.key}
+                rightIcon={<IconX/>}
                 radius={"xl"}
-                className={classes["btn-primary-outline"]}>
+                className={classes["btn-primary-outline"]}
+                onClick={() => deleteHistory(item.key)}
+        >
             {item.value}
         </Button>
     ))
+
+    const deleteHistory = (key: number) => {
+        setLastestHistory(() =>
+            lastestHistory.filter((item) => item.key !== key)
+        );
+    }
 
     return (
         <Drawer.Root opened={opened}
@@ -41,7 +51,8 @@ function MobileSearchDrawer() {
                 <Drawer.Header>
                     <IconChevronLeft size={"3vh"}
                                      onClick={handleOpened}
-                                     style={{paddingRight: "5vw"}}/>
+                                     style={{paddingRight: "2vh"}}
+                    />
                     <SearchBox/>
                 </Drawer.Header>
                 <Drawer.Body>
@@ -59,7 +70,8 @@ function MobileSearchDrawer() {
                 </Drawer.Body>
             </Drawer.Content>
         </Drawer.Root>
-    );
+    )
+        ;
 }
 
 export default MobileSearchDrawer;
