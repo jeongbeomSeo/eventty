@@ -4,6 +4,7 @@ import com.eventty.businessservice.application.dto.response.EventFindByIdWithDet
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.serviceImpl.EventServiceImpl;
 import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.domain.EventWithDetailDAO;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
@@ -27,6 +28,8 @@ public class EventServiceImplTest {
 
     @Mock
     private EventRepository eventRepository;
+    @Mock
+    private EventDetailRepository eventDetailRepository;
 
     @InjectMocks
     private EventServiceImpl eventService;
@@ -77,29 +80,22 @@ public class EventServiceImplTest {
         verify(eventRepository, times(1)).selectAllEvents();
     }
 
-    /*
     @Test
-    public void testCreateEvent() {
+    @DisplayName("이벤트 삭제 테스트")
+    public void deleteEventTest(){
         // Given
-        EventFullCreateRequestDTO eventFullCreateRequestDTO = new EventFullCreateRequestDTO();
-        // Set properties of eventFullCreateRequestDTO...
-
-        EventCreateRequestDTO eventCreateRequestDTO = eventFullCreateRequestDTO.toEventCreateRequestDTO();
-        EventDetailCreateRequestDTO eventDetailCreateRequestDTO = eventFullCreateRequestDTO.toEventDetailCreateRequestDTO();
-
-        EventEntity eventEntity = eventCreateRequestDTO.toEntity();
-        EventDetailEntity eventDetailEntity = eventDetailCreateRequestDTO.toEntity();
+        Long eventId = 1L;
+        when(eventRepository.deleteEvent(eventId)).thenReturn(eventId);
+        when(eventDetailRepository.deleteEventDetail(eventId)).thenReturn(eventId);
 
         // When
-        doNothing().when(eventDetailService).createEventDetail(eq(eventDetailEntity));
-        doNothing().when(eventRepository).insertEvent(eq(eventEntity));
-        eventService.createEvent(eventFullCreateRequestDTO);
+        eventService.deleteEvent(eventId);
 
         // Then
-        verify(eventDetailService, times(1)).createEventDetail(eventDetailEntity);
+        verify(eventRepository, times(1)).deleteEvent(eventId);
+        verify(eventDetailRepository, times(1)).deleteEventDetail(eventId);
     }
 
-     */
 
     private static EventEntity createEventEntity(Long i){
         return EventEntity.builder()

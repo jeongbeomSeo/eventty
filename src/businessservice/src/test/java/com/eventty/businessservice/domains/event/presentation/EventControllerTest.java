@@ -90,6 +90,24 @@ public class EventControllerTest {
         verify(eventService, times(1)).createEvent(eventFullCreateRequestDTO);
     }
 
+    @Test
+    @DisplayName("행사 삭제 테스트")
+    public void deleteEventTest() throws Exception {
+        // Given
+        Long eventId = 1L;
+        when(eventService.deleteEvent(eventId)).thenReturn(eventId);
+
+        // When & Then
+        mockMvc.perform(delete("/api/events/{eventId}", eventId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.code").value("0"))
+                .andExpect(jsonPath("$.message").value("Event deleted successfully"));
+
+        verify(eventService, times(1)).deleteEvent(eventId);
+    }
+
     private static EventFullCreateRequestDTO createEventFullCreateRequestDTO() {
         return EventFullCreateRequestDTO.builder()
                 .id(1L)

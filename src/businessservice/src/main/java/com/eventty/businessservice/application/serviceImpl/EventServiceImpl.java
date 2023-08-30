@@ -47,7 +47,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public void createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO){
 
-        // 받은 요청을 나누기
         EventCreateRequestDTO eventCreateRequestDTO = eventFullCreateRequestDTO.toEventCreateRequestDTO();
         EventDetailCreateRequestDTO eventDetailCreateRequestDTO = eventFullCreateRequestDTO.toEventDetailCreateRequestDTO();
 
@@ -59,9 +58,11 @@ public class EventServiceImpl implements EventService {
     // 이벤트 삭제
     @Override
     public Long deleteEvent(Long id){
-        Long eventId = eventDetailRepository.deleteEventDetail(id);
-        Long eventId2 = eventRepository.deleteEvent(id);
-
-        return eventId;
+        Long deletedEventId = null;
+        // 두 개의 메서드 모두 성공적으로 삭제되어 같은 ID 반환하고 있는지 확인 후 이벤트 ID를 반환
+        if (eventDetailRepository.deleteEventDetail(id) == eventRepository.deleteEvent(id)) {
+            deletedEventId = id;
+        }
+        return deletedEventId;
     }
 }

@@ -80,14 +80,6 @@ public class EventController {
 
 
     /**
-     * 주최한 행사 수정
-     *
-     */
-
-
-
-
-    /**
      * 주최한 행사 삭제
      *
      */
@@ -95,13 +87,19 @@ public class EventController {
     @Operation(summary = "행사 삭제")
     public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(@PathVariable @Min(1) Long eventId){
 
-        Long id = eventService.deleteEvent(eventId);
+        Long deleteEventId = eventService.deleteEvent(eventId);
 
         SuccessCode code = DELETE_EVENT_SUCCESS;
         return ResponseEntity
                 .status(code.getStatus())
-                .body(SuccessResponseDTO.of(id, code));
+                .body(SuccessResponseDTO.of(deleteEventId, code));
     }
+
+    /**
+     * 주최한 행사 수정
+     *
+     */
+
 
 
     /**
