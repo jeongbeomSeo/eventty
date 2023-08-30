@@ -47,7 +47,7 @@ public class AuthController {
      * 이메일 검증
      */
     @PostMapping("/email")
-    public ResponseEntity<ResponseDTO> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
 
         userService.isEmailDuplicate(isUserDuplicateRequestDTO.getEmail());
 

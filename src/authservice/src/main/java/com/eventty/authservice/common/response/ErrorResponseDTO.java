@@ -1,6 +1,7 @@
 package com.eventty.authservice.common.response;
 
 import jakarta.validation.ConstraintViolation;
+import lombok.Setter;
 import org.springframework.validation.BindingResult;
 
 import lombok.AccessLevel;

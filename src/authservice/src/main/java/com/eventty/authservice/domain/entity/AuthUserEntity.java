@@ -1,6 +1,5 @@
 package com.eventty.authservice.domain.entity;
 
-import com.eventty.authservice.infrastructure.BooleanToYNConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,9 +24,4 @@ public class AuthUserEntity {
     private String email;               // Email
 
     private String password;            // 암호화된 Password
-
-    @Column(nullable = false)
-    @Convert(converter = BooleanToYNConverter.class)
-    private Boolean isHost;             // 주최 여부(주최자 일 경우 : true/참여자 일 경우 : false)
-
 }

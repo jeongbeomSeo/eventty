@@ -1,7 +1,9 @@
 package com.eventty.authservice.common.Enum;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @RequiredArgsConstructor
@@ -21,8 +23,10 @@ public enum ErrorCode {
     CONFLICT(409, "C009", "Conflict occurred"),
 
     // Auth
-    DUPLICATE_EMAIL(409, "A000", "Duplicate Email");
+    DUPLICATE_EMAIL(409, "A000", "Duplicate Email"),
 
+    // API
+    SERVER_API_ERROR(400, "G000", "Server API ERROR");
 
     private final int status;
     private final String code;

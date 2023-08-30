@@ -19,10 +19,12 @@ import java.util.List;
 public class AuthException extends RuntimeException{
 
     private ErrorCode errorCode;
+    /*
     protected AuthException(ErrorCode errorcode, String message) {
         super(message);
         this.errorCode = errorcode;
     }
+    */
 
     protected AuthException(ErrorCode errorCode) {
         super(errorCode.getMessage());

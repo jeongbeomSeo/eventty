@@ -1,5 +1,6 @@
 package com.eventty.authservice.common.exception;
 
+import com.eventty.authservice.api.exception.ApiException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
+/*    // 서버간의 API 통신에서 발생한 예외 처ㅣㄹ
+    @ExceptionHandler
+    protected  ResponseEntity<ErrorResponseDTO> handleApiException(ApiException e) {
+        log.warn("ApiException Occurred: {}", e.getErrorResponseDTO().getMessage());
+        return new ResponseEntity<>(e.getErrorResponseDTO(), e.getStatusCode());
+    }*/
 
     // 인증 예외 처리
     @ExceptionHandler
