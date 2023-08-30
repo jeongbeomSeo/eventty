@@ -1,26 +1,28 @@
 package com.eventty.userservice.domain;
 
-import com.eventty.userservice.config.BooleanToYNConverter;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity @Builder @AllArgsConstructor
-@Getter @NoArgsConstructor
+@Entity @Builder @Getter
+@AllArgsConstructor @DynamicUpdate
+@NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "user")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;                    // PK값
+
+    @NotNull
+    private Long authId;                // auth Server에 저장 후 받을 FK값
 
     @NotNull
     private String name;                // 이름
@@ -29,17 +31,15 @@ public class UserEntity {
 
     private LocalDate birth;            // 생일
 
-    @NotNull
-    @Convert(converter = BooleanToYNConverter.class)
-    private Boolean isHost;             // 주최 여부(주최자 일 경우 : true/참여자 일 경우 : false)
-
     private String image;               // 유저 사진
 
     private String phone;               // 유저 전화번호
 
-    @CreationTimestamp
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createDate;   // 회원가입 일자
 
-    @UpdateTimestamp
+    @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime updateDate;   // 회원 정보 수정 일자
 }
