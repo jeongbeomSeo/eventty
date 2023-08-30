@@ -1,10 +1,12 @@
 package com.eventty.businessservice.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Timestamp;
 
 @Getter
+@Builder
 public class EventWithDetailDAO {
     private Long id;
     private Long hostId;

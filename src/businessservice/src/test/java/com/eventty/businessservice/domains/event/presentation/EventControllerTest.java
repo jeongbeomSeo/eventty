@@ -1,7 +1,7 @@
 package com.eventty.businessservice.domains.event.presentation;
 
 import com.eventty.businessservice.application.dto.response.EventDetailResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventFullResponseDTO;
+import com.eventty.businessservice.application.dto.response.EventWithDetailDTO;
 import com.eventty.businessservice.application.dto.response.EventResponseDTO;
 import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.service.EventService;
@@ -40,8 +40,7 @@ public class EventControllerTest {
     public void findEventByIdTest() throws Exception {
         // Given
         Long eventId = 1L;
-        EventFullResponseDTO MockEvent = new EventFullResponseDTO(
-                createEventResponseDTO(eventId), createEventDetailDTO(eventId));
+        EventWithDetailDTO MockEvent = createEventWithDetailDTO(eventId);
         when(eventService.findEventById(eventId)).thenReturn(MockEvent);
 
         // When & Then
@@ -50,8 +49,8 @@ public class EventControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.data.eventResponseDTO.id", equalTo(eventId.intValue())))
-                .andExpect(jsonPath("$.data.eventResponseDTO.title", equalTo("Sample Event")));
+                .andExpect(jsonPath("$.data.id", equalTo(eventId.intValue())))
+                .andExpect(jsonPath("$.data.title", equalTo("Sample Event")));
 
         verify(eventService, times(1)).findEventById(eventId);
     }
@@ -102,6 +101,26 @@ public class EventControllerTest {
                 .deleteDate(Timestamp.valueOf("2023-08-21 12:00:00"))
                 .updateDate(Timestamp.valueOf("2023-08-21 13:00:00"))
                 .createDate(Timestamp.valueOf("2023-08-21 10:30:00"))
+                .build();
+    }
+
+    private static EventWithDetailDTO createEventWithDetailDTO(Long id){
+        return EventWithDetailDTO.builder()
+                .id(id)
+                .hostId(1L)
+                .title("Sample Event")
+                .image("sample.jpg")
+                .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
+                .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .participateNum(100L)
+                .location("Sample Location")
+                .category("Sample Category")
+                .isActive(true)
+                .isDeleted(false)
+                .content("Sample content")
+                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
+                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .views(100L)
                 .build();
     }
 
