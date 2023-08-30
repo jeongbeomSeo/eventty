@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domain.EventDetailRepository">
+<mapper namespace="com.eventty.businessservice.domain.repository.EventDetailRepository">
 
-    <resultMap id="EventDetailResultMap" type="com.eventty.businessservice.domain.EventDetailEntity">
+    <resultMap id="EventDetailResultMap" type="com.eventty.businessservice.domain.entity.EventDetailEntity">
         <id property="id" column="id"/>
         <result property="content" column="content"/>
         <result property="applyStartAt" column="apply_start_at"/>
@@ -15,9 +15,14 @@
         <result property="createDate" column="create_date"/>
     </resultMap>
 
-
     <select id="selectEventDetailById" resultMap="EventDetailResultMap" parameterType="java.lang.Long">
         SELECT * FROM event_details WHERE ID = #{id}
     </select>
+
+    <!-- 이벤트 상세정보 생성 -->
+    <insert id="insertEventDetail" parameterType="com.eventty.businessservice.domain.entity.EventDetailEntity">
+        INSERT INTO event_details (id, content, apply_start_at, apply_end_at, views, delete_date, update_date, create_date)
+        VALUES (#{id}, #{content}, #{applyStartAt}, #{applyEndAt}, #{views}, #{deleteDate}, #{updateDate}, #{createDate})
+    </insert>
 
 </mapper>

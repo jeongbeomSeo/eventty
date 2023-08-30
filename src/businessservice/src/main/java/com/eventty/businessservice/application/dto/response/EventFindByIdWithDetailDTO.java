@@ -1,6 +1,5 @@
 package com.eventty.businessservice.application.dto.response;
 
-import com.eventty.businessservice.domain.EventEntity;
 import com.eventty.businessservice.domain.EventWithDetailDAO;
 import lombok.*;
 
@@ -12,7 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class EventWithDetailDTO {
+public class EventFindByIdWithDetailDTO {
     private Long id;
     private Long hostId;
     private String title;
@@ -24,15 +23,13 @@ public class EventWithDetailDTO {
     private String category;
     private Boolean isActive;
     private Boolean isDeleted;
-
     private String content;
     private Timestamp applyStartAt;
     private Timestamp applyEndAt;
     private Long views;
 
-
-    public static EventWithDetailDTO fromDAO(EventWithDetailDAO event) {
-        return EventWithDetailDTO.builder()
+    public static EventFindByIdWithDetailDTO fromDAO(EventWithDetailDAO event) {
+        return EventFindByIdWithDetailDTO.builder()
             .id(event.getId())
             .hostId(event.getHostId())
             .title(event.getTitle())

@@ -1,13 +1,13 @@
 -- 테이블 생성
 
 CREATE TABLE IF NOT EXISTS events (
-  id BIGINT PRIMARY KEY,
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
   host_id BIGINT,
   title VARCHAR(255),
   image VARCHAR(255),
-  event_start_at TIMESTAMP,
-  event_end_at TIMESTAMP,
-  participate_num BIGINT,
+  event_start_at DATETIME NULL,
+  event_end_at DATETIME NULL,
+  participate_num BIGINT NULL,
   location VARCHAR(50),
   category VARCHAR(30),
   is_active BOOLEAN DEFAULT true,
@@ -17,12 +17,12 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE TABLE IF NOT EXISTS event_details (
     id BIGINT PRIMARY KEY,
     content VARCHAR(2000),
-    apply_start_at TIMESTAMP,
-    apply_end_at TIMESTAMP,
+    apply_start_at DATETIME NULL,
+    apply_end_at DATETIME NULL,
     views BIGINT,
-    delete_date TIMESTAMP,
-    update_date TIMESTAMP,
-    create_date TIMESTAMP
+    delete_date DATETIME NULL,
+    update_date DATETIME NULL,
+    create_date DATETIME NULL
 );
 
 

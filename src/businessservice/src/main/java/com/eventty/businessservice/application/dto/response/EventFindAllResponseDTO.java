@@ -1,6 +1,6 @@
 package com.eventty.businessservice.application.dto.response;
 
-import com.eventty.businessservice.domain.EventEntity;
+import com.eventty.businessservice.domain.entity.EventEntity;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class EventResponseDTO {
+public class EventFindAllResponseDTO {
     private Long id;
     private Long hostId;
     private String title;
@@ -24,8 +24,8 @@ public class EventResponseDTO {
     private Boolean isActive;
     private Boolean isDeleted;
 
-    public static EventResponseDTO fromEntity(EventEntity eventEntity) {
-        return EventResponseDTO.builder()
+    public static EventFindAllResponseDTO fromEntity(EventEntity eventEntity) {
+        return EventFindAllResponseDTO.builder()
             .id(eventEntity.getId())
             .hostId(eventEntity.getHostId())
             .title(eventEntity.getTitle())

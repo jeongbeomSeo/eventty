@@ -1,8 +1,9 @@
 package com.eventty.businessservice.domains.event.presentation;
 
-import com.eventty.businessservice.application.dto.response.EventDetailResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventWithDetailDTO;
-import com.eventty.businessservice.application.dto.response.EventResponseDTO;
+import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
+import com.eventty.businessservice.application.dto.response.EventDetailFindByIdResponseDTO;
+import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
+import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.service.EventService;
 import com.eventty.businessservice.presentation.EventController;
@@ -40,7 +41,7 @@ public class EventControllerTest {
     public void findEventByIdTest() throws Exception {
         // Given
         Long eventId = 1L;
-        EventWithDetailDTO MockEvent = createEventWithDetailDTO(eventId);
+        EventFindByIdWithDetailDTO MockEvent = createEventWithDetailDTO(eventId);
         when(eventService.findEventById(eventId)).thenReturn(MockEvent);
 
         // When & Then
@@ -59,7 +60,7 @@ public class EventControllerTest {
     @DisplayName("전체 행사 조회 테스트")
     public void findAllEventsTest() throws Exception {
         // Given
-        List<EventResponseDTO> mockEventList = createEventRespnseDTOList(3L);
+        List<EventFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
         when(eventService.findAllEvents()).thenReturn(mockEventList);
 
         // When & Then
@@ -75,8 +76,44 @@ public class EventControllerTest {
         verify(eventService, times(1)).findAllEvents();
     }
 
-    private static EventResponseDTO createEventResponseDTO(Long id){
-        return EventResponseDTO.builder()
+    @Test
+    @DisplayName("행사 생성 테스트")
+    public void createEventTest() throws Exception {
+        // Given
+        EventFullCreateRequestDTO eventFullCreateRequestDTO = createEventFullCreateRequestDTO();
+        doNothing().when(eventService).createEvent(eq(eventFullCreateRequestDTO));
+
+        // When & Then
+        mockMvc.perform(post("/api/events"))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.code").value("0"))
+                .andExpect(jsonPath("$.message").value("Event created successfully"));
+
+        verify(eventService, times(1)).createEvent(eventFullCreateRequestDTO);
+    }
+
+    private static EventFullCreateRequestDTO createEventFullCreateRequestDTO() {
+        return EventFullCreateRequestDTO.builder()
+                .id(1L)
+                .hostId(1L)
+                .title("Event Title")
+                .image("event_image.jpg")
+                .eventStartAt(Timestamp.valueOf("2023-09-01 10:00:00"))
+                .eventEndAt(Timestamp.valueOf("2023-09-01 18:00:00"))
+                .participateNum(100L)
+                .location("Event Location")
+                .category("Event Category")
+                .content("Event Content")
+                .applyStartAt(Timestamp.valueOf("2023-08-15 10:00:00"))
+                .applyEndAt(Timestamp.valueOf("2023-08-31 18:00:00"))
+                .views(500L)
+                .build();
+    }
+
+    private static EventFindAllResponseDTO createEventResponseDTO(Long id){
+        return EventFindAllResponseDTO.builder()
             .id(id)
             .hostId(1L)
             .title("Sample Event")
@@ -91,8 +128,8 @@ public class EventControllerTest {
             .build();
     }
 
-    private static EventDetailResponseDTO createEventDetailDTO(Long id){
-        return EventDetailResponseDTO.builder()
+    private static EventDetailFindByIdResponseDTO createEventDetailDTO(Long id){
+        return EventDetailFindByIdResponseDTO.builder()
                 .id(id)
                 .content("Sample content")
                 .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
@@ -104,8 +141,8 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static EventWithDetailDTO createEventWithDetailDTO(Long id){
-        return EventWithDetailDTO.builder()
+    private static EventFindByIdWithDetailDTO createEventWithDetailDTO(Long id){
+        return EventFindByIdWithDetailDTO.builder()
                 .id(id)
                 .hostId(1L)
                 .title("Sample Event")
@@ -124,14 +161,14 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static List<EventResponseDTO> createEventRespnseDTOList(Long count) {
-        List<EventResponseDTO> eventResponseDTOList = new ArrayList<>();
+    private static List<EventFindAllResponseDTO> createEventRespnseDTOList(Long count) {
+        List<EventFindAllResponseDTO> eventFindAllResponseDTOList = new ArrayList<>();
 
         for (Long i = 0L; i < count; i++) {
-            EventResponseDTO eventResponseDTO = createEventResponseDTO(i);
-            eventResponseDTOList.add(eventResponseDTO);
+            EventFindAllResponseDTO eventFindAllResponseDTO = createEventResponseDTO(i);
+            eventFindAllResponseDTOList.add(eventFindAllResponseDTO);
         }
 
-        return eventResponseDTOList;
+        return eventFindAllResponseDTOList;
     }
 }

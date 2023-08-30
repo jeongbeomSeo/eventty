@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domain.EventRepository">
+<mapper namespace="com.eventty.businessservice.domain.repository.EventRepository">
 
-    <resultMap id="EventResultMap" type="com.eventty.businessservice.domain.EventEntity">
+    <resultMap id="EventResultMap" type="com.eventty.businessservice.domain.entity.EventEntity">
         <id property="id" column="id"/>
         <result property="hostId" column="host_id"/>
         <result property="title" column="title"/>
@@ -34,6 +34,9 @@
         <result property="applyStartAt" column="apply_start_at"/>
         <result property="applyEndAt" column="apply_end_at"/>
         <result property="views" column="views"/>
+        <result property="delete_date" column="delete_date"/>
+        <result property="update_date" column="update_date"/>
+        <result property="create_date" column="create_date"/>
     </resultMap>
 
     <!--이벤트 일반정보 조회-->
@@ -53,5 +56,11 @@
             INNER JOIN event_details ed ON e.id = ed.id
         WHERE e.id = #{id}
     </select>
+
+    <!-- 이벤트 생성 -->
+    <insert id="insertEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity">
+        INSERT INTO events (id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
+        VALUES (#{id}, #{hostId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
+    </insert>
 
 </mapper>

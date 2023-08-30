@@ -1,11 +1,15 @@
 package com.eventty.businessservice.domains.event.application;
 
-import com.eventty.businessservice.application.dto.response.EventWithDetailDTO;
-import com.eventty.businessservice.application.dto.response.EventResponseDTO;
+import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventDetailCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
+import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
+import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.serviceImpl.EventServiceImpl;
-import com.eventty.businessservice.domain.EventEntity;
-import com.eventty.businessservice.domain.EventRepository;
+import com.eventty.businessservice.domain.entity.EventDetailEntity;
+import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.domain.EventWithDetailDAO;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +48,7 @@ public class EventServiceImplTest {
         when(eventRepository.selectEventWithDetailById(eventId)).thenReturn(mockEvent);
 
         // When
-        EventWithDetailDTO responseDTO = eventService.findEventById(eventId);
+        EventFindByIdWithDetailDTO responseDTO = eventService.findEventById(eventId);
 
         // Then
         assertEquals(mockEvent.getId(), responseDTO.getId());
@@ -74,12 +78,36 @@ public class EventServiceImplTest {
         when(eventRepository.selectAllEvents()).thenReturn(mockEventEntities);
 
         // When
-        List<EventResponseDTO> responseDTOs = eventService.findAllEvents();
+        List<EventFindAllResponseDTO> responseDTOs = eventService.findAllEvents();
 
         // Then
         assertEquals(mockEventEntities.size(), responseDTOs.size());
         verify(eventRepository, times(1)).selectAllEvents();
     }
+
+    /*
+    @Test
+    public void testCreateEvent() {
+        // Given
+        EventFullCreateRequestDTO eventFullCreateRequestDTO = new EventFullCreateRequestDTO();
+        // Set properties of eventFullCreateRequestDTO...
+
+        EventCreateRequestDTO eventCreateRequestDTO = eventFullCreateRequestDTO.toEventCreateRequestDTO();
+        EventDetailCreateRequestDTO eventDetailCreateRequestDTO = eventFullCreateRequestDTO.toEventDetailCreateRequestDTO();
+
+        EventEntity eventEntity = eventCreateRequestDTO.toEntity();
+        EventDetailEntity eventDetailEntity = eventDetailCreateRequestDTO.toEntity();
+
+        // When
+        doNothing().when(eventDetailService).createEventDetail(eq(eventDetailEntity));
+        doNothing().when(eventRepository).insertEvent(eq(eventEntity));
+        eventService.createEvent(eventFullCreateRequestDTO);
+
+        // Then
+        verify(eventDetailService, times(1)).createEventDetail(eventDetailEntity);
+    }
+
+     */
 
     private static EventEntity createEventEntity(Long i){
         return EventEntity.builder()
@@ -110,6 +138,10 @@ public class EventServiceImplTest {
                 .category("Sample Category")
                 .isActive(true)
                 .isDeleted(false)
+                .content("Sample content")
+                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
+                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .views(100L)
                 .build();
     }
 

@@ -1,16 +1,20 @@
 package com.eventty.businessservice.application.serviceImpl;
 
-import com.eventty.businessservice.application.dto.response.EventDetailResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventWithDetailDTO;
-import com.eventty.businessservice.application.dto.response.EventResponseDTO;
+import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventDetailCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
+import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
+import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.service.EventService;
-import com.eventty.businessservice.domain.EventRepository;
+import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,20 +29,32 @@ public class EventServiceImpl implements EventService {
 
     // 이벤트 기본 정보와 상세 정보 모두 조회
     @Override
-    public EventWithDetailDTO findEventById(Long eventId){
+    public EventFindByIdWithDetailDTO findEventById(Long eventId){
         return Optional.ofNullable(eventRepository.selectEventWithDetailById(eventId))
-            .map(EventWithDetailDTO::fromDAO)
+            .map(EventFindByIdWithDetailDTO::fromDAO)
             .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
     // 이벤트 전체 조회
     @Override
-    public List<EventResponseDTO> findAllEvents() {
+    public List<EventFindAllResponseDTO> findAllEvents() {
         return Optional.ofNullable(eventRepository.selectAllEvents())
             .map(events -> events.stream()
-                .map(EventResponseDTO::fromEntity)
+                .map(EventFindAllResponseDTO::fromEntity)
                 .collect(Collectors.toList()))
             .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
+    // 이벤트 생성
+    @Override
+    public void createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO){
+
+        // 받은 요청을 나누기
+        EventCreateRequestDTO eventCreateRequestDTO = eventFullCreateRequestDTO.toEventCreateRequestDTO();
+        EventDetailCreateRequestDTO eventDetailCreateRequestDTO = eventFullCreateRequestDTO.toEventDetailCreateRequestDTO();
+
+        eventRepository.insertEvent(eventCreateRequestDTO.toEntity());
+        eventDetailService.createEventDetail(eventDetailCreateRequestDTO.toEntity());
+
+    }
 }

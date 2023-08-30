@@ -1,6 +1,6 @@
 package com.eventty.businessservice.application.dto.response;
 
-import com.eventty.businessservice.domain.EventDetailEntity;
+import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class EventDetailResponseDTO {
+public class EventDetailFindByIdResponseDTO {
     private Long id;
     private String content;
     private Timestamp applyStartAt;
@@ -21,8 +21,8 @@ public class EventDetailResponseDTO {
     private Timestamp updateDate;
     private Timestamp createDate;
 
-    public static EventDetailResponseDTO fromEntity(EventDetailEntity eventDetailEntity) {
-        return EventDetailResponseDTO.builder()
+    public static EventDetailFindByIdResponseDTO fromEntity(EventDetailEntity eventDetailEntity) {
+        return EventDetailFindByIdResponseDTO.builder()
             .id(eventDetailEntity.getId())
             .content(eventDetailEntity.getContent())
             .applyStartAt(eventDetailEntity.getApplyStartAt())

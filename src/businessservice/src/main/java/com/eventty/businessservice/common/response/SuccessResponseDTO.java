@@ -30,4 +30,8 @@ public class SuccessResponseDTO<T> extends ResponseDTO {
     public static <T> SuccessResponseDTO<T> of(T data, SuccessCode successCode) {
         return new SuccessResponseDTO<>(data, successCode);
     }
+
+    public static <T> SuccessResponseDTO<T> of(SuccessCode successCode) {
+        return new SuccessResponseDTO<>(null, successCode);
+    }
 }

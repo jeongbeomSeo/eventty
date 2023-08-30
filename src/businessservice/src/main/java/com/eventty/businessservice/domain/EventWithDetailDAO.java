@@ -19,9 +19,11 @@ public class EventWithDetailDAO {
     private String category;
     private Boolean isActive;
     private Boolean isDeleted;
-
     private String content;
     private Timestamp applyStartAt;
     private Timestamp applyEndAt;
     private Long views;
+    private Timestamp delete_date;
+    private Timestamp update_date;
+    private Timestamp create_date;
 }
