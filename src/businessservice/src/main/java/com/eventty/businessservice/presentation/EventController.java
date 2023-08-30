@@ -2,7 +2,7 @@ package com.eventty.businessservice.presentation;
 
 import com.eventty.businessservice.common.Enum.SuccessCode;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventFullResponseDTO;
+import com.eventty.businessservice.application.dto.response.EventWithDetailDTO;
 import com.eventty.businessservice.application.dto.response.EventResponseDTO;
 import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.service.EventService;
@@ -12,10 +12,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,9 +33,9 @@ public class EventController {
      */
     @GetMapping( "/{eventId}")
     @Operation(summary = "특정 행사 조회")
-    public ResponseEntity<SuccessResponseDTO<EventFullResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId){
+    public ResponseEntity<SuccessResponseDTO<EventWithDetailDTO>> findEventById(@PathVariable @Min(1) Long eventId){
         // 행사 기본 정보 + 상세 정보
-        EventFullResponseDTO event = eventService.findEventById(eventId);
+        EventWithDetailDTO event = eventService.findEventById(eventId);
 
         SuccessCode code = GET_EVENT_INFO_SUCCESS;
         return ResponseEntity
@@ -61,5 +58,34 @@ public class EventController {
                 .status(code.getStatus())
                 .body(SuccessResponseDTO.of(eventList, code));
     }
+
+    /**
+     * 행사 주회
+     *
+     */
+//    @PostMapping("")
+//    @Operation(summary = "행사 주최")
+//    public ResponseEntity<?> postEvent(){
+//
+//    }
+
+
+    /**
+     * 주최한 행사 수정
+     *
+     */
+
+
+
+    /**
+     * 주최한 행사 삭제
+     *
+     */
+
+
+    /**
+     * 행사 카테고리별 조회
+     *
+     */
 
 }

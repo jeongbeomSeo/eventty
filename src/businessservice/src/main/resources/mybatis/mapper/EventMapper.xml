@@ -18,12 +18,40 @@
         <result property="isDeleted" column="is_deleted"/>
     </resultMap>
 
+    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domain.EventWithDetailDAO">
+        <id property="id" column="id"/>
+        <result property="hostId" column="host_id"/>
+        <result property="title" column="title"/>
+        <result property="image" column="image"/>
+        <result property="eventStartAt" column="event_start_at"/>
+        <result property="eventEndAt" column="event_end_at"/>
+        <result property="participateNum" column="participate_num"/>
+        <result property="location" column="location"/>
+        <result property="category" column="category"/>
+        <result property="isActive" column="is_active"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="content" column="content"/>
+        <result property="applyStartAt" column="apply_start_at"/>
+        <result property="applyEndAt" column="apply_end_at"/>
+        <result property="views" column="views"/>
+    </resultMap>
+
+    <!--이벤트 일반정보 조회-->
     <select id="selectEventById" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT * FROM events WHERE ID = #{id}
     </select>
 
+    <!--이벤트 상세정보 조회-->
     <select id="selectAllEvents" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT * FROM events
+    </select>
+
+    <!--이벤트 일반+상세정보 조회-->
+    <select id="selectEventWithDetailById" resultMap="EventResultMapWithDetail" parameterType="java.lang.Long">
+        SELECT e.*, ed.*
+        FROM events e
+            INNER JOIN event_details ed ON e.id = ed.id
+        WHERE e.id = #{id}
     </select>
 
 </mapper>

@@ -17,6 +17,7 @@ public class EventDetailServiceImpl implements EventDetailService {
 
     private final EventDetailRepository eventDetailRepository;
 
+    // 이벤트 상세 정보만 조회
     @Override
     public EventDetailResponseDTO findEventDetailById(Long id){
         return Optional.ofNullable(eventDetailRepository.selectEventDetailById(id))
