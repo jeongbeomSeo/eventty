@@ -5,16 +5,14 @@ import com.eventty.businessservice.application.dto.request.EventDetailCreateRequ
 import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
-import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.service.EventService;
-import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
-    private final EventDetailService eventDetailService;
+    private final EventDetailRepository eventDetailRepository;
 
     // 이벤트 기본 정보와 상세 정보 모두 조회
     @Override
@@ -54,7 +52,16 @@ public class EventServiceImpl implements EventService {
         EventDetailCreateRequestDTO eventDetailCreateRequestDTO = eventFullCreateRequestDTO.toEventDetailCreateRequestDTO();
 
         eventRepository.insertEvent(eventCreateRequestDTO.toEntity());
-        eventDetailService.createEventDetail(eventDetailCreateRequestDTO.toEntity());
+        eventDetailRepository.insertEventDetail(eventDetailCreateRequestDTO.toEntity());
 
+    }
+
+    // 이벤트 삭제
+    @Override
+    public Long deleteEvent(Long id){
+        Long eventId = eventDetailRepository.deleteEventDetail(id);
+        Long eventId2 = eventRepository.deleteEvent(id);
+
+        return eventId;
     }
 }

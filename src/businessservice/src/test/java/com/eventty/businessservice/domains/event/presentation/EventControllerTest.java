@@ -4,7 +4,6 @@ import com.eventty.businessservice.application.dto.request.EventFullCreateReques
 import com.eventty.businessservice.application.dto.response.EventDetailFindByIdResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
-import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.service.EventService;
 import com.eventty.businessservice.presentation.EventController;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +31,6 @@ public class EventControllerTest {
 
     @MockBean
     private EventService eventService;
-
-    @MockBean
-    private EventDetailService eventDetailService;
 
     @Test
     @DisplayName("특정 행사 조회 테스트")

@@ -8,4 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface EventDetailRepository {
     EventDetailEntity selectEventDetailById(Long id);
     Long insertEventDetail(EventDetailEntity eventDetail);
+    Long deleteEventDetail(Long id);
 }

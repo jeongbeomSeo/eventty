@@ -78,6 +78,20 @@ public class EventRepositoryTest {
         assertEquals(savedEvent.getTitle(), retrievedEvent.getTitle());
     }
 
+    @Test
+    @DisplayName("이벤트 삭제 테스트")
+    public void deleteEventTest(){
+        // given
+        Long eventId = 1L;
+
+        // when
+        Long deletedEventId = eventRepository.deleteEvent(eventId);
+
+        // then
+        assertEquals(deletedEventId, eventId);
+        assertEquals(eventRepository.selectEventById(eventId).getIsDeleted(), true);
+    }
+
     private static EventEntity createEventEntity(){
         return EventEntity.builder()
                 .id(10L)

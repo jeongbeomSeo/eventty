@@ -1,13 +1,8 @@
 package com.eventty.businessservice.domains.event.application;
 
-import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
-import com.eventty.businessservice.application.dto.request.EventDetailCreateRequestDTO;
-import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
-import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.serviceImpl.EventServiceImpl;
-import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.domain.EventWithDetailDAO;
@@ -32,9 +27,6 @@ public class EventServiceImplTest {
 
     @Mock
     private EventRepository eventRepository;
-
-    @Mock
-    private EventDetailService eventDetailService;
 
     @InjectMocks
     private EventServiceImpl eventService;

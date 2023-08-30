@@ -25,4 +25,11 @@
         VALUES (#{id}, #{content}, #{applyStartAt}, #{applyEndAt}, #{views}, #{deleteDate}, #{updateDate}, #{createDate})
     </insert>
 
+    <!--이벤트 상세정보 삭제-->
+    <update id="deleteEventDetail" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
+        UPDATE event_details
+        SET delete_date = NOW() -- 현재 시간으로 업데이트
+        WHERE id = #{id}
+    </update>
+
 </mapper>

@@ -7,7 +7,6 @@ import com.eventty.businessservice.common.Enum.SuccessCode;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
-import com.eventty.businessservice.application.service.EventDetailService;
 import com.eventty.businessservice.application.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +27,6 @@ import static com.eventty.businessservice.common.Enum.SuccessCode.*;
 @RequestMapping( "/api/events")
 @Tag(name = "Event", description = "Event API")
 public class EventController {
-    private final EventDetailService eventDetailService;
     private final EventService eventService;
 
     /**
@@ -88,10 +86,22 @@ public class EventController {
 
 
 
+
     /**
      * 주최한 행사 삭제
      *
      */
+    @DeleteMapping("/{eventId}")
+    @Operation(summary = "행사 삭제")
+    public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(@PathVariable @Min(1) Long eventId){
+
+        Long id = eventService.deleteEvent(eventId);
+
+        SuccessCode code = DELETE_EVENT_SUCCESS;
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(SuccessResponseDTO.of(id, code));
+    }
 
 
     /**

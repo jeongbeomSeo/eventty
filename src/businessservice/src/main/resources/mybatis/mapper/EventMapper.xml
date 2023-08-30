@@ -63,4 +63,11 @@
         VALUES (#{id}, #{hostId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
     </insert>
 
+    <!--이벤트 상세정보 삭제-->
+    <update id="deleteEvent" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
+        UPDATE events
+        SET is_deleted = true
+        WHERE id = #{id}
+    </update>
+
 </mapper>

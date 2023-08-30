@@ -53,6 +53,20 @@ public class EventDetailRepositoryTest {
         assertEquals(eventDetail.getContent(), retrievedEventDetail.getContent());
     }
 
+    @Test
+    @DisplayName("이벤트 상세 정보 삭제 테스트")
+    public void deleteEventDetailTest(){
+        // given
+        Long eventId = 1L;
+
+        // when
+        Long deletedEventId = eventDetailRepository.deleteEventDetail(eventId);
+
+        // then
+        assertEquals(deletedEventId, eventId);
+        assertNotNull(eventDetailRepository.selectEventDetailById(eventId).getDeleteDate());
+    }
+
     private static EventDetailEntity createEventDetailEntity(Long id){
         return EventDetailEntity.builder()
                 .id(id)
