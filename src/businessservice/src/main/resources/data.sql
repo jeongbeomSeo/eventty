@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS events (
   event_end_at DATETIME NULL,
   participate_num BIGINT NULL,
   location VARCHAR(50),
-  category VARCHAR(30),
+  category BIGINT,
   is_active BOOLEAN DEFAULT true,
   is_deleted BOOLEAN DEFAULT false
 );
@@ -35,15 +35,30 @@ CREATE TABLE IF NOT EXISTS tickets (
      is_deleted BOOLEAN DEFAULT false
 );
 
+CREATE TABLE categories (
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
 
 -- 더미데이터 삽입
+
+INSERT INTO categories (id, name) VALUES (1, 'Music');
+INSERT INTO categories (id, name) VALUES (2, 'Sports');
+INSERT INTO categories (id, name) VALUES (3, 'Art');
+INSERT INTO categories (id, name) VALUES (4, 'Food');
+INSERT INTO categories (id, name) VALUES (5, 'Fashion');
+INSERT INTO categories (id, name) VALUES (6, 'Technology');
+INSERT INTO categories (id, name) VALUES (7, 'Health');
+INSERT INTO categories (id, name) VALUES (8, 'Travel');
+INSERT INTO categories (id, name) VALUES (9, 'Education');
 
 -- -- events 테이블 더미 데이터 삽입
 -- INSERT INTO events (id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category)
 -- VALUES
---     (1, 1, 'Event 1', 'image1.jpg', '2023-08-20 10:00:00', '2023-08-21 18:00:00', 100, 'Location A', 'Category X'),
---     (2, 2, 'Event 2', 'image2.jpg', '2023-08-22 14:00:00', '2023-08-23 22:00:00', 150, 'Location B', 'Category Y'),
---     (3, 3, 'Event 3', 'image3.jpg', '2023-08-25 09:00:00', '2023-08-26 17:00:00', 120, 'Location C', 'Category Z');
+--     (1, 1, 'Event 1', 'image1.jpg', '2023-08-20 10:00:00', '2023-08-21 18:00:00', 100, 'Location A', 'CategoryEntity X'),
+--     (2, 2, 'Event 2', 'image2.jpg', '2023-08-22 14:00:00', '2023-08-23 22:00:00', 150, 'Location B', 'CategoryEntity Y'),
+--     (3, 3, 'Event 3', 'image3.jpg', '2023-08-25 09:00:00', '2023-08-26 17:00:00', 120, 'Location C', 'CategoryEntity Z');
 --
 -- -- event_details 테이블 더미 데이터 삽입
 -- INSERT INTO event_details (id, content, apply_start_at, apply_end_at, views, delete_date, update_date, create_date)

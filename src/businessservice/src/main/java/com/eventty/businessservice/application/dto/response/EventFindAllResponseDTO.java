@@ -20,7 +20,7 @@ public class EventFindAllResponseDTO {
     private Timestamp eventEndAt;
     private Long participateNum;
     private String location;
-    private String category;
+    private Long category;
     private Boolean isActive;
     private Boolean isDeleted;
 

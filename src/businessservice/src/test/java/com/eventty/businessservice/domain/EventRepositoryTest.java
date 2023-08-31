@@ -123,7 +123,7 @@ public class EventRepositoryTest {
                 .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
                 .participateNum(100L)
                 .location("Sample Location")
-                .category("Sample Category")
+                .category("Sample CategoryEntity")
                 .isActive(true)
                 .isDeleted(false)
                 .build();
@@ -137,7 +137,7 @@ public class EventRepositoryTest {
                 .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
                 .participateNum(100L)
                 .location("Updated Location")
-                .category("Updated Category")
+                .category("Updated CategoryEntity")
                 .build();
     }
 

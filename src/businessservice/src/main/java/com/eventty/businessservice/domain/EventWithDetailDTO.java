@@ -16,7 +16,7 @@ public class EventWithDetailDTO {
     private Timestamp eventEndAt;
     private Long participateNum;
     private String location;
-    private String category;
+    private Long category;
     private Boolean isActive;
     private Boolean isDeleted;
     private String content;
@@ -26,4 +26,5 @@ public class EventWithDetailDTO {
     private Timestamp delete_date;
     private Timestamp update_date;
     private Timestamp create_date;
+    private String categoryName;
 }

@@ -21,7 +21,7 @@ public class EventFullCreateRequestDTO {
     private Timestamp eventEndAt;
     private Long participateNum;
     private String location;
-    private String category;
+    private Long category;
     private String content;
     private Timestamp applyStartAt;
     private Timestamp applyEndAt;

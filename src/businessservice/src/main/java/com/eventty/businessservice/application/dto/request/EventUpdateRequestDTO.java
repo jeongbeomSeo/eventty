@@ -15,7 +15,7 @@ public class EventUpdateRequestDTO {
     private Timestamp eventEndAt;
     private Long participateNum;
     private String location;
-    private String category;
+    private Long category;
 
     public EventEntity toEntity(Long id) {
         return EventEntity.builder()

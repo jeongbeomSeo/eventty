@@ -22,7 +22,8 @@ public class EventFindByIdWithDetailResponseDTO {
     private Timestamp eventEndAt;
     private Long participateNum;
     private String location;
-    private String category;
+    //private Long category;
+    private String categoryName;
     private Boolean isActive;
     private Boolean isDeleted;
     private String content;
@@ -42,7 +43,7 @@ public class EventFindByIdWithDetailResponseDTO {
             .eventEndAt(event.getEventEndAt())
             .participateNum(event.getParticipateNum())
             .location(event.getLocation())
-            .category(event.getCategory())
+            .categoryName(event.getCategoryName())
             .isActive(event.getIsActive())
             .isDeleted(event.getIsDeleted())
             .content(event.getContent())
