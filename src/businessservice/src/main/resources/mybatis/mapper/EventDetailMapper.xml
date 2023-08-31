@@ -16,7 +16,7 @@
     </resultMap>
 
     <select id="selectEventDetailById" resultMap="EventDetailResultMap" parameterType="java.lang.Long">
-        SELECT * FROM event_details WHERE ID = #{id}
+        SELECT * FROM event_details WHERE ID = #{id} AND delete_date = null
     </select>
 
     <!-- 이벤트 상세정보 생성 -->

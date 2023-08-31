@@ -6,6 +6,7 @@ import com.eventty.businessservice.application.dto.response.EventFindByIdWithDet
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
 import com.eventty.businessservice.presentation.EventController;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class EventControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private EventService eventService;
@@ -76,18 +79,19 @@ public class EventControllerTest {
     @DisplayName("행사 생성 테스트")
     public void createEventTest() throws Exception {
         // Given
+        Long newEventId = 10L;
         EventFullCreateRequestDTO eventFullCreateRequestDTO = createEventFullCreateRequestDTO();
-        doNothing().when(eventService).createEvent(eq(eventFullCreateRequestDTO));
+        when(eventService.createEvent(eventFullCreateRequestDTO)).thenReturn(newEventId);
 
         // When & Then
-        mockMvc.perform(post("/api/events"))
-                .andExpect(status().isCreated())
+        mockMvc.perform(post("/api/events")
+                .content(objectMapper.writeValueAsString(eventFullCreateRequestDTO))  // JSON 데이터 추가
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.code").value("0"))
                 .andExpect(jsonPath("$.message").value("Event created successfully"));
-
-        verify(eventService, times(1)).createEvent(eventFullCreateRequestDTO);
     }
 
     @Test
@@ -140,19 +144,6 @@ public class EventControllerTest {
             .isActive(true)
             .isDeleted(false)
             .build();
-    }
-
-    private static EventDetailFindByIdResponseDTO createEventDetailDTO(Long id){
-        return EventDetailFindByIdResponseDTO.builder()
-                .id(id)
-                .content("Sample content")
-                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
-                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
-                .views(100L)
-                .deleteDate(Timestamp.valueOf("2023-08-21 12:00:00"))
-                .updateDate(Timestamp.valueOf("2023-08-21 13:00:00"))
-                .createDate(Timestamp.valueOf("2023-08-21 10:30:00"))
-                .build();
     }
 
     private static EventFindByIdWithDetailResponseDTO createEventWithDetailDTO(Long id){

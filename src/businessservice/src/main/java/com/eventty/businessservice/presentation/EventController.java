@@ -67,12 +67,12 @@ public class EventController {
     @Operation(summary = "행사 주최")
     public ResponseEntity<SuccessResponseDTO<?>> postEvent(@RequestBody EventFullCreateRequestDTO eventFullCreateRequestDTO){
 
-        Long createdEventId = eventService.createEvent(eventFullCreateRequestDTO);
+        Long newEventId = eventService.createEvent(eventFullCreateRequestDTO);
 
         SuccessCode code = CREATE_EVENT_SUCCESS;
         return ResponseEntity
                 .status(code.getStatus())
-                .body(SuccessResponseDTO.of(createdEventId, code));
+                .body(SuccessResponseDTO.of(newEventId, code));
     }
 
     /**
