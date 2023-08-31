@@ -32,7 +32,7 @@ public class EventFindByIdWithDetailResponseDTO {
 
     private List<TicketEntity> tickets;
 
-    public static EventFindByIdWithDetailResponseDTO from(EventWithDetailDTO event) {
+    public static EventFindByIdWithDetailResponseDTO from(EventWithDetailDTO event, List<TicketEntity> tickets) {
         return EventFindByIdWithDetailResponseDTO.builder()
             .id(event.getId())
             .hostId(event.getHostId())
@@ -49,6 +49,7 @@ public class EventFindByIdWithDetailResponseDTO {
             .applyStartAt(event.getApplyStartAt())
             .applyEndAt(event.getApplyEndAt())
             .views(event.getViews())
+            .tickets(tickets)
             .build();
     }
 }

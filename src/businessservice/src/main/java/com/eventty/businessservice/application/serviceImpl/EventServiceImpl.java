@@ -4,6 +4,7 @@ import com.eventty.businessservice.application.dto.request.*;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
+import com.eventty.businessservice.domain.EventWithDetailDTO;
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.entity.TicketEntity;
@@ -31,9 +32,17 @@ public class EventServiceImpl implements EventService {
     // 이벤트 기본 정보와 상세 정보 모두 조회
     @Override
     public EventFindByIdWithDetailResponseDTO findEventById(Long eventId){
-        return Optional.ofNullable(eventRepository.selectEventWithDetailById(eventId))
-            .map(EventFindByIdWithDetailResponseDTO::from)
-            .orElseThrow(()->EventNotFoundException.EXCEPTION);
+
+        // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환
+        List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
+        EventWithDetailDTO eventWithDetail = eventRepository.selectEventWithDetailById(eventId);
+
+        EventFindByIdWithDetailResponseDTO response = EventFindByIdWithDetailResponseDTO.from(eventWithDetail, tickets);
+        return response;
+
+//        return Optional.ofNullable(eventRepository.selectEventWithDetailById(eventId))
+//            .map(EventFindByIdWithDetailResponseDTO::from)
+//            .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
     // 이벤트 전체 조회

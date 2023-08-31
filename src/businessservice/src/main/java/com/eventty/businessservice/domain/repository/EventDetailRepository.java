@@ -1,7 +1,5 @@
 package com.eventty.businessservice.domain.repository;
 
-import com.eventty.businessservice.application.dto.request.EventDetailCreateRequestDTO;
-import com.eventty.businessservice.application.dto.request.EventDetailUpdateRequestDTO;
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import org.apache.ibatis.annotations.Mapper;
 

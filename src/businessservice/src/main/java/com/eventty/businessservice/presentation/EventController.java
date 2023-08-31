@@ -34,13 +34,13 @@ public class EventController {
     @GetMapping( "/{eventId}")
     @Operation(summary = "특정 행사 조회")
     public ResponseEntity<SuccessResponseDTO<EventFindByIdWithDetailResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId){
-        // 행사 기본 정보 + 상세 정보
-        EventFindByIdWithDetailResponseDTO event = eventService.findEventById(eventId);
+        // 행사 기본 정보 + 상세 정보 + 티켓
+        EventFindByIdWithDetailResponseDTO data = eventService.findEventById(eventId);
 
         SuccessCode code = GET_EVENT_INFO_SUCCESS;
         return ResponseEntity
                 .status(code.getStatus())
-                .body(SuccessResponseDTO.of(event, code));
+                .body(SuccessResponseDTO.of(data, code));
     }
 
     /**

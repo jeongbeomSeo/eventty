@@ -126,7 +126,7 @@ public class EventControllerTest {
                 .content("Event Content")
                 .applyStartAt(Timestamp.valueOf("2023-08-15 10:00:00"))
                 .applyEndAt(Timestamp.valueOf("2023-08-31 18:00:00"))
-                .views(500L)
+                //.views(500L)
                 .build();
     }
 

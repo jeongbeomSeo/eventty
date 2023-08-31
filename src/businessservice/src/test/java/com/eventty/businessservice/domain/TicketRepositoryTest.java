@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -29,10 +31,10 @@ public class TicketRepositoryTest {
         // given
         Long eventId = 1L;
         // when
-        TicketEntity ticket = ticketRepository.selectTicketByEventId(eventId);
+        List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
         // then
-        assertNotNull(ticket);
-        assertEquals(ticket.getEventId(), eventId);
+        assertNotNull(tickets);
+        assertEquals(tickets.get(0).getEventId(), eventId);
     }
 
     @Test
