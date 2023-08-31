@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domains.event.domain;
+package com.eventty.businessservice.domain;
 
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;

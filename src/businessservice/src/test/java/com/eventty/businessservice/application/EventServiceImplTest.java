@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domains.event.application;
+package com.eventty.businessservice.application;
 
 import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;

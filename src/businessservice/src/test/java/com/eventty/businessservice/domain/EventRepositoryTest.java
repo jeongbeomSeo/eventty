@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domains.event.domain;
+package com.eventty.businessservice.domain;
 
 import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.application.dto.request.EventUpdateRequestDTO;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -98,6 +99,7 @@ public class EventRepositoryTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("이벤트 삭제 테스트")
     public void deleteEventTest(){
         // given

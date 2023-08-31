@@ -1,9 +1,11 @@
 package com.eventty.businessservice.application.dto.response;
 
 import com.eventty.businessservice.domain.EventWithDetailDTO;
+import com.eventty.businessservice.domain.entity.TicketEntity;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,6 +29,8 @@ public class EventFindByIdWithDetailResponseDTO {
     private Timestamp applyStartAt;
     private Timestamp applyEndAt;
     private Long views;
+
+    private List<TicketEntity> tickets;
 
     public static EventFindByIdWithDetailResponseDTO from(EventWithDetailDTO event) {
         return EventFindByIdWithDetailResponseDTO.builder()

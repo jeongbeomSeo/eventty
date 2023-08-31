@@ -6,9 +6,11 @@ import com.eventty.businessservice.application.dto.response.EventFindAllResponse
 import com.eventty.businessservice.application.service.EventService;
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domain.entity.TicketEntity;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.domain.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final EventDetailRepository eventDetailRepository;
+    private final TicketRepository ticketRepository;
 
     // 이벤트 기본 정보와 상세 정보 모두 조회
     @Override
@@ -47,9 +50,17 @@ public class EventServiceImpl implements EventService {
     @Override
     public Long createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO){
 
+        // 이벤트 일반 정보 저장
         EventEntity event = eventFullCreateRequestDTO.toEventEntity();
         Long id = eventRepository.insertEvent(event);
 
+        // 티켓 정보 저장
+        eventFullCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
+            TicketEntity ticket = ticketCreateRequest.toEntity(id);
+            ticketRepository.insertTicket(ticket);
+        });
+
+        // 이벤트 상세 정보 저장
         EventDetailEntity eventDetail = eventFullCreateRequestDTO.toEventDetailEntity(id);
         return eventDetailRepository.insertEventDetail(eventDetail);
     }
