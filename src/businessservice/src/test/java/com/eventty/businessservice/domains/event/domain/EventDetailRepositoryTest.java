@@ -25,7 +25,7 @@ public class EventDetailRepositoryTest {
     private EventDetailRepository eventDetailRepository;
 
     @Test
-    @DisplayName("특정 이벤트 상세 정보 조회 테스")
+    @DisplayName("특정 이벤트 상세 정보 조회 테스트")
     public void selectEventDetailByIdTest() {
         // given
         Long eventId = 1L;

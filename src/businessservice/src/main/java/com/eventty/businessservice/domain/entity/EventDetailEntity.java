@@ -18,4 +18,8 @@ public class EventDetailEntity {
     private Timestamp deleteDate;
     private Timestamp updateDate;
     private Timestamp createDate;
+
+    public void updateContent(String content){
+        this.content = content;
+    }
 }

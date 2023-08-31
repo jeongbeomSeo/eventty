@@ -1,8 +1,12 @@
 package com.eventty.businessservice.domains.event.application;
 
+import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventFullUpdateRequestDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.serviceImpl.EventServiceImpl;
+import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
@@ -94,6 +98,32 @@ public class EventServiceImplTest {
         // Then
         verify(eventRepository, times(1)).deleteEvent(eventId);
         verify(eventDetailRepository, times(1)).deleteEventDetail(eventId);
+    }
+
+    @Test
+    @DisplayName("이벤트 수정 테스트")
+    public void testUpdateEvent() {
+        Long eventId = 1L;
+        EventEntity existingEvent = createEventEntity(eventId);
+
+        EventFullUpdateRequestDTO updateRequestDTO = EventFullUpdateRequestDTO.builder()
+                .title("Updated Title")
+                .image("updated_image.jpg")
+                .content("Updated Content")
+                .build();
+
+        EventDetailEntity existingEventDetail = EventDetailEntity.builder()
+                .id(eventId)
+                .content("Old Content")
+                .build();
+
+        when(eventRepository.selectEventById(eventId)).thenReturn(existingEvent);
+        when(eventDetailRepository.selectEventDetailById(eventId)).thenReturn(existingEventDetail);
+
+        eventService.updateEvent(eventId, updateRequestDTO);
+
+        verify(eventRepository, times(1)).updateEvent(any(EventEntity.class));
+        verify(eventDetailRepository, times(1)).updateEventDetail(any(EventDetailEntity.class));
     }
 
 

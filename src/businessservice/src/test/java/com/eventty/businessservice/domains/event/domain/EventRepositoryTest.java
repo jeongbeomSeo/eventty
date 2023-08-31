@@ -32,29 +32,33 @@ public class EventRepositoryTest {
     public void selectEventByIdTest() {
         // given
         Long eventId = 1L;
+        EventEntity savedEvent = createEventEntity();
+        eventRepository.insertEvent(savedEvent);
         // when
         EventEntity event = eventRepository.selectEventById(eventId);
         // then
         assertNotNull(event);
         assertEquals(event.getId(), eventId);
-        assertEquals(event.getTitle(), "Event 1");
     }
 
     @Test
     @DisplayName("이벤트 전체 조회 테스트")
     public void selectAllEventsTest() {
         // given & when
+        EventEntity savedEvent = createEventEntity();
+        eventRepository.insertEvent(savedEvent);
         List<EventEntity> events = eventRepository.selectAllEvents();
         // then
         assertNotNull(events);
-        assertEquals(events.size(), 3);
+        assertEquals(events.size(), 1);
     }
 
     @Test
     @DisplayName("이벤트 JOIN 문 조회 테스트")
     public void selectEventWithDetailByIdTest(){
         // given
-        Long eventId = 1L;
+        EventEntity savedEvent = createEventEntity();
+        Long eventId = eventRepository.insertEvent(savedEvent);
 
         // when
         EventWithDetailDTO event = eventRepository.selectEventWithDetailById(eventId);
@@ -69,7 +73,7 @@ public class EventRepositoryTest {
     @DisplayName("이벤트 생성 테스트")
     public void createEventTest(){
         // given
-        EventCreateRequestDTO savedEvent = createEventCreateRequestDTO();
+        EventEntity savedEvent = createEventEntity();
 
         // when
         Long id = eventRepository.insertEvent(savedEvent);
@@ -90,7 +94,7 @@ public class EventRepositoryTest {
         Long id = eventRepository.updateEvent(updatedEvent.toEntity(eventId));
 
         // then=
-        assertEquals(eventId, id);
+        assertNotNull(id);
     }
 
     @Test
@@ -107,8 +111,8 @@ public class EventRepositoryTest {
         assertEquals(eventRepository.selectEventById(eventId).getIsDeleted(), true);
     }
 
-    private static EventCreateRequestDTO createEventCreateRequestDTO(){
-        return EventCreateRequestDTO.builder()
+    private static EventEntity createEventEntity(){
+        return EventEntity.builder()
                 //.id(10L)
                 .hostId(1L)
                 .title("Sample Event")

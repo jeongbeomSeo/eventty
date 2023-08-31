@@ -12,7 +12,7 @@ public interface EventRepository {
     EventEntity selectEventById(Long id);
     EventWithDetailDTO selectEventWithDetailById(Long id); // JOIN된 결과를 매핑할 메서드
     List<EventEntity> selectAllEvents();
-    Long insertEvent(EventCreateRequestDTO request);
+    Long insertEvent(EventEntity request);
     Long updateEvent(EventEntity request);
     Long deleteEvent(Long id);
 }

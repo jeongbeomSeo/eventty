@@ -1,6 +1,7 @@
 package com.eventty.businessservice.application.dto.request;
 
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
+import com.eventty.businessservice.domain.entity.EventEntity;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import java.sql.Timestamp;
 @Getter
 @Builder
 public class EventFullCreateRequestDTO {
-    //private Long id;
+    private Long id;
     private Long hostId;
     private String title;
     private String image;
@@ -23,8 +24,8 @@ public class EventFullCreateRequestDTO {
     private Timestamp applyEndAt;
     private Long views;
 
-    public EventCreateRequestDTO toEventCreateRequestDTO(){
-        return EventCreateRequestDTO.builder()
+    public EventEntity toEventEntity(){
+        return EventEntity.builder()
                 //.id(id)
                 .hostId(hostId)
                 .title(title)
@@ -39,9 +40,9 @@ public class EventFullCreateRequestDTO {
                 .build();
     }
 
-    public EventDetailCreateRequestDTO toEventDetailCreateRequestDTO() {
-        return EventDetailCreateRequestDTO.builder()
-                //.id(id)
+    public EventDetailEntity toEventDetailEntity(Long id) {
+        return EventDetailEntity.builder()
+                .id(id)
                 .content(content)
                 .applyStartAt(applyStartAt)
                 .applyEndAt(applyEndAt)

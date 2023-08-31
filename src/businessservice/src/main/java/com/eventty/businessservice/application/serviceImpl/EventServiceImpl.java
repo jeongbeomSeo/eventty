@@ -4,6 +4,7 @@ import com.eventty.businessservice.application.dto.request.*;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
+import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
@@ -46,28 +47,27 @@ public class EventServiceImpl implements EventService {
     @Override
     public Long createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO){
 
-        EventCreateRequestDTO eventCreateRequestDTO = eventFullCreateRequestDTO.toEventCreateRequestDTO();
-        Long id = eventRepository.insertEvent(eventCreateRequestDTO);
+        EventEntity event = eventFullCreateRequestDTO.toEventEntity();
+        Long id = eventRepository.insertEvent(event);
 
-        EventDetailCreateRequestDTO eventDetailCreateRequestDTO = eventFullCreateRequestDTO.toEventDetailCreateRequestDTO();
-        eventDetailCreateRequestDTO.setId(id);
-        return eventDetailRepository.insertEventDetail(eventDetailCreateRequestDTO);
+        EventDetailEntity eventDetail = eventFullCreateRequestDTO.toEventDetailEntity(id);
+        return eventDetailRepository.insertEventDetail(eventDetail);
     }
 
     // 이벤트 수정
     @Override
     public Long updateEvent(Long id, EventFullUpdateRequestDTO eventFullUpdateRequestDTO){
-        EventUpdateRequestDTO eventUpdateRequestDTO = eventFullUpdateRequestDTO.toEventUpdateRequestDTO();
 
         EventEntity event = eventRepository.selectEventById(id);
-        event.updateTitle(eventUpdateRequestDTO.getTitle());
-        event.updateImage(eventUpdateRequestDTO.getImage());
+        event.updateTitle(eventFullUpdateRequestDTO.getTitle());
+        event.updateImage(eventFullUpdateRequestDTO.getImage());
         eventRepository.updateEvent(event);
 
-        EventDetailUpdateRequestDTO eventDetailUpdateRequestDTO = eventFullUpdateRequestDTO.toEventDetailUpdateRequestDTO();
+        EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(id);
+        eventDetail.updateContent(eventFullUpdateRequestDTO.getContent());
+        eventDetailRepository.updateEventDetail(eventDetail);
 
-
-        return 1L;
+        return id;
     }
 
     // 이벤트 삭제
