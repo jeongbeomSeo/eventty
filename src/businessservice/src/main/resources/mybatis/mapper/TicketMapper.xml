@@ -16,7 +16,7 @@
     <!-- 이벤트 별 티켓 조회 -->
     <select id="selectTicketByEventId" resultMap="TicketResultMap" parameterType="java.lang.Long">
         SELECT * FROM tickets
-        WHERE event_id = #{id} AND is_deleted = false;
+        WHERE event_id = #{event_id} AND is_deleted = false;
     </select>
 
     <!-- 이벤트 별 티켓 생성 -->
@@ -24,5 +24,12 @@
         INSERT INTO tickets (name, price, quantity, event_id, is_deleted)
         VALUES (#{name}, #{price}, #{quantity}, #{eventId}, #{is_deleted});
     </insert>
+
+    <!--티켓 정보 삭제-->
+    <update id="deleteTicket" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
+        UPDATE tickets
+        SET is_deleted = true
+        WHERE event_id = #{event_id}
+    </update>
 
 </mapper>
