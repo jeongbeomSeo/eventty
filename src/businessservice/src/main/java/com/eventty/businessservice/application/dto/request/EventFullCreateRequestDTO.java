@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -46,6 +47,9 @@ public class EventFullCreateRequestDTO {
                 .content(content)
                 .applyStartAt(applyStartAt)
                 .applyEndAt(applyEndAt)
+                .createDate(Timestamp.valueOf(LocalDateTime.now()))
+                .updateDate(null)
+                .deleteDate(null)
                 .build();
     }
 

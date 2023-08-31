@@ -61,11 +61,11 @@ public class EventServiceImpl implements EventService {
         EventEntity event = eventRepository.selectEventById(id);
         event.updateTitle(eventFullUpdateRequestDTO.getTitle());
         event.updateImage(eventFullUpdateRequestDTO.getImage());
-        eventRepository.updateEvent(event);
+        Long eventId = eventRepository.updateEvent(event);
 
         EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(id);
         eventDetail.updateContent(eventFullUpdateRequestDTO.getContent());
-        eventDetailRepository.updateEventDetail(eventDetail);
+        Long eventDetailId = eventDetailRepository.updateEventDetail(eventDetail);
 
         return id;
     }

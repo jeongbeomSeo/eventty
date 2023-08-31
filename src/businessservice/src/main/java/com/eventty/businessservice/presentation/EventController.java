@@ -1,6 +1,7 @@
 package com.eventty.businessservice.presentation;
 
 import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventFullUpdateRequestDTO;
 import com.eventty.businessservice.common.Enum.SuccessCode;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
@@ -74,6 +75,24 @@ public class EventController {
                 .body(SuccessResponseDTO.of(createdEventId, code));
     }
 
+    /**
+     * 주최한 행사 수정
+     *
+     */
+    @PutMapping(value = "/{eventId}")
+    @Operation(summary = "행사 수정")
+    public ResponseEntity<SuccessResponseDTO<Long>> postEvent(
+            @PathVariable Long eventId,
+            @RequestBody EventFullUpdateRequestDTO eventFullUpdateRequestDTO){
+
+        Long updatedEventId = eventService.updateEvent(eventId, eventFullUpdateRequestDTO);
+
+        SuccessCode code = UPDATE_EVENT_SUCCESS;
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(SuccessResponseDTO.of(updatedEventId, code));
+    }
+
 
     /**
      * 주최한 행사 삭제
@@ -90,25 +109,6 @@ public class EventController {
                 .status(code.getStatus())
                 .body(SuccessResponseDTO.of(deleteEventId, code));
     }
-
-    /**
-     * 주최한 행사 수정
-     *
-     */
-//    @PostMapping("/{eventId}")
-//    @Operation(summary = "행사 수정")
-//    public ResponseEntity<SuccessResponseDTO<?>> postEvent(
-//    @PathVariable Long eventId,
-//    @RequestBody EventFullUpdateRequestDTO eventFullUpdateRequestDTO
-//    ){
-//
-//        //Long createdEventId = eventService.updateEvent(eventId, eventFullUpdateRequestDTO);
-//
-//        SuccessCode code = CREATE_EVENT_SUCCESS;
-//        return ResponseEntity
-//                .status(code.getStatus())
-//                .body(SuccessResponseDTO.of(createdEventId, code));
-//    }
 
 
     /**

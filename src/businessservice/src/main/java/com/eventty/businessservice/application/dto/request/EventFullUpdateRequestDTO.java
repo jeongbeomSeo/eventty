@@ -15,17 +15,4 @@ public class EventFullUpdateRequestDTO {
     // EventDetail
     private String content;
 
-//    public EventUpdateRequestDTO toEventUpdateRequestDTO(){
-//        return EventUpdateRequestDTO.builder()
-//                .title(title)
-//                .image(image)
-//                .build();
-//    }
-//
-//    public EventDetailUpdateRequestDTO toEventDetailUpdateRequestDTO() {
-//        return EventDetailUpdateRequestDTO.builder()
-//                .content(content)
-//                .build();
-//    }
-
 }
