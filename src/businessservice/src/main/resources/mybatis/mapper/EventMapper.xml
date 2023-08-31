@@ -18,7 +18,7 @@
         <result property="isDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domain.EventWithDetailDAO">
+    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domain.EventWithDetailDTO">
         <id property="id" column="id"/>
         <result property="hostId" column="host_id"/>
         <result property="title" column="title"/>
@@ -51,19 +51,46 @@
 
     <!--이벤트 일반+상세정보 조회-->
     <select id="selectEventWithDetailById" resultMap="EventResultMapWithDetail" parameterType="java.lang.Long">
-        SELECT e.*, ed.*
+        SELECT
+            e.id,
+            e.host_id,
+            e.title,
+            e.image,
+            e.event_start_at,
+            e.event_end_at,
+            e.participate_num,
+            e.location,
+            e.category,
+            e.is_active,
+            e.is_deleted,
+            ed.content,
+            ed.apply_start_at,
+            ed.apply_end_at,
+            ed.views,
+            ed.delete_date,
+            ed.update_date,
+            ed.create_date
         FROM events e
             INNER JOIN event_details ed ON e.id = ed.id
         WHERE e.id = #{id}
     </select>
 
     <!-- 이벤트 생성 -->
-    <insert id="insertEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity">
-        INSERT INTO events (id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
-        VALUES (#{id}, #{hostId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
+    <insert id="insertEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity" useGeneratedKeys="true" keyColumn="id">
+        INSERT INTO events (host_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
+        VALUES (#{hostId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
     </insert>
 
-    <!--이벤트 상세정보 삭제-->
+    <!-- 이벤트 수정 -->
+    <update id="updateEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity">
+        UPDATE events
+        SET
+            title = #{title},
+            image = #{image}
+        WHERE id = #{id}
+    </update>
+
+    <!--이벤트 정보 삭제-->
     <update id="deleteEvent" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
         UPDATE events
         SET is_deleted = true

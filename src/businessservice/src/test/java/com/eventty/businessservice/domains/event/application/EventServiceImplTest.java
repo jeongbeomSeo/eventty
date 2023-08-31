@@ -1,12 +1,12 @@
 package com.eventty.businessservice.domains.event.application;
 
-import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
+import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.serviceImpl.EventServiceImpl;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
-import com.eventty.businessservice.domain.EventWithDetailDAO;
+import com.eventty.businessservice.domain.EventWithDetailDTO;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,11 +39,11 @@ public class EventServiceImplTest {
     public void findEventByIdTest_ExistingEvent() {
         // Given
         Long eventId = 1L;
-        EventWithDetailDAO mockEvent = createEventWithDetailDAO(eventId);
+        EventWithDetailDTO mockEvent = createEventWithDetailDAO(eventId);
         when(eventRepository.selectEventWithDetailById(eventId)).thenReturn(mockEvent);
 
         // When
-        EventFindByIdWithDetailDTO responseDTO = eventService.findEventById(eventId);
+        EventFindByIdWithDetailResponseDTO responseDTO = eventService.findEventById(eventId);
 
         // Then
         assertEquals(mockEvent.getId(), responseDTO.getId());
@@ -113,8 +113,8 @@ public class EventServiceImplTest {
             .build();
     }
 
-    private static EventWithDetailDAO createEventWithDetailDAO(Long id){
-        return EventWithDetailDAO.builder()
+    private static EventWithDetailDTO createEventWithDetailDAO(Long id){
+        return EventWithDetailDTO.builder()
                 .id(id)
                 .hostId(1L)
                 .title("Sample Event")

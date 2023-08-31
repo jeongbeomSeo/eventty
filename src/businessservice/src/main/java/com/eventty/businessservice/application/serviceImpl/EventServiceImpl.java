@@ -1,11 +1,10 @@
 package com.eventty.businessservice.application.serviceImpl;
 
-import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
-import com.eventty.businessservice.application.dto.request.EventDetailCreateRequestDTO;
-import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
-import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
+import com.eventty.businessservice.application.dto.request.*;
+import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
+import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
@@ -27,9 +26,9 @@ public class EventServiceImpl implements EventService {
 
     // 이벤트 기본 정보와 상세 정보 모두 조회
     @Override
-    public EventFindByIdWithDetailDTO findEventById(Long eventId){
+    public EventFindByIdWithDetailResponseDTO findEventById(Long eventId){
         return Optional.ofNullable(eventRepository.selectEventWithDetailById(eventId))
-            .map(EventFindByIdWithDetailDTO::fromDAO)
+            .map(EventFindByIdWithDetailResponseDTO::from)
             .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
@@ -45,14 +44,30 @@ public class EventServiceImpl implements EventService {
 
     // 이벤트 생성
     @Override
-    public void createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO){
+    public Long createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO){
 
         EventCreateRequestDTO eventCreateRequestDTO = eventFullCreateRequestDTO.toEventCreateRequestDTO();
+        Long id = eventRepository.insertEvent(eventCreateRequestDTO);
+
         EventDetailCreateRequestDTO eventDetailCreateRequestDTO = eventFullCreateRequestDTO.toEventDetailCreateRequestDTO();
+        eventDetailCreateRequestDTO.setId(id);
+        return eventDetailRepository.insertEventDetail(eventDetailCreateRequestDTO);
+    }
 
-        eventRepository.insertEvent(eventCreateRequestDTO.toEntity());
-        eventDetailRepository.insertEventDetail(eventDetailCreateRequestDTO.toEntity());
+    // 이벤트 수정
+    @Override
+    public Long updateEvent(Long id, EventFullUpdateRequestDTO eventFullUpdateRequestDTO){
+        EventUpdateRequestDTO eventUpdateRequestDTO = eventFullUpdateRequestDTO.toEventUpdateRequestDTO();
 
+        EventEntity event = eventRepository.selectEventById(id);
+        event.updateTitle(eventUpdateRequestDTO.getTitle());
+        event.updateImage(eventUpdateRequestDTO.getImage());
+        eventRepository.updateEvent(event);
+
+        EventDetailUpdateRequestDTO eventDetailUpdateRequestDTO = eventFullUpdateRequestDTO.toEventDetailUpdateRequestDTO();
+
+
+        return 1L;
     }
 
     // 이벤트 삭제
@@ -65,4 +80,5 @@ public class EventServiceImpl implements EventService {
         }
         return deletedEventId;
     }
+
 }

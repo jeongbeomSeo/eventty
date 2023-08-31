@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-public class EventWithDetailDAO {
+public class EventWithDetailDTO {
     private Long id;
     private Long hostId;
     private String title;

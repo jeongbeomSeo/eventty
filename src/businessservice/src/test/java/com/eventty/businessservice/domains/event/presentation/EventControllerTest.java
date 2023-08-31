@@ -2,7 +2,7 @@ package com.eventty.businessservice.domains.event.presentation;
 
 import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
 import com.eventty.businessservice.application.dto.response.EventDetailFindByIdResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
+import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
 import com.eventty.businessservice.presentation.EventController;
@@ -37,7 +37,7 @@ public class EventControllerTest {
     public void findEventByIdTest() throws Exception {
         // Given
         Long eventId = 1L;
-        EventFindByIdWithDetailDTO MockEvent = createEventWithDetailDTO(eventId);
+        EventFindByIdWithDetailResponseDTO MockEvent = createEventWithDetailDTO(eventId);
         when(eventService.findEventById(eventId)).thenReturn(MockEvent);
 
         // When & Then
@@ -110,7 +110,7 @@ public class EventControllerTest {
 
     private static EventFullCreateRequestDTO createEventFullCreateRequestDTO() {
         return EventFullCreateRequestDTO.builder()
-                .id(1L)
+                //.id(1L)
                 .hostId(1L)
                 .title("Event Title")
                 .image("event_image.jpg")
@@ -155,8 +155,8 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static EventFindByIdWithDetailDTO createEventWithDetailDTO(Long id){
-        return EventFindByIdWithDetailDTO.builder()
+    private static EventFindByIdWithDetailResponseDTO createEventWithDetailDTO(Long id){
+        return EventFindByIdWithDetailResponseDTO.builder()
                 .id(id)
                 .hostId(1L)
                 .title("Sample Event")

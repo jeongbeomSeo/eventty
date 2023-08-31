@@ -21,4 +21,11 @@ public class EventEntity {
     private String category;
     private Boolean isActive;
     private Boolean isDeleted;
+
+    public void updateTitle(String title){
+        this.title = title;
+    }
+    public void updateImage(String image){
+        this.image = image;
+    }
 }

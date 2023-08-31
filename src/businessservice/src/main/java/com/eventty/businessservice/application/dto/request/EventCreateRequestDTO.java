@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.sql.Timestamp;
 @Builder
 public class EventCreateRequestDTO {
-    private Long id;
+    //private Long id;
     private Long hostId;
     private String title;
     private String image;
@@ -18,19 +18,19 @@ public class EventCreateRequestDTO {
     private Boolean isActive;
     private Boolean isDeleted;
 
-    public EventEntity toEntity() {
-        return EventEntity.builder()
-                .id(id)
-                .hostId(hostId)
-                .title(title)
-                .image(image)
-                .eventStartAt(eventStartAt)
-                .eventEndAt(eventEndAt)
-                .participateNum(participateNum)
-                .location(location)
-                .category(category)
-                .isActive(true)
-                .isDeleted(false)
-                .build();
-    }
+//    public EventEntity toEntity() {
+//        return EventEntity.builder()
+//                //.id(id)
+//                .hostId(hostId)
+//                .title(title)
+//                .image(image)
+//                .eventStartAt(eventStartAt)
+//                .eventEndAt(eventEndAt)
+//                .participateNum(participateNum)
+//                .location(location)
+//                .category(category)
+//                .isActive(true)
+//                .isDeleted(false)
+//                .build();
+//    }
 }

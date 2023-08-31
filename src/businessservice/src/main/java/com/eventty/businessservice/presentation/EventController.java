@@ -1,16 +1,13 @@
 package com.eventty.businessservice.presentation;
 
-import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
-import com.eventty.businessservice.application.dto.response.EventCreateAndUpdateResponseDTO;
 import com.eventty.businessservice.common.Enum.SuccessCode;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailDTO;
+import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +32,9 @@ public class EventController {
      */
     @GetMapping( "/{eventId}")
     @Operation(summary = "특정 행사 조회")
-    public ResponseEntity<SuccessResponseDTO<EventFindByIdWithDetailDTO>> findEventById(@PathVariable @Min(1) Long eventId){
+    public ResponseEntity<SuccessResponseDTO<EventFindByIdWithDetailResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId){
         // 행사 기본 정보 + 상세 정보
-        EventFindByIdWithDetailDTO event = eventService.findEventById(eventId);
+        EventFindByIdWithDetailResponseDTO event = eventService.findEventById(eventId);
 
         SuccessCode code = GET_EVENT_INFO_SUCCESS;
         return ResponseEntity
@@ -69,13 +66,12 @@ public class EventController {
     @Operation(summary = "행사 주최")
     public ResponseEntity<SuccessResponseDTO<?>> postEvent(@RequestBody EventFullCreateRequestDTO eventFullCreateRequestDTO){
 
-        // 행사 기본 정보 (Event) 만 열거
-        eventService.createEvent(eventFullCreateRequestDTO);
+        Long createdEventId = eventService.createEvent(eventFullCreateRequestDTO);
 
         SuccessCode code = CREATE_EVENT_SUCCESS;
         return ResponseEntity
                 .status(code.getStatus())
-                .body(SuccessResponseDTO.of(code));
+                .body(SuccessResponseDTO.of(createdEventId, code));
     }
 
 
@@ -99,7 +95,20 @@ public class EventController {
      * 주최한 행사 수정
      *
      */
-
+//    @PostMapping("/{eventId}")
+//    @Operation(summary = "행사 수정")
+//    public ResponseEntity<SuccessResponseDTO<?>> postEvent(
+//    @PathVariable Long eventId,
+//    @RequestBody EventFullUpdateRequestDTO eventFullUpdateRequestDTO
+//    ){
+//
+//        //Long createdEventId = eventService.updateEvent(eventId, eventFullUpdateRequestDTO);
+//
+//        SuccessCode code = CREATE_EVENT_SUCCESS;
+//        return ResponseEntity
+//                .status(code.getStatus())
+//                .body(SuccessResponseDTO.of(createdEventId, code));
+//    }
 
 
     /**

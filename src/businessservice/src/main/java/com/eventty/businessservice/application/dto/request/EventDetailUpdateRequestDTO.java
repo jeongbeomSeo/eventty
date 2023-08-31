@@ -1,15 +1,13 @@
 package com.eventty.businessservice.application.dto.request;
 
-import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import lombok.Builder;
-import lombok.Setter;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 
+@Getter
 @Builder
-@Setter
-public class EventDetailCreateRequestDTO {
-    private Long id;
+public class EventDetailUpdateRequestDTO {
     private String content;
     private Timestamp applyStartAt;
     private Timestamp applyEndAt;

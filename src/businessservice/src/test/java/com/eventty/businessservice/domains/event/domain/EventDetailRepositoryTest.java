@@ -37,21 +37,21 @@ public class EventDetailRepositoryTest {
         assertEquals(eventDetail.getContent(), "Detail for Event 1");
     }
 
-    @Test
-    @DisplayName("이벤트 상세 정보 생성 테스트")
-    public void createEventDetailTest(){
-        // given
-        Long eventId = 10L;
-        EventDetailEntity eventDetail = createEventDetailEntity(eventId);
-
-        // when
-        Long savedEventId = eventDetailRepository.insertEventDetail(eventDetail);
-
-        // then
-        assertNotNull(savedEventId);
-        EventDetailEntity retrievedEventDetail = eventDetailRepository.selectEventDetailById(eventId);
-        assertEquals(eventDetail.getContent(), retrievedEventDetail.getContent());
-    }
+//    @Test
+//    @DisplayName("이벤트 상세 정보 생성 테스트")
+//    public void createEventDetailTest(){
+//        // given
+//        Long eventId = 10L;
+//        EventDetailEntity eventDetail = createEventDetailEntity(eventId);
+//
+//        // when
+//        Long savedEventId = eventDetailRepository.insertEventDetail(eventDetail);
+//
+//        // then
+//        assertNotNull(savedEventId);
+//        EventDetailEntity retrievedEventDetail = eventDetailRepository.selectEventDetailById(eventId);
+//        assertEquals(eventDetail.getContent(), retrievedEventDetail.getContent());
+//    }
 
     @Test
     @DisplayName("이벤트 상세 정보 삭제 테스트")

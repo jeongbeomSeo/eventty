@@ -1,9 +1,10 @@
 package com.eventty.businessservice.domains.event.domain;
 
 import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventRepository;
-import com.eventty.businessservice.domain.EventWithDetailDAO;
+import com.eventty.businessservice.domain.EventWithDetailDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,7 +57,7 @@ public class EventRepositoryTest {
         Long eventId = 1L;
 
         // when
-        EventWithDetailDAO event = eventRepository.selectEventWithDetailById(eventId);
+        EventWithDetailDTO event = eventRepository.selectEventWithDetailById(eventId);
 
         // then
         assertNotNull(event);
@@ -68,14 +69,28 @@ public class EventRepositoryTest {
     @DisplayName("이벤트 생성 테스트")
     public void createEventTest(){
         // given
-        EventEntity savedEvent = createEventEntity();
+        EventCreateRequestDTO savedEvent = createEventCreateRequestDTO();
 
         // when
-        eventRepository.insertEvent(savedEvent);
+        Long id = eventRepository.insertEvent(savedEvent);
 
         // then
-        EventEntity retrievedEvent = eventRepository.selectEventById(savedEvent.getId());
-        assertEquals(savedEvent.getTitle(), retrievedEvent.getTitle());
+        assertNotNull(id);
+        assertEquals(1, id);
+    }
+
+    @Test
+    @DisplayName("이벤트 수정 테스트")
+    public void updateEventTest(){
+        // given
+        Long eventId = 1L;
+        EventUpdateRequestDTO updatedEvent = createEventUpdateRequestDTO();
+
+        // when
+        Long id = eventRepository.updateEvent(updatedEvent.toEntity(eventId));
+
+        // then=
+        assertEquals(eventId, id);
     }
 
     @Test
@@ -92,9 +107,9 @@ public class EventRepositoryTest {
         assertEquals(eventRepository.selectEventById(eventId).getIsDeleted(), true);
     }
 
-    private static EventEntity createEventEntity(){
-        return EventEntity.builder()
-                .id(10L)
+    private static EventCreateRequestDTO createEventCreateRequestDTO(){
+        return EventCreateRequestDTO.builder()
+                //.id(10L)
                 .hostId(1L)
                 .title("Sample Event")
                 .image("sample.jpg")
@@ -105,6 +120,18 @@ public class EventRepositoryTest {
                 .category("Sample Category")
                 .isActive(true)
                 .isDeleted(false)
+                .build();
+    }
+
+    private static EventUpdateRequestDTO createEventUpdateRequestDTO(){
+        return EventUpdateRequestDTO.builder()
+                .title("Updated Event")
+                .image("Updated.jpg")
+                .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
+                .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .participateNum(100L)
+                .location("Updated Location")
+                .category("Updated Category")
                 .build();
     }
 
