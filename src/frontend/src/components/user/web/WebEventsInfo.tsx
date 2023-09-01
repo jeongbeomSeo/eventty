@@ -1,9 +1,9 @@
 import React from "react";
 import {Button, Divider, Group, Stack, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
-import EventsDetailBtn from "../EventsDetailBtn";
+import WebEventsDetailBtn from "./WebEventsDetailBtn";
 
-function WebUserEvents() {
+function WebEventsInfo() {
     const {classes} = customStyle();
     return (
         <>
@@ -18,12 +18,12 @@ function WebUserEvents() {
                     <Button compact radius={"5rem"} className={classes["btn-primary-outline"]}>category</Button>
                     <Button compact radius={"5rem"} className={classes["btn-primary-outline"]}>category</Button>
                 </Group>
-                <EventsDetailBtn id={"0"} title={"[행사 제목]"} state={0} date={new Date()}/>
-                <EventsDetailBtn id={"0"} title={"[행사 제목]"} state={1} date={new Date()}/>
-                <EventsDetailBtn id={"0"} title={"[행사 제목]"} state={2} date={new Date()}/>
+                <WebEventsDetailBtn id={"0"} title={"[행사 제목]"} state={0} date={new Date()}/>
+                <WebEventsDetailBtn id={"0"} title={"[행사 제목]"} state={1} date={new Date()}/>
+                <WebEventsDetailBtn id={"0"} title={"[행사 제목]"} state={2} date={new Date()}/>
             </Stack>
         </>
     );
 }
 
-export default WebUserEvents;
+export default WebEventsInfo;

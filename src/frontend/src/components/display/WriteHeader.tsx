@@ -8,7 +8,7 @@ interface Interface {
     onSubmit: () => void;
 }
 
-function WriteHeader({onSubmit}:Interface) {
+function WriteHeader() {
     const {classes} = customStyle();
 
     return (
@@ -18,13 +18,13 @@ function WriteHeader({onSubmit}:Interface) {
             top: 0,
             width: "100%",
             height: "4rem",
-            borderBottom: "1px solid #e6e6e6",
+            // borderBottom: "1px solid #e6e6e6",
             zIndex: 99
         }}>
             <Container style={{height: "100%"}}>
                 <Group align={"center"} style={{height: "100%"}} position={"apart"}>
                     <UnstyledButton component={Link} to={"/"}>
-                        <IconArrowLeft/>
+                        <IconArrowLeft color={"#666666"}/>
                     </UnstyledButton>
 
                     <Group>

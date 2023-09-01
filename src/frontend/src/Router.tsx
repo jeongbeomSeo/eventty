@@ -22,7 +22,7 @@ import Test from "./pages/Test";
 import User from "./pages/User";
 import EventDetail from "./pages/events/EventDetail";
 import Profile from "./pages/user/Profile";
-import UserEvents from "./pages/user/UserEvents";
+import EventsInfo from "./pages/user/EventsInfo";
 import Write from "./pages/Write";
 
 const Router = createBrowserRouter([
@@ -62,7 +62,7 @@ const Router = createBrowserRouter([
                                     },
                                     {
                                         path: "users/events",
-                                        element: <UserEvents/>,
+                                        element: <EventsInfo/>,
                                     },
                                     {
                                         path: "users/reservations",

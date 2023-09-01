@@ -12,6 +12,22 @@ export interface IEvent {
     isDeleted: boolean;
 }
 
+export interface IEventWrite {
+    id: number;
+    hostId: number;
+    title: string;
+    image: string;
+    eventStartAt: Date;
+    eventEndAt: Date;
+    applyStartAt: Date;
+    applyEndAt: Date;
+    participateNum: number;
+    location: string;
+    category: string;
+    isActive: boolean;
+    isDeleted: boolean;
+}
+
 export interface IEventDetail {
     eventDetailResponseDTO: {
         id: number;

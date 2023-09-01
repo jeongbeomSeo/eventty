@@ -21,6 +21,7 @@ import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
 import EventDetailModal from "../EventDetailModal";
+import TicketBtn from "../TicketBtn";
 
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
@@ -93,6 +94,13 @@ function WebEventDetail() {
                                     content
                                 </Group>
                             </Paper>
+
+                            <Stack>
+                                <Title order={4}>티켓 선택</Title>
+                                <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
+                                <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
+                                <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
+                            </Stack>
                             <WebTicketInfo/>
                         </Stack>
                     </Grid.Col>

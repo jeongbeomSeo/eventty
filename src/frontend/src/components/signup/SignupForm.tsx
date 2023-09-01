@@ -8,7 +8,7 @@ import {ChangeEvent, useState} from "react";
 import {ISignup} from "../../types/IUser";
 import {DatePickerInput} from "@mantine/dates";
 import "dayjs/locale/ko";
-import CalendarPicker from "../common/CalendarPicker";
+import BirthdayPicker from "../common/BirthdayPicker";
 import PhoneNumberInput from "../common/PhoneNumberInput";
 
 function SignupForm(props: { isHost: boolean }) {
@@ -200,7 +200,7 @@ function SignupForm(props: { isHost: boolean }) {
                             name={"birth"}
                             rules={{required: "날짜를 선택해주세요"}}
                             render={({field}) => (
-                                <CalendarPicker label={"생년월일"}
+                                <BirthdayPicker label={"생년월일"}
                                                 placeholder={"생년월일"}
                                                 value={field.value}
                                                 onChange={field.onChange}

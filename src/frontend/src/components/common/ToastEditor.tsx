@@ -9,9 +9,6 @@ interface IToastEditor {
 
 function ToastEditor({content, editorRef}: IToastEditor) {
 
-    const clickEvent = (e: any) => {
-        console.log(e.target.className);
-    }
     const handleSave = () => {
         const markDownContent = editorRef.current?.getInstance().getMarkdown();
         // const htmlContent = editorRef.current?.getInstance().getHTML();
@@ -20,7 +17,7 @@ function ToastEditor({content, editorRef}: IToastEditor) {
     }
 
     return (
-        <div onClick={clickEvent}>
+        <div>
             <Editor
                 ref={editorRef}
                 initialValue={content ? content : " "}

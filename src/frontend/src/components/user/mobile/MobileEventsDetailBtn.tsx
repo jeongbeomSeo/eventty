@@ -1,7 +1,7 @@
 import React from "react";
-import {Badge, Button, Group, Image, Stack, Text, Title, UnstyledButton} from "@mantine/core";
-import customStyle from "../../styles/customStyle";
-import {Link} from "react-router-dom";
+import {AspectRatio, Badge, Box, Button, Grid, Group, Image, Stack, Text, Title, UnstyledButton} from "@mantine/core";
+import customStyle from "../../../styles/customStyle";
+import {Link, useLocation} from "react-router-dom";
 
 enum State {
     open,
@@ -52,35 +52,42 @@ function StateBadge({state}: { state: number }) {
     return (<></>);
 }
 
-function EventsDetailBtn(props: IEventState) {
+function MobileEventsDetailBtn(props: IEventState) {
     const {classes} = customStyle();
+    const {pathname} = useLocation();
 
     return (
-        <UnstyledButton style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
-            <Group noWrap position={"apart"} style={{opacity: props.state === 0 ? "" : "0.3",}}>
-                <Group>
-                    <Image src={""}
-                           width={100}
-                           height={80}
-                           radius={"md"}
-                           withPlaceholder/>
-                    <Stack>
-                        <Title order={4}>{props.title}</Title>
-                        <Group noWrap>
-                            <StateBadge state={props.state}/>
-                            <Text>{props.date.toLocaleDateString()} 까지</Text>
-                        </Group>
-                    </Stack>
+        <UnstyledButton
+            component={Link}
+            to={`/events/${props.id}`}
+            state={pathname}
+            style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
+            <Stack style={{opacity: props.state === 2 ? "0.3" : "",}}>
+                <Group noWrap>
+                    <StateBadge state={props.state}/>
+                    <Text>{props.date.toLocaleDateString()} 까지</Text>
                 </Group>
+                <Grid>
+                    <Grid.Col span={4}>
+                        <AspectRatio ratio={4 / 3}>
+                            <Image src={""}
+                                   withPlaceholder/>
+                        </AspectRatio>
+                    </Grid.Col>
+                    <Grid.Col span={"auto"}>
+                        <Title order={4}>{props.title}</Title>
+                    </Grid.Col>
+                </Grid>
                 {props.state !== 2 &&
                     <Button component={Link}
                             to={`/applices/${props.id}`}
-                        className={classes["btn-primary"]}>
+                            className={classes["btn-primary"]}>
                         신청내역
                     </Button>}
-            </Group>
+            </Stack>
         </UnstyledButton>
-    );
+    )
+        ;
 }
 
-export default EventsDetailBtn;
+export default MobileEventsDetailBtn;

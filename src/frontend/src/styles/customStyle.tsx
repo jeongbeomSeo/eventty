@@ -64,6 +64,24 @@ const customStyle = createStyles((theme) => ({
             color: "#cdcdcd !important",
         },
     },
+    "input-date-time":{
+        ".mantine-DateTimePicker-input":{
+            ":active, :focus": {
+                borderColor: "var(--primary)",
+            },
+        },
+        ".mantine-DateTimePicker-day": {
+            "&[data-selected], &[data-selected]:hover": {
+                background: "var(--primary)",
+            },
+            "&[data-items='5']": {
+                background: "red",
+            }
+        },
+        ".mantine-DateTimePicker-placeholder": {
+            color: "#cdcdcd !important",
+        },
+    },
     "btn-primary": {
         backgroundColor: "var(--primary)",
         ":hover": {

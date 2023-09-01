@@ -3,14 +3,17 @@ import {Badge, Divider, Group, Paper, Stack, Text} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import EventDetailModal from "./EventDetailModal";
 import {CheckLogin} from "../../util/CheckLogin";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
 
 function TicketBtn(props: {title: string, content: string, price: number, left:number}) {
     const {classes} = customStyle();
+    const navigate = useNavigate();
+    const {pathname} = useLocation();
 
     return (
         <>
             <Paper p={"md"} withBorder
+                   onClick={() => navigate("ticket", {state: pathname})}
                    className={classes["ticket-select"]}>
                 <Stack>
                     <Group position={"apart"}>

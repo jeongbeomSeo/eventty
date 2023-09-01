@@ -2,7 +2,7 @@ import React, {ChangeEvent, useState} from "react";
 import {Avatar, Button, Center, Flex, Group, Paper, Stack, Text, TextInput, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import {DatePickerInput} from "@mantine/dates";
-import CalendarPicker from "../../common/CalendarPicker";
+import BirthdayPicker from "../../common/BirthdayPicker";
 
 function PaperItem({children}: { children: React.ReactNode }) {
     return (
@@ -47,7 +47,7 @@ function MobileProfile() {
                            value={phoneNumber}
                            onInput={handlePhoneInputChange}
                            className={classes["input"]}/>
-                <CalendarPicker label={"생년월일"} value={selectedDate}
+                <BirthdayPicker label={"생년월일"} value={selectedDate}
                                 onChange={handleDateChange}/>
                 <Button className={classes["btn-primary"]}>저장하기</Button>
             </PaperItem>

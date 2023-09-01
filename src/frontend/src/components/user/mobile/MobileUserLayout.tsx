@@ -29,6 +29,12 @@ function MobileUserLayout() {
                     <Tabs.Panel value={"profile"}>
                         <Outlet/>
                     </Tabs.Panel>
+                    <Tabs.Panel value={"events"}>
+                        <Outlet/>
+                    </Tabs.Panel>
+                    <Tabs.Panel value={"reservations"}>
+                        <Outlet/>
+                    </Tabs.Panel>
                 </Stack>
             </Tabs>
         </Container>

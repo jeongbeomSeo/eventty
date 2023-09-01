@@ -1,4 +1,4 @@
-const MY_HEADERS = new Headers({"Content-Type": "application/json"},);
+// process.env["REACT_APP_SERVER_URL"]
 
 export const getEvent = async (eventId: string) => {
     return await fetch(`/api/events/${eventId}`)
