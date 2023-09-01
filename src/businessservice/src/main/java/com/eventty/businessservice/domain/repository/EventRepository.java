@@ -14,4 +14,5 @@ public interface EventRepository {
     Long insertEvent(EventEntity request);
     Long updateEvent(EventEntity request);
     Long deleteEvent(Long id);
+    List<EventEntity> selectEventsByCategory(Long categoryId);
 }

@@ -102,4 +102,13 @@
         WHERE id = #{id}
     </update>
 
+    <!--카테고리 별 이벤트 조회-->
+    <select id="selectEventsByCategory" resultMap="EventResultMap" parameterType="java.lang.Long">
+        SELECT *
+        FROM events e
+             INNER JOIN categories c ON e.category = c.id
+        WHERE is_deleted = false
+        AND c.id = #{categoryId}
+    </select>
+
 </mapper>

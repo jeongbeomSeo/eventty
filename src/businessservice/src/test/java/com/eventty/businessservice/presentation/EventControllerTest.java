@@ -1,11 +1,9 @@
 package com.eventty.businessservice.presentation;
 
 import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
-import com.eventty.businessservice.application.dto.response.EventDetailFindByIdResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
-import com.eventty.businessservice.presentation.EventController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -122,7 +120,7 @@ public class EventControllerTest {
                 .eventEndAt(Timestamp.valueOf("2023-09-01 18:00:00"))
                 .participateNum(100L)
                 .location("Event Location")
-                .category("Event CategoryEntity")
+                .category(1L)
                 .content("Event Content")
                 .applyStartAt(Timestamp.valueOf("2023-08-15 10:00:00"))
                 .applyEndAt(Timestamp.valueOf("2023-08-31 18:00:00"))
@@ -140,7 +138,7 @@ public class EventControllerTest {
             .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
             .participateNum(100L)
             .location("Sample Location")
-            .category("Sample CategoryEntity")
+            .category(1L)
             .isActive(true)
             .isDeleted(false)
             .build();
@@ -156,7 +154,7 @@ public class EventControllerTest {
                 .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
                 .participateNum(100L)
                 .location("Sample Location")
-                .category("Sample CategoryEntity")
+                .categoryName("Music")
                 .isActive(true)
                 .isDeleted(false)
                 .content("Sample content")

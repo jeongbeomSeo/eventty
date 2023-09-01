@@ -115,5 +115,17 @@ public class EventController {
      * 행사 카테고리별 조회
      *
      */
+    @GetMapping( "/category/{categoryId}")
+    @Operation(summary = "카테고리 별 행사 조회")
+    public ResponseEntity<SuccessResponseDTO<List<EventFindAllResponseDTO>>> findEventsByCategory(
+            @PathVariable Long categoryId
+    ) {
+        List<EventFindAllResponseDTO> events = eventService.findEventsByCategory(categoryId);
+
+        SuccessCode code = GET_EVENT_INFO_SUCCESS;
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(SuccessResponseDTO.of(events, code));
+    }
 
 }

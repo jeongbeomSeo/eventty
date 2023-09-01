@@ -13,4 +13,5 @@ public interface EventService {
     Long createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO);
     Long deleteEvent(Long id);
     Long updateEvent(Long id, EventFullUpdateRequestDTO eventFullUpdateRequestDTO);
+    List<EventFindAllResponseDTO> findEventsByCategory(Long id);
 }

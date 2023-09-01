@@ -57,10 +57,4 @@ public class EventFullCreateRequestDTO {
                 .build();
     }
 
-//    public TicketEntity toTicketEntity(Long id){
-//        return TicketEntity.builder()
-//                .eventId(id)
-//                .name()
-//    }
-
 }

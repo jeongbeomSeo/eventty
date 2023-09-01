@@ -23,8 +23,8 @@ public enum ErrorCode {
 
     // Event
     EVENT_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "E001", "Event is not found"),
-    EVENT_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "E002", "Event detail info is not found"),
-    EVENT_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "E003", "Event already exists"),
+    EVENT_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "E002", "Event already exists"),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "E003", "Category is not found"),
 
     // Apply
     // 수정 예정

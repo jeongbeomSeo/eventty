@@ -1,7 +1,5 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.application.dto.request.EventCreateRequestDTO;
-import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
 import com.eventty.businessservice.application.dto.request.EventFullUpdateRequestDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
@@ -137,7 +135,7 @@ public class EventServiceImplTest {
             .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
             .participateNum(100L)
             .location("Sample Location")
-            .category("Sample CategoryEntity")
+            .category(1L)
             .isActive(true)
             .isDeleted(false)
             .build();
@@ -153,7 +151,7 @@ public class EventServiceImplTest {
                 .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
                 .participateNum(100L)
                 .location("Sample Location")
-                .category("Sample CategoryEntity")
+                .category(1L)
                 .isActive(true)
                 .isDeleted(false)
                 .content("Sample content")
