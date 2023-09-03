@@ -1,35 +1,37 @@
 package com.eventty.authservice.api.config;
 
 import com.eventty.authservice.api.exception.ApiException;
-import com.eventty.authservice.common.response.ErrorResponseDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.ResponseErrorHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
 
 @Component
-public class CustomRestTemplateErrorHandler extends DefaultResponseErrorHandler {
+public class CustomRestTemplateErrorHandler implements ResponseErrorHandler {
 
     @Override
     public boolean hasError(ClientHttpResponse response) throws IOException {
-        System.out.println(response.getStatusCode().is4xxClientError()
-                || response.getStatusCode().is5xxServerError());
-        return (
-                response.getStatusCode().is4xxClientError()
-                        || response.getStatusCode().is5xxServerError()
-        );
+        // 사용자 정의 코드 499 => 비지니스 로직에서 분기점 처리해야 될 때 사용
+        if (response.getStatusCode() == HttpStatusCode.valueOf(499)) return false;
+
+        // 4XX, 5XX 상태 코드의 경우 곧바로 GlobalExceptionHandler가 잡도록 구성
+        if (response.getStatusCode().is4xxClientError()
+            || response.getStatusCode().is5xxServerError()) return true;
+
+        return false;
     }
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // Read the response body as an InputStream
-        InputStream responseBody = response.getBody();
-        // Convert the InputStream to ErrorResponseDTO using ObjectMapper
-        ErrorResponseDTO errorResponseDTO = objectMapper.readValue(responseBody, ErrorResponseDTO.class);
-        throw new ApiException(errorResponseDTO, response.getStatusCode());
+
+    }
+
+    @Override
+    public void handleError(URI uri, HttpMethod method, ClientHttpResponse response) throws IOException {
+        throw new ApiException(uri, method, response.getStatusCode());
     }
 }

@@ -65,7 +65,6 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.message").value(SuccessCode.USER_CREATED.getMessage()))
                 .andExpect(jsonPath("$.data").doesNotExist());
 
     }
@@ -89,8 +88,7 @@ public class AuthControllerTest {
                 .andExpect(status().isConflict()) // 실패 시 BadRequest 상태 코드 예상
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false)) // 실패 시 success 값이 false로 예상
-                .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.getCode())) // 실패 시 code 값이 DUPLICATE_EMAIL로 예상
-                .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_EMAIL.getMessage()));
+                .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.getCode())); // 실패 시 code 값이 DUPLICATE_EMAIL로 예상
         // Verify that the isEmailDuplicate method was called with the provided email
         verify(userService, times(1)).isEmailDuplicate(email);
     }

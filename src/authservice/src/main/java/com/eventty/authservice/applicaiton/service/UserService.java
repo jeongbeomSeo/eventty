@@ -2,6 +2,7 @@ package com.eventty.authservice.applicaiton.service;
 
 import com.eventty.authservice.api.ApiClient;
 import com.eventty.authservice.api.dto.UserCreateRequestDTO;
+import com.eventty.authservice.common.response.ErrorResponseDTO;
 import com.eventty.authservice.common.response.ResponseDTO;
 import com.eventty.authservice.api.exception.ApiException;
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
@@ -59,10 +60,14 @@ public class UserService {
 
         // API 요청 로직
         UserCreateRequestDTO userCreateRequestDTO = fullUserCreateRequestDTO.toUserCreateRequestDTO(authId);
-        apiClient.createUserApi(userCreateRequestDTO);
+        ResponseEntity<ResponseDTO> response =  apiClient.createUserApi(userCreateRequestDTO);
 
+        System.out.println(response);
+
+        // 보상 트랜 잭션 + 예외 던지기
         // 보상 트랜잭션의 경우 예외가 발생하면 @Transactional에 의해서 수행되며
         // 예외는 기존의 ErrorResponseDTO를 그대로 건네주면서 전역적으로 처리
+
     }
 
     public void isEmailDuplicate(String email) {

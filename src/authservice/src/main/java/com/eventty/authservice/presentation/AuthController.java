@@ -33,14 +33,18 @@ public class AuthController {
      * 회원가임
      */
     @PostMapping("")
-    public ResponseEntity<ResponseDTO> createUser(@Valid @RequestBody FullUserCreateRequestDTO userCreateRequestDTO) {
+    public ResponseEntity<Void> createUser(@Valid @RequestBody FullUserCreateRequestDTO userCreateRequestDTO) {
 
         userService.createUser(userCreateRequestDTO);
 
         SuccessCode code = SuccessCode.USER_CREATED;
         return ResponseEntity
                 .status(code.getStatus())
-                .body(SuccessResponseDTO.of(null, code));
+                .body(null);
+
+        /* 출력 형태
+
+         */
     }
 
     /**
@@ -51,10 +55,18 @@ public class AuthController {
 
         userService.isEmailDuplicate(isUserDuplicateRequestDTO.getEmail());
 
-        SuccessCode code = SuccessCode.EMAIL_IS_VALID;
         return ResponseEntity
-                .status(code.getStatus())
-                .body(SuccessResponseDTO.of(true, code));
+                .status(SuccessCode.IS_OK.getStatus())
+                .body(SuccessResponseDTO.of(null));
+        /* 출력 형태
+            {
+            "successResponseDTO": {
+                "data": null
+            },
+            "success": true
+        }
+         */
     }
+
 
 }

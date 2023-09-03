@@ -9,13 +9,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum SuccessCode {
 
-    // Validation
-    EMAIL_IS_VALID(200, "Email is valid"),
+    // OK
+    IS_OK(200),
 
     // Create
-    USER_CREATED(201, "SignUp successful");
+    USER_CREATED(201);
 
     private final int status;
-    private final String message;
 
 }
