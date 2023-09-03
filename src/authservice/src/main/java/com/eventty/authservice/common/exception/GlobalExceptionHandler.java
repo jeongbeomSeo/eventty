@@ -20,8 +20,8 @@ import com.eventty.authservice.common.response.ErrorResponseDTO;
 import static com.eventty.authservice.common.Enum.ErrorCode.*;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -43,6 +43,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
 
         // return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED); (body에 code도 담지 않고 보내는 방식)
+    }
+
+    // 지정하지 않은 API URI 요청이 들어왔을 경우 (404 예외 처리 핸들러 => appication-properties 설정 필요)
+    @ExceptionHandler
+    protected ResponseEntity<ErrorResponseDTO> handleNotFoundExceptoin(NoHandlerFoundException e) {
+        log.error("NoHandlerFoundException occurred: {}", e.getMessage());
+
+        final ErrorResponseDTO response = ErrorResponseDTO.of(NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     // @Valid 에서 발생한 binding error 에 대한 예외 처리

@@ -1,17 +1,15 @@
 package com.eventty.authservice.presentation;
 
+import com.eventty.authservice.applicaiton.service.Facade.AuthService;
+import com.eventty.authservice.domain.Enum.Roles;
 import com.eventty.authservice.presentation.dto.IsUserDuplicateRequestDTO;
-import com.eventty.authservice.applicaiton.service.UserService;
+import com.eventty.authservice.applicaiton.service.UserServiceImpl;
 import com.eventty.authservice.common.Enum.SuccessCode;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.common.response.ResponseDTO;
 import com.eventty.authservice.common.response.SuccessResponseDTO;
 
 import jakarta.validation.Valid;
@@ -26,16 +24,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name= "Auth", description = "Auth API")
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
 
     /**
-     * 회원가임
+     * 회원가입
      */
-    @PostMapping("")
-    public ResponseEntity<Void> createUser(@Valid @RequestBody FullUserCreateRequestDTO userCreateRequestDTO) {
+    @PostMapping("/me/{role}")
+    public ResponseEntity<Void> createUser(@Valid @RequestBody FullUserCreateRequestDTO userCreateRequestDTO,
+                                           @PathVariable("role") Roles role) {
 
-        userService.createUser(userCreateRequestDTO);
+        authService.createUser(userCreateRequestDTO, role);
 
         SuccessCode code = SuccessCode.USER_CREATED;
         return ResponseEntity
@@ -53,7 +52,7 @@ public class AuthController {
     @PostMapping("/email")
     public ResponseEntity<SuccessResponseDTO> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
 
-        userService.isEmailDuplicate(isUserDuplicateRequestDTO.getEmail());
+        authService.isEmailDuplicate(isUserDuplicateRequestDTO.getEmail());
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())

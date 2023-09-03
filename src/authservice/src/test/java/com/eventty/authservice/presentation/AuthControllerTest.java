@@ -14,9 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.service.UserService;
+import com.eventty.authservice.applicaiton.service.UserServiceImpl;
 import com.eventty.authservice.common.Enum.ErrorCode;
-import com.eventty.authservice.common.Enum.SuccessCode;
 import com.eventty.authservice.infrastructure.config.BasicSecurityConfig;
 import com.eventty.authservice.domain.exception.DuplicateEmailException;
 
@@ -46,7 +45,7 @@ public class AuthControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Test
     @DisplayName("[POST] 회원 가입 테스트")
@@ -78,7 +77,7 @@ public class AuthControllerTest {
         String email = createEmail(id);
 
         // Arrange: UserService의 isEmailDuplicate 메서드가 DuplicateEmailException을 던질 것을 모킹
-        doThrow(DuplicateEmailException.EXCEPTION).when(userService).isEmailDuplicate(email);
+        doThrow(DuplicateEmailException.EXCEPTION).when(userServiceImpl).isEmailDuplicate(email);
 
         // When & Then
         mockMvc.perform(post("/api/auth/email")
@@ -90,7 +89,7 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.success").value(false)) // 실패 시 success 값이 false로 예상
                 .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.getCode())); // 실패 시 code 값이 DUPLICATE_EMAIL로 예상
         // Verify that the isEmailDuplicate method was called with the provided email
-        verify(userService, times(1)).isEmailDuplicate(email);
+        verify(userServiceImpl, times(1)).isEmailDuplicate(email);
     }
 
     private static String createEmail(Long id) {

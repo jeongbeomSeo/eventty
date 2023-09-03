@@ -21,6 +21,12 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  # 404 Error
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 
   #### h2
   h2:

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Builder
@@ -24,4 +26,7 @@ public class AuthUserEntity {
     private String email;               // Email
 
     private String password;            // 암호화된 Password
+
+    @OneToMany(mappedBy = "authUserEntity", fetch = FetchType.EAGER)
+    private List<AuthorityEntity> Authorities;
 }

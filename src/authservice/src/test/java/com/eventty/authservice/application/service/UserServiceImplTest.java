@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.eventty.authservice.domain.exception.DuplicateEmailException;
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.service.UserService;
+import com.eventty.authservice.applicaiton.service.UserServiceImpl;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.repository.AuthUserRepository;
 
@@ -29,10 +29,10 @@ import static org.mockito.Mockito.*;
  */
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class UserServiceImplTest {
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Mock
     private AuthUserRepository userRepository;
@@ -49,7 +49,7 @@ public class UserServiceTest {
         FullUserCreateRequestDTO request = createFullUserCreateRequestDTO(email);
 
         // When
-        userService.createUser(request);
+        userServiceImpl.createUser(request);
 
         // Then
        verify(userRepository, times(1)).findByEmail(email);
@@ -67,7 +67,7 @@ public class UserServiceTest {
         when(userRepository.findByEmail(createEmail(id))).thenReturn(Optional.of(authUserEntity));
 
         // Then
-        assertThrows(DuplicateEmailException.class, () -> userService.createUser(request));
+        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.createUser(request));
         verify(userRepository, times(0)).save(authUserEntity);
     }
 
@@ -83,7 +83,7 @@ public class UserServiceTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(authUserEntity));
 
         // Then
-        assertThrows(DuplicateEmailException.class, () -> userService.isEmailDuplicate(email));
+        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.isEmailDuplicate(email));
         verify(userRepository, times(1)).findByEmail(email);
     }
 

@@ -22,7 +22,6 @@ public class UserFindByIdResponseDTO {
         this.name = userEntity.getName();
         this.address = userEntity.getAddress();
         this.birth = userEntity.getBirth();
-        this.hostYn = userEntity.getIsHost();
         this.image = userEntity.getImage();
         this.phone = userEntity.getPhone();
     }
