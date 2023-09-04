@@ -1,16 +1,11 @@
 package com.eventty.authservice.applicaiton.service.Facade;
 
-import com.eventty.authservice.api.ApiClient;
-import com.eventty.authservice.applicaiton.service.UserService;
-import com.eventty.authservice.domain.Enum.Roles;
+import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
 
 public interface AuthService {
 
-    void createUser(FullUserCreateRequestDTO fullUserCreateRequestDTO, Roles role);
+    Long createUser(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole userRole);
 
-    void isEmailDuplicate(String email);
-
-
-
+    void validateEmailNotDuplicated(String email);
 }

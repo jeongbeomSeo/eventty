@@ -1,7 +1,5 @@
 package com.eventty.authservice.common.Enum;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

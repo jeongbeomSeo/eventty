@@ -1,22 +1,19 @@
 package com.eventty.authservice.presentation;
 
-import com.eventty.authservice.applicaiton.service.Facade.AuthService;
-import com.eventty.authservice.domain.Enum.Roles;
-import com.eventty.authservice.presentation.dto.IsUserDuplicateRequestDTO;
-import com.eventty.authservice.applicaiton.service.UserServiceImpl;
-import com.eventty.authservice.common.Enum.SuccessCode;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.common.response.SuccessResponseDTO;
 
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.applicaiton.service.Facade.AuthService;
+import com.eventty.authservice.domain.Enum.UserRole;
+import com.eventty.authservice.presentation.dto.IsUserDuplicateRequestDTO;
+import com.eventty.authservice.common.Enum.SuccessCode;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,45 +23,31 @@ public class AuthController {
 
     private final AuthService authService;
 
-
     /**
      * 회원가입
      */
-    @PostMapping("/me/{role}")
+    @PostMapping("/me/{userRole}")
     public ResponseEntity<Void> createUser(@Valid @RequestBody FullUserCreateRequestDTO userCreateRequestDTO,
-                                           @PathVariable("role") Roles role) {
+                                           @PathVariable("userRole") UserRole userRole) {
 
-        authService.createUser(userCreateRequestDTO, role);
+        authService.createUser(userCreateRequestDTO, userRole);
 
-        SuccessCode code = SuccessCode.USER_CREATED;
         return ResponseEntity
-                .status(code.getStatus())
+                .status(SuccessCode.USER_CREATED.getStatus())
                 .body(null);
-
-        /* 출력 형태
-
-         */
     }
 
     /**
      * 이메일 검증
      */
     @PostMapping("/email")
-    public ResponseEntity<SuccessResponseDTO> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
+    public ResponseEntity<Void> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
 
-        authService.isEmailDuplicate(isUserDuplicateRequestDTO.getEmail());
+        authService.validateEmailNotDuplicated(isUserDuplicateRequestDTO.getEmail());
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
-                .body(SuccessResponseDTO.of(null));
-        /* 출력 형태
-            {
-            "successResponseDTO": {
-                "data": null
-            },
-            "success": true
-        }
-         */
+                .body(null);
     }
 
 

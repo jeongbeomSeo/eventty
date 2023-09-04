@@ -43,7 +43,7 @@ logging:
             sql: trace
 
 ## USER SERVER BASE URL
-user.server.base.url: ${user-server-url}
+server.base.url.userServer: ${user-server-url}
 
 # Swagger
 springdoc:

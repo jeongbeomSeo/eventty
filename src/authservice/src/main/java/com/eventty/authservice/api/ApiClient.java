@@ -5,22 +5,22 @@ import org.springframework.web.client.RestTemplate;
 
 import org.springframework.http.*;
 
-import com.eventty.authservice.api.dto.UserCreateRequestDTO;
-import com.eventty.authservice.api.utils.MakeUrlService;
-import com.eventty.authservice.common.response.ResponseDTO;
-
 import java.net.URI;
 import java.util.Collections;
 
 import lombok.AllArgsConstructor;
 
+import com.eventty.authservice.api.dto.UserCreateRequestDTO;
+import com.eventty.authservice.api.utils.MakeUrlService;
+import com.eventty.authservice.common.response.ResponseDTO;
+
 @Component
 @AllArgsConstructor
 public class ApiClient {
 
+    // @Bean에 이름을 지정하지 않아서 생성자 이름을 따라감
     private final MakeUrlService makeUrlService;
 
-    // @Bean에 이름을 지정하지 않아서 생성자 이름을 따라감
     private final RestTemplate basicRestTemplate;
 
     private final RestTemplate customRestTemplate;

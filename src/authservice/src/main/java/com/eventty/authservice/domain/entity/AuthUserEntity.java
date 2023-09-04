@@ -1,15 +1,14 @@
 package com.eventty.authservice.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Getter
+// Setter의 경우 TestCode때문에 넣었어요
+@Setter
 @Entity
 @Builder
 @AllArgsConstructor

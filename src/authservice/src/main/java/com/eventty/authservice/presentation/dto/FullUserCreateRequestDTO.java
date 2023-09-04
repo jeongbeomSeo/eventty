@@ -4,7 +4,6 @@ import com.eventty.authservice.api.dto.UserCreateRequestDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import jakarta.validation.constraints.Email;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,12 +21,16 @@ public class FullUserCreateRequestDTO {
 
     @NotNull @Email
     private String email;
+    @NotNull
     private String password;
+    @NotNull
     private String name;
-    private String address;
+    @NotNull
     private LocalDate birth;
-    private String image;
+    @NotNull
     private String phone;
+    private String address;
+
 
     // Interface PasswordEncoder로 받으면서 상황에 맞는 Encoder를 받을 수 있도록 설정
     public AuthUserEntity toAuthUserEntity(PasswordEncoder encoder) {
@@ -44,7 +47,6 @@ public class FullUserCreateRequestDTO {
                 .name(this.name)
                 .address(this.address)
                 .birth(this.birth)
-                .image(this.image)
                 .phone(this.phone)
                 .build();
     }

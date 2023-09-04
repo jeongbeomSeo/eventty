@@ -1,27 +1,28 @@
 package com.eventty.authservice.common.exception;
 
-import com.eventty.authservice.api.exception.ApiException;
-import com.eventty.authservice.common.utils.DataErrorLogger;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import lombok.extern.slf4j.Slf4j;
 
 import com.eventty.authservice.common.Enum.ErrorCode;
 import com.eventty.authservice.common.response.ErrorResponseDTO;
+import com.eventty.authservice.api.exception.ApiException;
+import com.eventty.authservice.common.utils.DataErrorLogger;
 
 import static com.eventty.authservice.common.Enum.ErrorCode.*;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice

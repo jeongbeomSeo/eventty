@@ -1,15 +1,8 @@
 package com.eventty.authservice.applicaiton.service;
 
-import com.eventty.authservice.api.ApiClient;
-import com.eventty.authservice.api.dto.UserCreateRequestDTO;
-import com.eventty.authservice.domain.Enum.Roles;
-import com.eventty.authservice.domain.entity.AuthorityEntity;
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.domain.entity.AuthUserEntity;
-import com.eventty.authservice.domain.exception.DuplicateEmailException;
-import com.eventty.authservice.domain.repository.AuthUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,8 +10,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import com.eventty.authservice.domain.Enum.UserRole;
+import com.eventty.authservice.domain.entity.AuthorityEntity;
+import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.domain.entity.AuthUserEntity;
+import com.eventty.authservice.domain.exception.DuplicateEmailException;
+import com.eventty.authservice.domain.repository.AuthUserRepository;
+
+
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final AuthUserRepository userRepository;
 
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Transactional
-    public AuthUserEntity create(FullUserCreateRequestDTO fullUserCreateRequestDTO, Roles role) {
+    public AuthUserEntity create(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole userRole) {
         // 이메일 중복 검사
         String email = fullUserCreateRequestDTO.getEmail();
         emailValidationCheck(email);
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService{
 
         // 권한 저장하기
         AuthorityEntity newAuthority = AuthorityEntity.builder()
-                .name(role.getRole())
+                .name(userRole.getRole())
                 .authUserEntity(newUser)
                 .build();
 
@@ -61,11 +62,14 @@ public class UserServiceImpl implements UserService{
         return newUser;
     }
 
-    public void emailValidationCheck(String email) {
+    public boolean emailValidationCheck(String email) {
         Optional<AuthUserEntity> existingUser = userRepository.findByEmail(email);
 
         if (existingUser.isPresent()) {
             throw DuplicateEmailException.EXCEPTION;
         }
+
+        return true;
     }
 }
+

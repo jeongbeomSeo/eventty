@@ -1,8 +1,7 @@
 package com.eventty.authservice.infrastructure.config;
 
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,8 +20,8 @@ public class BasicSecurityConfig {
         return http
                 .authorizeHttpRequests(authorizationConfig -> {
                     authorizationConfig
-                            .requestMatchers(PathRequest.toH2Console()) // H2가 나의 로컬 DB 접근할 수 있도록 허용
-                            .permitAll()
+                            /*.requestMatchers(PathRequest.toH2Console()) // H2가 나의 로컬 DB 접근할 수 있도록 허용
+                            .permitAll()*/
                             .anyRequest()
                             .permitAll();
 

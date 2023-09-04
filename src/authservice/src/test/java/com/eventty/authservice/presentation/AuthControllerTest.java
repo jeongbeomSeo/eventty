@@ -14,12 +14,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.service.UserServiceImpl;
 import com.eventty.authservice.common.Enum.ErrorCode;
 import com.eventty.authservice.infrastructure.config.BasicSecurityConfig;
 import com.eventty.authservice.domain.exception.DuplicateEmailException;
 
 import java.time.LocalDate;
+
+import com.eventty.authservice.applicaiton.service.Facade.AuthServiceImpl;
+import com.eventty.authservice.domain.Enum.UserRole;
 
 import static org.springframework.security.test.
         web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -45,51 +47,72 @@ public class AuthControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserServiceImpl userServiceImpl;
+    private AuthServiceImpl authService;
 
     @Test
-    @DisplayName("[POST] 회원 가입 테스트")
-    public void createUserTest() throws Exception {
+    @DisplayName("[POST] 회원 가입 테스트 성공_User")
+    public void createUserTest_SUCCESS() throws Exception {
         // given
         Long id = 1L;
         String email = createEmail(id);
         FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+        UserRole userRole = UserRole.USER;
 
         // When & Then
-        mockMvc.perform(post("/api/auth")
+        mockMvc.perform(post("/api/auth/me/" + userRole)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(fullUserCreateRequestDTO))
                         .with(csrf()))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.data").doesNotExist());
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
 
+    @Test
+    @DisplayName("[POST] 회원 가입 테스트 실패_USER - DuplicateEmailException")
+    public void createUserTest_FAIL_INVALID_INPUT_VALUE() throws Exception {
+
+        // given
+        Long id = 1L;
+        String email = createEmail(id);
+        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+        UserRole userRole = UserRole.USER;
+
+        // When
+        doThrow(DuplicateEmailException.EXCEPTION).when(authService).createUser(any(FullUserCreateRequestDTO.class), any(UserRole.class));
+
+        // When & Then
+        mockMvc.perform(post("/api/auth/me/" + userRole)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(fullUserCreateRequestDTO))
+                        .with(csrf()))
+                .andExpect(status().is(ErrorCode.DUPLICATE_EMAIL.getStatus()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false)) // 실패 시 success 값이 false로 예상
+                .andExpect(jsonPath("$.errorResponseDTO.code").value(ErrorCode.DUPLICATE_EMAIL.getCode()));
     }
 
 
     @Test
     @DisplayName("[POST][ERRPR] 이메일 검증 테스트")
-    public void isEmailDuplicateTest() throws Exception {
+    public void isEmailDuplicateTest_FAIL() throws Exception {
         // given
         Long id = 1L;
         String email = createEmail(id);
 
         // Arrange: UserService의 isEmailDuplicate 메서드가 DuplicateEmailException을 던질 것을 모킹
-        doThrow(DuplicateEmailException.EXCEPTION).when(userServiceImpl).isEmailDuplicate(email);
+        doThrow(DuplicateEmailException.EXCEPTION).when(authService).validateEmailNotDuplicated(email);
 
-        // When & Then
+        // When  & Then
         mockMvc.perform(post("/api/auth/email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"email\":\"" + email + "\"}")
                         .with(csrf()))
-                .andExpect(status().isConflict()) // 실패 시 BadRequest 상태 코드 예상
+                .andExpect(status().is(ErrorCode.DUPLICATE_EMAIL.getStatus())) // 실패 시 BadRequest 상태 코드 예상
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false)) // 실패 시 success 값이 false로 예상
-                .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.getCode())); // 실패 시 code 값이 DUPLICATE_EMAIL로 예상
+                .andExpect(jsonPath("$.errorResponseDTO.code").value(ErrorCode.DUPLICATE_EMAIL.getCode()));
         // Verify that the isEmailDuplicate method was called with the provided email
-        verify(userServiceImpl, times(1)).isEmailDuplicate(email);
+        verify(authService, times(1)).validateEmailNotDuplicated(email);
     }
 
     private static String createEmail(Long id) {
@@ -103,7 +126,6 @@ public class AuthControllerTest {
                 .name("eventty0")
                 .address("서울시 강남")
                 .birth(LocalDate.now())
-                .image("image url 0")
                 .phone("000-0000-0000")
                 .build();
     }

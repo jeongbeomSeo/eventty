@@ -1,17 +1,13 @@
 package com.eventty.authservice.application.service;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.eventty.authservice.domain.exception.DuplicateEmailException;
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.service.UserServiceImpl;
-import com.eventty.authservice.domain.entity.AuthUserEntity;
-import com.eventty.authservice.domain.repository.AuthUserRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -19,8 +15,15 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.applicaiton.service.UserServiceImpl;
+import com.eventty.authservice.domain.entity.AuthUserEntity;
+import com.eventty.authservice.domain.repository.AuthUserRepository;
+import com.eventty.authservice.domain.Enum.UserRole;
+import com.eventty.authservice.domain.entity.AuthorityEntity;
+import com.eventty.authservice.domain.exception.DuplicateEmailException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /*
@@ -38,21 +41,33 @@ public class UserServiceImplTest {
     private AuthUserRepository userRepository;
 
     @Mock
+    private EntityManager em;
+
+    @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Test
-    @DisplayName("회원가입 성공")
-    public void createUser_SUCCESS() {
-        // given
-        String email = "example1@mm.mm";
-        FullUserCreateRequestDTO request = createFullUserCreateRequestDTO(email);
+    @DisplayName("[Local] 회원가입 및 권한 정보 저장 성공")
+    public void create_SUCCESS() {
+        Long id = 1L;
+        String email = createEmail(id);
+        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+        UserRole userRole = UserRole.USER;
 
         // When
-        userServiceImpl.createUser(request);
+        AuthUserEntity newUser = userServiceImpl.create(fullUserCreateRequestDTO, userRole);
+
+        /*  오류: 새로운 생성자를 만들면 위에서 실행했을 때 만들어 지는 newAutority 랑은 다른 생성자로 만들어 지는 것임.
+        AuthorityEntity newAuthority = AuthorityEntity.builder()
+                .name(userRole.getRole())
+                .authUserEntity(newUser)
+                .build();
+                */
 
         // Then
-       verify(userRepository, times(1)).findByEmail(email);
+       verify(em, times(1)).persist(newUser);
+       verify(em, times(1)).persist(any(AuthorityEntity.class));
     }
 
     @Test
@@ -60,15 +75,18 @@ public class UserServiceImplTest {
     public void createUser_Duplicate_Email() {
         // given: authUserRepository의 findByEmail 메서드를 Stubbing하여 이미 중복된 이메일이 존재하는 것으로 설정
         Long id = 1L;
-        FullUserCreateRequestDTO request = createFullUserCreateRequestDTO(createEmail(id));
-        AuthUserEntity authUserEntity = request.toAuthUserEntity(bCryptPasswordEncoder);
+        String email = createEmail(id);
+        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+        UserRole userRole = UserRole.USER;
+        AuthUserEntity authUserEntity = fullUserCreateRequestDTO.toAuthUserEntity(bCryptPasswordEncoder);
 
         // when: authUserRepository의 findByEmail 메서드를 Stubbing하여 이미 중복된 이메일이 존재하는 것으로 설정
-        when(userRepository.findByEmail(createEmail(id))).thenReturn(Optional.of(authUserEntity));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(authUserEntity));
 
         // Then
-        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.createUser(request));
-        verify(userRepository, times(0)).save(authUserEntity);
+        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.create(fullUserCreateRequestDTO, userRole));
+        verify(em, times(0)).persist(any(AuthUserEntity.class));
+        verify(em, times(0)).persist(any(AuthorityEntity.class));
     }
 
     @Test
@@ -83,7 +101,7 @@ public class UserServiceImplTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(authUserEntity));
 
         // Then
-        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.isEmailDuplicate(email));
+        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.emailValidationCheck(email));
         verify(userRepository, times(1)).findByEmail(email);
     }
 
@@ -93,7 +111,6 @@ public class UserServiceImplTest {
                 .id(id)
                 .email(createEmail(id))
                 .password("123123")
-                .isHost(true)
                 .build();
     }
 
@@ -105,12 +122,9 @@ public class UserServiceImplTest {
         return FullUserCreateRequestDTO.builder()
                 .email(email)
                 .password("123123")
-                .nickname("eventty0")
                 .name("eventty0")
                 .address("서울시 강남")
                 .birth(LocalDate.now())
-                .isHost(true)
-                .image("image url 0")
                 .phone("000-0000-0000")
                 .build();
     }

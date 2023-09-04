@@ -1,13 +1,13 @@
 package com.eventty.authservice.applicaiton.service;
 
-import com.eventty.authservice.domain.Enum.Roles;
+import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
 
 public interface UserService {
 
-    AuthUserEntity create(FullUserCreateRequestDTO fullUserCreateRequestDTO, Roles role);
+    AuthUserEntity create(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole userRole);
 
-    void emailValidationCheck(String email);
+    boolean emailValidationCheck(String email);
 
 }

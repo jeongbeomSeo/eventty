@@ -1,14 +1,15 @@
 package com.eventty.authservice.common.config;
 
-import com.eventty.authservice.common.response.ErrorResponseDTO;
-import com.eventty.authservice.common.response.ResponseDTO;
-import com.eventty.authservice.common.response.SuccessResponseDTO;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import com.eventty.authservice.common.response.ErrorResponseDTO;
+import com.eventty.authservice.common.response.ResponseDTO;
+import com.eventty.authservice.common.response.SuccessResponseDTO;
 
 @RestControllerAdvice(basePackages = "com.eventty")
 public class GlobalResponseAdvice implements ResponseBodyAdvice {
@@ -24,16 +25,14 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
 
         if (body instanceof SuccessResponseDTO<?>) {
             SuccessResponseDTO successResponseDTO = (SuccessResponseDTO) body;
-            ResponseDTO responseDTO = ResponseDTO.of(successResponseDTO);
-            return responseDTO;
+            return ResponseDTO.of(successResponseDTO);
         }
 
         if (body instanceof ErrorResponseDTO) {
             ErrorResponseDTO errorResponseDTO = (ErrorResponseDTO) body;
-            ResponseDTO responseDTO = ResponseDTO.of(errorResponseDTO);
-            return responseDTO;
+            return ResponseDTO.of(errorResponseDTO);
         }
 
-        return null;
+        return ResponseDTO.of(true);
     }
 }

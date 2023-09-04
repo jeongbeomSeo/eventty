@@ -1,16 +1,17 @@
 package com.eventty.authservice.api.utils;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.eventty.authservice.api.config.UrlProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 
 @Service
+@RequiredArgsConstructor
 public class MakeUrlService {
 
-    @Value("${user.server.base.url}")
-    private String USER_SERVER_BASE_URL;
+    private final UrlProperties urlProperties;
     public URI createUserUri() {
-        return URI.create(USER_SERVER_BASE_URL + "/api/users/me");
+        return URI.create(urlProperties.getUserServer() + "/api/users/me");
     }
 }
