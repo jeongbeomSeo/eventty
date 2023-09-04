@@ -91,7 +91,8 @@
         UPDATE events
         SET
             title = #{title},
-            image = #{image}
+            image = #{image},
+            category = #{category}
         WHERE id = #{id}
     </update>
 

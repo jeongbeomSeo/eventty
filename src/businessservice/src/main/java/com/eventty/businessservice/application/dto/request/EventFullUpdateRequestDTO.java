@@ -10,6 +10,7 @@ public class EventFullUpdateRequestDTO {
     // Event
     private String title;
     private String image;
+    private Long category;
 
     // EventDetail
     private String content;

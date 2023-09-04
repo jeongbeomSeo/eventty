@@ -5,6 +5,7 @@ import com.eventty.businessservice.application.dto.response.EventFindByIdWithDet
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
 import com.eventty.businessservice.domain.EventWithDetailDTO;
+import com.eventty.businessservice.domain.entity.CategoryEntity;
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.entity.TicketEntity;
@@ -80,14 +81,20 @@ public class EventServiceImpl implements EventService {
     @Override
     public Long updateEvent(Long id, EventFullUpdateRequestDTO eventFullUpdateRequestDTO){
 
+        // Event
         EventEntity event = eventRepository.selectEventById(id);
         event.updateTitle(eventFullUpdateRequestDTO.getTitle());
         event.updateImage(eventFullUpdateRequestDTO.getImage());
+        event.updateCategory(eventFullUpdateRequestDTO.getCategory());
+
         Long eventId = eventRepository.updateEvent(event);
 
+        // Event Detail
         EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(id);
         eventDetail.updateContent(eventFullUpdateRequestDTO.getContent());
+
         Long eventDetailId = eventDetailRepository.updateEventDetail(eventDetail);
+
 
         return id;
     }

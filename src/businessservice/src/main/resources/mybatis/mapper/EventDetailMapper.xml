@@ -15,8 +15,10 @@
         <result property="createDate" column="create_date"/>
     </resultMap>
 
+    <!-- 이벤트 상세정보 조회 -->
     <select id="selectEventDetailById" resultMap="EventDetailResultMap" parameterType="java.lang.Long">
-        SELECT * FROM event_details WHERE ID = #{id} AND delete_date = null
+        SELECT * FROM event_details
+        WHERE ID = #{id} AND DELETE_DATE IS NULL
     </select>
 
     <!-- 이벤트 상세정보 생성 -->

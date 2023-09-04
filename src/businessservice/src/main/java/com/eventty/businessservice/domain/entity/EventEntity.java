@@ -28,4 +28,5 @@ public class EventEntity {
     public void updateImage(String image){
         this.image = image;
     }
+    public void updateCategory(Long category) { this.category = category; }
 }
