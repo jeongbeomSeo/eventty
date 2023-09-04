@@ -1,5 +1,6 @@
 package com.eventty.authservice.api;
 
+import com.eventty.authservice.api.utils.MakeUrlService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,6 +23,7 @@ import com.eventty.authservice.common.response.SuccessResponseDTO;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@EnableConfigurationProperties
 @ExtendWith(MockitoExtension.class)
 public class ApiClientTest {
 
@@ -29,6 +32,10 @@ public class ApiClientTest {
 
     @Mock
     private RestTemplate customRestTemplate;
+
+    // properties 가져오기 위해서 @EnableConfigurationProperties 설정과 같이 사용
+    @Mock
+    private MakeUrlService makeUrlService;
 
     // Properties value를 Mockito를 실행할 때 못가져 오는 것도 그렇고,
     // 굳이 직접 서버의 주소를 가져다 쓰는 것은 안좋을 것 같아서 null로 고정
@@ -50,12 +57,8 @@ public class ApiClientTest {
         UserCreateRequestDTO userCreateRequestDTO = createUserCreateRequestDTO();
 
         // When
-        when(
-                customRestTemplate.exchange(
-                        null,
-                        HttpMethod.POST,
-                        createHttpPostEntity(userCreateRequestDTO),
-                        ResponseDTO.class)
+        when(customRestTemplate.exchange(
+                        null, HttpMethod.POST, createHttpPostEntity(userCreateRequestDTO), ResponseDTO.class)
         ).thenReturn(responseEntity);
 
         // Then

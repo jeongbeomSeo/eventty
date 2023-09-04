@@ -21,6 +21,11 @@ repositories {
 	mavenCentral()
 }
 
+/*test.onlyIf {
+	!project.hasProperty('test')
+}*/
+
+
 dependencies {
 	// Web, valication
 	implementation 'org.springframework.boot:spring-boot-starter-web'
