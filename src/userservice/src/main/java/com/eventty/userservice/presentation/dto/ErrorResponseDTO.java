@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Setter
 @Getter
-@ToString
 public class ErrorResponseDTO extends ResponseDTO {
 
     private final List<FieldError> errors;
