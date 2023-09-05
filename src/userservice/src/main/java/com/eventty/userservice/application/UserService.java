@@ -3,7 +3,6 @@ package com.eventty.userservice.application;
 import com.eventty.userservice.application.dto.*;
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
-import com.eventty.userservice.application.dto.response.UserCreateAndUpdateResponseDTO;
 import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.domain.UserEntity;
 import com.eventty.userservice.domain.exception.UserInfoNotFoundException;
@@ -11,7 +10,6 @@ import com.eventty.userservice.domain.UserJPARepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +24,8 @@ public class UserService {
     private final UserJPARepository userJPARepository;
 
     @Transactional
-    public UserCreateAndUpdateResponseDTO createUser(UserCreateRequestDTO userCreateRequestDTO){
-        return new UserCreateAndUpdateResponseDTO(userJPARepository.save(userCreateRequestDTO.toEntity()));
+    public UserEntity createUser(UserCreateRequestDTO userCreateRequestDTO){
+        return userJPARepository.save(userCreateRequestDTO.toEntity());
     }
 
     @Transactional
@@ -36,9 +34,9 @@ public class UserService {
     }
 
     @Transactional
-    public UserCreateAndUpdateResponseDTO updateUser(Long id, UserUpdateRequestDTO userUpdateRequestDTO){
+    public UserEntity updateUser(Long id, UserUpdateRequestDTO userUpdateRequestDTO){
         UserUpdateDTO userUpdateDTO = new UserUpdateDTO(findUserByEMAndDB(id));
-        return new UserCreateAndUpdateResponseDTO(userJPARepository.save(userUpdateDTO.toEntity(userUpdateRequestDTO)));
+        return userJPARepository.save(userUpdateDTO.toEntity(userUpdateRequestDTO));
     }
 
     private UserEntity findUserByEMAndDB(Long id){
