@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS event_details (
     content VARCHAR(2000),
     apply_start_at DATETIME NULL,
     apply_end_at DATETIME NULL,
-    views BIGINT,
+    views BIGINT DEFAULT(0),
     delete_date DATETIME NULL,
     update_date DATETIME NULL,
     create_date DATETIME NULL

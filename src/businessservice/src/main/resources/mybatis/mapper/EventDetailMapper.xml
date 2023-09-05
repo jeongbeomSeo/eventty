@@ -34,6 +34,13 @@
         WHERE id = #{id}
     </update>
 
+    <!-- 이벤트 상세정보 수정 -->
+    <update id="updateView" parameterType="java.lang.Long">
+        UPDATE event_details
+        SET views = views + 1
+        WHERE id = #{id}
+    </update>
+
     <!--이벤트 상세정보 삭제-->
     <update id="deleteEventDetail" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
         UPDATE event_details

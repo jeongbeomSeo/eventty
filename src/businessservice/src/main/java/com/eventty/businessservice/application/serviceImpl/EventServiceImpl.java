@@ -38,6 +38,9 @@ public class EventServiceImpl implements EventService {
         EventWithDetailResponseDTO eventWithDetail = eventRepository.selectEventWithDetailById(eventId);
         List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
 
+        // 조회수 업데이트 쿼리 execute
+        eventDetailRepository.updateView(eventId);
+
         // 티켓이 없을 경우 "티켓이 모두 매진되었습니다."
 
         if(eventWithDetail == null){
