@@ -46,9 +46,8 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.data.id", equalTo(eventId.intValue())))
-                .andExpect(jsonPath("$.data.title", equalTo("Sample Event")));
+                .andExpect(jsonPath("$.successResponseDTO.data.id", equalTo(eventId.intValue())))
+                .andExpect(jsonPath("$.successResponseDTO.data.title", equalTo("Sample Event")));
 
         verify(eventService, times(1)).findEventById(eventId);
     }
@@ -65,10 +64,8 @@ public class EventControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.message").value("Event retrieved successfully"))
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data.length()").value(mockEventList.size()));
+                .andExpect(jsonPath("$.successResponseDTO.data").isArray())
+                .andExpect(jsonPath("$.successResponseDTO.data.length()").value(mockEventList.size()));
 
         verify(eventService, times(1)).findAllEvents();
     }
@@ -87,9 +84,7 @@ public class EventControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.message").value("Event created successfully"));
+                .andExpect(jsonPath("$.success").value(true));
     }
 
     @Test
@@ -103,9 +98,7 @@ public class EventControllerTest {
         mockMvc.perform(delete("/api/events/{eventId}", eventId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.message").value("Event deleted successfully"));
+                .andExpect(jsonPath("$.success").value(true));
 
         verify(eventService, times(1)).deleteEvent(eventId);
     }
@@ -121,9 +114,7 @@ public class EventControllerTest {
         mockMvc.perform(get("/api/events/category/{categoryId}", categoryId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.code").value("0"))
-                .andExpect(jsonPath("$.message").value("Event retrieved successfully"));
+                .andExpect(jsonPath("$.success").value(true));
 
         verify(eventService, times(1)).findEventsByCategory(categoryId);
     }

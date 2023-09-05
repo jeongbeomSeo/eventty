@@ -2,7 +2,9 @@ package com.eventty.businessservice.presentation;
 
 import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
 import com.eventty.businessservice.application.dto.request.EventFullUpdateRequestDTO;
-import com.eventty.businessservice.common.Enum.SuccessCode;
+import com.eventty.businessservice.common.Enum.ErrorCode;
+import com.eventty.businessservice.common.annotation.ApiErrorCode;
+import com.eventty.businessservice.common.annotation.ApiSuccessData;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
@@ -33,6 +35,8 @@ public class EventController {
      */
     @GetMapping( "/{eventId}")
     @Operation(summary = "특정 행사 조회")
+    @ApiSuccessData(EventFindByIdWithDetailResponseDTO.class)
+    @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<EventFindByIdWithDetailResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId){
         // 행사 기본 정보 + 상세 정보 + 티켓
         EventFindByIdWithDetailResponseDTO data = eventService.findEventById(eventId);
@@ -48,6 +52,8 @@ public class EventController {
      */
     @GetMapping( "")
     @Operation(summary = "행사 전체 조회")
+    @ApiSuccessData(EventFindAllResponseDTO.class)
+    @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventFindAllResponseDTO>>> findAllEvents() {
         // 행사 기본 정보 (Event) 만 열거
         List<EventFindAllResponseDTO> eventList = eventService.findAllEvents();
@@ -63,7 +69,8 @@ public class EventController {
      */
     @PostMapping("")
     @Operation(summary = "행사 주최")
-    public ResponseEntity<SuccessResponseDTO<?>> postEvent(@RequestBody EventFullCreateRequestDTO eventFullCreateRequestDTO){
+    @ApiSuccessData()
+    public ResponseEntity<Void> postEvent(@RequestBody EventFullCreateRequestDTO eventFullCreateRequestDTO){
 
         Long newEventId = eventService.createEvent(eventFullCreateRequestDTO);
 
@@ -79,6 +86,7 @@ public class EventController {
      */
     @PutMapping(value = "/{eventId}")
     @Operation(summary = "행사 수정")
+    @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<Long>> postEvent(
             @PathVariable Long eventId,
             @RequestBody EventFullUpdateRequestDTO eventFullUpdateRequestDTO){
@@ -87,7 +95,8 @@ public class EventController {
 
         return ResponseEntity
                 .status(UPDATE_EVENT_SUCCESS.getStatus())
-                .body(SuccessResponseDTO.of(updatedEventId));
+                .body(null);
+                //.body(SuccessResponseDTO.of(updatedEventId));
     }
 
 
@@ -97,13 +106,15 @@ public class EventController {
      */
     @DeleteMapping("/{eventId}")
     @Operation(summary = "행사 삭제")
+    @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(@PathVariable @Min(1) Long eventId){
 
         Long deleteEventId = eventService.deleteEvent(eventId);
 
         return ResponseEntity
                 .status(DELETE_EVENT_SUCCESS.getStatus())
-                .body(SuccessResponseDTO.of(deleteEventId));
+                .body(null);
+                //.body(SuccessResponseDTO.of(deleteEventId));
     }
 
 
@@ -113,6 +124,8 @@ public class EventController {
      */
     @GetMapping( "/category/{categoryId}")
     @Operation(summary = "카테고리 별 행사 조회")
+    @ApiSuccessData(EventFindAllResponseDTO.class)
+    @ApiErrorCode(ErrorCode.CATEGORY_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventFindAllResponseDTO>>> findEventsByCategory(
             @PathVariable Long categoryId
     ) {

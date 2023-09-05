@@ -1,13 +1,10 @@
 package com.eventty.businessservice.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString
+@ToString @Setter
 @Getter @NoArgsConstructor
 public class ResponseDTO<T> {
 

@@ -4,12 +4,12 @@ import com.eventty.businessservice.domain.entity.EventEntity;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class EventFindAllResponseDTO {
     private Long id;
@@ -38,5 +38,20 @@ public class EventFindAllResponseDTO {
             .isActive(eventEntity.getIsActive())
             .isDeleted(eventEntity.getIsDeleted())
             .build();
+    }
+
+    // Swagger 을 위하여 기본 생성자로 기본값 설정
+    public EventFindAllResponseDTO() {
+        this.id = 1L;
+        this.hostId = 1L;
+        this.title = "String";
+        this.image = "String";
+        this.eventStartAt = Timestamp.valueOf(LocalDateTime.now());
+        this.eventEndAt = Timestamp.valueOf(LocalDateTime.now());
+        this.participateNum = 1L;
+        this.location = "String";
+        this.category = 1L;
+        this.isActive = true;
+        this.isDeleted = false;
     }
 }
