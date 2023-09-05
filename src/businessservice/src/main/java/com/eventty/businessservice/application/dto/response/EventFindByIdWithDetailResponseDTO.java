@@ -1,6 +1,5 @@
 package com.eventty.businessservice.application.dto.response;
 
-import com.eventty.businessservice.domain.EventWithDetailDTO;
 import com.eventty.businessservice.domain.entity.TicketEntity;
 import lombok.*;
 
@@ -33,7 +32,7 @@ public class EventFindByIdWithDetailResponseDTO {
 
     private List<TicketEntity> tickets;
 
-    public static EventFindByIdWithDetailResponseDTO from(EventWithDetailDTO event, List<TicketEntity> tickets) {
+    public static EventFindByIdWithDetailResponseDTO from(EventWithDetailResponseDTO event, List<TicketEntity> tickets) {
         return EventFindByIdWithDetailResponseDTO.builder()
             .id(event.getId())
             .hostId(event.getHostId())

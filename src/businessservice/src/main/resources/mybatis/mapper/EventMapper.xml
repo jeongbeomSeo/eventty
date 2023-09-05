@@ -18,7 +18,7 @@
         <result property="isDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domain.EventWithDetailDTO">
+    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO">
         <id property="id" column="id"/>
         <result property="hostId" column="host_id"/>
         <result property="title" column="title"/>

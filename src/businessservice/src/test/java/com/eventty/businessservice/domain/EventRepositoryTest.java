@@ -1,5 +1,6 @@
 package com.eventty.businessservice.domain;
 
+import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -59,7 +60,7 @@ public class EventRepositoryTest {
         Long eventId = eventRepository.insertEvent(savedEvent);
 
         // when
-        EventWithDetailDTO event = eventRepository.selectEventWithDetailById(eventId);
+        EventWithDetailResponseDTO event = eventRepository.selectEventWithDetailById(eventId);
 
         // then
         assertNotNull(event);

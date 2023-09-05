@@ -8,7 +8,7 @@ import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
-import com.eventty.businessservice.domain.EventWithDetailDTO;
+import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ public class EventServiceImplTest {
     public void findEventByIdTest_ExistingEvent() {
         // Given
         Long eventId = 1L;
-        EventWithDetailDTO mockEvent = createEventWithDetailDAO(eventId);
+        EventWithDetailResponseDTO mockEvent = createEventWithDetailDAO(eventId);
         when(eventRepository.selectEventWithDetailById(eventId)).thenReturn(mockEvent);
 
         // When
@@ -141,8 +141,8 @@ public class EventServiceImplTest {
             .build();
     }
 
-    private static EventWithDetailDTO createEventWithDetailDAO(Long id){
-        return EventWithDetailDTO.builder()
+    private static EventWithDetailResponseDTO createEventWithDetailDAO(Long id){
+        return EventWithDetailResponseDTO.builder()
                 .id(id)
                 .hostId(1L)
                 .title("Sample Event")

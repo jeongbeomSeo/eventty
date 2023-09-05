@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domain;
+package com.eventty.businessservice.application.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Builder
-public class EventWithDetailDTO {
+public class EventWithDetailResponseDTO {
     private Long id;
     private Long hostId;
     private String title;

@@ -43,15 +43,16 @@ CREATE TABLE categories (
 
 -- 더미데이터 삽입
 
-INSERT INTO categories (id, name) VALUES (1, 'Music');
-INSERT INTO categories (id, name) VALUES (2, 'Sports');
-INSERT INTO categories (id, name) VALUES (3, 'Art');
-INSERT INTO categories (id, name) VALUES (4, 'Food');
-INSERT INTO categories (id, name) VALUES (5, 'Fashion');
-INSERT INTO categories (id, name) VALUES (6, 'Technology');
-INSERT INTO categories (id, name) VALUES (7, 'Health');
-INSERT INTO categories (id, name) VALUES (8, 'Travel');
-INSERT INTO categories (id, name) VALUES (9, 'Education');
+INSERT INTO categories (id, name) VALUES (1, '콘서트');
+INSERT INTO categories (id, name) VALUES (2, '클래식');
+INSERT INTO categories (id, name) VALUES (3, '전시');
+INSERT INTO categories (id, name) VALUES (4, '스포츠');
+INSERT INTO categories (id, name) VALUES (5, '캠핑');
+INSERT INTO categories (id, name) VALUES (6, '아동');
+INSERT INTO categories (id, name) VALUES (7, '영화');
+INSERT INTO categories (id, name) VALUES (8, 'IT');
+INSERT INTO categories (id, name) VALUES (9, '교양');
+INSERT INTO categories (id, name) VALUES (10, 'TOPIC');
 
 -- -- events 테이블 더미 데이터 삽입
 -- INSERT INTO events (id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category)

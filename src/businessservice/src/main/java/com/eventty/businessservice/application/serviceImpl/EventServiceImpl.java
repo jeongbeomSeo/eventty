@@ -4,8 +4,7 @@ import com.eventty.businessservice.application.dto.request.*;
 import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
 import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
 import com.eventty.businessservice.application.service.EventService;
-import com.eventty.businessservice.domain.EventWithDetailDTO;
-import com.eventty.businessservice.domain.entity.CategoryEntity;
+import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.entity.TicketEntity;
@@ -36,7 +35,7 @@ public class EventServiceImpl implements EventService {
     public EventFindByIdWithDetailResponseDTO findEventById(Long eventId){
 
         // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환 예정
-        EventWithDetailDTO eventWithDetail = eventRepository.selectEventWithDetailById(eventId);
+        EventWithDetailResponseDTO eventWithDetail = eventRepository.selectEventWithDetailById(eventId);
         List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
 
         // 티켓이 없을 경우 "티켓이 모두 매진되었습니다."
@@ -115,7 +114,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFindAllResponseDTO> findEventsByCategory(Long categoryId){
 
-        if (categoryId < 1 || categoryId > 9) {
+        if (categoryId < 1 || categoryId > 10) {
             throw CategoryNotFoundException.EXCEPTION;
         }
 
