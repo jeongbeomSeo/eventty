@@ -27,7 +27,7 @@ const customStyle = createStyles((theme) => ({
             },
         },
     },
-    "input-textarea":{
+    "input-textarea": {
         ".mantine-Textarea-input": {
             borderColor: "#cdcdcd",
             color: "#000000 !important",
@@ -64,8 +64,8 @@ const customStyle = createStyles((theme) => ({
             color: "#cdcdcd !important",
         },
     },
-    "input-date-time":{
-        ".mantine-DateTimePicker-input":{
+    "input-date-time": {
+        ".mantine-DateTimePicker-input": {
             ":active, :focus": {
                 borderColor: "var(--primary)",
             },
@@ -82,11 +82,42 @@ const customStyle = createStyles((theme) => ({
             color: "#cdcdcd !important",
         },
     },
+    "input-select": {
+        input: {
+            borderColor: "#cdcdcd",
+            color: "#000000 !important",
+            "::placeholder": {
+                color: "#cdcdcd !important",
+            },
+            ":focus": {
+                borderColor: "var(--primary)",
+            },
+        },
+        ".mantine-Select-item": {
+            "&[data-selected]": {
+                backgroundColor: "var(--primary) !important",
+                "&[data-hovered]": {
+                    filter: "brightness(0.96)",
+                },
+            },
+        },
+    },
+    "input-checkbox": {
+        ".mantine-Checkbox-input:checked": {
+            background: "var(--primary)",
+            borderColor: "var(--primary)",
+        },
+        "&.signup": {
+            label: {
+                fontSize: "0.5rem",
+            },
+        },
+    },
     "btn-primary": {
         backgroundColor: "var(--primary)",
         ":hover": {
             backgroundColor: "var(--primary)",
-            filter: "brightness(0.98)",
+            filter: "brightness(0.96)",
         },
         "&.disable": {
             background: "#e6e6e6",
@@ -105,7 +136,7 @@ const customStyle = createStyles((theme) => ({
     "btn-gray": {
         backgroundColor: "#b3b3b3 !important",
         ":hover": {
-            filter: "brightness(0.98)",
+            filter: "brightness(0.96)",
         }
     },
     "btn-gray-outline": {
@@ -113,7 +144,7 @@ const customStyle = createStyles((theme) => ({
         borderColor: "#b3b3b3 !important",
         color: "#666666 !important",
         ":hover": {
-            filter: "brightness(0.98)",
+            filter: "brightness(0.96)",
         }
     },
     "signup-footer": {
@@ -126,15 +157,6 @@ const customStyle = createStyles((theme) => ({
         whiteSpace: "pre-line",
         padding: "3rem 0 1rem 0",
         color: "#666666",
-    },
-    "signup-checkbox": {
-        ".mantine-Checkbox-input:checked": {
-            background: "var(--primary)",
-            borderColor: "var(--primary)",
-        },
-        label: {
-            fontSize: "0.5rem",
-        },
     },
     "web-nav-link": {
         fontWeight: "bold",

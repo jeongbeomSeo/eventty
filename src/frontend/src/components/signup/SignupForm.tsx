@@ -29,7 +29,6 @@ function SignupForm(props: { isHost: boolean }) {
     } = useForm<ISignup>({mode: "onChange"});
 
     const emailInputValue = watch("email");
-    const nicknameInputValue = watch("nickname");
     const [isEmailValid, setIsEmailValid] = useState(false);
     const [isNicknameValid, setIsNicknameValid] = useState(false);
 
@@ -64,26 +63,6 @@ function SignupForm(props: { isHost: boolean }) {
         } else {
             alert("이메일을 입력해주세요")
             setIsEmailValid(false);
-        }
-    }
-
-    const onNicknameValid = () => {
-        if (typeof nicknameInputValue !== "undefined" && nicknameInputValue !== "") {
-            if (errors.nickname) {
-                alert("사용 불가능");
-                setIsNicknameValid(false);
-            } else {
-                if (userStateValue.nickname !== nicknameInputValue) {
-                    alert("사용 가능");
-                    setIsNicknameValid(true);
-                } else {
-                    alert("중복된 닉네임");
-                    setIsNicknameValid(false);
-                }
-            }
-        } else {
-            alert("닉네임을 입력해주세요")
-            setIsNicknameValid(false);
         }
     }
 
@@ -177,25 +156,6 @@ function SignupForm(props: { isHost: boolean }) {
                            error={errors.phone && errors.phone?.message}
                            className={`${classes["input"]} ${errors.phone && "error"}`}
                            onInput={handlePhoneInputChange}/>
-                <Grid>
-                    <Grid.Col span={"auto"}>
-                        <TextInput {...register("nickname", {
-                            required: "닉네임을 입력해주세요",
-                            minLength: {
-                                value: 2,
-                                message: "최소 2글자 이상 입력해주세요",
-                            },
-                        })}
-                                   placeholder={"닉네임"}
-                                   label={"닉네임"}
-                                   error={errors.nickname && errors.nickname?.message}
-                                   className={`${classes["input"]} ${errors.nickname && "error"}`}/>
-                    </Grid.Col>
-                    <Grid.Col span={"content"}>
-                        <Button className={classes["btn-primary"]} style={{marginTop: "24px"}}
-                                onClick={onNicknameValid}>중복확인</Button>
-                    </Grid.Col>
-                </Grid>
                 <Controller control={control}
                             name={"birth"}
                             rules={{required: "날짜를 선택해주세요"}}
@@ -207,18 +167,17 @@ function SignupForm(props: { isHost: boolean }) {
                                                 error={errors.birth && errors.birth?.message}/>
                             )}/>
                 <TextInput {...register("address", {
-                    required: "주소를 입력해주세요"
+                    required: true
                 })}
                            placeholder="주소"
                            label="주소"
-                           error={errors.address && errors.address?.message}
-                           className={`${classes["input"]} ${errors.address && "error"}`}/>
+                           className={classes["input"]}/>
                 <Checkbox {...register("termsOfService",{
                     required: "약관에 동의해주세요"
                 })}
                           label={"서비스 이용 약관과 개인정보 취급 방침 및 개인정보 3자 제공 동의"}
                           error={errors.termsOfService && errors.termsOfService?.message}
-                          className={classes["signup-checkbox"]}
+                          className={`${classes["input-checkbox"]} signup`}
                 />
                 <Button type="submit" className={classes["btn-primary"]}>
                     회원가입

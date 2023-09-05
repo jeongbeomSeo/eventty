@@ -8,9 +8,8 @@ export const userState = atom({
         passwordConfirm: "",
         name: "",
         phone: "",
-        nickname: "",
         birth: new Date(Date.now()),
         address: "",
-        isHost: false,
+        isHost: true,
     },
 })

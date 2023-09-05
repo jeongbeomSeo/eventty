@@ -20,6 +20,9 @@ const globalStyle = createGlobalStyle`
     --primary: #7536DC;
   }
 
+  .toastui-editor-contents {
+    font-size: 12pt;
+  }
   // TOAST UI Editor 모바일 환경 시, 툴바 overflow 문제 대응
   .toastui-editor-dropdown-toolbar {
     max-width: none;

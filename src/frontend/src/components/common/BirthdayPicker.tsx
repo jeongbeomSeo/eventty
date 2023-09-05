@@ -17,7 +17,7 @@ function BirthdayPicker(props:IDatePicker) {
                          weekendDays={[0]}
                          firstDayOfWeek={0}
                          // minDate={new Date(currentDate.getFullYear()-120, 1, 1)}
-                         // maxDate={new Date(currentDate.getFullYear()-14, currentDate.getMonth(), currentDate.getDate())}
+                         maxDate={new Date(currentDate.getFullYear()-14, currentDate.getMonth(), currentDate.getDate())}
                          getDayProps={(date) => {
                              if (date.getDay() === 6) {
                                  return {

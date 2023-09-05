@@ -41,8 +41,8 @@ function WebProfile() {
                     </Stack>
 
                     <Stack style={{width: "100%"}}>
-                        <TextInput label={"이메일"} withAsterisk disabled className={classes["input"]}/>
-                        <TextInput label={"닉네임"} className={classes["input"]}/>
+                        <TextInput label={"이메일"} disabled className={classes["input"]}/>
+                        <TextInput label={"이름"} className={classes["input"]}/>
                         <PhoneNumberInput value={phoneNumber} onInput={handlePhoneNumberChange}/>
                         <BirthdayPicker label={"생년월일"} value={selectedDate} onChange={handleDateChange}/>
                         <Group position={"right"}>

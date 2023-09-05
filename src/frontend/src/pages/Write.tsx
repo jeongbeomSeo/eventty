@@ -1,89 +1,211 @@
-import React, {useRef, useState} from "react";
-import {Button, Container, Group, Input, Select, Stack, Textarea, TextInput, Title} from "@mantine/core";
+import React, {useEffect, useRef, useState} from "react";
+import {
+    Button, Center,
+    Container, Flex,
+    Group, NumberInput,
+    Paper,
+    Select, SimpleGrid,
+    Stack, Text,
+    TextInput,
+    Title,
+    UnstyledButton
+} from "@mantine/core";
 import customStyle from "../styles/customStyle";
-import {DatePicker, DateTimePicker, TimeInput} from "@mantine/dates";
-import {Controller, useForm} from "react-hook-form";
-import {IEvent, IEventWrite} from "../types/IEvent";
+import {Controller, FormProvider, useFieldArray, useForm} from "react-hook-form";
+import {IEventTicket, IEventWrite} from "../types/IEvent";
 import ToastEditor from "../components/common/ToastEditor";
 import {Editor} from "@toast-ui/react-editor";
 import WriteHeader from "../components/display/WriteHeader";
 import {
-    IconBallBaseball, IconBook,
-    IconCalendar, IconCode,
+    IconBallBaseball, IconBook, IconCode,
     IconHandRock,
     IconHorseToy, IconMovie,
     IconPalette,
-    IconPiano, IconPresentation,
-    IconTent
+    IconPiano, IconPlus, IconPresentation, IconSquareRoundedPlusFilled,
+    IconTent, IconX
 } from "@tabler/icons-react";
-import EventDatePicker from "../components/common/EventDatePicker";
+import EventDatePicker from "../components/write/EventDatePicker";
+import TicketSubmitModal from "../components/write/TicketSubmitModal";
+import TicketEditModal from "../components/write/TicketEditModal";
+import {CheckMobile} from "../util/CheckMobile";
 
 function Write() {
     const {classes} = customStyle();
+    const isMobile = CheckMobile();
+    const [ticketModalOpened, setTicketModalOpened] = useState(false);
+    const [ticketEditModalOpened, setTicketEditModalOpened] = useState(false);
     const editorRef = useRef<Editor>(null);
 
-    const {register, handleSubmit, control, watch, getValues, formState: {errors}} = useForm<IEventWrite>();
+    const {register, handleSubmit, control, watch, getValues, setValue, formState: {errors}} = useForm<IEventWrite>();
+    const {fields, append, remove, update} = useFieldArray({
+        control,
+        name: "ticket",
+        rules: {
+            required: "티켓을 설정해주세요",
+        }
+    });
+
+    const ticketMethods = useForm<IEventTicket>();
+    const ticketEditMethods = useForm<IEventTicket>();
 
     const currentDate = new Date();
     const CATEGORY_LIST = [
-        {label: "콘서트", value: "1", icon: <IconHandRock/>},
-        {label: "클래식", value: "2", icon: <IconPiano/>},
-        {label: "전시", value: "3", icon: <IconPalette/>},
-        {label: "스포츠", value: "4", icon: <IconBallBaseball/>},
-        {label: `캠핑`, value: "5", icon: <IconTent/>},
-        {label: "아동", value: "6", icon: <IconHorseToy/>},
-        {label: "영화", value: "7", icon: <IconMovie/>},
-        {label: "IT", value: "8", icon: <IconCode/>},
-        {label: "교양", value: "9", icon: <IconBook/>},
-        {label: "TOPIC", value: "10", icon: <IconPresentation/>},
+        {label: "콘서트", value: "concert", icon: <IconHandRock/>},
+        {label: "클래식", value: "classic", icon: <IconPiano/>},
+        {label: "전시", value: "art", icon: <IconPalette/>},
+        {label: "스포츠", value: "sports", icon: <IconBallBaseball/>},
+        {label: "캠핑", value: "camping", icon: <IconTent/>},
+        {label: "아동", value: "kids", icon: <IconHorseToy/>},
+        {label: "영화", value: "movie", icon: <IconMovie/>},
+        {label: "IT", value: "it", icon: <IconCode/>},
+        {label: "교양", value: "elective", icon: <IconBook/>},
+        {label: "TOPIC", value: "topic", icon: <IconPresentation/>},
     ];
+    const TICKET_LIMIT = 3;
+    const [ticketEdit, setTicketEdit] = useState<IEventTicket | null>(null);
+    const [ticketIdx, setTicketIdx] = useState(0);
+    const disabledTitle = fields.map((ticket) => ticket.title);
 
     const onSubmit = (data: IEventWrite) => {
-
+        data.content = editorRef.current?.getInstance().getMarkdown()!;
+        console.log(data);
     }
 
-    console.log(watch("eventStartAt") + "\n" + watch("eventEndAt"))
+    const onTicketCreate = (data: IEventTicket) => {
+        append(data);
+    }
+
+    const onTicketEdit = (data: IEventTicket) => {
+        update(ticketIdx, data);
+    }
+
+    const handleTicketModalOpened = () => {
+        setTicketModalOpened(prev => !prev);
+    }
+
+    const handleTicketEditModalOpened = (data: IEventTicket, idx: number) => {
+        setTicketEdit(data);
+        setTicketIdx(idx);
+        setTicketEditModalOpened(prev => !prev);
+    }
+
+    const ticketItems = fields.map((item, idx) => {
+        return (
+            <UnstyledButton key={item.id} onClick={() => handleTicketEditModalOpened(item, idx)}>
+                <Paper withBorder p={"1rem"}
+                       style={{width: "180px", height: "120px", position: "relative"}}
+                       className={classes["ticket-select"]}>
+                    <IconX size={"1rem"}
+                           style={{top: "1rem", right: "1rem", position: "absolute"}}
+                           onClick={(event) => {
+                               event.stopPropagation();
+                               remove(idx);
+                           }}/>
+                    <Stack spacing={"0.5rem"}>
+                        <Title order={4}>{item.title}</Title>
+                        <Text>{item.limit}명</Text>
+                        <Text>{item.price === 0 ? "무료" : `${item.price}원`}</Text>
+                    </Stack>
+                </Paper>
+            </UnstyledButton>
+        )
+    });
+
+    console.log();
 
     return (
         <>
+            {/* 티켓 등록 Modal */}
+            <FormProvider {...ticketMethods}>
+                <form onSubmit={ticketMethods.handleSubmit(onTicketCreate)}>
+                    <TicketSubmitModal open={ticketModalOpened}
+                                       title={disabledTitle}/>
+                </form>
+            </FormProvider>
+
+            {/* 티켓 수정 Modal */}
+            {ticketEdit !== null &&
+                <FormProvider {...ticketEditMethods}>
+                    <form onSubmit={ticketEditMethods.handleSubmit(onTicketEdit)}>
+                        <TicketEditModal open={ticketEditModalOpened}
+                                         title={disabledTitle}
+                                         data={ticketEdit}/>
+                    </form>
+                </FormProvider>
+            }
+
             <form onSubmit={handleSubmit(onSubmit)}>
                 {<WriteHeader/>}
                 <Container>
                     <Stack style={{margin: "5vh auto 15vh"}} spacing={"3rem"}>
-                        <div>
+                        <Stack>
                             <Title order={3}>제목</Title>
                             <TextInput {...register("title", {
                                 required: "제목을 입력해주세요",
                             })}
-                                       error={errors.title && errors.title?.message}
+                                       error={errors.title?.message}
                                        className={`${classes["input"]} ${errors.title && "error"}`}/>
-                        </div>
+                        </Stack>
 
-                        <div>
+                        <Stack align={"flex-start"}>
                             <Title order={3}>카테고리</Title>
-                            <Group spacing={"0.5rem"}>
-                                {/*<Button compact radius={"5rem"} className={classes["btn-primary"]}>category</Button>
-                                <Button compact radius={"5rem"}
-                                        className={classes["btn-primary-outline"]}>category</Button>*/}
-                                <Controller control={control}
-                                            name={"category"}
-                                            rules={{required: "카테고리를 선택해주세요"}}
-                                            render={({field}) => (
-                                                <Select
-                                                    {...field}
-                                                    data={CATEGORY_LIST}
-                                                    error={errors.category && errors.category.message}/>
-                                            )}/>
-                            </Group>
-                        </div>
+                            <Controller control={control}
+                                        name={"category"}
+                                        rules={{required: "카테고리를 선택해주세요"}}
+                                        render={({field}) => (
+                                            <Select
+                                                {...field}
+                                                data={CATEGORY_LIST}
+                                                error={errors.category?.message}
+                                                placeholder={"카테고리"}
+                                                style={{width: isMobile ? "50vw" : "300px"}}
+                                                className={classes["input-select"]}/>
+                                        )}/>
+                        </Stack>
 
-                        <div>
+                        <Stack align={"flex-start"}>
+                            <Title order={3}>인원</Title>
+                            <Controller control={control}
+                                        name={"participateNum"}
+                                        rules={{
+                                            required: "인원을 입력해주세요",
+                                            validate: (value) => value > 0 || "최소 1명 이상 입력해주세요",
+                                        }}
+                                        render={({field}) => (
+                                            <NumberInput
+                                                {...field}
+                                                min={0}
+                                                type={"number"}
+                                                style={{width: isMobile ? "50vw" : "300px"}}
+                                                error={errors.participateNum?.message}
+                                                className={classes["input"]}/>
+                                        )}/>
+                        </Stack>
+
+                        <Stack>
                             <Title order={3}>티켓 정보</Title>
-                            <div>티켓 영역</div>
-                        </div>
+                            <Group>
+                                {ticketItems}
+                                <UnstyledButton onClick={handleTicketModalOpened}
+                                                hidden={ticketItems.length === TICKET_LIMIT}>
+                                    <Paper style={{
+                                        border: "1px dashed #cdcdcd",
+                                        color: "#cdcdcd",
+                                        width: "180px",
+                                        height: "120px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <IconPlus/>
+                                    </Paper>
+                                </UnstyledButton>
+                            </Group>
+                            <Text className={"mantine-mve552"}>{errors.ticket?.root?.message}</Text>
+                        </Stack>
 
                         <Group spacing={"2.5rem"}>
-                            <div>
+                            <Stack>
                                 <Title order={3}>행사 일정</Title>
                                 <Stack>
                                     <Group>
@@ -95,7 +217,7 @@ function Write() {
                                                         <EventDatePicker
                                                             {...field}
                                                             minDate={currentDate}
-                                                            error={errors.eventStartAt && errors.eventStartAt.message}/>
+                                                            error={errors.eventStartAt?.message}/>
                                                     )}/>
                                     </Group>
 
@@ -111,12 +233,12 @@ function Write() {
                                                         <EventDatePicker
                                                             {...field}
                                                             minDate={watch("eventStartAt")}
-                                                            error={errors.eventEndAt && errors.eventEndAt.message}/>
+                                                            error={errors.eventEndAt?.message}/>
                                                     )}/>
                                     </Group>
                                 </Stack>
-                            </div>
-                            <div>
+                            </Stack>
+                            <Stack>
                                 <Title order={3}>예약 일정</Title>
                                 <Stack>
                                     <Group>
@@ -128,7 +250,7 @@ function Write() {
                                                         <EventDatePicker
                                                             {...field}
                                                             minDate={currentDate}
-                                                            error={errors.applyStartAt && errors.applyStartAt.message}/>
+                                                            error={errors.applyStartAt?.message}/>
                                                     )}/>
                                     </Group>
 
@@ -144,37 +266,42 @@ function Write() {
                                                         <EventDatePicker
                                                             {...field}
                                                             minDate={watch("applyStartAt")}
-                                                            error={errors.applyEndAt && errors.applyEndAt.message}/>
+                                                            error={errors.applyEndAt?.message}/>
                                                     )}/>
                                     </Group>
                                 </Stack>
-                            </div>
+                            </Stack>
                         </Group>
 
-                        <Title order={3}>커버 이미지</Title>
+                        <Stack>
+                            <Title order={3}>커버 이미지</Title>
+                        </Stack>
 
-                        <div>
-                            <Title order={3}>소개</Title>
-                            <Textarea
-                                placeholder={"150자 이내로 작성해주세요"}
-                                maxLength={150}
-                                minRows={4}
-                                className={classes["input-textarea"]}/>
-                        </div>
-
-                        <div>
+                        <Stack>
                             <Title order={3}>내용</Title>
-                            <ToastEditor editorRef={editorRef}/>
-                        </div>
+                            <Controller control={control}
+                                        name={"content"}
+                                        rules={{required: "내용을 입력해주세요"}}
+                                        defaultValue={""}
+                                        render={({field}) => (
+                                            <>
+                                                <ToastEditor
+                                                    content={field.value}
+                                                    onChange={field.onChange}
+                                                    editorRef={editorRef}/>
+                                                <Text className={"mantine-mve552"}>{errors.content?.message}</Text>
+                                            </>
+                                        )}/>
+                        </Stack>
 
-                        <div>
+                        <Stack>
                             <Title order={3}>장소</Title>
                             <TextInput {...register("location", {
                                 required: "장소를 입력해주세요",
                             })}
-                                       error={errors.location && errors.location?.message}
+                                       error={errors.location?.message}
                                        className={`${classes["input"]} ${errors.location && "error"}`}/>
-                        </div>
+                        </Stack>
                     </Stack>
                 </Container>
             </form>

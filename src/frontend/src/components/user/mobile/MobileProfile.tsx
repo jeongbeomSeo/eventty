@@ -36,12 +36,12 @@ function MobileProfile() {
         <Stack>
             <Title order={3}>프로필</Title>
             <PaperItem>
-                <Center>
+                <Stack align={"center"}>
                     <Avatar size={"6rem"} radius={"6rem"}/>
-                    {/*<Button className={classes["btn-primary"]}>이미지 변경</Button>*/}
-                </Center>
-                <TextInput label={"이메일"} withAsterisk className={classes["input"]}/>
-                <TextInput label={"닉네임"} className={classes["input"]}/>
+                    <Button className={classes["btn-primary"]}>이미지 변경</Button>
+                </Stack>
+                <TextInput label={"이메일"} disabled className={classes["input"]}/>
+                <TextInput label={"이름"} className={classes["input"]}/>
                 <TextInput label={"휴대폰 번호"}
                            maxLength={13}
                            value={phoneNumber}

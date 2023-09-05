@@ -56,7 +56,10 @@ function WebEventsDetailBtn(props: IEventState) {
     const {classes} = customStyle();
 
     return (
-        <UnstyledButton style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
+        <UnstyledButton
+            component={Link}
+            to={`/events/${props.id}`}
+            style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
             <Group noWrap position={"apart"} style={{opacity: props.state === 2 ? "0.3" : "",}}>
                 <Group>
                     <Image src={""}
@@ -75,7 +78,7 @@ function WebEventsDetailBtn(props: IEventState) {
                 {props.state !== 2 &&
                     <Button component={Link}
                             to={`/applices/${props.id}`}
-                        className={classes["btn-primary"]}>
+                            className={classes["btn-primary"]}>
                         신청내역
                     </Button>}
             </Group>
