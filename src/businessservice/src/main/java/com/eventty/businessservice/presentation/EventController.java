@@ -37,10 +37,9 @@ public class EventController {
         // 행사 기본 정보 + 상세 정보 + 티켓
         EventFindByIdWithDetailResponseDTO data = eventService.findEventById(eventId);
 
-        SuccessCode code = GET_EVENT_INFO_SUCCESS;
         return ResponseEntity
-                .status(code.getStatus())
-                .body(SuccessResponseDTO.of(data, code));
+                .status(GET_EVENT_INFO_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(data));
     }
 
     /**
@@ -53,10 +52,9 @@ public class EventController {
         // 행사 기본 정보 (Event) 만 열거
         List<EventFindAllResponseDTO> eventList = eventService.findAllEvents();
 
-        SuccessCode code = GET_EVENT_INFO_SUCCESS;
         return ResponseEntity
-                .status(code.getStatus())
-                .body(SuccessResponseDTO.of(eventList, code));
+                .status(GET_EVENT_INFO_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(eventList));
     }
 
     /**
@@ -69,10 +67,10 @@ public class EventController {
 
         Long newEventId = eventService.createEvent(eventFullCreateRequestDTO);
 
-        SuccessCode code = CREATE_EVENT_SUCCESS;
         return ResponseEntity
-                .status(code.getStatus())
-                .body(SuccessResponseDTO.of(newEventId, code));
+                .status(CREATE_EVENT_SUCCESS.getStatus())
+                .body(null);
+                //.body(SuccessResponseDTO.of(newEventId));
     }
 
     /**
@@ -87,10 +85,9 @@ public class EventController {
 
         Long updatedEventId = eventService.updateEvent(eventId, eventFullUpdateRequestDTO);
 
-        SuccessCode code = UPDATE_EVENT_SUCCESS;
         return ResponseEntity
-                .status(code.getStatus())
-                .body(SuccessResponseDTO.of(updatedEventId, code));
+                .status(UPDATE_EVENT_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(updatedEventId));
     }
 
 
@@ -104,10 +101,9 @@ public class EventController {
 
         Long deleteEventId = eventService.deleteEvent(eventId);
 
-        SuccessCode code = DELETE_EVENT_SUCCESS;
         return ResponseEntity
-                .status(code.getStatus())
-                .body(SuccessResponseDTO.of(deleteEventId, code));
+                .status(DELETE_EVENT_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(deleteEventId));
     }
 
 
@@ -122,10 +118,9 @@ public class EventController {
     ) {
         List<EventFindAllResponseDTO> events = eventService.findEventsByCategory(categoryId);
 
-        SuccessCode code = GET_EVENT_INFO_SUCCESS;
         return ResponseEntity
-                .status(code.getStatus())
-                .body(SuccessResponseDTO.of(events, code));
+                .status(GET_EVENT_INFO_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(events));
     }
 
 }
