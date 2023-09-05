@@ -109,8 +109,8 @@
         SELECT *
         FROM events e
              INNER JOIN categories c ON e.category = c.id
-        WHERE is_deleted = false
-        AND c.id = #{categoryId}
+        WHERE c.id = #{categoryId}
+        AND is_deleted = false
     </select>
 
 </mapper>

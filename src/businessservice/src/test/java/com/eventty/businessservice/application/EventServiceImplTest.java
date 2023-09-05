@@ -6,10 +6,13 @@ import com.eventty.businessservice.application.dto.response.EventFindAllResponse
 import com.eventty.businessservice.application.serviceImpl.EventServiceImpl;
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domain.entity.TicketEntity;
+import com.eventty.businessservice.domain.exception.CategoryNotFoundException;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domain.repository.EventRepository;
 import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
 import com.eventty.businessservice.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.domain.repository.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +35,9 @@ public class EventServiceImplTest {
     @Mock
     private EventDetailRepository eventDetailRepository;
 
+    @Mock
+    private TicketRepository ticketRepository;
+
     @InjectMocks
     private EventServiceImpl eventService;
 
@@ -42,7 +47,10 @@ public class EventServiceImplTest {
         // Given
         Long eventId = 1L;
         EventWithDetailResponseDTO mockEvent = createEventWithDetailDAO(eventId);
+        List<TicketEntity> mockTickets = createTickets(); // 필요에 따라 만들어야 합니다.
+
         when(eventRepository.selectEventWithDetailById(eventId)).thenReturn(mockEvent);
+        when(ticketRepository.selectTicketByEventId(eventId)).thenReturn(mockTickets);
 
         // When
         EventFindByIdWithDetailResponseDTO responseDTO = eventService.findEventById(eventId);
@@ -60,11 +68,11 @@ public class EventServiceImplTest {
     public void findEventByIdTest_NonExistingEvent() {
         // Given
         Long eventId = 1L;
-        when(eventRepository.selectEventById(eventId)).thenReturn(null);
+        when(eventRepository.selectEventWithDetailById(eventId)).thenReturn(null);
 
         // When & Then
         assertThrows(EventNotFoundException.class, () -> eventService.findEventById(eventId));
-        verify(eventRepository, times(1)).selectEventById(eventId);
+        verify(eventRepository, times(1)).selectEventWithDetailById(eventId);
     }
 
     @Test
@@ -87,20 +95,22 @@ public class EventServiceImplTest {
     public void deleteEventTest(){
         // Given
         Long eventId = 1L;
-        when(eventRepository.deleteEvent(eventId)).thenReturn(eventId);
-        when(eventDetailRepository.deleteEventDetail(eventId)).thenReturn(eventId);
+        when(eventRepository.deleteEvent(eventId)).thenReturn(1L);
+        when(eventDetailRepository.deleteEventDetail(eventId)).thenReturn(1L);
+        when(ticketRepository.deleteTicket(eventId)).thenReturn(1L);
 
         // When
         eventService.deleteEvent(eventId);
 
         // Then
+        assertNull(eventRepository.selectEventById(eventId));
         verify(eventRepository, times(1)).deleteEvent(eventId);
         verify(eventDetailRepository, times(1)).deleteEventDetail(eventId);
     }
 
     @Test
     @DisplayName("이벤트 수정 테스트")
-    public void testUpdateEvent() {
+    public void updateEventTest() {
         Long eventId = 1L;
         EventEntity existingEvent = createEventEntity(eventId);
 
@@ -124,6 +134,44 @@ public class EventServiceImplTest {
         verify(eventDetailRepository, times(1)).updateEventDetail(any(EventDetailEntity.class));
     }
 
+    @Test
+    public void findEventsByCategoryTest() {
+        // given
+        Long categoryId = 5L;
+        List<EventEntity> mockEvents = createEventEntityList(3L); // 필요에 따라 만들어야 합니다.
+        when(eventRepository.selectEventsByCategory(categoryId)).thenReturn(mockEvents);
+
+        // when
+        List<EventFindAllResponseDTO> result = eventService.findEventsByCategory(categoryId);
+
+        // then
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(mockEvents.size(), result.size());
+    }
+
+    @Test
+    public void findEventsByCategoryTest_InvalidCategoryId() {
+        // given
+        Long invalidCategoryId = 15L;
+
+        // when & then
+        assertThrows(CategoryNotFoundException.class, () -> {
+            eventService.findEventsByCategory(invalidCategoryId);
+        });
+    }
+
+    @Test
+    public void findEventsByCategoryTest_NoEventsFound() {
+        // given
+        Long categoryId = 7L;
+        when(eventRepository.selectEventsByCategory(categoryId)).thenReturn(new ArrayList<>());
+
+        // when & then
+        assertThrows(EventNotFoundException.class, () -> {
+            eventService.findEventsByCategory(categoryId);
+        });
+    }
 
     private static EventEntity createEventEntity(Long i){
         return EventEntity.builder()
@@ -171,5 +219,35 @@ public class EventServiceImplTest {
 
         return eventEntityList;
     }
+
+    private List<TicketEntity> createTickets() {
+        List<TicketEntity> tickets = new ArrayList<>();
+
+        // 티켓 1
+        TicketEntity ticket1 = TicketEntity.builder()
+                .id(1L)
+                .name("Ticket 1")
+                .price(20.0)
+                .quantity(50)
+                .eventId(1L)
+                .is_deleted(false)
+                .build();
+
+        // 티켓 2
+        TicketEntity ticket2 = TicketEntity.builder()
+                .id(2L)
+                .name("Ticket 2")
+                .price(30.0)
+                .quantity(30)
+                .eventId(1L)
+                .is_deleted(false)
+                .build();
+
+        tickets.add(ticket1);
+        tickets.add(ticket2);
+
+        return tickets;
+    }
+
 
 }

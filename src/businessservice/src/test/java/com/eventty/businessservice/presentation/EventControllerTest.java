@@ -110,6 +110,24 @@ public class EventControllerTest {
         verify(eventService, times(1)).deleteEvent(eventId);
     }
 
+    @Test
+    @DisplayName("카테고리 별 행사 조회 테스트")
+    public void findEventsByCategoryTest() throws Exception {
+        // Given
+        Long categoryId = 3L;
+        when(eventService.findEventsByCategory(categoryId)).thenReturn(createEventRespnseDTOList(5L));
+
+        // When & Then
+        mockMvc.perform(get("/api/events/category/{categoryId}", categoryId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.code").value("0"))
+                .andExpect(jsonPath("$.message").value("Event retrieved successfully"));
+
+        verify(eventService, times(1)).findEventsByCategory(categoryId);
+    }
+
     private static EventFullCreateRequestDTO createEventFullCreateRequestDTO() {
         return EventFullCreateRequestDTO.builder()
                 //.id(1L)

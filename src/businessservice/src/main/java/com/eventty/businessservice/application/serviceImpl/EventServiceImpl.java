@@ -90,13 +90,13 @@ public class EventServiceImpl implements EventService {
         event.updateImage(eventFullUpdateRequestDTO.getImage());
         event.updateCategory(eventFullUpdateRequestDTO.getCategory());
 
-        Long eventId = eventRepository.updateEvent(event);
+        eventRepository.updateEvent(event);
 
         // Event Detail
         EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(id);
         eventDetail.updateContent(eventFullUpdateRequestDTO.getContent());
 
-        Long eventDetailId = eventDetailRepository.updateEventDetail(eventDetail);
+        eventDetailRepository.updateEventDetail(eventDetail);
 
         return id;
     }
@@ -105,12 +105,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public Long deleteEvent(Long id){
         ticketRepository.deleteTicket(id);
-        Long deletedEventId = null;
-        // 두 개의 메서드 모두 성공적으로 삭제되어 같은 ID 반환하고 있는지 확인 후 이벤트 ID를 반환
-        if (eventDetailRepository.deleteEventDetail(id) == eventRepository.deleteEvent(id)) {
-            deletedEventId = id;
-        }
-        return deletedEventId;
+        eventDetailRepository.deleteEventDetail(id);
+        eventRepository.deleteEvent(id);
+        return id;
     }
 
     // 이벤트 카테고리별 조회

@@ -1,8 +1,10 @@
 package com.eventty.businessservice.domain;
 
+import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
 import com.eventty.businessservice.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domain.entity.EventEntity;
 import com.eventty.businessservice.domain.repository.EventDetailRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,47 +27,47 @@ public class EventDetailRepositoryTest {
     @Autowired
     private EventDetailRepository eventDetailRepository;
 
+    private Long eventId = 1L;
+
+    @BeforeEach
+    public void setUp(){
+        EventDetailEntity mockEventDetail = createEventDetailEntity(eventId);
+        eventDetailRepository.insertEventDetail(mockEventDetail);
+    }
+
     @Test
     @DisplayName("특정 이벤트 상세 정보 조회 테스트")
     public void selectEventDetailByIdTest() {
         // given
-        Long eventId = 1L;
+//        Long eventId = 1L;
+//        EventDetailEntity mockEventDetail = createEventDetailEntity(eventId);
+//        eventDetailRepository.insertEventDetail(mockEventDetail);
         // when
         EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(eventId);
         // then
-        assertNotNull(eventDetail);
         assertEquals(eventDetail.getId(), eventId);
-        assertEquals(eventDetail.getContent(), "Detail for Event 1");
+        assertEquals(eventDetail.getContent(), "Sample content");
     }
-
-//    @Test
-//    @DisplayName("이벤트 상세 정보 생성 테스트")
-//    public void createEventDetailTest(){
-//        // given
-//        Long eventId = 10L;
-//        EventDetailEntity eventDetail = createEventDetailEntity(eventId);
-//
-//        // when
-//        Long savedEventId = eventDetailRepository.insertEventDetail(eventDetail);
-//
-//        // then
-//        assertNotNull(savedEventId);
-//        EventDetailEntity retrievedEventDetail = eventDetailRepository.selectEventDetailById(eventId);
-//        assertEquals(eventDetail.getContent(), retrievedEventDetail.getContent());
-//    }
 
     @Test
     @DisplayName("이벤트 상세 정보 삭제 테스트")
     public void deleteEventDetailTest(){
-        // given
-        Long eventId = 1L;
-
-        // when
+        // given & when
         Long deletedEventId = eventDetailRepository.deleteEventDetail(eventId);
 
         // then
         assertEquals(deletedEventId, eventId);
-        assertNotNull(eventDetailRepository.selectEventDetailById(eventId).getDeleteDate());
+        assertNull(eventDetailRepository.selectEventDetailById(eventId));
+    }
+
+    @Test
+    @DisplayName("이벤트 조회수 증가 테스트")
+    public void updateViewTest(){
+        // given & when
+        eventDetailRepository.updateView(eventId);
+
+        // then
+        assertEquals( 1, eventDetailRepository.selectEventDetailById(eventId).getViews());
     }
 
     private static EventDetailEntity createEventDetailEntity(Long id){
