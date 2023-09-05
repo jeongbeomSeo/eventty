@@ -50,6 +50,7 @@
     <select id="selectAllEvents" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT * FROM events
         WHERE is_deleted = false
+        ORDER BY id DESC
     </select>
 
     <!--이벤트 일반+상세정보 조회-->
@@ -81,7 +82,7 @@
     </select>
 
     <!-- 이벤트 생성 -->
-    <insert id="insertEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity" useGeneratedKeys="true" keyColumn="id">
+    <insert id="insertEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO events (host_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
         VALUES (#{hostId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
     </insert>

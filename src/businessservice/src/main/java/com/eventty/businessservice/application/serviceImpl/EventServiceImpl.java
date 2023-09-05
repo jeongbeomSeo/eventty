@@ -64,7 +64,8 @@ public class EventServiceImpl implements EventService {
 
         // 이벤트 일반 정보 저장
         EventEntity event = eventFullCreateRequestDTO.toEventEntity();
-        Long id = eventRepository.insertEvent(event);
+        eventRepository.insertEvent(event);
+        Long id = event.getId();
 
         // 티켓 정보 저장
         eventFullCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
@@ -94,7 +95,6 @@ public class EventServiceImpl implements EventService {
         eventDetail.updateContent(eventFullUpdateRequestDTO.getContent());
 
         Long eventDetailId = eventDetailRepository.updateEventDetail(eventDetail);
-
 
         return id;
     }
