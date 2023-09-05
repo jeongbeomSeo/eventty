@@ -45,6 +45,11 @@ logging:
 ## USER SERVER BASE URL
 server.base.url.userServer: ${user-server-url}
 
+## JWT
+
+jwt.issuer: ${issuer}
+jwt.secret_key: ${secret_key}
+
 # Swagger
 springdoc:
   default-consumes-media-type: application/json

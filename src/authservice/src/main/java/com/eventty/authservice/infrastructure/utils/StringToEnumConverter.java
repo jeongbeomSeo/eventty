@@ -1,4 +1,4 @@
-package com.eventty.authservice.infrastructure.config.utils;
+package com.eventty.authservice.infrastructure.utils;
 
 import com.eventty.authservice.domain.Enum.UserRole;
 import org.springframework.core.convert.converter.Converter;

@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.eventty.authservice.api.dto.UserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.service.Facade.AuthServiceImpl;
-import com.eventty.authservice.applicaiton.service.UserServiceImpl;
+import com.eventty.authservice.applicaiton.service.Facade.UserServiceImpl;
+import com.eventty.authservice.applicaiton.service.subservices.UserDetailServiceImpl;
 import com.eventty.authservice.common.response.ResponseDTO;
 import com.eventty.authservice.common.response.SuccessResponseDTO;
 import com.eventty.authservice.domain.Enum.UserRole;
@@ -30,13 +30,13 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthServiceImplTest {
+public class UserServiceImplTest {
 
     @InjectMocks
-    private AuthServiceImpl authService;
+    private UserServiceImpl authService;
 
     @Mock
-    private UserServiceImpl userService;
+    private UserDetailServiceImpl userService;
 
     @Mock
     private ApiClient apiClient;

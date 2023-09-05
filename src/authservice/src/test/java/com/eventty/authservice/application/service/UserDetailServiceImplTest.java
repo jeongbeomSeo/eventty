@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.service.UserServiceImpl;
+import com.eventty.authservice.applicaiton.service.subservices.UserDetailServiceImpl;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.repository.AuthUserRepository;
 import com.eventty.authservice.domain.Enum.UserRole;
@@ -32,10 +32,10 @@ import static org.mockito.Mockito.*;
  */
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceImplTest {
+public class UserDetailServiceImplTest {
 
     @InjectMocks
-    private UserServiceImpl userServiceImpl;
+    private UserDetailServiceImpl userServiceImpl;
 
     @Mock
     private AuthUserRepository userRepository;
@@ -57,7 +57,7 @@ public class UserServiceImplTest {
 
         // When
         AuthUserEntity newUser = userServiceImpl.create(fullUserCreateRequestDTO, userRole);
-
+`
         /*  오류: 새로운 생성자를 만들면 위에서 실행했을 때 만들어 지는 newAutority 랑은 다른 생성자로 만들어 지는 것임.
         AuthorityEntity newAuthority = AuthorityEntity.builder()
                 .name(userRole.getRole())
@@ -101,7 +101,7 @@ public class UserServiceImplTest {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(authUserEntity));
 
         // Then
-        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.emailValidationCheck(email));
+        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.validateEmail(email));
         verify(userRepository, times(1)).findByEmail(email);
     }
 

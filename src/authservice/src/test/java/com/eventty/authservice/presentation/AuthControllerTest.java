@@ -20,7 +20,7 @@ import com.eventty.authservice.domain.exception.DuplicateEmailException;
 
 import java.time.LocalDate;
 
-import com.eventty.authservice.applicaiton.service.Facade.AuthServiceImpl;
+import com.eventty.authservice.applicaiton.service.Facade.UserServiceImpl;
 import com.eventty.authservice.domain.Enum.UserRole;
 
 import static org.springframework.security.test.
@@ -47,7 +47,7 @@ public class AuthControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AuthServiceImpl authService;
+    private UserServiceImpl authService;
 
     @Test
     @DisplayName("[POST] 회원 가입 테스트 성공_User")
