@@ -10,6 +10,6 @@ export const userState = atom({
         phone: "",
         birth: new Date(Date.now()),
         address: "",
-        isHost: true,
+        isHost: false,
     },
 })

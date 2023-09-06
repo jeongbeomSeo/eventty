@@ -7,7 +7,7 @@ export const getEvent = async (eventId: string) => {
 }
 
 export const getEvents = async () => {
-    return await fetch("/api/events")
+    return await fetch("http://localhost:8001/api/events")
         .then((res) => res.json())
         .then((res) => res.data);
 }

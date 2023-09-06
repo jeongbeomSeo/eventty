@@ -1,34 +1,29 @@
 import React, {useEffect} from "react";
 import {Editor} from "@toast-ui/react-editor";
 import '@toast-ui/editor/dist/toastui-editor.css';
+import {RefCallBack} from "react-hook-form";
 
 interface IToastEditor {
-    content?: string;
-    editorRef: React.RefObject<Editor>;
+    value?: string;
+    editorRef: React.Ref<Editor>;
+    // ref: RefCallBack;
     onChange: () => void;
+    onBlur: () => void;
 }
 
-function ToastEditor({content, editorRef, onChange}: IToastEditor) {
-
-    const handleSave = () => {
-        const markDownContent = editorRef.current?.getInstance().getMarkdown();
-        // const htmlContent = editorRef.current?.getInstance().getHTML();
-
-        console.log(markDownContent);
-    }
-
+function ToastEditor({value, editorRef, onChange, onBlur}: IToastEditor) {
     return (
         <div>
             <Editor
                 ref={editorRef}
-                initialValue={content ? content : " "}
+                initialValue={value ? value : " "}
                 height={"70vh"}
                 previewStyle={"vertical"}
                 previewHighlight={false}
                 initialEditType={"wysiwyg"}
-                autofocus={false}
                 language={"ko"}
                 onChange={onChange}
+                onBlur={onBlur}
                 // 통계 수집 비활성
                 usageStatistics={false}
             />

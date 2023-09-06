@@ -1,8 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
 import {
+    Alert,
     Button, Center,
     Container, Flex,
-    Group, NumberInput,
+    Group, Notification, NumberInput,
     Paper,
     Select, SimpleGrid,
     Stack, Text,
@@ -17,6 +18,7 @@ import ToastEditor from "../components/common/ToastEditor";
 import {Editor} from "@toast-ui/react-editor";
 import WriteHeader from "../components/display/WriteHeader";
 import {
+    IconAlertCircle,
     IconBallBaseball, IconBook, IconCode,
     IconHandRock,
     IconHorseToy, IconMovie,
@@ -28,6 +30,7 @@ import EventDatePicker from "../components/write/EventDatePicker";
 import TicketSubmitModal from "../components/write/TicketSubmitModal";
 import TicketEditModal from "../components/write/TicketEditModal";
 import {CheckMobile} from "../util/CheckMobile";
+import {types} from "util";
 
 function Write() {
     const {classes} = customStyle();
@@ -36,7 +39,7 @@ function Write() {
     const [ticketEditModalOpened, setTicketEditModalOpened] = useState(false);
     const editorRef = useRef<Editor>(null);
 
-    const {register, handleSubmit, control, watch, getValues, setValue, formState: {errors}} = useForm<IEventWrite>();
+    const {register, handleSubmit, control, watch, getValues, setError, clearErrors, setFocus, formState: {errors}} = useForm<IEventWrite>();
     const {fields, append, remove, update} = useFieldArray({
         control,
         name: "ticket",
@@ -65,10 +68,16 @@ function Write() {
     const [ticketEdit, setTicketEdit] = useState<IEventTicket | null>(null);
     const [ticketIdx, setTicketIdx] = useState(0);
     const disabledTitle = fields.map((ticket) => ticket.title);
+    const leftTicket = watch("participateNum") - fields.reduce((acc, cur) => acc + cur.limit, 0);
 
     const onSubmit = (data: IEventWrite) => {
-        data.content = editorRef.current?.getInstance().getMarkdown()!;
-        console.log(data);
+        if (leftTicket !== 0){
+            setError("ticket", {types:{validate: "총 인원수를 확인해주세요"}},);
+            return;
+        }
+        console.log("error submit 확인");
+
+        // data.content = editorRef.current?.getInstance().getMarkdown()!;
     }
 
     const onTicketCreate = (data: IEventTicket) => {
@@ -80,7 +89,11 @@ function Write() {
     }
 
     const handleTicketModalOpened = () => {
-        setTicketModalOpened(prev => !prev);
+        if (getValues("participateNum") > 0) {
+            setTicketModalOpened(prev => !prev);
+        }else{
+            setError("ticket", {types:{validate: "우선 인원수를 설정해주세요"}});
+        }
     }
 
     const handleTicketEditModalOpened = (data: IEventTicket, idx: number) => {
@@ -93,7 +106,7 @@ function Write() {
         return (
             <UnstyledButton key={item.id} onClick={() => handleTicketEditModalOpened(item, idx)}>
                 <Paper withBorder p={"1rem"}
-                       style={{width: "180px", height: "120px", position: "relative"}}
+                       style={{height: "120px", position: "relative"}}
                        className={classes["ticket-select"]}>
                     <IconX size={"1rem"}
                            style={{top: "1rem", right: "1rem", position: "absolute"}}
@@ -111,7 +124,13 @@ function Write() {
         )
     });
 
-    console.log();
+    useEffect(() => {
+        if (leftTicket !== 0 && ticketItems.length !== 0){
+            setError("ticket", {types:{validate: "총 인원수를 확인해주세요"}});
+        }else {
+            clearErrors("ticket");
+        }
+    }, [leftTicket]);
 
     return (
         <>
@@ -119,7 +138,8 @@ function Write() {
             <FormProvider {...ticketMethods}>
                 <form onSubmit={ticketMethods.handleSubmit(onTicketCreate)}>
                     <TicketSubmitModal open={ticketModalOpened}
-                                       title={disabledTitle}/>
+                                       title={disabledTitle}
+                                       left={leftTicket}/>
                 </form>
             </FormProvider>
 
@@ -129,13 +149,14 @@ function Write() {
                     <form onSubmit={ticketEditMethods.handleSubmit(onTicketEdit)}>
                         <TicketEditModal open={ticketEditModalOpened}
                                          title={disabledTitle}
-                                         data={ticketEdit}/>
+                                         data={ticketEdit}
+                                         left={leftTicket}/>
                     </form>
                 </FormProvider>
             }
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {<WriteHeader/>}
+            <form>
+                <WriteHeader onSubmit={handleSubmit(onSubmit)}/>
                 <Container>
                     <Stack style={{margin: "5vh auto 15vh"}} spacing={"3rem"}>
                         <Stack>
@@ -184,14 +205,14 @@ function Write() {
 
                         <Stack>
                             <Title order={3}>티켓 정보</Title>
-                            <Group>
+                            <SimpleGrid cols={4} breakpoints={[{maxWidth: "xs", cols:2}]}>
                                 {ticketItems}
                                 <UnstyledButton onClick={handleTicketModalOpened}
-                                                hidden={ticketItems.length === TICKET_LIMIT}>
+                                                hidden={(ticketItems.length === TICKET_LIMIT) ||
+                                                    (ticketItems.length > 0 && leftTicket < 1)}>
                                     <Paper style={{
                                         border: "1px dashed #cdcdcd",
                                         color: "#cdcdcd",
-                                        width: "180px",
                                         height: "120px",
                                         display: "flex",
                                         justifyContent: "center",
@@ -200,11 +221,14 @@ function Write() {
                                         <IconPlus/>
                                     </Paper>
                                 </UnstyledButton>
-                            </Group>
-                            <Text className={"mantine-mve552"}>{errors.ticket?.root?.message}</Text>
+                            </SimpleGrid>
+                            <Text fz={"12px"} color={"#f44336"}>
+                                {errors.ticket?.root?.message}
+                                {errors.ticket?.types?.validate}
+                            </Text>
                         </Stack>
 
-                        <Group spacing={"2.5rem"}>
+                        <SimpleGrid cols={2} breakpoints={[{maxWidth: "xs", cols:1, verticalSpacing: "2.5rem"}]}>
                             <Stack>
                                 <Title order={3}>행사 일정</Title>
                                 <Stack>
@@ -212,7 +236,7 @@ function Write() {
                                         <Title order={4}>시작</Title>
                                         <Controller control={control}
                                                     name={"eventStartAt"}
-                                                    rules={{required: "날짜를 지정해주세요",}}
+                                                    rules={{required: "행사 시작 날짜를 지정해주세요",}}
                                                     render={({field}) => (
                                                         <EventDatePicker
                                                             {...field}
@@ -226,8 +250,8 @@ function Write() {
                                         <Controller control={control}
                                                     name={"eventEndAt"}
                                                     rules={{
-                                                        required: "날짜를 지정해주세요",
-                                                        validate: (value) => new Date(getValues("eventStartAt")) <= value || "종료일 확인",
+                                                        required: "행사 종료 날짜를 지정해주세요",
+                                                        validate: (value) => new Date(getValues("eventStartAt")) <= value || "종료일은 시작일보다 앞설 수 없습니다",
                                                     }}
                                                     render={({field}) => (
                                                         <EventDatePicker
@@ -245,7 +269,7 @@ function Write() {
                                         <Title order={4}>시작</Title>
                                         <Controller control={control}
                                                     name={"applyStartAt"}
-                                                    rules={{required: "날짜를 지정해주세요",}}
+                                                    rules={{required: "예약 시작 날짜를 지정해주세요",}}
                                                     render={({field}) => (
                                                         <EventDatePicker
                                                             {...field}
@@ -259,8 +283,8 @@ function Write() {
                                         <Controller control={control}
                                                     name={"applyEndAt"}
                                                     rules={{
-                                                        required: "날짜를 지정해주세요",
-                                                        validate: (value) => new Date(getValues("applyEndAt")) <= value || "종료일 확인",
+                                                        required: "예약 종료 날짜를 지정해주세요",
+                                                        validate: (value) => new Date(getValues("applyStartAt")) <= value || "종료일은 시작일보다 앞설 수 없습니다",
                                                     }}
                                                     render={({field}) => (
                                                         <EventDatePicker
@@ -271,7 +295,7 @@ function Write() {
                                     </Group>
                                 </Stack>
                             </Stack>
-                        </Group>
+                        </SimpleGrid>
 
                         <Stack>
                             <Title order={3}>커버 이미지</Title>
@@ -286,9 +310,9 @@ function Write() {
                                         render={({field}) => (
                                             <>
                                                 <ToastEditor
-                                                    content={field.value}
-                                                    onChange={field.onChange}
-                                                    editorRef={editorRef}/>
+                                                    {...field}
+                                                    editorRef={editorRef}
+                                                />
                                                 <Text className={"mantine-mve552"}>{errors.content?.message}</Text>
                                             </>
                                         )}/>

@@ -1,17 +1,31 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Group, Modal, NumberInput, Select, Stack, TextInput} from "@mantine/core";
+import {Button, Checkbox, Flex, Group, Modal, NumberInput, Select, Stack, Text, TextInput} from "@mantine/core";
 import {Controller, useFormContext} from "react-hook-form";
 import customStyle from "../../styles/customStyle";
 import {IEventTicket} from "../../types/IEvent";
 import {getValue} from "@testing-library/user-event/dist/utils";
 
-function TicketEditModal({open, title, data}:{open:boolean, title:string[], data:IEventTicket}) {
+function TicketEditModal({open, title, left, data}: {
+    open: boolean,
+    title: string[],
+    left: number,
+    data: IEventTicket
+}) {
     const {classes} = customStyle();
 
     const [modalOpened, setModalOpened] = useState(open)
     const [ticketPriceFree, setTicketPriceFree] = useState(false);
 
-    const {register, handleSubmit, control, getValues, setValue, watch, reset, resetField, clearErrors, formState: {errors}} = useFormContext<IEventTicket>();
+    const {
+        handleSubmit,
+        control,
+        watch,
+        getValues,
+        setValue,
+        resetField,
+        clearErrors,
+        formState: {errors}
+    } = useFormContext<IEventTicket>();
 
     const disabledTitle = title.filter(item => item !== data.title);
 
@@ -39,11 +53,11 @@ function TicketEditModal({open, title, data}:{open:boolean, title:string[], data
         setValue("price", data.price);
         setValue("limit", data.limit);
 
-        if (data.price === 0){
+        if (data.price === 0) {
             setTicketPriceFree(true);
         }
     }, [data]);
-    
+
     return (
         <Modal opened={modalOpened}
                onClose={handleModalOpened}
@@ -52,7 +66,7 @@ function TicketEditModal({open, title, data}:{open:boolean, title:string[], data
                size={"auto"}
                centered>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Stack style={{padding:"1rem"}}>
+                <Stack style={{padding: "1rem"}}>
                     <Controller control={control}
                                 name={"title"}
                                 rules={{required: "종류를 선택해주세요"}}
@@ -79,6 +93,7 @@ function TicketEditModal({open, title, data}:{open:boolean, title:string[], data
                                     <NumberInput
                                         {...field}
                                         label={"금액"}
+                                        max={999999999}
                                         defaultValue={data.price}
                                         disabled={ticketPriceFree}
                                         type={"number"}
@@ -92,17 +107,23 @@ function TicketEditModal({open, title, data}:{open:boolean, title:string[], data
                               className={classes["input-checkbox"]}/>
                     <Controller control={control}
                                 name={"limit"}
-                                rules={{required: "인원을 정해주세요",
-                                validate: (value) => value > 0 || "최소 1명 이상 입력해주세요"}}
+                                rules={{
+                                    required: "인원을 정해주세요",
+                                    validate: (value) => value > 0 || "최소 1명 이상 입력해주세요"
+                                }}
                                 render={({field}) => (
-                                    <NumberInput
-                                        {...field}
-                                        label={"인원"}
-                                        min={0}
-                                        type={"number"}
-                                        defaultValue={data.limit}
-                                        error={errors.limit && errors.limit.message}
-                                        className={classes["input"]}/>
+                                    <Flex direction={"column"} gap={"0.4rem"}>
+                                        <NumberInput
+                                            {...field}
+                                            label={"인원"}
+                                            min={0}
+                                            max={left+data.limit}
+                                            type={"number"}
+                                            defaultValue={data.limit}
+                                            error={errors.limit && errors.limit.message}
+                                            className={classes["input"]}/>
+                                        <Text fz={"xs"}>{data.limit+left-watch("limit")}명 남았습니다</Text>
+                                    </Flex>
                                 )}/>
                     <Group grow>
                         <Button onClick={handleModalOpened} className={classes["btn-primary-outline"]}>취소</Button>

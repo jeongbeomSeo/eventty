@@ -1,13 +1,23 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Group, Modal, NumberInput, Select, Stack, TextInput} from "@mantine/core";
-import {Controller, useFormContext} from "react-hook-form";
+import {Button, Checkbox, Flex, Group, Modal, NumberInput, Select, Stack, Text, TextInput} from "@mantine/core";
+import {Controller, useFormContext, useWatch} from "react-hook-form";
 import customStyle from "../../styles/customStyle";
 import {IEventTicket} from "../../types/IEvent";
 
-function TicketSubmitModal({open, title}: { open: boolean, title: string[] }) {
+function TicketSubmitModal({open, title, left}: { open: boolean, title: string[], left: number }) {
     const [modalOpened, setModalOpened] = useState(open)
     const [ticketPriceFree, setTicketPriceFree] = useState(false);
-    const { handleSubmit, control, setValue, reset, resetField, clearErrors, formState: {errors} } = useFormContext<IEventTicket>();
+    const {
+        handleSubmit,
+        control,
+        getValues,
+        setValue,
+        reset,
+        watch,
+        resetField,
+        clearErrors,
+        formState: {errors}
+    } = useFormContext<IEventTicket>();
     const {classes} = customStyle();
 
     const handleTicketPriceFree = () => {
@@ -29,6 +39,7 @@ function TicketSubmitModal({open, title}: { open: boolean, title: string[] }) {
 
     useEffect(() => {
         handleModalOpened();
+        setValue("limit", 0);
     }, [open]);
 
     return (
@@ -65,6 +76,7 @@ function TicketSubmitModal({open, title}: { open: boolean, title: string[] }) {
                                     <NumberInput
                                         {...field}
                                         label={"금액"}
+                                        max={999999999}
                                         disabled={ticketPriceFree}
                                         hideControls
                                         type={"number"}
@@ -79,13 +91,23 @@ function TicketSubmitModal({open, title}: { open: boolean, title: string[] }) {
                                     validate: (value) => value > 0 || "최소 1명 이상 입력해주세요"
                                 }}
                                 render={({field}) => (
-                                    <NumberInput
-                                        {...field}
-                                        label={"인원"}
-                                        min={0}
-                                        type={"number"}
-                                        error={errors.limit && errors.limit.message}
-                                        className={classes["input"]}/>
+                                    <Flex direction={"column"} gap={"0.4rem"}>
+                                        <NumberInput
+                                            {...field}
+                                            label={"인원"}
+                                            min={0}
+                                            max={left}
+                                            defaultValue={0}
+                                            type={"number"}
+                                            error={errors.limit && errors.limit.message}
+                                            className={classes["input"]}/>
+                                        <Text fz={"xs"}>
+                                            {left >= 0 ?
+                                                `${left}명 남았습니다` :
+                                                `${left*-1}명 초과했습니다`
+                                            }
+                                        </Text>
+                                    </Flex>
                                 )}/>
                     <Group grow>
                         <Button onClick={handleModalOpened} className={classes["btn-primary-outline"]}>취소</Button>

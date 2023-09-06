@@ -29,6 +29,7 @@ function MobileMenuDrawer() {
         {value: "홈", link:"/", icon:<IconHome/>},
         {value: "주최하기", link: "/write/event", icon: <IconPlus/>},
         {value: "마이페이지", link:"/users/profile", icon:<IconUser/>},
+        {value: "주최 내역", link:"/users/events", icon:<IconReceipt/>},
         {value: "예약 내역", link:"/users/reservations", icon:<IconReceipt/>},
         {value: "설정", link:"", icon:<IconSettings/>},
     ];
@@ -64,10 +65,10 @@ function MobileMenuDrawer() {
                         </Drawer.Header>
                         <Drawer.Body>
                             <Stack>
-                                <Group>
+                                <Flex align={"center"} gap={"1rem"}>
                                     <Avatar size={"4rem"} radius={"4rem"}/>
-                                    <Text>{!isLoggedIn && "로그인"}</Text>
-                                </Group>
+                                    <Text style={{whiteSpace: "pre-wrap"}}>{!isLoggedIn && "로그인 후 \n이용 가능합니다"}</Text>
+                                </Flex>
                                 <Divider/>
 
                                 {items}

@@ -8,7 +8,7 @@ import SignupHost from './pages/signup/SignupHost';
 import Logout from './pages/Logout';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
-import SignupMember from './pages/signup/SigntupMember';
+import SignupMember from './pages/signup/SignupUser';
 import Error from './pages/Error';
 import WebLayout from "./components/display/web/WebLayout";
 import Detail from "./pages/events/EventDetail";
@@ -24,6 +24,7 @@ import EventDetail from "./pages/events/EventDetail";
 import Profile from "./pages/user/Profile";
 import EventsInfo from "./pages/user/EventsInfo";
 import Write from "./pages/Write";
+import SignupUser from "./pages/signup/SignupUser";
 
 const Router = createBrowserRouter([
     {
@@ -93,8 +94,8 @@ const Router = createBrowserRouter([
                                 element: <SignupMain/>
                             },
                             {
-                                path: "member",
-                                element: <SignupMember/>
+                                path: "user",
+                                element: <SignupUser/>
                             },
                             {
                                 path: "host",

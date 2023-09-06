@@ -17,7 +17,7 @@ function SignupMain() {
 
     return (
         <Stack>
-            <Button className={classes["btn-primary"]} component={Link} to={"member"}>
+            <Button className={classes["btn-primary"]} component={Link} to={"user"}>
                 개인 회원가입
             </Button>
             <Button className={classes["btn-gray-outline"]} component={Link} to={"host"}>

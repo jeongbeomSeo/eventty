@@ -4,11 +4,11 @@ import {IconArrowLeft} from "@tabler/icons-react";
 import customStyle from "../../styles/customStyle";
 import {Link} from "react-router-dom";
 
-interface Interface {
+interface IWriteSubmit {
     onSubmit: () => void;
 }
 
-function WriteHeader() {
+function WriteHeader({onSubmit}: IWriteSubmit) {
     const {classes} = customStyle();
 
     return (
@@ -29,10 +29,7 @@ function WriteHeader() {
 
                     <Group>
                         <Button className={classes["btn-primary-outline"]}>임시저장</Button>
-                        <Button type={"submit"}
-                                className={classes["btn-primary"]}>
-                            게시하기
-                        </Button>
+                        <Button onClick={onSubmit} className={classes["btn-primary"]}>게시하기</Button>
                     </Group>
                 </Group>
             </Container>
