@@ -1,11 +1,13 @@
 package com.eventty.userservice.presentation.dto;
 
 import com.eventty.userservice.domain.code.ErrorCode;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolation;
 import lombok.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -14,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Setter
 @Getter
-@ToString
 public class ErrorResponseDTO extends ResponseDTO {
 
     private final List<FieldError> errors;
@@ -37,27 +38,12 @@ public class ErrorResponseDTO extends ResponseDTO {
         return new ErrorResponseDTO(code);
     }
 
-    public static ErrorResponseDTO of(final ErrorCode code, final List<FieldError> errors) {
-        return new ErrorResponseDTO(code, errors);
-    }
-
     public static ErrorResponseDTO of(final ErrorCode code, final BindingResult bindingResult) {
         return new ErrorResponseDTO(code, FieldError.of(bindingResult));
     }
 
-    public static ErrorResponseDTO of(MethodArgumentTypeMismatchException e) {
-        // MethodArgumentTypeMismatchException에서 정보 추출하여 ErrorResponseDTO 생성
-        final String value = e.getValue() == null ? "" : e.getValue().toString();
-        final List<FieldError> errors = FieldError.of(e.getName(), value, e.getErrorCode());
-        return new ErrorResponseDTO(ErrorCode.INVALID_TYPE_VALUE, errors);
-    }
-
     public static ErrorResponseDTO of(final ErrorCode code, final Set<ConstraintViolation<?>> constraintViolations) {
         return new ErrorResponseDTO(code, FieldError.of(constraintViolations));
-    }
-
-    public static ErrorResponseDTO of(final ErrorCode code, final String missingParameterName) {
-        return new ErrorResponseDTO(code, FieldError.of(missingParameterName, "", "parameter must required"));
     }
 
     /*
@@ -74,12 +60,6 @@ public class ErrorResponseDTO extends ResponseDTO {
             this.field = field;
             this.value = value;
             this.reason = reason;
-        }
-
-        static List<FieldError> of(final String field, final String value, final String reason) {
-            List<FieldError> fieldErrors = new ArrayList<>();
-            fieldErrors.add(new FieldError(field, value, reason));
-            return fieldErrors;
         }
 
         // BindingResult를 기반으로 오류 정보 생성

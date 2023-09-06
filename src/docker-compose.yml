@@ -1,0 +1,57 @@
+version: "3.9"
+services:
+  businessservice:
+    image: serin0404/event:1.1
+    build:
+      context: ./businessservice
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./businessservice:/src/businessservice
+    networks:
+      eventty:
+        aliases:
+          - "event server"
+  userservice:
+    image: hyungyunk/eventty:1.1
+    build:
+      context: ./userservice
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./userservice:/src/userservice
+    networks:
+      eventty:
+        aliases:
+          - "user server"
+  # authservice:
+  #   image: auth:1.0
+  #   build:
+  #     context: ./authservice
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8002:8002"
+  #   volumes:
+  #     - ./authservice:/src/authservice
+  #   networks:
+  #     eventty:
+  #       aliases:
+  #         - "auth server"
+  gateway:
+    image: gateway:1.1
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./gateway:/src/gateway
+    networks:
+      eventty:
+        aliases:
+          - "gateway server"
+networks:
+  eventty:
+    driver: bridge

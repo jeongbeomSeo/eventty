@@ -4,7 +4,7 @@ import com.eventty.userservice.domain.code.SuccessCode;
 import lombok.*;
 import org.springframework.http.ResponseEntity;
 
-@Setter @Getter @ToString
+@Setter @Getter
 public class SuccessResponseDTO<T> extends ResponseDTO {
     private T data;
 
