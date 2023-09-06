@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 
+import java.util.List;
 import java.util.Optional;
 
 @Configuration
@@ -100,19 +101,23 @@ public class SwaggerConfig {
         Class<?> responseDTO = apiSuccessData.value();
         String status = apiSuccessData.stateCode();
 
+        //-----------------------------------------------------generateInstance
         ApiResponses responses = operation.getResponses();
         ApiResponse response = new ApiResponse();
         Content content = new Content();
         MediaType mediaType = new MediaType();
-
-        // 이건 try catch를 사용하지 않고 어떻게 쓸지 잘 모르겠어요..!
-        // 아시는 분은 말씀 주세요..@
         Example successExample = new Example();
+
+        //-----------------------------------------------------settingInstance
         try{
-            successExample.setValue(ResponseDTO.of(SuccessResponseDTO.of(responseDTO.getConstructor().newInstance())));
+            if(apiSuccessData.array())
+                successExample.setValue(ResponseDTO.of(SuccessResponseDTO.of(List.of(responseDTO.getConstructor().newInstance()))));
+            else
+                successExample.setValue(ResponseDTO.of(SuccessResponseDTO.of(responseDTO.getConstructor().newInstance())));
         }catch(Exception e) {
             successExample.setValue(new ResponseDTO());
         }
+
         mediaType.addExamples("ResponseDTO", successExample);
 
         response.setDescription(HttpStatus.valueOf(Integer.parseInt(status)).toString());

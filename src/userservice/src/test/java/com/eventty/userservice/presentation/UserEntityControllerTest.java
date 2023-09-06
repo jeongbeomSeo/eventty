@@ -38,6 +38,9 @@ public class UserEntityControllerTest {
     @MockBean
     UserService userService;
 
+    @MockBean
+    DataErrorLogger dataErrorLogger;
+
     @BeforeEach
     public void setMockMvc() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
