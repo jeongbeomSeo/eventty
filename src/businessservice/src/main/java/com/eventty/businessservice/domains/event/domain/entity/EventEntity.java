@@ -1,21 +1,22 @@
-package com.eventty.businessservice.domain.entity;
+package com.eventty.businessservice.domains.event.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
 @Builder
 public class EventEntity {
     private Long id;
-    private Long hostId;
+    private Long userId; // hostId
     private String title;
     private String image;
-    private Timestamp eventStartAt;
-    private Timestamp eventEndAt;
+    private LocalDateTime eventStartAt;
+    private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
     private Long category;

@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domain.entity;
+package com.eventty.businessservice.domains.event.domain.entity;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,8 +8,8 @@ import lombok.Getter;
 public class TicketEntity {
     private Long id;
     private String name;
-    private double price;
-    private int quantity;
+    private Long price;
+    private Long quantity;
     private Long eventId;
     private Boolean is_deleted;
 }

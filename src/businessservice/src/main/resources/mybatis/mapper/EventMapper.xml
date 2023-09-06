@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domain.repository.EventRepository">
+<mapper namespace="com.eventty.businessservice.domains.event.domain.repository.EventRepository">
 
-    <resultMap id="EventResultMap" type="com.eventty.businessservice.domain.entity.EventEntity">
+    <resultMap id="EventResultMap" type="com.eventty.businessservice.domains.event.domain.entity.EventEntity">
         <id property="id" column="id"/>
-        <result property="hostId" column="host_id"/>
+        <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
         <result property="image" column="image"/>
         <result property="eventStartAt" column="event_start_at"/>
@@ -18,9 +18,9 @@
         <result property="isDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO">
+    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO">
         <id property="id" column="id"/>
-        <result property="hostId" column="host_id"/>
+        <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
         <result property="image" column="image"/>
         <result property="eventStartAt" column="event_start_at"/>
@@ -57,7 +57,7 @@
     <select id="selectEventWithDetailById" resultMap="EventResultMapWithDetail" parameterType="java.lang.Long">
         SELECT
             e.id,
-            e.host_id,
+            e.user_id,
             e.title,
             e.image,
             e.event_start_at,
@@ -82,13 +82,13 @@
     </select>
 
     <!-- 이벤트 생성 -->
-    <insert id="insertEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO events (host_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
-        VALUES (#{hostId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
+    <insert id="insertEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO events (user_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
+        VALUES (#{userId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
     </insert>
 
     <!-- 이벤트 수정 -->
-    <update id="updateEvent" parameterType="com.eventty.businessservice.domain.entity.EventEntity">
+    <update id="updateEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventEntity">
         UPDATE events
         SET
             title = #{title},

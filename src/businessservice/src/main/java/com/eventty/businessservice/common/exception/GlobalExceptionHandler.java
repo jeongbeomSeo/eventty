@@ -103,6 +103,14 @@ public class GlobalExceptionHandler {
 //        return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
 //    }
 
+    // 비즈니스 요구사항에 따른 예외처리
+    @ExceptionHandler
+    protected ResponseEntity<ErrorResponseDTO> handleBusinessException(BusinessException e) {
+        final ErrorCode errorCode = e.getErrorCode();
+        final ErrorResponseDTO response = ErrorResponseDTO.of(errorCode);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
+    }
+
     // 기타 예외 처리
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponseDTO> handleException(Exception e) {

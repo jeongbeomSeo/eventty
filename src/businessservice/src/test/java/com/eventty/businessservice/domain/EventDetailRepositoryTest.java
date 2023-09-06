@@ -1,9 +1,7 @@
 package com.eventty.businessservice.domain;
 
-import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
-import com.eventty.businessservice.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.domain.entity.EventEntity;
-import com.eventty.businessservice.domain.repository.EventDetailRepository;
+import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
+import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,12 +71,12 @@ public class EventDetailRepositoryTest {
         return EventDetailEntity.builder()
                 .id(id)
                 .content("Sample content")
-                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
-                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00").toLocalDateTime())
+                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00").toLocalDateTime())
                 .views(100L)
-                .deleteDate(Timestamp.valueOf("2023-08-21 12:00:00"))
-                .updateDate(Timestamp.valueOf("2023-08-21 13:00:00"))
-                .createDate(Timestamp.valueOf("2023-08-21 10:30:00"))
+                .deleteDate(Timestamp.valueOf("2023-08-21 12:00:00").toLocalDateTime())
+                .updateDate(Timestamp.valueOf("2023-08-21 13:00:00").toLocalDateTime())
+                .createDate(Timestamp.valueOf("2023-08-21 10:30:00").toLocalDateTime())
                 .build();
     }
 

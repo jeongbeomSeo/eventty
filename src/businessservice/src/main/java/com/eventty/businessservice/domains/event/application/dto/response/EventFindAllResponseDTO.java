@@ -1,6 +1,6 @@
-package com.eventty.businessservice.application.dto.response;
+package com.eventty.businessservice.domains.event.application.dto.response;
 
-import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @ToString
 public class EventFindAllResponseDTO {
     private Long id;
-    private Long hostId;
+    private Long userId;
     private String title;
     private String image;
-    private Timestamp eventStartAt;
-    private Timestamp eventEndAt;
+    private LocalDateTime eventStartAt;
+    private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
     private Long category;
@@ -27,7 +27,7 @@ public class EventFindAllResponseDTO {
     public static EventFindAllResponseDTO fromEntity(EventEntity eventEntity) {
         return EventFindAllResponseDTO.builder()
             .id(eventEntity.getId())
-            .hostId(eventEntity.getHostId())
+            .userId(eventEntity.getUserId())
             .title(eventEntity.getTitle())
             .image(eventEntity.getImage())
             .eventStartAt(eventEntity.getEventStartAt())
@@ -43,11 +43,11 @@ public class EventFindAllResponseDTO {
     // Swagger 을 위하여 기본 생성자로 기본값 설정
     public EventFindAllResponseDTO() {
         this.id = 1L;
-        this.hostId = 1L;
+        this.userId = 1L;
         this.title = "String";
         this.image = "String";
-        this.eventStartAt = Timestamp.valueOf(LocalDateTime.now());
-        this.eventEndAt = Timestamp.valueOf(LocalDateTime.now());
+        this.eventStartAt = LocalDateTime.now();
+        this.eventEndAt = LocalDateTime.now();
         this.participateNum = 1L;
         this.location = "String";
         this.category = 1L;

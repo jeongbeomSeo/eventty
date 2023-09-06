@@ -1,14 +1,15 @@
-package com.eventty.businessservice.presentation;
+package com.eventty.businessservice.domains.event.presentation;
 
-import com.eventty.businessservice.application.dto.request.EventFullCreateRequestDTO;
-import com.eventty.businessservice.application.dto.request.EventFullUpdateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventFullCreateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventFullUpdateRequestDTO;
 import com.eventty.businessservice.common.Enum.ErrorCode;
 import com.eventty.businessservice.common.annotation.ApiErrorCode;
 import com.eventty.businessservice.common.annotation.ApiSuccessData;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
-import com.eventty.businessservice.application.service.EventService;
+import com.eventty.businessservice.domains.event.application.dto.response.EventFindByIdWithDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventFindAllResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;

@@ -1,7 +1,7 @@
 package com.eventty.businessservice.domain;
 
-import com.eventty.businessservice.domain.entity.EventEntity;
-import com.eventty.businessservice.domain.repository.EventRepository;
+import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.repository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,11 +80,11 @@ public class EventRepositoryTest {
     private static EventEntity createEventEntity(){
         return EventEntity.builder()
                 //.id(10L)
-                .hostId(1L)
+                .userId(1L)
                 .title("Sample Event")
                 .image("sample.jpg")
-                .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
-                .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .eventStartAt(LocalDateTime.now())
+                .eventEndAt(LocalDateTime.now())
                 .participateNum(100L)
                 .location("Sample Location")
                 .category(1L)

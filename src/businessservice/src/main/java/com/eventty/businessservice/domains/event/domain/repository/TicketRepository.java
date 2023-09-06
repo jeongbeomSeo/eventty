@@ -1,6 +1,6 @@
-package com.eventty.businessservice.domain.repository;
+package com.eventty.businessservice.domains.event.domain.repository;
 
-import com.eventty.businessservice.domain.entity.TicketEntity;
+import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

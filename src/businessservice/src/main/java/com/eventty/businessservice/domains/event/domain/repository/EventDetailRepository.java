@@ -1,6 +1,6 @@
-package com.eventty.businessservice.domain.repository;
+package com.eventty.businessservice.domains.event.domain.repository;
 
-import com.eventty.businessservice.domain.entity.EventDetailEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 

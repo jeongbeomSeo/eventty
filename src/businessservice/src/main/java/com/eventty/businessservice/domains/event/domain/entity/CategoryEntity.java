@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domain.entity;
+package com.eventty.businessservice.domains.event.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

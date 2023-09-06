@@ -1,7 +1,7 @@
-package com.eventty.businessservice.domain.repository;
+package com.eventty.businessservice.domains.event.domain.repository;
 
-import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
-import com.eventty.businessservice.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

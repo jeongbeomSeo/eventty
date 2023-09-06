@@ -1,8 +1,7 @@
-package com.eventty.businessservice.application.dto.request;
+package com.eventty.businessservice.domains.event.application.dto.request;
 
-import com.eventty.businessservice.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.domain.entity.EventEntity;
-import com.eventty.businessservice.domain.entity.TicketEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,17 +13,17 @@ import java.util.List;
 @Builder
 public class EventFullCreateRequestDTO {
     //private Long id;
-    private Long hostId;
+    private Long userId;
     private String title;
     private String image;
-    private Timestamp eventStartAt;
-    private Timestamp eventEndAt;
+    private LocalDateTime eventStartAt;
+    private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
     private Long category;
     private String content;
-    private Timestamp applyStartAt;
-    private Timestamp applyEndAt;
+    private LocalDateTime applyStartAt;
+    private LocalDateTime applyEndAt;
     //private Long views;
 
     private List<TicketCreateRequestDTO> tickets;
@@ -32,7 +31,7 @@ public class EventFullCreateRequestDTO {
     public EventEntity toEventEntity(){
         return EventEntity.builder()
                 //.id(id)
-                .hostId(hostId)
+                .userId(userId)
                 .title(title)
                 .image(image)
                 .eventStartAt(eventStartAt)
@@ -51,7 +50,7 @@ public class EventFullCreateRequestDTO {
                 .content(content)
                 .applyStartAt(applyStartAt)
                 .applyEndAt(applyEndAt)
-                .createDate(Timestamp.valueOf(LocalDateTime.now()))
+                .createDate(LocalDateTime.now())
                 .updateDate(null)
                 .deleteDate(null)
                 .build();

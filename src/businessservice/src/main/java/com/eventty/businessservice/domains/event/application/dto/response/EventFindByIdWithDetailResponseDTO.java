@@ -1,6 +1,6 @@
-package com.eventty.businessservice.application.dto.response;
+package com.eventty.businessservice.domains.event.application.dto.response;
 
-import com.eventty.businessservice.domain.entity.TicketEntity;
+import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -15,11 +15,11 @@ import java.util.List;
 @ToString
 public class EventFindByIdWithDetailResponseDTO {
     private Long id;
-    private Long hostId;
+    private Long userId;
     private String title;
     private String image;
-    private Timestamp eventStartAt;
-    private Timestamp eventEndAt;
+    private LocalDateTime eventStartAt;
+    private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
     //private Long category;
@@ -27,8 +27,8 @@ public class EventFindByIdWithDetailResponseDTO {
     private Boolean isActive;
     private Boolean isDeleted;
     private String content;
-    private Timestamp applyStartAt;
-    private Timestamp applyEndAt;
+    private LocalDateTime applyStartAt;
+    private LocalDateTime applyEndAt;
     private Long views;
 
     private List<TicketEntity> tickets;
@@ -36,7 +36,7 @@ public class EventFindByIdWithDetailResponseDTO {
     public static EventFindByIdWithDetailResponseDTO from(EventWithDetailResponseDTO event, List<TicketEntity> tickets) {
         return EventFindByIdWithDetailResponseDTO.builder()
             .id(event.getId())
-            .hostId(event.getHostId())
+            .userId(event.getUserId())
             .title(event.getTitle())
             .image(event.getImage())
             .eventStartAt(event.getEventStartAt())
@@ -58,19 +58,19 @@ public class EventFindByIdWithDetailResponseDTO {
     // Swagger 을 위하여 기본 생성자로 기본값 설정
     public EventFindByIdWithDetailResponseDTO() {
         this.id = 1L;
-        this.hostId = 1L;
+        this.userId = 1L;
         this.title = "String";
         this.image = "String";
-        this.eventStartAt = Timestamp.valueOf(LocalDateTime.now());
-        this.eventEndAt = Timestamp.valueOf(LocalDateTime.now());
+        this.eventStartAt = LocalDateTime.now();
+        this.eventEndAt = LocalDateTime.now();
         this.participateNum = 1L;
         this.location = "String";
         this.categoryName = "String";
         this.isActive = true;
         this.isDeleted = false;
         this.content = "String";
-        this.applyStartAt = Timestamp.valueOf(LocalDateTime.now());
-        this.applyEndAt = Timestamp.valueOf(LocalDateTime.now());
+        this.applyStartAt = LocalDateTime.now();
+        this.applyEndAt = LocalDateTime.now();
         this.views = 1L;
         this.tickets = new ArrayList<>();
     }

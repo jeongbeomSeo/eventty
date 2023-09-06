@@ -1,13 +1,13 @@
-package com.eventty.businessservice.application.dto.request;
+package com.eventty.businessservice.domains.event.application.dto.request;
 
-import com.eventty.businessservice.domain.entity.TicketEntity;
+import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
 import lombok.Getter;
 
 @Getter
 public class TicketCreateRequestDTO {
     private String name;
-    private double price;
-    private int quantity;
+    private Long price;
+    private Long quantity;
 
     public TicketEntity toEntity(Long eventId){
         return TicketEntity.builder()

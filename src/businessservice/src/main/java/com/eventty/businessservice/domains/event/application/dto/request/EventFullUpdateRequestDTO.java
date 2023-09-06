@@ -1,4 +1,4 @@
-package com.eventty.businessservice.application.dto.request;
+package com.eventty.businessservice.domains.event.application.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;

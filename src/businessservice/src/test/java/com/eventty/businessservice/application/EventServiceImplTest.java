@@ -1,18 +1,18 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.application.dto.request.EventFullUpdateRequestDTO;
-import com.eventty.businessservice.application.dto.response.EventFindByIdWithDetailResponseDTO;
-import com.eventty.businessservice.application.dto.response.EventFindAllResponseDTO;
-import com.eventty.businessservice.application.serviceImpl.EventServiceImpl;
-import com.eventty.businessservice.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.domain.entity.EventEntity;
-import com.eventty.businessservice.domain.entity.TicketEntity;
-import com.eventty.businessservice.domain.exception.CategoryNotFoundException;
-import com.eventty.businessservice.domain.repository.EventDetailRepository;
-import com.eventty.businessservice.domain.repository.EventRepository;
-import com.eventty.businessservice.application.dto.response.EventWithDetailResponseDTO;
-import com.eventty.businessservice.domain.exception.EventNotFoundException;
-import com.eventty.businessservice.domain.repository.TicketRepository;
+import com.eventty.businessservice.domains.event.application.dto.request.EventFullUpdateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventFindByIdWithDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventFindAllResponseDTO;
+import com.eventty.businessservice.domains.event.application.serviceImpl.EventServiceImpl;
+import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
+import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
+import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
+import com.eventty.businessservice.domains.event.domain.repository.EventRepository;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO;
+import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -176,11 +176,11 @@ public class EventServiceImplTest {
     private static EventEntity createEventEntity(Long i){
         return EventEntity.builder()
             .id(i)
-            .hostId(i)
+            .userId(i)
             .title("Sample Event")
             .image("sample.jpg")
-            .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
-            .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+            .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00").toLocalDateTime())
+            .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00").toLocalDateTime())
             .participateNum(100L)
             .location("Sample Location")
             .category(1L)
@@ -192,19 +192,19 @@ public class EventServiceImplTest {
     private static EventWithDetailResponseDTO createEventWithDetailDAO(Long id){
         return EventWithDetailResponseDTO.builder()
                 .id(id)
-                .hostId(1L)
+                .userId(1L)
                 .title("Sample Event")
                 .image("sample.jpg")
-                .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
-                .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00").toLocalDateTime())
+                .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00").toLocalDateTime())
                 .participateNum(100L)
                 .location("Sample Location")
                 .category(1L)
                 .isActive(true)
                 .isDeleted(false)
                 .content("Sample content")
-                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00"))
-                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00"))
+                .applyStartAt(Timestamp.valueOf("2023-08-21 10:00:00").toLocalDateTime())
+                .applyEndAt(Timestamp.valueOf("2023-08-21 15:00:00").toLocalDateTime())
                 .views(100L)
                 .build();
     }
@@ -227,8 +227,8 @@ public class EventServiceImplTest {
         TicketEntity ticket1 = TicketEntity.builder()
                 .id(1L)
                 .name("Ticket 1")
-                .price(20.0)
-                .quantity(50)
+                .price(2000L)
+                .quantity(50L)
                 .eventId(1L)
                 .is_deleted(false)
                 .build();
@@ -237,8 +237,8 @@ public class EventServiceImplTest {
         TicketEntity ticket2 = TicketEntity.builder()
                 .id(2L)
                 .name("Ticket 2")
-                .price(30.0)
-                .quantity(30)
+                .price(3000L)
+                .quantity(30L)
                 .eventId(1L)
                 .is_deleted(false)
                 .build();

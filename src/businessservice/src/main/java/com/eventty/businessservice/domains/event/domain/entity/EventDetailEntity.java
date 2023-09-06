@@ -1,10 +1,10 @@
-package com.eventty.businessservice.domain.entity;
+package com.eventty.businessservice.domains.event.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -12,12 +12,12 @@ import java.sql.Timestamp;
 public class EventDetailEntity {
     private Long id;
     private String content;
-    private Timestamp applyStartAt;
-    private Timestamp applyEndAt;
+    private LocalDateTime applyStartAt;
+    private LocalDateTime applyEndAt;
     private Long views;
-    private Timestamp deleteDate;
-    private Timestamp updateDate;
-    private Timestamp createDate;
+    private LocalDateTime deleteDate;
+    private LocalDateTime updateDate;
+    private LocalDateTime createDate;
 
     public void updateContent(String content){
         this.content = content;
