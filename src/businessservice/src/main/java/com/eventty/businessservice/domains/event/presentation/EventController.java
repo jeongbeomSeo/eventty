@@ -53,7 +53,7 @@ public class EventController {
      */
     @GetMapping( "")
     @Operation(summary = "행사 전체 조회")
-    @ApiSuccessData(EventFindAllResponseDTO.class)
+    @ApiSuccessData(value = EventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventFindAllResponseDTO>>> findAllEvents() {
         // 행사 기본 정보 (Event) 만 열거
@@ -125,7 +125,7 @@ public class EventController {
      */
     @GetMapping( "/category/{categoryId}")
     @Operation(summary = "카테고리 별 행사 조회")
-    @ApiSuccessData(EventFindAllResponseDTO.class)
+    @ApiSuccessData(value = EventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.CATEGORY_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventFindAllResponseDTO>>> findEventsByCategory(
             @PathVariable Long categoryId
