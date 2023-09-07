@@ -47,6 +47,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             Claims claims = jwtUtils.getClaims(jwtToken);
 
+            // Authentication 객체를 직렬화해서 보낼 수 있지만, 데이터의 크기와 복잡성 때문에 각 서비스에서 만드는 것이 효율적
             ServerHttpRequest requestWithHeader = exchange.getRequest().
                     mutate()
                     .header(HEADER_USER_ID, jwtUtils.getUserId(claims))

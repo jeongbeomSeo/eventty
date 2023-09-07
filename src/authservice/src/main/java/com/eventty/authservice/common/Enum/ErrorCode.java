@@ -20,6 +20,7 @@ public enum ErrorCode {
     REFERENCE_INTEGRITY_VIOLATION(400, "" , "Reference integrity violation"),
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),
     CONFLICT(409, "", "Conflict occurred"),
+    PERMISSION_DENIED(403, "", "Permission Denided"),
 
     // Auth
     DUPLICATE_EMAIL(409, "C200", "Duplicate Email");

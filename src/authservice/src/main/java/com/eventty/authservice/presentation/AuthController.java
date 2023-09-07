@@ -1,11 +1,17 @@
 package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.TokenDTO;
+import com.eventty.authservice.infrastructure.annotation.Auth;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
 import com.eventty.authservice.presentation.dto.UserLoginRequestDTO;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -19,6 +25,8 @@ import com.eventty.authservice.applicaiton.service.Facade.UserService;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.presentation.dto.IsUserDuplicateRequestDTO;
 import com.eventty.authservice.common.Enum.SuccessCode;
+
+import javax.management.relation.Role;
 
 @RestController
 @RequiredArgsConstructor
@@ -76,6 +84,20 @@ public class AuthController {
                 .status(SuccessCode.IS_OK.getStatus())
                 .header(HttpHeaders.SET_COOKIE, combinedCookies)
                 .body(null);
+    }
+
+    /**
+     * 로그아웃
+     */
+    @Auth(Roles = {UserRole.HOST})
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal Authentication authentication,
+                                       HttpServletRequest request) {
+
+        Cookie[] cookies = request.getCookies();
+
+
+        return null;
     }
 
 }

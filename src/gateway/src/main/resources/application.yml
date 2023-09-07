@@ -9,7 +9,7 @@ spring:
       routes:
         - id: userservice-server
           # ?? URL (??? http://userservice:8000/ ?? ??)
-          uri: http://userservice:8000/
+          uri: http://${user_server}:8000/
           predicates:
             - Path=/api/users/**
           filters:
@@ -19,7 +19,7 @@ spring:
 
         - id: event-server
           # ?? URL (??? http://eventservice:8000/ ?? ??)
-          uri: http://businessservice:80/
+          uri: http://${event_server}:80/
           predicates:
             - Path=/api/events/**
           filters:
@@ -28,7 +28,7 @@ spring:
               - JwtAuthenticationFilter
 
         - id: auth-login
-          uri: http://localahost:8002/
+          uri: http://${auth_server}:8002/
           predicates:
             - Path=/api/auth/login, /api/auth/me
             - Method=POST
@@ -36,12 +36,11 @@ spring:
           #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
 
         - id: auth-me-delete
-          uri: http://localhost:8002/
+          uri: http://${auth_server}:8002/
           predicates:
             - Path=/api/auth/me
             - Method=DELETE
           filters:
-            - RemoveRequestHeader=Cookie
             - JwtAuthenticationFilter
             #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
       globalcors:

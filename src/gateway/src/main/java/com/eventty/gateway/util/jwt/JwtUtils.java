@@ -12,9 +12,8 @@ import io.jsonwebtoken.Jwts;
 
 import lombok.RequiredArgsConstructor;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -41,7 +40,7 @@ public class JwtUtils {
     }
 
     public String getAuthoritiesToJson(Claims claims) {
-        List<String> roles = getRolesFromClaims(claims);
+        List<Authority> roles = getRolesFromClaims(claims);
         try {
             return objectMapper.writeValueAsString(roles);
         } catch (JsonProcessingException e) {
@@ -49,10 +48,12 @@ public class JwtUtils {
         }
     }
 
-    private List<String> getRolesFromClaims(Claims claims) {
+    // 안에 담긴 형태가 authorities안에 [{authority=ROLE_USER}] 형태로 담겨 오는 상황
+    private List<Authority> getRolesFromClaims(Claims claims) {
         return objectMapper.convertValue(
-                claims.get(TokenEnum.AUTHORIZATION.toString()),
-                new TypeReference<List<String>>() {});
+                claims.get(TokenEnum.AUTHORIZATION.getName()),
+                new TypeReference<List<Authority>>() {}
+        );
     }
     private void validationCheck(Claims claims) {
         if (!claims.getIssuer().equals(jwtProperties.getIssure())) {
@@ -63,25 +64,4 @@ public class JwtUtils {
             throw new RuntimeException("Token is expired");
         }
     }
-
-    /* Authentication 객체는 직렬화해서 보낼 수 있지만, 데이터의 크기와 복잡성 때문에 각 서비스에서 만드는 것이 효율적
-    public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token);
-
-        // 형태: userId, "", ROLE_USER
-        return new UsernamePasswordAuthenticationToken(
-                claims.get(TokenEnum.USERID.toString()), "", getAuthorities(claims));
-    }
-    */
-
-
-    /*  권한 List로 만드는 작업은 각 서비스에서 할 에정
-    private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
-        List<String> roles = getRolesFromClaims(claims);
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-    */
-
 }
