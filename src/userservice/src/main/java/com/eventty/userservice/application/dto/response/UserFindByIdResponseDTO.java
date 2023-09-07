@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserFindByIdResponseDTO {
     private Long id;                    // PK값
-    private Long authId;                // auth 서버의 PK 값
+    private Long userId;                // auth 서버의 PK 값
     private String name;                // 이름
     private String address;             // 주소
     private LocalDate birth;            // 생일
@@ -18,7 +18,7 @@ public class UserFindByIdResponseDTO {
 
     public UserFindByIdResponseDTO(UserEntity userEntity){
         this.id = userEntity.getId();
-        this.authId = userEntity.getAuthId();
+        this.userId = userEntity.getUserId();
         this.name = userEntity.getName();
         this.address = userEntity.getAddress();
         this.birth = userEntity.getBirth();

@@ -3,7 +3,6 @@ package com.eventty.authservice.presentation;
 import com.eventty.authservice.applicaiton.dto.TokenDTO;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
 import com.eventty.authservice.presentation.dto.UserLoginRequestDTO;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;

@@ -46,9 +46,12 @@ logging:
 server.base.url.userServer: ${user-server-url}
 
 ## JWT
-
 jwt.issuer: ${issuer}
 jwt.secret_key: ${secret_key}
+
+## Token
+token.access-expired-time: ${token-access}
+token.refresh-expired-time: ${token-refresh}
 
 # Swagger
 springdoc:

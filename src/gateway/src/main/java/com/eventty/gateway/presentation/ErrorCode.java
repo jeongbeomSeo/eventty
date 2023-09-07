@@ -1,4 +1,4 @@
-package com.eventty.authservice.common.Enum;
+package com.eventty.gateway.presentation;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +19,8 @@ public enum ErrorCode {
     DATABASE_CONSTRAINT_VIOLATION(400, "", "Database constraint violation"),
     REFERENCE_INTEGRITY_VIOLATION(400, "" , "Reference integrity violation"),
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),
-    CONFLICT(409, "", "Conflict occurred"),
+    CONFLICT(409, "", "Conflict occurred");
 
-    // Auth
-    DUPLICATE_EMAIL(409, "C200", "Duplicate Email");
 
     private final int status;
     private final String code;

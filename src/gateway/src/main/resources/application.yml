@@ -2,23 +2,48 @@ server:
   port: 8001
 
 spring:
+  profiles:
+    active: test
   cloud:
     gateway:
       routes:
         - id: userservice-server
           # ?? URL (??? http://userservice:8000/ ?? ??)
-          uri: http://localhost:8000/
+          uri: http://userservice:8000/
           predicates:
             - Path=/api/users/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
+            - JwtAuthenticationFilter
+
         - id: event-server
           # ?? URL (??? http://eventservice:8000/ ?? ??)
-          uri: http://localhost:80/
+          uri: http://businessservice:80/
           predicates:
             - Path=/api/events/**
-        - id: auth-server
+          filters:
+              - RemoveRequestHeader=Cookie
+              #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
+              - JwtAuthenticationFilter
+
+        - id: auth-login
+          uri: http://localahost:8002/
+          predicates:
+            - Path=/api/auth/login, /api/auth/me
+            - Method=POST
+          filters:
+          #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
+
+        - id: auth-me-delete
           uri: http://localhost:8002/
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/auth/me
+            - Method=DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - JwtAuthenticationFilter
+            #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
       globalcors:
         cors-configurations:
           '[/**]':
@@ -37,5 +62,8 @@ spring:
               - OPTIONS
               - DELETE
 
+## JWT
+jwt.secret_key: ${secret_key}
+jwt.issure: ${issuer}
 
 

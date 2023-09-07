@@ -1,0 +1,3 @@
+## jwt
+issuer: eventty
+secret_key: eventtyKey

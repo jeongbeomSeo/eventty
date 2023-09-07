@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class UserUpdateDTO {
 
     private Long id;
-    private Long authId;
+    private Long userId;
     private String name;
     private String phone;
     private LocalDate birth;
@@ -20,7 +20,7 @@ public class UserUpdateDTO {
 
     public UserUpdateDTO(UserEntity user){
         this.id = user.getId();
-        this.authId = user.getAuthId();
+        this.userId = user.getUserId();
         this.name = user.getName();
         this.phone = user.getPhone();
         this.birth = user.getBirth();
@@ -32,7 +32,7 @@ public class UserUpdateDTO {
         return UserEntity
                 .builder()
                 .id(this.getId())
-                .authId(this.authId)
+                .userId(this.userId)
                 .name(dto.getName() != null ? dto.getName() : this.name)
                 .phone(dto.getPhone() != null ? dto.getPhone() : this.phone)
                 .birth(dto.getBirth() != null ? dto.getBirth() : this.birth)

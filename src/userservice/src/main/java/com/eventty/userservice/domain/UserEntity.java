@@ -22,7 +22,7 @@ public class UserEntity {
     private Long id;                    // PK값
 
     @NotNull
-    private Long authId;                // auth Server에 저장 후 받을 FK값
+    private Long userId;                // auth Server에 저장 후 받을 FK값
 
     @NotNull
     private String name;                // 이름

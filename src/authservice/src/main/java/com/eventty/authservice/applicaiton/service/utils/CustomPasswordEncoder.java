@@ -20,6 +20,4 @@ public class CustomPasswordEncoder {
     }
 
     public boolean match(String rawPassword, String encodedPassword) { return bCryptPasswordEncoder.matches(rawPassword, encodedPassword); }
-
-
 }

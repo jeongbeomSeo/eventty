@@ -18,7 +18,6 @@ import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
-import com.eventty.authservice.applicaiton.service.utils.CustomConverterImpl;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 
 @Service
@@ -35,7 +34,7 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserDetailServiceImpl userServiceImpl,
                            AuthServiceImpl authServiceImpl,
                            @Lazy ApiClient apiClient,
-                           @Lazy CustomConverterImpl converterService,
+                           @Lazy CustomConverter converterService,
                            @Lazy CustomPasswordEncoder customPasswordEncoder) {
         this.userDetailService = userServiceImpl;
         this.authService = authServiceImpl;
@@ -62,13 +61,13 @@ public class UserServiceImpl implements UserService {
 
         AuthUserEntity authUserEntity = customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder);
 
-        Long authUserId = userDetailService.create(authUserEntity, role);
+        Long userId = userDetailService.create(authUserEntity, role);
 
         // API 요청 로직
-        UserCreateRequestDTO userCreateRequestDTO = customConverter.fullUserDTOToUserDTOConvert(fullUserCreateRequestDTO, authUserId);
+        UserCreateRequestDTO userCreateRequestDTO = customConverter.fullUserDTOToUserDTOConvert(fullUserCreateRequestDTO, userId);
         apiClient.createUserApi(userCreateRequestDTO);
 
-        return authUserId;
+        return userId;
     }
 
     @Override

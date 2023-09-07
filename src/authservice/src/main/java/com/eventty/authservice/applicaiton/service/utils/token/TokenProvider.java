@@ -13,6 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class TokenProvider {
 
+    private final TokenProperties tokenProperties;
+
     private final AccessTokenProvider accessTokenProvider;
 
     private final RefreshTokenProvider refreshTokenProvider;
@@ -22,13 +24,13 @@ public class TokenProvider {
         Date now = new Date();
 
         // Access Token의 만료 시간: 2시간
-        String accessToken = accessTokenProvider.generateToken(authUserEntity, now, createExpiry(now, Duration.ofHours(2)));
+        String accessToken = accessTokenProvider.generateToken(authUserEntity, now, createExpiry(now, Duration.ofHours(tokenProperties.accessExpiredTime)));
 
         // Refresh Token의 만교 기간: 2일
-        String refreshToken = refreshTokenProvider.generateToken(authUserEntity, now, createExpiry(now, Duration.ofDays(2L)));
+        String refreshToken = refreshTokenProvider.generateToken(authUserEntity, now, createExpiry(now, Duration.ofDays(tokenProperties.refreshExpiredTime)));
 
-        // Refresh Token 저장
-        refreshTokenProvider.saveRefreshToken(refreshToken, authUserEntity.getId());
+        // Refresh Token 저장 혹은 업데이트
+        refreshTokenProvider.saveOrUpdateRefreshToken(refreshToken, authUserEntity.getId());
 
         return TokenDTO.builder()
                 .accessToken(accessToken)

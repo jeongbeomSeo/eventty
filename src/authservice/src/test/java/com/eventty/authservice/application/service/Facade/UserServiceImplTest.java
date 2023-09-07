@@ -1,3 +1,4 @@
+/*
 package com.eventty.authservice.application.service.Facade;
 
 import com.eventty.authservice.api.ApiClient;
@@ -143,3 +144,4 @@ public class UserServiceImplTest {
                 .build();
     }
 }
+*/

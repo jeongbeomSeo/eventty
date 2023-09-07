@@ -1,12 +1,10 @@
 package com.eventty.authservice.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @Entity
 @Builder
 @AllArgsConstructor
@@ -23,7 +21,5 @@ public class RefreshTokenEntity {
     private Long userId;
 
     @Column(nullable = false, unique = true)
-    private String refreshToken;
-
-
+    private String name;
 }

@@ -14,5 +14,4 @@ public enum SuccessCode {
     USER_CREATED(201);
 
     private final int status;
-
 }
