@@ -1,16 +1,16 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.domains.event.application.dto.request.EventFullUpdateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindByIdWithDetailResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindAllResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.serviceImpl.EventServiceImpl;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
 import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
-import com.eventty.businessservice.domains.event.domain.repository.EventRepository;
-import com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO;
+import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
+import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 public class EventServiceImplTest {
 
     @Mock
-    private EventRepository eventRepository;
+    private EventBasicRepository eventBasicRepository;
     @Mock
     private EventDetailRepository eventDetailRepository;
 
@@ -46,21 +46,21 @@ public class EventServiceImplTest {
     public void findEventByIdTest_ExistingEvent() {
         // Given
         Long eventId = 1L;
-        EventWithDetailResponseDTO mockEvent = createEventWithDetailDAO(eventId);
+        EventFullFindByIdResponseDTO mockEvent = createEventWithDetailDAO(eventId);
         List<TicketEntity> mockTickets = createTickets(); // 필요에 따라 만들어야 합니다.
 
-        when(eventRepository.selectEventWithDetailById(eventId)).thenReturn(mockEvent);
+        when(eventBasicRepository.selectEventWithDetailById(eventId)).thenReturn(mockEvent);
         when(ticketRepository.selectTicketByEventId(eventId)).thenReturn(mockTickets);
 
         // When
-        EventFindByIdWithDetailResponseDTO responseDTO = eventService.findEventById(eventId);
+        EventWithTicketsFindByIdResponseDTO responseDTO = eventService.findEventById(eventId);
 
         // Then
         assertEquals(mockEvent.getId(), responseDTO.getId());
         assertEquals(mockEvent.getTitle(), responseDTO.getTitle());
         assertEquals(mockEvent.getContent(), responseDTO.getContent());
 
-        verify(eventRepository, times(1)).selectEventWithDetailById(eventId);
+        verify(eventBasicRepository, times(1)).selectEventWithDetailById(eventId);
     }
 
     @Test
@@ -68,26 +68,26 @@ public class EventServiceImplTest {
     public void findEventByIdTest_NonExistingEvent() {
         // Given
         Long eventId = 1L;
-        when(eventRepository.selectEventWithDetailById(eventId)).thenReturn(null);
+        when(eventBasicRepository.selectEventWithDetailById(eventId)).thenReturn(null);
 
         // When & Then
         assertThrows(EventNotFoundException.class, () -> eventService.findEventById(eventId));
-        verify(eventRepository, times(1)).selectEventWithDetailById(eventId);
+        verify(eventBasicRepository, times(1)).selectEventWithDetailById(eventId);
     }
 
     @Test
     @DisplayName("전체 이벤트 조회 테스트")
     public void findAllEventsTest() {
         // Given
-        List<EventEntity> mockEventEntities = createEventEntityList(3L);
-        when(eventRepository.selectAllEvents()).thenReturn(mockEventEntities);
+        List<EventBasicEntity> mockEventEntities = createEventEntityList(3L);
+        when(eventBasicRepository.selectAllEvents()).thenReturn(mockEventEntities);
 
         // When
-        List<EventFindAllResponseDTO> responseDTOs = eventService.findAllEvents();
+        List<EventBasicFindAllResponseDTO> responseDTOs = eventService.findAllEvents();
 
         // Then
         assertEquals(mockEventEntities.size(), responseDTOs.size());
-        verify(eventRepository, times(1)).selectAllEvents();
+        verify(eventBasicRepository, times(1)).selectAllEvents();
     }
 
     @Test
@@ -95,7 +95,7 @@ public class EventServiceImplTest {
     public void deleteEventTest(){
         // Given
         Long eventId = 1L;
-        when(eventRepository.deleteEvent(eventId)).thenReturn(1L);
+        when(eventBasicRepository.deleteEvent(eventId)).thenReturn(1L);
         when(eventDetailRepository.deleteEventDetail(eventId)).thenReturn(1L);
         when(ticketRepository.deleteTicket(eventId)).thenReturn(1L);
 
@@ -103,8 +103,8 @@ public class EventServiceImplTest {
         eventService.deleteEvent(eventId);
 
         // Then
-        assertNull(eventRepository.selectEventById(eventId));
-        verify(eventRepository, times(1)).deleteEvent(eventId);
+        assertNull(eventBasicRepository.selectEventById(eventId));
+        verify(eventBasicRepository, times(1)).deleteEvent(eventId);
         verify(eventDetailRepository, times(1)).deleteEventDetail(eventId);
     }
 
@@ -112,9 +112,9 @@ public class EventServiceImplTest {
     @DisplayName("이벤트 수정 테스트")
     public void updateEventTest() {
         Long eventId = 1L;
-        EventEntity existingEvent = createEventEntity(eventId);
+        EventBasicEntity existingEvent = createEventEntity(eventId);
 
-        EventFullUpdateRequestDTO updateRequestDTO = EventFullUpdateRequestDTO.builder()
+        EventUpdateRequestDTO updateRequestDTO = EventUpdateRequestDTO.builder()
                 .title("Updated Title")
                 .image("updated_image.jpg")
                 .content("Updated Content")
@@ -125,12 +125,12 @@ public class EventServiceImplTest {
                 .content("Old Content")
                 .build();
 
-        when(eventRepository.selectEventById(eventId)).thenReturn(existingEvent);
+        when(eventBasicRepository.selectEventById(eventId)).thenReturn(existingEvent);
         when(eventDetailRepository.selectEventDetailById(eventId)).thenReturn(existingEventDetail);
 
         eventService.updateEvent(eventId, updateRequestDTO);
 
-        verify(eventRepository, times(1)).updateEvent(any(EventEntity.class));
+        verify(eventBasicRepository, times(1)).updateEvent(any(EventBasicEntity.class));
         verify(eventDetailRepository, times(1)).updateEventDetail(any(EventDetailEntity.class));
     }
 
@@ -138,11 +138,11 @@ public class EventServiceImplTest {
     public void findEventsByCategoryTest() {
         // given
         Long categoryId = 5L;
-        List<EventEntity> mockEvents = createEventEntityList(3L); // 필요에 따라 만들어야 합니다.
-        when(eventRepository.selectEventsByCategory(categoryId)).thenReturn(mockEvents);
+        List<EventBasicEntity> mockEvents = createEventEntityList(3L); // 필요에 따라 만들어야 합니다.
+        when(eventBasicRepository.selectEventsByCategory(categoryId)).thenReturn(mockEvents);
 
         // when
-        List<EventFindAllResponseDTO> result = eventService.findEventsByCategory(categoryId);
+        List<EventBasicFindAllResponseDTO> result = eventService.findEventsByCategory(categoryId);
 
         // then
         assertNotNull(result);
@@ -165,7 +165,7 @@ public class EventServiceImplTest {
     public void findEventsByCategoryTest_NoEventsFound() {
         // given
         Long categoryId = 7L;
-        when(eventRepository.selectEventsByCategory(categoryId)).thenReturn(new ArrayList<>());
+        when(eventBasicRepository.selectEventsByCategory(categoryId)).thenReturn(new ArrayList<>());
 
         // when & then
         assertThrows(EventNotFoundException.class, () -> {
@@ -173,8 +173,8 @@ public class EventServiceImplTest {
         });
     }
 
-    private static EventEntity createEventEntity(Long i){
-        return EventEntity.builder()
+    private static EventBasicEntity createEventEntity(Long i){
+        return EventBasicEntity.builder()
             .id(i)
             .userId(i)
             .title("Sample Event")
@@ -189,8 +189,8 @@ public class EventServiceImplTest {
             .build();
     }
 
-    private static EventWithDetailResponseDTO createEventWithDetailDAO(Long id){
-        return EventWithDetailResponseDTO.builder()
+    private static EventFullFindByIdResponseDTO createEventWithDetailDAO(Long id){
+        return EventFullFindByIdResponseDTO.builder()
                 .id(id)
                 .userId(1L)
                 .title("Sample Event")
@@ -209,15 +209,15 @@ public class EventServiceImplTest {
                 .build();
     }
 
-    private static List<EventEntity> createEventEntityList(Long count) {
-        List<EventEntity> eventEntityList = new ArrayList<>();
+    private static List<EventBasicEntity> createEventEntityList(Long count) {
+        List<EventBasicEntity> eventBasicEntityList = new ArrayList<>();
 
         for (Long i = 0L; i < count; i++) {
-            EventEntity eventEntity = createEventEntity(i);
-            eventEntityList.add(eventEntity);
+            EventBasicEntity eventBasicEntity = createEventEntity(i);
+            eventBasicEntityList.add(eventBasicEntity);
         }
 
-        return eventEntityList;
+        return eventBasicEntityList;
     }
 
     private List<TicketEntity> createTickets() {

@@ -1,9 +1,8 @@
 package com.eventty.businessservice.domains.event.application.dto.response;
 
-import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @ToString
-public class EventFindAllResponseDTO {
+public class EventBasicFindAllResponseDTO {
     private Long id;
     private Long userId;
     private String title;
@@ -24,24 +23,24 @@ public class EventFindAllResponseDTO {
     private Boolean isActive;
     private Boolean isDeleted;
 
-    public static EventFindAllResponseDTO fromEntity(EventEntity eventEntity) {
-        return EventFindAllResponseDTO.builder()
-            .id(eventEntity.getId())
-            .userId(eventEntity.getUserId())
-            .title(eventEntity.getTitle())
-            .image(eventEntity.getImage())
-            .eventStartAt(eventEntity.getEventStartAt())
-            .eventEndAt(eventEntity.getEventEndAt())
-            .participateNum(eventEntity.getParticipateNum())
-            .location(eventEntity.getLocation())
-            .category(eventEntity.getCategory())
-            .isActive(eventEntity.getIsActive())
-            .isDeleted(eventEntity.getIsDeleted())
+    public static EventBasicFindAllResponseDTO fromEntity(EventBasicEntity eventBasicEntity) {
+        return EventBasicFindAllResponseDTO.builder()
+            .id(eventBasicEntity.getId())
+            .userId(eventBasicEntity.getUserId())
+            .title(eventBasicEntity.getTitle())
+            .image(eventBasicEntity.getImage())
+            .eventStartAt(eventBasicEntity.getEventStartAt())
+            .eventEndAt(eventBasicEntity.getEventEndAt())
+            .participateNum(eventBasicEntity.getParticipateNum())
+            .location(eventBasicEntity.getLocation())
+            .category(eventBasicEntity.getCategory())
+            .isActive(eventBasicEntity.getIsActive())
+            .isDeleted(eventBasicEntity.getIsDeleted())
             .build();
     }
 
     // Swagger 을 위하여 기본 생성자로 기본값 설정
-    public EventFindAllResponseDTO() {
+    public EventBasicFindAllResponseDTO() {
         this.id = 1L;
         this.userId = 1L;
         this.title = "String";

@@ -1,17 +1,16 @@
 package com.eventty.businessservice.domains.event.application.dto.request;
 
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Builder
-public class EventFullCreateRequestDTO {
+public class EventCreateRequestDTO {
     //private Long id;
     private Long userId;
     private String title;
@@ -28,8 +27,8 @@ public class EventFullCreateRequestDTO {
 
     private List<TicketCreateRequestDTO> tickets;
 
-    public EventEntity toEventEntity(){
-        return EventEntity.builder()
+    public EventBasicEntity toEventEntity(){
+        return EventBasicEntity.builder()
                 //.id(id)
                 .userId(userId)
                 .title(title)

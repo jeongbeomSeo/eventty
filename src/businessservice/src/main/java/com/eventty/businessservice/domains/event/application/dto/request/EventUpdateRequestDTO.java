@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class EventFullUpdateRequestDTO {
+public class EventUpdateRequestDTO {
     // Event
     private String title;
     private String image;

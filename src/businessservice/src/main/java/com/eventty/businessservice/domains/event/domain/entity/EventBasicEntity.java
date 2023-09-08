@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
 @Builder
-public class EventEntity {
+public class EventBasicEntity {
     private Long id;
     private Long userId; // hostId
     private String title;

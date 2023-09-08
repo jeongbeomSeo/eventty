@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domains.event.domain.repository.EventRepository">
+<mapper namespace="com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository">
 
-    <resultMap id="EventResultMap" type="com.eventty.businessservice.domains.event.domain.entity.EventEntity">
+    <resultMap id="EventResultMap" type="com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
@@ -18,7 +18,7 @@
         <result property="isDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO">
+    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
@@ -40,20 +40,14 @@
         <result property="categoryName" column="category_name"/>
     </resultMap>
 
-    <!--특정 이벤트 조회-->
-    <select id="selectEventById" resultMap="EventResultMap" parameterType="java.lang.Long">
-        SELECT * FROM events
-        WHERE ID = #{id} AND is_deleted = false
-    </select>
-
     <!--전체 이벤트 조회-->
     <select id="selectAllEvents" resultMap="EventResultMap" parameterType="java.lang.Long">
-        SELECT * FROM events
+        SELECT * FROM events_basic
         WHERE is_deleted = false
         ORDER BY id DESC
     </select>
 
-    <!--이벤트 일반+상세정보 조회-->
+    <!--특정 이벤트 조회 : 일반 정보와 상세 정보 JOIN-->
     <select id="selectEventWithDetailById" resultMap="EventResultMapWithDetail" parameterType="java.lang.Long">
         SELECT
             e.id,
@@ -75,21 +69,21 @@
             ed.update_date,
             ed.create_date,
             c.name AS category_name
-        FROM events e
+        FROM events_basic e
             INNER JOIN event_details ed ON e.id = ed.id
             INNER JOIN categories c ON e.category = c.id
         WHERE e.id = #{id} AND is_deleted = false
     </select>
 
     <!-- 이벤트 생성 -->
-    <insert id="insertEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO events (user_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
+    <insert id="insertEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO events_basic (user_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
         VALUES (#{userId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
     </insert>
 
     <!-- 이벤트 수정 -->
-    <update id="updateEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventEntity">
-        UPDATE events
+    <update id="updateEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity">
+        UPDATE events_basic
         SET
             title = #{title},
             image = #{image},
@@ -99,7 +93,7 @@
 
     <!--이벤트 정보 삭제-->
     <update id="deleteEvent" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
-        UPDATE events
+        UPDATE events_basic
         SET is_deleted = true
         WHERE id = #{id}
     </update>
@@ -107,7 +101,7 @@
     <!--카테고리 별 이벤트 조회-->
     <select id="selectEventsByCategory" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT *
-        FROM events e
+        FROM events_basic e
              INNER JOIN categories c ON e.category = c.id
         WHERE c.id = #{categoryId}
         AND is_deleted = false

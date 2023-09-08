@@ -1,17 +1,17 @@
 package com.eventty.businessservice.domains.event.application.serviceImpl;
 
-import com.eventty.businessservice.domains.event.application.dto.request.EventFullCreateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.request.EventFullUpdateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindByIdWithDetailResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindAllResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.service.EventService;
-import com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.domains.event.domain.entity.EventEntity;
+import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
 import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
-import com.eventty.businessservice.domains.event.domain.repository.EventRepository;
+import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,75 +27,73 @@ import java.util.stream.Collectors;
 @Transactional
 public class EventServiceImpl implements EventService {
 
-    private final EventRepository eventRepository;
+    private final EventBasicRepository eventBasicRepository;
     private final EventDetailRepository eventDetailRepository;
     private final TicketRepository ticketRepository;
 
-    // 이벤트 기본 정보와 상세 정보 모두 조회
+    /**
+     * 이벤트 기본 정보와 상세 정보 모두 조회
+     */
     @Override
-    public EventFindByIdWithDetailResponseDTO findEventById(Long eventId){
+    public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId){
 
-        // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환 예정
-        EventWithDetailResponseDTO eventWithDetail = eventRepository.selectEventWithDetailById(eventId);
+        EventFullFindByIdResponseDTO eventWithDetail = Optional.ofNullable(eventBasicRepository.selectEventWithDetailById(eventId))
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION);
+
         List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
 
         // 조회수 업데이트 쿼리 execute
         eventDetailRepository.updateView(eventId);
 
-        // 티켓이 없을 경우 "티켓이 모두 매진되었습니다."
-
-        if(eventWithDetail == null){
-            throw EventNotFoundException.EXCEPTION;
-        }
-
-        return EventFindByIdWithDetailResponseDTO.from(eventWithDetail, tickets);
+        // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환
+        return EventWithTicketsFindByIdResponseDTO.from(eventWithDetail, tickets);
     }
 
     // 이벤트 전체 조회
     @Override
-    public List<EventFindAllResponseDTO> findAllEvents() {
-        return Optional.ofNullable(eventRepository.selectAllEvents())
+    public List<EventBasicFindAllResponseDTO> findAllEvents() {
+        return Optional.ofNullable(eventBasicRepository.selectAllEvents())
             .map(events -> events.stream()
-                .map(EventFindAllResponseDTO::fromEntity)
+                .map(EventBasicFindAllResponseDTO::fromEntity)
                 .collect(Collectors.toList()))
             .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
     // 이벤트 생성
     @Override
-    public Long createEvent(EventFullCreateRequestDTO eventFullCreateRequestDTO){
+    public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
 
         // 이벤트 일반 정보 저장
-        EventEntity event = eventFullCreateRequestDTO.toEventEntity();
-        eventRepository.insertEvent(event);
+        EventBasicEntity event = eventCreateRequestDTO.toEventEntity();
+        eventBasicRepository.insertEvent(event);
         Long id = event.getId();
 
         // 티켓 정보 저장
-        eventFullCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
+        eventCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
             TicketEntity ticket = ticketCreateRequest.toEntity(id);
             ticketRepository.insertTicket(ticket);
         });
 
         // 이벤트 상세 정보 저장
-        EventDetailEntity eventDetail = eventFullCreateRequestDTO.toEventDetailEntity(id);
+        EventDetailEntity eventDetail = eventCreateRequestDTO.toEventDetailEntity(id);
         return eventDetailRepository.insertEventDetail(eventDetail);
     }
 
     // 이벤트 수정
     @Override
-    public Long updateEvent(Long id, EventFullUpdateRequestDTO eventFullUpdateRequestDTO){
+    public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO){
 
         // Event
-        EventEntity event = eventRepository.selectEventById(id);
-        event.updateTitle(eventFullUpdateRequestDTO.getTitle());
-        event.updateImage(eventFullUpdateRequestDTO.getImage());
-        event.updateCategory(eventFullUpdateRequestDTO.getCategory());
+        EventBasicEntity event = eventBasicRepository.selectEventById(id);
+        event.updateTitle(eventUpdateRequestDTO.getTitle());
+        event.updateImage(eventUpdateRequestDTO.getImage());
+        event.updateCategory(eventUpdateRequestDTO.getCategory());
 
-        eventRepository.updateEvent(event);
+        eventBasicRepository.updateEvent(event);
 
         // Event Detail
         EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(id);
-        eventDetail.updateContent(eventFullUpdateRequestDTO.getContent());
+        eventDetail.updateContent(eventUpdateRequestDTO.getContent());
 
         eventDetailRepository.updateEventDetail(eventDetail);
 
@@ -107,23 +105,23 @@ public class EventServiceImpl implements EventService {
     public Long deleteEvent(Long id){
         ticketRepository.deleteTicket(id);
         eventDetailRepository.deleteEventDetail(id);
-        eventRepository.deleteEvent(id);
+        eventBasicRepository.deleteEvent(id);
         return id;
     }
 
     // 이벤트 카테고리별 조회
     @Override
-    public List<EventFindAllResponseDTO> findEventsByCategory(Long categoryId){
+    public List<EventBasicFindAllResponseDTO> findEventsByCategory(Long categoryId){
 
         if (categoryId < 1 || categoryId > 10) {
             throw CategoryNotFoundException.EXCEPTION;
         }
 
-        return Optional.ofNullable(eventRepository.selectEventsByCategory(categoryId))
+        return Optional.ofNullable(eventBasicRepository.selectEventsByCategory(categoryId))
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventFindAllResponseDTO::fromEntity)
+                .map(EventBasicFindAllResponseDTO::fromEntity)
                 .collect(Collectors.toList());
 
     }

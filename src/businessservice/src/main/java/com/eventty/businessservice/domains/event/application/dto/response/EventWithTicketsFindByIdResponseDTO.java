@@ -3,7 +3,6 @@ package com.eventty.businessservice.domains.event.application.dto.response;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @ToString
-public class EventFindByIdWithDetailResponseDTO {
+public class EventWithTicketsFindByIdResponseDTO {
     private Long id;
     private Long userId;
     private String title;
@@ -33,8 +32,8 @@ public class EventFindByIdWithDetailResponseDTO {
 
     private List<TicketEntity> tickets;
 
-    public static EventFindByIdWithDetailResponseDTO from(EventWithDetailResponseDTO event, List<TicketEntity> tickets) {
-        return EventFindByIdWithDetailResponseDTO.builder()
+    public static EventWithTicketsFindByIdResponseDTO from(EventFullFindByIdResponseDTO event, List<TicketEntity> tickets) {
+        return EventWithTicketsFindByIdResponseDTO.builder()
             .id(event.getId())
             .userId(event.getUserId())
             .title(event.getTitle())
@@ -56,7 +55,7 @@ public class EventFindByIdWithDetailResponseDTO {
 
 
     // Swagger 을 위하여 기본 생성자로 기본값 설정
-    public EventFindByIdWithDetailResponseDTO() {
+    public EventWithTicketsFindByIdResponseDTO() {
         this.id = 1L;
         this.userId = 1L;
         this.title = "String";

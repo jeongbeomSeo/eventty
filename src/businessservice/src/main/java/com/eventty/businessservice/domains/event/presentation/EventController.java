@@ -1,14 +1,13 @@
 package com.eventty.businessservice.domains.event.presentation;
 
-import com.eventty.businessservice.domains.event.application.dto.request.EventFullCreateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.request.EventFullUpdateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.common.Enum.ErrorCode;
 import com.eventty.businessservice.common.annotation.ApiErrorCode;
 import com.eventty.businessservice.common.annotation.ApiSuccessData;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindByIdWithDetailResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventWithDetailResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,11 +35,11 @@ public class EventController {
      */
     @GetMapping( "/{eventId}")
     @Operation(summary = "특정 행사 조회")
-    @ApiSuccessData(EventFindByIdWithDetailResponseDTO.class)
+    @ApiSuccessData(EventWithTicketsFindByIdResponseDTO.class)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    public ResponseEntity<SuccessResponseDTO<EventFindByIdWithDetailResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId){
+    public ResponseEntity<SuccessResponseDTO<EventWithTicketsFindByIdResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId){
         // 행사 기본 정보 + 상세 정보 + 티켓
-        EventFindByIdWithDetailResponseDTO data = eventService.findEventById(eventId);
+        EventWithTicketsFindByIdResponseDTO data = eventService.findEventById(eventId);
 
         return ResponseEntity
                 .status(GET_EVENT_INFO_SUCCESS.getStatus())
@@ -53,11 +52,11 @@ public class EventController {
      */
     @GetMapping( "")
     @Operation(summary = "행사 전체 조회")
-    @ApiSuccessData(value = EventFindAllResponseDTO.class, array = true)
+    @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    public ResponseEntity<SuccessResponseDTO<List<EventFindAllResponseDTO>>> findAllEvents() {
+    public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findAllEvents() {
         // 행사 기본 정보 (Event) 만 열거
-        List<EventFindAllResponseDTO> eventList = eventService.findAllEvents();
+        List<EventBasicFindAllResponseDTO> eventList = eventService.findAllEvents();
 
         return ResponseEntity
                 .status(GET_EVENT_INFO_SUCCESS.getStatus())
@@ -71,9 +70,9 @@ public class EventController {
     @PostMapping("")
     @Operation(summary = "행사 주최")
     @ApiSuccessData()
-    public ResponseEntity<Void> postEvent(@RequestBody EventFullCreateRequestDTO eventFullCreateRequestDTO){
+    public ResponseEntity<Void> postEvent(@RequestBody EventCreateRequestDTO eventCreateRequestDTO){
 
-        Long newEventId = eventService.createEvent(eventFullCreateRequestDTO);
+        Long newEventId = eventService.createEvent(eventCreateRequestDTO);
 
         return ResponseEntity
                 .status(CREATE_EVENT_SUCCESS.getStatus())
@@ -90,9 +89,9 @@ public class EventController {
     @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<Long>> postEvent(
             @PathVariable Long eventId,
-            @RequestBody EventFullUpdateRequestDTO eventFullUpdateRequestDTO){
+            @RequestBody EventUpdateRequestDTO eventUpdateRequestDTO){
 
-        Long updatedEventId = eventService.updateEvent(eventId, eventFullUpdateRequestDTO);
+        Long updatedEventId = eventService.updateEvent(eventId, eventUpdateRequestDTO);
 
         return ResponseEntity
                 .status(UPDATE_EVENT_SUCCESS.getStatus())
@@ -125,12 +124,12 @@ public class EventController {
      */
     @GetMapping( "/category/{categoryId}")
     @Operation(summary = "카테고리 별 행사 조회")
-    @ApiSuccessData(value = EventFindAllResponseDTO.class, array = true)
+    @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.CATEGORY_NOT_FOUND)
-    public ResponseEntity<SuccessResponseDTO<List<EventFindAllResponseDTO>>> findEventsByCategory(
+    public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findEventsByCategory(
             @PathVariable Long categoryId
     ) {
-        List<EventFindAllResponseDTO> events = eventService.findEventsByCategory(categoryId);
+        List<EventBasicFindAllResponseDTO> events = eventService.findEventsByCategory(categoryId);
 
         return ResponseEntity
                 .status(GET_EVENT_INFO_SUCCESS.getStatus())

@@ -33,20 +33,6 @@ public class EventDetailRepositoryTest {
     }
 
     @Test
-    @DisplayName("특정 이벤트 상세 정보 조회 테스트")
-    public void selectEventDetailByIdTest() {
-        // given
-//        Long eventId = 1L;
-//        EventDetailEntity mockEventDetail = createEventDetailEntity(eventId);
-//        eventDetailRepository.insertEventDetail(mockEventDetail);
-        // when
-        EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(eventId);
-        // then
-        assertEquals(eventDetail.getId(), eventId);
-        assertEquals(eventDetail.getContent(), "Sample content");
-    }
-
-    @Test
     @DisplayName("이벤트 상세 정보 삭제 테스트")
     public void deleteEventDetailTest(){
         // given & when

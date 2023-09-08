@@ -1,8 +1,8 @@
 package com.eventty.businessservice.presentation;
 
-import com.eventty.businessservice.domains.event.application.dto.request.EventFullCreateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindByIdWithDetailResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFindAllResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.service.EventService;
 import com.eventty.businessservice.domains.event.presentation.EventController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,7 +38,7 @@ public class EventControllerTest {
 //    public void findEventByIdTest() throws Exception {
 //        // Given
 //        Long eventId = 1L;
-//        EventFindByIdWithDetailResponseDTO MockEvent = createEventWithDetailDTO(eventId);
+//        EventWithTicketsFindByIdResponseDTO MockEvent = createEventWithDetailDTO(eventId);
 //        when(eventService.findEventById(eventId)).thenReturn(MockEvent);
 //
 //        // When & Then
@@ -57,7 +56,7 @@ public class EventControllerTest {
     @DisplayName("전체 행사 조회 테스트")
     public void findAllEventsTest() throws Exception {
         // Given
-        List<EventFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
+        List<EventBasicFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
         when(eventService.findAllEvents()).thenReturn(mockEventList);
 
         // When & Then
@@ -76,12 +75,12 @@ public class EventControllerTest {
     public void createEventTest() throws Exception {
         // Given
         Long newEventId = 10L;
-        EventFullCreateRequestDTO eventFullCreateRequestDTO = createEventFullCreateRequestDTO();
-        when(eventService.createEvent(eventFullCreateRequestDTO)).thenReturn(newEventId);
+        EventCreateRequestDTO eventCreateRequestDTO = createEventFullCreateRequestDTO();
+        when(eventService.createEvent(eventCreateRequestDTO)).thenReturn(newEventId);
 
         // When & Then
         mockMvc.perform(post("/api/events")
-                .content(objectMapper.writeValueAsString(eventFullCreateRequestDTO))  // JSON 데이터 추가
+                .content(objectMapper.writeValueAsString(eventCreateRequestDTO))  // JSON 데이터 추가
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -120,8 +119,8 @@ public class EventControllerTest {
         verify(eventService, times(1)).findEventsByCategory(categoryId);
     }
 
-    private static EventFullCreateRequestDTO createEventFullCreateRequestDTO() {
-        return EventFullCreateRequestDTO.builder()
+    private static EventCreateRequestDTO createEventFullCreateRequestDTO() {
+        return EventCreateRequestDTO.builder()
                 //.id(1L)
                 .userId(1L)
                 .title("Event Title")
@@ -138,8 +137,8 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static EventFindAllResponseDTO createEventResponseDTO(Long id){
-        return EventFindAllResponseDTO.builder()
+    private static EventBasicFindAllResponseDTO createEventResponseDTO(Long id){
+        return EventBasicFindAllResponseDTO.builder()
             .id(id)
             .userId(1L)
             .title("Sample Event")
@@ -154,8 +153,8 @@ public class EventControllerTest {
             .build();
     }
 
-    private static EventFindByIdWithDetailResponseDTO createEventWithDetailDTO(Long id){
-        return EventFindByIdWithDetailResponseDTO.builder()
+    private static EventWithTicketsFindByIdResponseDTO createEventWithDetailDTO(Long id){
+        return EventWithTicketsFindByIdResponseDTO.builder()
                 .id(id)
                 .userId(1L)
                 .title("Sample Event")
@@ -174,14 +173,14 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static List<EventFindAllResponseDTO> createEventRespnseDTOList(Long count) {
-        List<EventFindAllResponseDTO> eventFindAllResponseDTOList = new ArrayList<>();
+    private static List<EventBasicFindAllResponseDTO> createEventRespnseDTOList(Long count) {
+        List<EventBasicFindAllResponseDTO> eventBasicFindAllResponseDTOList = new ArrayList<>();
 
         for (Long i = 0L; i < count; i++) {
-            EventFindAllResponseDTO eventFindAllResponseDTO = createEventResponseDTO(i);
-            eventFindAllResponseDTOList.add(eventFindAllResponseDTO);
+            EventBasicFindAllResponseDTO eventBasicFindAllResponseDTO = createEventResponseDTO(i);
+            eventBasicFindAllResponseDTOList.add(eventBasicFindAllResponseDTO);
         }
 
-        return eventFindAllResponseDTOList;
+        return eventBasicFindAllResponseDTOList;
     }
 }
