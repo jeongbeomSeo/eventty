@@ -1,7 +1,8 @@
-package com.eventty.userservice.presentation.dto;
+package com.eventty.authservice.common.response;
 
 import lombok.Getter;
 
+@Getter
 public class SuccessResponseDTO<T>{
 
     // code 번호 0으로 고정
