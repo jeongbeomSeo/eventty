@@ -30,10 +30,10 @@ spring:
         - id: auth-login
           uri: http://${auth_server}:8002/
           predicates:
-            - Path=/api/auth/login, /api/auth/me
+            - Path=/api/auth/login, /api/auth/me, /api/auth/email
             - Method=POST
           filters:
-          #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
+          - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
 
         - id: auth-me-delete
           uri: http://${auth_server}:8002/
@@ -42,7 +42,7 @@ spring:
             - Method=DELETE
           filters:
             - JwtAuthenticationFilter
-            #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
+            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
       globalcors:
         cors-configurations:
           '[/**]':

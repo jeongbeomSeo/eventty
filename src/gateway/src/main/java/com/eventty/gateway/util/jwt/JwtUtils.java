@@ -1,6 +1,12 @@
 package com.eventty.gateway.util.jwt;
 
+import com.eventty.gateway.api.ApiClient;
+import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
+import com.eventty.gateway.api.dto.NewTokensResponseDTO;
+import com.eventty.gateway.presentation.dto.ResponseDTO;
+import com.eventty.gateway.util.CustomMapper;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.eventty.gateway.presentation.TokenEnum;
@@ -21,8 +27,30 @@ public class JwtUtils {
 
     private final JwtProperties jwtProperties;
     private final ObjectMapper objectMapper;
+    private final ApiClient apiClient;
+    private final CustomMapper customMapper;
 
-    public Claims getClaims(String token) {
+
+    public Map<String, String> getNewTokens(Map<String, String> tokens) {
+        if (tokens.get(TokenEnum.REFRESH_TOKEN.getName()) == null) {} // 예외 발생 => Login Page
+
+        Claims refreshTokenCliams = getClaimsOrThrow(tokens.get(TokenEnum.REFRESH_TOKEN.getName())); // 예외 전부 발생 (내부 로직) => Login Page
+
+        String userId = getUserId(refreshTokenCliams);
+        GetNewTokensRequestDTO getNewTokensRequestDTO = customMapper.createGetNewTokensRequestDTO(userId, tokens.get(TokenEnum.REFRESH_TOKEN.getName()));
+
+        ResponseEntity<ResponseDTO<NewTokensResponseDTO>> response = apiClient.getNewTokens(getNewTokensRequestDTO);
+
+        if (Objects.requireNonNull(response.getBody()).getSuccessResponseDTO().getData() == null) {} // 예외 발생 => Login Page
+
+        return Map.of(
+                TokenEnum.ACCESS_TOKEN.getName(), response.getBody().getSuccessResponseDTO().getData().getAccessToken(),
+                TokenEnum.REFRESH_TOKEN.getName(), response.getBody().getSuccessResponseDTO().getData().getRefreshToken()
+        );
+
+
+    }
+    public Claims getClaimsOrNullOnExpiration(String token) {
         Claims claims;
         try {
             claims = Jwts.parser()
@@ -32,12 +60,14 @@ public class JwtUtils {
         } catch (ExpiredJwtException e) {
             return null;
         }
-
         return claims;
     }
 
-    public boolean isNotExpiredToken(Claims claims) {
-        return claims.getExpiration().before(new Date());
+    public Claims getClaimsOrThrow(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtProperties.getSecretKey())
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public String getUserId(Claims claims) {

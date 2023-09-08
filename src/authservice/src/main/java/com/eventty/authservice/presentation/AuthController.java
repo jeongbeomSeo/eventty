@@ -74,11 +74,11 @@ public class AuthController {
 
         // JWT & Refresh Token
         TokensDTO tokensDTO = userService.login(userLoginRequestDTO);
-        ResponseCookie responseAccessTokenCookie = CookieCreator.createAccessTokenCookie(tokensDTO.getAccessToken());
-        ResponseCookie responseRefreshTokenCookie = CookieCreator.createRefreshTokenCookie(tokensDTO.getRefreshToken());
+        ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(tokensDTO.getAccessToken());
+        ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(tokensDTO.getRefreshToken());
 
         // Combine the two cookies into a single header value
-        String combinedCookies = responseAccessTokenCookie.toString() + "; " + responseRefreshTokenCookie.toString();
+        String combinedCookies = jwtCookie.toString() + "; " + refreshTokenCookie.toString();
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())

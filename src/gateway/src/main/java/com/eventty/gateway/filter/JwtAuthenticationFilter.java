@@ -5,7 +5,7 @@ import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
 import com.eventty.gateway.api.dto.NewTokensResponseDTO;
 import com.eventty.gateway.presentation.TokenEnum;
 import com.eventty.gateway.presentation.dto.ResponseDTO;
-import com.eventty.gateway.presentation.dto.SuccessResponseDTO;
+import com.eventty.gateway.util.CookieCreator;
 import com.eventty.gateway.util.CustomMapper;
 import com.eventty.gateway.util.jwt.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpCookie;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import reactor.core.publisher.Mono;
@@ -31,14 +33,12 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     private final CustomMapper customMapper;
     private final JwtUtils jwtUtils;
-    private final ApiClient apiClient;
 
     @Autowired
-    public JwtAuthenticationFilter(CustomMapper customMapper, JwtUtils jwtUtils, ApiClient apiClient) {
+    public JwtAuthenticationFilter(CustomMapper customMapper, JwtUtils jwtUtils, CookieCreator cookieCreator) {
         super(Config.class); // Config.class를 매개변수로 전달
         this.customMapper = customMapper;
         this.jwtUtils = jwtUtils;
-        this.apiClient = apiClient;
     }
 
     public static class Config {
@@ -54,37 +54,24 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         // 함수형 인터페이스의 인스턴스를 간결하게 표한하는 람다 표현식
         return ((exchange, chain) -> {
             MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
-
             Map<String, String> tokens = customMapper.tokenMapping(cookies);
 
             if (tokens.get(TokenEnum.ACCESS_TOKEN.getName()) == null) {} // 예외 발생
 
-            Claims jwtClaims = jwtUtils.getClaims(tokens.get(TokenEnum.ACCESS_TOKEN.getName()));
-
             // 이 로직 수정 필요 (내부에서 try-catch로 ExpiredJwtException만 잡아서 null값을 return해주는 형태로 진행중
+            Claims jwtClaims = jwtUtils.getClaimsOrNullOnExpiration(tokens.get(TokenEnum.ACCESS_TOKEN.getName()));
             boolean isExpired = (jwtClaims == null);
 
             if (isExpired) {
+                // 새로 받아온 Tokens 저장
+                tokens = jwtUtils.getNewTokens(tokens);
 
-                if (tokens.get(TokenEnum.REFRESH_TOKEN.getName()) == null) {} // 예외 발생 => Login Page로 Redirect
+                log.warn("토큰 받아옵니다.");
 
-                Claims refreshTokenClaims = jwtUtils.getClaims(tokens.get(TokenEnum.REFRESH_TOKEN.getName()));
-
-                if (refreshTokenClaims == null) {} // RefreshToken의 만료 기간도 지난 경우 그냥 예외 터트리기
-
-                String userId = jwtUtils.getUserId(refreshTokenClaims);
-
-                // Auth Server로 요청 보내서 새로운 JWT와 RefreshToken 받아오기
-                // 이 작업이 비동기적으로 이루어진다면 Mono나 Flux를 반환하는 메서드로 처리하고,
-                // .block()과 같은 메서드를 사용하여 결과를 기다려야 합니다.
-
-                GetNewTokensRequestDTO getNewTokensRequestDTO = customMapper.createGetNewTokensRequestDTO(userId, tokens.get(TokenEnum.REFRESH_TOKEN.getName()));
-
-                ResponseEntity<ResponseDTO<NewTokensResponseDTO>> response = apiClient.getNewTokens(getNewTokensRequestDTO);
-
-                System.out.println(response);
-                // 실패할 경우 예외 발생
+                // 가져온 토큰을 통해서 Cliams 가져오기. 만약, 여기서도 예외 발생한다면 그냥 전부 발생시키기
+                jwtClaims = jwtUtils.getClaimsOrThrow(tokens.get(TokenEnum.ACCESS_TOKEN.getName()));
             }
+
             // Authentication 객체를 직렬화해서 보낼 수 있지만, 데이터의 크기와 복잡성 때문에 각 서비스에서 만드는 것이 효율적
             ServerHttpRequest requestWithHeader = exchange.getRequest().
                     mutate()
@@ -98,12 +85,20 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             if (!isExpired)
                 return chain.filter(exchange.mutate().request(requestWithHeader).build());
             else {
-                // Response에 새로 받아온 JWT와 Refresh Token Update
-                return chain.filter(exchange.mutate().request(requestWithHeader).build())
+                    // Response에 새로 받아온 JWT와 Refresh Token Update
+                    final Map<String, String> finalTokens = tokens;
+                    return chain.filter(exchange.mutate().request(requestWithHeader).build())
                         .then(Mono.fromRunnable(() -> {
+                            ServerHttpResponse serverHttpResponse = exchange.getResponse();
                             // 위에서 받아온 토큰 Response 쿠키 설정
 
+                            log.warn("token update");
 
+                            ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(finalTokens.get(TokenEnum.ACCESS_TOKEN.getName()));
+                            ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(finalTokens.get(TokenEnum.REFRESH_TOKEN.getName()));
+
+                            serverHttpResponse.addCookie(jwtCookie);
+                            serverHttpResponse.addCookie(refreshTokenCookie);
                         }));
             }
 
