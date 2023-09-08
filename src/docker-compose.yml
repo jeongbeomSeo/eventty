@@ -14,7 +14,7 @@ services:
         aliases:
           - "event server"
   userservice:
-    image: hyungyunk/eventty:1.1
+    image: hyungyunk/eventty:1.2
     build:
       context: ./userservice
       dockerfile: Dockerfile
@@ -26,19 +26,19 @@ services:
       eventty:
         aliases:
           - "user server"
-  # authservice:
-  #   image: auth:1.0
-  #   build:
-  #     context: ./authservice
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8002:8002"
-  #   volumes:
-  #     - ./authservice:/src/authservice
-  #   networks:
-  #     eventty:
-  #       aliases:
-  #         - "auth server"
+  authservice:
+    image: jeongbeom4693/auth:1.1
+    build:
+      context: ./authservice
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./authservice:/src/authservice
+    networks:
+      eventty:
+        aliases:
+          - "auth server"
   gateway:
     image: gateway:1.1
     build:

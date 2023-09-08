@@ -112,6 +112,11 @@ const customStyle = createStyles((theme) => ({
                 fontSize: "0.5rem",
             },
         },
+        "&.login":{
+            label: {
+                color: "#666666",
+            },
+        },
     },
     "btn-primary": {
         backgroundColor: "var(--primary)",
@@ -134,10 +139,8 @@ const customStyle = createStyles((theme) => ({
         }
     },
     "btn-gray": {
-        backgroundColor: "#b3b3b3 !important",
-        ":hover": {
-            filter: "brightness(0.96)",
-        }
+        backgroundColor: "#b3b3b3",
+        cursor: "default",
     },
     "btn-gray-outline": {
         backgroundColor: "white !important",

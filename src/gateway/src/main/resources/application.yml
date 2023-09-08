@@ -16,7 +16,7 @@ spring:
           predicates:
             - Path=/api/events/**
         - id: auth-server
-          uri: http://localhost:8002/
+          uri: http://authservice:8002/
           predicates:
             - Path=/api/auth/**
       globalcors:

@@ -10,7 +10,6 @@ import {
     IconPalette, IconPiano, IconPresentation,
     IconTent
 } from "@tabler/icons-react";
-import {useMediaQuery} from "react-responsive";
 
 const ICON_SIZE = "40px"
 
@@ -32,7 +31,10 @@ function WebCategoryBtn() {
 
     const items = CATEGORY_LIST.map((item) => (
 
-        <UnstyledButton component={Link} to={item.link} key={item.category} style={{textAlign: "center"}}>
+        <UnstyledButton component={Link}
+                        to={item.link}
+                        key={item.category}
+                        style={{textAlign: "center"}}>
             {item.icon}
             <Text fz={"xs"}>{item.category}</Text>
         </UnstyledButton>

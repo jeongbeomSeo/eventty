@@ -1,11 +1,11 @@
-import {useRecoilState, useRecoilValue, useResetRecoilState} from 'recoil';
+import {useResetRecoilState, useSetRecoilState} from 'recoil';
 import { loginState } from '../states/loginState';
 import { useEffect } from 'react';
-import {Navigate, useLocation, useNavigate} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {userState} from "../states/userState";
 
 function Logout() {
-    const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+    const setIsLoggedIn = useSetRecoilState(loginState);
     const resetUserState = useResetRecoilState(userState);
 
     useEffect(() => {

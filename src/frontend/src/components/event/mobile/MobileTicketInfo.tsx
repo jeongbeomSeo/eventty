@@ -4,16 +4,16 @@ import customStyle from "../../../styles/customStyle";
 import TicketBtn from "../TicketBtn";
 import {IconChevronDown} from "@tabler/icons-react";
 import {DrawerContent} from "@mantine/core/lib/Drawer/DrawerContent/DrawerContent";
-import EventDetailModal from "../EventDetailModal";
 import {useLocation, useNavigate} from "react-router-dom";
 import {CheckLogin} from "../../../util/CheckLogin";
+import {useModal} from "../../../util/hook/useModal";
 
 function MobileTicketInfo({open}: { open: boolean }) {
     const [opened, setOpened] = useState(open);
     const navigate = useNavigate();
     const {pathname} = useLocation();
     const isLoggedIn = CheckLogin();
-    const [modalOpened, setModalOpened] = useState(false);
+    const {loginAlertModal} = useModal();
 
     const handleOpen = () => {
         setOpened(prev => !prev);
@@ -23,7 +23,7 @@ function MobileTicketInfo({open}: { open: boolean }) {
         if (isLoggedIn) {
             navigate("ticket", {state: pathname});
         } else {
-            setModalOpened(prev => !prev);
+            loginAlertModal();
         }
     }
 
@@ -33,7 +33,6 @@ function MobileTicketInfo({open}: { open: boolean }) {
 
     return (
         <>
-            <EventDetailModal open={modalOpened}/>
             <Drawer.Root opened={opened}
                          onClose={handleOpen}
                          size={"60%"}
@@ -47,11 +46,14 @@ function MobileTicketInfo({open}: { open: boolean }) {
                     </Drawer.Header>
                     <Drawer.Body style={{paddingBottom: "15vh"}}>
                         <Stack onClick={onClickTicket}>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
+                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
+                                       onClick={onClickTicket}/>
+                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
+                                       onClick={onClickTicket}/>
+                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
+                                       onClick={onClickTicket}/>
+                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
+                                       onClick={onClickTicket}/>
                         </Stack>
                     </Drawer.Body>
                 </Drawer.Content>

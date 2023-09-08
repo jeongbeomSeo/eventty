@@ -4,67 +4,86 @@ import {useRecoilState} from "recoil";
 import {userState} from "../../states/userState";
 import {Controller, useForm} from "react-hook-form";
 import customStyles from "../../styles/customStyle";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useMemo, useState} from "react";
 import {ISignup} from "../../types/IUser";
-import {DatePickerInput} from "@mantine/dates";
 import "dayjs/locale/ko";
+import {postSignupEmailValid, postSignupHost, postSignupUser} from "../../service/user/fetchUser";
 import BirthdayPicker from "../common/BirthdayPicker";
-import PhoneNumberInput from "../common/PhoneNumberInput";
+import {useModal} from "../../util/hook/useModal";
 
-function SignupForm(props: { isHost: boolean }) {
+function SignupForm({isHost}: { isHost: boolean }) {
+    const {classes} = customStyles();
     const navigate = useNavigate();
+    const {messageModal} = useModal();
     const [userStateValue, setUserStateValue] = useRecoilState(userState);
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
     const {
-        register,
-        handleSubmit,
-        getValues,
-        setValue,
-        control,
-        watch,
-        formState: {errors}
+        register, handleSubmit, getValues, setValue, control, watch, setFocus, formState: {errors}
     } = useForm<ISignup>({mode: "onChange"});
 
     const emailInputValue = watch("email");
     const [isEmailValid, setIsEmailValid] = useState(false);
-    const [isNicknameValid, setIsNicknameValid] = useState(false);
+
+    const [termOfServiceCheck, setTermOfServiceCheck] = useState(false);
 
     const onSubmit = (data: ISignup) => {
-        if (isEmailValid && isNicknameValid) {
-            setUserStateValue({
-                ...data,
-                ...props
-            });
-            navigate("/");
+        delete data.passwordConfirm;
+
+        if (!isEmailValid) {
+            messageModal("이메일 중복 확인 해주세요");
+            setFocus("email");
+            return;
         } else {
-            !isEmailValid ?
-                alert("이메일 중복 확인해주세요") :
-                alert("닉네임 중복 확인해주세요");
+            if (isHost) {
+                postSignupHost(data)
+                    .then(res => {
+                        if (res.success) {
+                            navigate("/");
+                        } else {
+                            alert("회원 가입 실패")
+                        }
+                    })
+                    .then((res) => console.log(res));
+            } else {
+                postSignupUser(data)
+                    .then(res => {
+                        if (res.success) {
+                            console.log("회원 가입 성공");
+                            navigate("/");
+                        } else {
+                            alert("회원 가입 실패")
+                        }
+                    });
+            }
         }
     };
 
     const onEmailValid = () => {
         if (typeof emailInputValue !== "undefined" && emailInputValue !== "") {
             if (errors.email) {
-                alert("사용 불가능");
+                messageModal("사용 할 수 없는 형식입니다");
                 setIsEmailValid(false);
             } else {
-                if (userStateValue.email !== emailInputValue) {
-                    alert("사용 가능");
-                    setIsEmailValid(true);
-                } else {
-                    alert("중복된 이메일");
-                    setIsEmailValid(false);
-                }
+                postSignupEmailValid(emailInputValue)
+                    .then(res => {
+                        if (res.success) {
+                            messageModal("사용 가능합니다");
+                            setIsEmailValid(true);
+                        } else {
+                            messageModal("이미 사용 중입니다");
+                            setIsEmailValid(false);
+                        }
+                    })
             }
         } else {
-            alert("이메일을 입력해주세요")
-            setIsEmailValid(false);
+            messageModal("이메일을 입력해주세요");
         }
     }
+    // 이메일 입력 값 변경시, 중복 확인 초기화
+    useMemo(() => setIsEmailValid(false), [emailInputValue]);
 
     const handlePhoneInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const {value} = e.target;
@@ -76,10 +95,8 @@ function SignupForm(props: { isHost: boolean }) {
         setValue("phone", formattedValue);
     }
 
-    const {classes} = customStyles();
-
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
             <Stack>
                 <Grid>
                     <Grid.Col span={"auto"}>
@@ -166,22 +183,21 @@ function SignupForm(props: { isHost: boolean }) {
                                                 onChange={field.onChange}
                                                 error={errors.birth && errors.birth?.message}/>
                             )}/>
-                <TextInput {...register("address", {
-                    required: true
-                })}
+                <TextInput {...register("address")}
                            placeholder="주소"
                            label="주소"
                            className={classes["input"]}/>
-                <Checkbox {...register("termsOfService",{
-                    required: "약관에 동의해주세요"
-                })}
-                          label={"서비스 이용 약관과 개인정보 취급 방침 및 개인정보 3자 제공 동의"}
-                          error={errors.termsOfService && errors.termsOfService?.message}
-                          className={`${classes["input-checkbox"]} signup`}
-                />
-                <Button type="submit" className={classes["btn-primary"]}>
-                    회원가입
-                </Button>
+                <Checkbox
+                    label={<><b style={{color: "var(--primary)"}}>[필수]</b> 서비스 이용 약관과 개인정보 취급 방침 및 개인정보 3자 제공 동의</>}
+                    onClick={() => setTermOfServiceCheck(prev => !prev)}
+                    className={`${classes["input-checkbox"]} signup`}/>
+                {termOfServiceCheck ?
+                    <Button onClick={handleSubmit(onSubmit)}
+                            style={{height: "2.6rem"}}
+                            className={classes["btn-primary"]}>회원가입</Button> :
+                    <Button style={{height: "2.6rem"}}
+                            className={`${classes["btn-primary"]} disable`}>회원가입</Button>
+                }
             </Stack>
         </form>
     );

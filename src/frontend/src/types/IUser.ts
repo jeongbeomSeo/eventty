@@ -1,12 +1,11 @@
 export interface ISignup {
     email: string;
     password: string;
-    passwordConfirm: string;
+    passwordConfirm?: string;
     name: string;
     phone: string;
     birth: Date;
-    address: string;
-    termsOfService: boolean;
+    address?: string;
 }
 
 export interface ILogin {

@@ -17,10 +17,10 @@ function SignupMain() {
 
     return (
         <Stack>
-            <Button className={classes["btn-primary"]} component={Link} to={"user"}>
+            <Button style={{height:"2.6rem"}} className={classes["btn-primary"]} component={Link} to={"user"}>
                 개인 회원가입
             </Button>
-            <Button className={classes["btn-gray-outline"]} component={Link} to={"host"}>
+            <Button style={{height:"2.6rem"}} className={classes["btn-gray-outline"]} component={Link} to={"host"}>
                 <span style={{color:"var(--primary)"}}>주최자&nbsp;</span> 회원가입
             </Button>
 

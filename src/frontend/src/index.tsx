@@ -5,6 +5,7 @@ import {RecoilRoot} from 'recoil';
 import Router from './Router';
 import GlobalStyle from './styles/globalStyle';
 import {NormalizeCSS} from '@mantine/core';
+import {ModalsProvider} from "@mantine/modals";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -15,7 +16,9 @@ root.render(
         <RecoilRoot>
             <NormalizeCSS/>
             <GlobalStyle/>
-            <RouterProvider router={Router}/>
+            <ModalsProvider>
+                <RouterProvider router={Router}/>
+            </ModalsProvider>
         </RecoilRoot>
     </React.StrictMode>
 );

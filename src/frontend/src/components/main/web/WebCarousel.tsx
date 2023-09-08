@@ -1,8 +1,7 @@
 import React, {useRef} from "react";
-import {Container, Image, Title, useMantineTheme} from "@mantine/core";
+import {Container, Title} from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import {Carousel} from "@mantine/carousel";
-import {useMediaQuery} from "react-responsive";
 
 const CAROUSEL_HEIGHT = "45vh";
 const CAROUSEL_DELAY = 4000;

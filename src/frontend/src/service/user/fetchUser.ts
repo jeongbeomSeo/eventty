@@ -1,51 +1,68 @@
 import {IChangePW, ILogin, IMyInfo, ISignup} from "../../types/IUser";
 
-const GATEWAY = "";
-const MY_HEADERS = new Headers({"Content-Type": "application/json"},);
-
-export const postSignup = (data: ISignup) => {
-    return fetch(`${GATEWAY}/api/auth/register`, {
+export const postSignupEmailValid = async (data: string) => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/email`,{
         method: "POST",
-        headers: MY_HEADERS,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then(res => res.json())
+        .catch(res => console.error(res));
+}
+
+export const postSignupUser = async (data: ISignup) => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/me/user`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .catch(res => console.error(res));
+}
+export const postSignupHost = async (data: ISignup) => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/me/host`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .catch(res => console.error(res));
+}
+
+export const postLogin = async (data: ILogin) => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/login`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
     })
         .then((res) => res.json());
 }
 
-export const postLogin = (data: ILogin) => {
-    return fetch(`${GATEWAY}/api/auth/login`, {
-        method: "POST",
-        headers: MY_HEADERS,
-        body: JSON.stringify(data),
-    })
-        .then((res) => res.json());
-}
-
-export const putChangePW = (data: IChangePW) => {
-    return fetch(`${GATEWAY}/api/auth/changePW`,{
+export const putChangePW = async (data: IChangePW) => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/changePW`,{
         method: "PUT",
-        headers: MY_HEADERS,
         body: JSON.stringify(data),
     })
         .then((res) => res.json());
 }
 
-export const getMyInfo = () => {
-    return fetch(`${GATEWAY}/api/user/myInfo`)
+export const getMyInfo = async (refreshToken: string) => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/user/myInfo`,{
+        method: "GET",
+    })
         .then((res) => res.json());
 }
 
-export const patchMyInfo = (data: IMyInfo) => {
-    return fetch(`${GATEWAY}/api/user/myinfo`,{
+export const patchMyInfo = async (data: IMyInfo) => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/user/myinfo`,{
         method: "PATCH",
-        headers: MY_HEADERS,
         body: JSON.stringify(data),
     })
         .then((res) => res.json());
 }
 
-export const patchDeleteAccount = () => {
-    return fetch(`${GATEWAY}/api/auth/myInfo`,{ //  왜 myInfo?
+export const patchDeleteAccount = async () => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/myInfo`,{ //  왜 myInfo?
         method: "PATCH",
     })
         .then((res) => res.json());
