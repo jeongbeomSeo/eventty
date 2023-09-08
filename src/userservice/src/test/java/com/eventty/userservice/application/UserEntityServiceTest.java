@@ -33,7 +33,6 @@ public class UserEntityServiceTest {
         String name = "홍박사";
         String address = "서울특별시 강남구 테헤란로";
         LocalDate birth = LocalDate.of(1988, 5, 3);
-        String image = "image.jpg";
         String phone = "01045628526";
 
         UserCreateRequestDTO request = UserCreateRequestDTO
@@ -42,7 +41,6 @@ public class UserEntityServiceTest {
                                                     .name(name)
                                                     .address(address)
                                                     .birth(birth)
-                                                    .image(image)
                                                     .phone(phone)
                                                     .build();
 
@@ -55,7 +53,6 @@ public class UserEntityServiceTest {
         assertEquals(userEntity.getAddress(), address);
         assertEquals(userEntity.getBirth(), birth);
         assertEquals(userEntity.getPhone(), phone);
-        assertEquals(userEntity.getImage(), image);
     }
 
     @Test

@@ -56,7 +56,6 @@ public class UserEntityControllerTest {
         String address = "서울특별시 도봉구 도봉동 1";
         LocalDate birth = LocalDate.of(1998, 06, 23);
         String phone = "01012345678";
-        String image = "/url/url/url.jpeg";
         String url = "/api/users/me";
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
@@ -66,7 +65,6 @@ public class UserEntityControllerTest {
                 .address(address)
                 .birth(birth)
                 .phone(phone)
-                .image(image)
                 .build();
 
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
@@ -90,7 +88,6 @@ public class UserEntityControllerTest {
         String address = "서울특별시 도봉구 도봉동 1";
         LocalDate birth = LocalDate.of(1998, 06, 23);
         String phone = "01012345678";
-        String image = "/url/url/url.jpeg";
         String url = "/api/users/me";
         ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
 
@@ -100,7 +97,6 @@ public class UserEntityControllerTest {
                 .address(address)
                 .birth(birth)
                 .phone(phone)
-                .image(image)
                 .build();
 
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
