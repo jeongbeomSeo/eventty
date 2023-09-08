@@ -1,5 +1,8 @@
-package com.eventty.authservice.common.exception;
+package com.eventty.authservice.global.advice;
 
+import com.eventty.authservice.global.Enum.ErrorCode;
+import com.eventty.authservice.global.exception.AuthException;
+import com.eventty.authservice.global.utils.DataErrorLogger;
 import jakarta.validation.ConstraintViolationException;
 
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -17,12 +20,8 @@ import org.springframework.http.ResponseEntity;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.eventty.authservice.common.Enum.ErrorCode;
-import com.eventty.authservice.common.response.ErrorResponseDTO;
+import com.eventty.authservice.global.response.ErrorResponseDTO;
 import com.eventty.authservice.api.exception.ApiException;
-import com.eventty.authservice.common.utils.DataErrorLogger;
-
-import static com.eventty.authservice.common.Enum.ErrorCode.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -40,7 +39,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponseDTO> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.error("Unsupported HTTP request method: {} / {}", e.getMethod(), e.getMessage());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(METHOD_NOT_ALLOWED);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.METHOD_NOT_ALLOWED);
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
 
         // return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED); (body에 code도 담지 않고 보내는 방식)
@@ -51,7 +50,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponseDTO> handleNotFoundExceptoin(NoHandlerFoundException e) {
         log.error("NoHandlerFoundException occurred: {}", e.getMessage());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(NOT_FOUND);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.NOT_FOUND);
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
@@ -61,7 +60,7 @@ public class GlobalExceptionHandler {
         log.error("MethodArgumentNotValidException occurred: {}", e.getMessage());
         dataErrorLogger.logging(e.getBindingResult());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.INVALID_INPUT_VALUE);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -71,7 +70,7 @@ public class GlobalExceptionHandler {
         log.error("ConstraintViolationException occurred: {}", e.getMessage());
         dataErrorLogger.logging(e.getConstraintViolations());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_INPUT_VALUE);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.INVALID_INPUT_VALUE);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -83,7 +82,7 @@ public class GlobalExceptionHandler {
         final String value = e.getValue() == null ? "" : e.getValue().toString();
         log.error(e.getName() + ": " + value + ", and ErrorCode: " + e.getErrorCode() + "\n");
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(INVALID_TYPE_VALUE);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.INVALID_TYPE_VALUE);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -92,7 +91,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponseDTO> handleConflictException(DataIntegrityViolationException e) {
         log.error("ConstraintViolationException Occurred: {}", e.getMessage());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(CONFLICT);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.CONFLICT);
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
@@ -120,7 +119,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponseDTO> handleException(Exception e) {
         log.error("Exception Occured: {}", e.getMessage());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(INTERNAL_ERROR);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.INTERNAL_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

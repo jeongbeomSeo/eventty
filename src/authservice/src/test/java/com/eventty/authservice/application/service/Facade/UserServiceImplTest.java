@@ -22,7 +22,7 @@ import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.entity.AuthorityEntity;
 import com.eventty.authservice.domain.exception.DuplicateEmailException;
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

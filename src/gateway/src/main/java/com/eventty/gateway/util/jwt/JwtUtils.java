@@ -1,5 +1,6 @@
 package com.eventty.gateway.util.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.stereotype.Component;
 
 import com.eventty.gateway.presentation.TokenEnum;
@@ -13,7 +14,6 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -23,15 +23,21 @@ public class JwtUtils {
     private final ObjectMapper objectMapper;
 
     public Claims getClaims(String token) {
-
-        // SigningKey가 적절하지 않은 경우 Illegal Exception 발생
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtProperties.getSecretKey())
-                .parseClaimsJws(token)
-                .getBody();
-        validationCheck(claims);
+        Claims claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(jwtProperties.getSecretKey())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return null;
+        }
 
         return claims;
+    }
+
+    public boolean isNotExpiredToken(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 
     public String getUserId(Claims claims) {
@@ -55,13 +61,9 @@ public class JwtUtils {
                 new TypeReference<List<Authority>>() {}
         );
     }
-    private void validationCheck(Claims claims) {
+    private void issuerCheck(Claims claims) {
         if (!claims.getIssuer().equals(jwtProperties.getIssure())) {
             throw new RuntimeException("Invalid issuer");
-        }
-
-        if (claims.getExpiration().before(new Date())) {
-            throw new RuntimeException("Token is expired");
         }
     }
 }

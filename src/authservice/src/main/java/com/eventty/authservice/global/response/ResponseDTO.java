@@ -1,4 +1,4 @@
-package com.eventty.authservice.common.response;
+package com.eventty.authservice.global.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -47,7 +47,7 @@ public class ResponseDTO<T> {
     public static ResponseDTO<Void> of(boolean isSuccess) {
         return new ResponseDTO<>(isSuccess);
     }
-
+    
 }
 
 /**

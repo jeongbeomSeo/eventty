@@ -1,8 +1,7 @@
-package com.eventty.authservice.common.response;
+package com.eventty.authservice.global.response;
 
+import com.eventty.authservice.global.Enum.ErrorCode;
 import lombok.*;
-
-import com.eventty.authservice.common.Enum.ErrorCode;
 
 @Getter
 @Builder

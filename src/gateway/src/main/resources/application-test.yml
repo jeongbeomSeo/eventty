@@ -6,3 +6,8 @@ secret_key: eventtyKey
 user_server: localhost
 auth_server: localhost
 event_server: localhost
+
+## server url
+user-server-url: http://localhost:8000
+auth-server-url: http://localhost:8002
+event-server-url: http://localhost:80

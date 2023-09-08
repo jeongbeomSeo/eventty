@@ -14,7 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import com.eventty.authservice.common.Enum.ErrorCode;
 import com.eventty.authservice.infrastructure.config.BasicSecurityConfig;
 import com.eventty.authservice.domain.exception.DuplicateEmailException;

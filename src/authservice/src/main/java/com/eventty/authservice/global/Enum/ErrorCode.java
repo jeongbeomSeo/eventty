@@ -1,4 +1,4 @@
-package com.eventty.authservice.common.Enum;
+package com.eventty.authservice.global.Enum;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

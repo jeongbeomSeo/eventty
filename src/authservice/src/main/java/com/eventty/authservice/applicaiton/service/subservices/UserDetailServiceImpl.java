@@ -34,6 +34,11 @@ public class UserDetailServiceImpl implements UserDetailService {
         return userRepository.findByEmail(email).orElseThrow(() -> UserNotFoundException.EXCEPTION);
     }
 
+    @Override
+    public AuthUserEntity findAuthUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+    }
+
     @Transactional
     public Long create(AuthUserEntity authUserEntity, UserRole userRole) {
         // 이메일 중복 검사

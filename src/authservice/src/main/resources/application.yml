@@ -42,16 +42,14 @@ logging:
           descriptor:
             sql: trace
 
-## USER SERVER BASE URL
-server.base.url.userServer: ${user-server-url}
-
-## JWT
-jwt.issuer: ${issuer}
-jwt.secret_key: ${secret_key}
+## SERVER BASE URL
+server.base.url.user_server: ${user-server-url}
 
 ## Token
 token.access-expired-time: ${token-access}
 token.refresh-expired-time: ${token-refresh}
+token.issure: ${issuer}
+token.secret_key: ${secret_key}
 
 # Swagger
 springdoc:

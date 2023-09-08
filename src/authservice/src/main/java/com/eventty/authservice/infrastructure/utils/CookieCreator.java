@@ -1,11 +1,12 @@
 package com.eventty.authservice.infrastructure.utils;
 
+import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
 import org.springframework.http.ResponseCookie;
 
 public class CookieCreator {
 
     public static ResponseCookie createAccessTokenCookie(String token) {
-        return ResponseCookie.from("accessToken", token)
+        return ResponseCookie.from(TokenEnum.ACCESS_TOKEN.getName(), token)
                 .httpOnly(true)
                 .path("/")
                 //.domain("eventty")
@@ -14,7 +15,7 @@ public class CookieCreator {
     }
 
     public static ResponseCookie createRefreshTokenCookie(String token) {
-        return ResponseCookie.from("refreshToken", token)
+        return ResponseCookie.from(TokenEnum.REFRESH_TOKEN.getName(), token)
                 .httpOnly(true)
                 .path("/")
                 //.domain("eventty")

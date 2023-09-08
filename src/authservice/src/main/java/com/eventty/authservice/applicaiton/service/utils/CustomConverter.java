@@ -1,8 +1,10 @@
 package com.eventty.authservice.applicaiton.service.utils;
 
 import com.eventty.authservice.api.dto.UserCreateRequestDTO;
+import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,6 +25,13 @@ public class CustomConverter {
                 .address(fullUserCreateRequestDTO.getAddress())
                 .birth(fullUserCreateRequestDTO.getBirth())
                 .phone(fullUserCreateRequestDTO.getPhone())
+                .build();
+    }
+
+    public NewTokensResponseDTO TokensDTOToNewTokensResponseDTO(TokensDTO tokensDTO) {
+        return NewTokensResponseDTO.builder()
+                .accessToken(tokensDTO.getAccessToken())
+                .refreshToken(tokensDTO.getRefreshToken())
                 .build();
     }
 }

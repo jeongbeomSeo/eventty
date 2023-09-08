@@ -6,3 +6,8 @@ secret_key: eventtyKey
 user_server: userservice
 auth_server: authservice
 event_server: businessservice
+
+## server url
+user-server-url: http://userservice:8000
+auth-server-url: http://authservice:8002
+event-server-url: http://eventservice:80

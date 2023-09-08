@@ -1,4 +1,4 @@
-package com.eventty.authservice.common.utils;
+package com.eventty.authservice.global.utils;
 
 import jakarta.validation.ConstraintViolation;
 

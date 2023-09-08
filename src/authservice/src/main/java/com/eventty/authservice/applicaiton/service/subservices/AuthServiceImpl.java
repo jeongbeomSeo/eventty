@@ -1,11 +1,13 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
-import com.eventty.authservice.applicaiton.dto.TokenDTO;
+import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.applicaiton.service.utils.token.TokenProvider;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
-import com.eventty.authservice.presentation.dto.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
+import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ public class AuthServiceImpl implements AuthService{
     private final TokenProvider tokenProvider;
 
     @Override
-    public boolean match(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
+    public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
         if (!passwordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
             throw InvalidPasswordException.EXCEPTION;
         }
@@ -26,8 +28,16 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public TokenDTO getToken(AuthUserEntity authUserEntity) {
+    public TokensDTO getToken(AuthUserEntity authUserEntity) {
         // 2시간 동안 유효한 액세스 토큰 생성 및 2일 동안 유효한 리프레시 토큰 생성 
         return tokenProvider.getAllToken(authUserEntity);
+    }
+
+    @Override
+    public TokensDTO getNewTokens(AuthUserEntity authUserEntity, GetNewTokensRequestDTO getNewTokensRequestDTO) {
+
+        tokenProvider.refreshTokenValidationCheck(getNewTokensRequestDTO);
+
+        return getToken(authUserEntity);
     }
 }

@@ -1,4 +1,4 @@
-package com.eventty.authservice.applicaiton.service.utils.token.jwt;
+package com.eventty.authservice.applicaiton.service.utils.token;
 
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import io.jsonwebtoken.Claims;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccessTokenProvider {
 
-    private final JwtProperties jwtProperties;
+    private final TokenProperties tokenProperties;
 
     public String generateToken(AuthUserEntity authUserEntity, Date now, Date expiry) {
 
@@ -29,12 +29,12 @@ public class AccessTokenProvider {
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setHeaderParam("alg", "HS256")
-                .setIssuer(jwtProperties.getIssuer())
+                .setIssuer(tokenProperties.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .setSubject(authUserEntity.getEmail())
                 .addClaims(claims)
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+                .signWith(SignatureAlgorithm.HS256, tokenProperties.getSecretKey())
                 .compact();
     }
 

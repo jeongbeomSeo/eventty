@@ -16,7 +16,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import com.eventty.authservice.applicaiton.service.subservices.UserDetailServiceImpl;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.repository.AuthUserRepository;

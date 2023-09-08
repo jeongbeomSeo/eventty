@@ -1,8 +1,7 @@
-package com.eventty.authservice.common.exception;
+package com.eventty.authservice.global.exception;
 
+import com.eventty.authservice.global.Enum.ErrorCode;
 import lombok.Getter;
-
-import com.eventty.authservice.common.Enum.ErrorCode;
 
 @Getter
 public class AuthException extends RuntimeException{

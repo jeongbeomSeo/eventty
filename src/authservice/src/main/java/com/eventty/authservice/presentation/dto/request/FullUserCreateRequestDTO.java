@@ -1,4 +1,4 @@
-package com.eventty.authservice.presentation.dto;
+package com.eventty.authservice.presentation.dto.request;
 
 import jakarta.validation.constraints.Email;
 

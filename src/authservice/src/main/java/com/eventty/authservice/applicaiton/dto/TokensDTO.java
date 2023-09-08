@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class TokenDTO {
-    String accessToken;
-    String refreshToken;
+public class TokensDTO {
+    private String accessToken;
+    private String refreshToken;
 }

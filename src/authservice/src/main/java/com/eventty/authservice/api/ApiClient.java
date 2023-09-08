@@ -1,5 +1,6 @@
 package com.eventty.authservice.api;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,11 +13,11 @@ import lombok.AllArgsConstructor;
 
 import com.eventty.authservice.api.dto.UserCreateRequestDTO;
 import com.eventty.authservice.api.utils.MakeUrlService;
-import com.eventty.authservice.common.response.ResponseDTO;
+import com.eventty.authservice.global.response.ResponseDTO;
 
 @Component
 @AllArgsConstructor
-public class ApiClient {
+public class    ApiClient {
 
     // @Bean에 이름을 지정하지 않아서 생성자 이름을 따라감
     private final MakeUrlService makeUrlService;
@@ -25,13 +26,13 @@ public class ApiClient {
 
     private final RestTemplate customRestTemplate;
 
-    public ResponseEntity<ResponseDTO> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
+    public ResponseEntity<ResponseDTO<Void>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
 
         HttpEntity<UserCreateRequestDTO> entity = createHttpPostEntity(userCreateRequestDTO);
 
         URI uri = makeUrlService.createUserUri();
 
-        return customRestTemplate.exchange(uri, HttpMethod.POST, entity, ResponseDTO.class);
+        return customRestTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {});
     }
     private <T> HttpEntity<T> createHttpPostEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();

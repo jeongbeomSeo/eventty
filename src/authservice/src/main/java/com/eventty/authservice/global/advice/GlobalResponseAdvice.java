@@ -1,4 +1,4 @@
-package com.eventty.authservice.common.config;
+package com.eventty.authservice.global.advice;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -7,9 +7,9 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import com.eventty.authservice.common.response.ErrorResponseDTO;
-import com.eventty.authservice.common.response.ResponseDTO;
-import com.eventty.authservice.common.response.SuccessResponseDTO;
+import com.eventty.authservice.global.response.ErrorResponseDTO;
+import com.eventty.authservice.global.response.ResponseDTO;
+import com.eventty.authservice.global.response.SuccessResponseDTO;
 
 @RestControllerAdvice(basePackages = "com.eventty")
 public class GlobalResponseAdvice implements ResponseBodyAdvice {

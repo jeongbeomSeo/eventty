@@ -10,4 +10,6 @@ public interface UserDetailService {
     void validateEmail(String email);
 
     AuthUserEntity findAuthUser(String email);
+
+    AuthUserEntity findAuthUser(Long userId);
 }

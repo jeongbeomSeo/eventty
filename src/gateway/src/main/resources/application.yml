@@ -65,4 +65,9 @@ spring:
 jwt.secret_key: ${secret_key}
 jwt.issure: ${issuer}
 
+## SERVER BASE URL
+server.base.url.user_server: ${user-server-url}
+server.base.url.auth_server: ${auth-server-url}
+server.base.url.event_server: ${event-server-url}
+
 

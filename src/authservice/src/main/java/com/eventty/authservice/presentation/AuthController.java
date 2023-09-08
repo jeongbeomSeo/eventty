@@ -1,9 +1,12 @@
 package com.eventty.authservice.presentation;
 
-import com.eventty.authservice.applicaiton.dto.TokenDTO;
+import com.eventty.authservice.applicaiton.dto.TokensDTO;
+import com.eventty.authservice.global.response.SuccessResponseDTO;
 import com.eventty.authservice.infrastructure.annotation.Auth;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
-import com.eventty.authservice.presentation.dto.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
+import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
@@ -11,7 +14,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -20,17 +22,15 @@ import lombok.RequiredArgsConstructor;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import com.eventty.authservice.presentation.dto.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
 import com.eventty.authservice.domain.Enum.UserRole;
-import com.eventty.authservice.presentation.dto.IsUserDuplicateRequestDTO;
-import com.eventty.authservice.common.Enum.SuccessCode;
-
-import javax.management.relation.Role;
+import com.eventty.authservice.presentation.dto.request.IsUserDuplicateRequestDTO;
+import com.eventty.authservice.global.Enum.SuccessCode;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("")
 @Tag(name= "Auth", description = "Auth API")
 public class AuthController {
 
@@ -73,9 +73,9 @@ public class AuthController {
     public ResponseEntity<Void> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
 
         // JWT & Refresh Token
-        TokenDTO tokenDTO = userService.login(userLoginRequestDTO);
-        ResponseCookie responseAccessTokenCookie = CookieCreator.createAccessTokenCookie(tokenDTO.getAccessToken());
-        ResponseCookie responseRefreshTokenCookie = CookieCreator.createRefreshTokenCookie(tokenDTO.getRefreshToken());
+        TokensDTO tokensDTO = userService.login(userLoginRequestDTO);
+        ResponseCookie responseAccessTokenCookie = CookieCreator.createAccessTokenCookie(tokensDTO.getAccessToken());
+        ResponseCookie responseRefreshTokenCookie = CookieCreator.createRefreshTokenCookie(tokensDTO.getRefreshToken());
 
         // Combine the two cookies into a single header value
         String combinedCookies = responseAccessTokenCookie.toString() + "; " + responseRefreshTokenCookie.toString();
@@ -96,8 +96,19 @@ public class AuthController {
 
         Cookie[] cookies = request.getCookies();
 
-
         return null;
     }
 
+    /**
+     * Refresh Token 검증 및 새로운 Tokens 발급
+     */
+    @PostMapping("/api/newtokens")
+    public ResponseEntity<SuccessResponseDTO<NewTokensResponseDTO>> getNewTokens(@RequestBody GetNewTokensRequestDTO getNewTokensRequestDTO) {
+
+        NewTokensResponseDTO newTokensResponseDTO = userService.getNewTokens(getNewTokensRequestDTO);
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
+                .body(SuccessResponseDTO.of(newTokensResponseDTO));
+    }
 }
