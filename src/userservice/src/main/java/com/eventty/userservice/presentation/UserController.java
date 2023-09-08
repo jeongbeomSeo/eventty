@@ -2,21 +2,24 @@ package com.eventty.userservice.presentation;
 
 import com.eventty.userservice.application.UserService;
 import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
-import com.eventty.userservice.domain.code.SuccessCode;
+import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
+import com.eventty.userservice.domain.annotation.ApiErrorCode;
+import com.eventty.userservice.domain.annotation.ApiSuccessData;
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
-import com.eventty.userservice.presentation.dto.ResponseDTO;
 import com.eventty.userservice.presentation.dto.SuccessResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.eventty.userservice.domain.code.ErrorCode.*;
 
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "User", description = "User Server - About Users")
 @RequiredArgsConstructor
-@ResponseStatus(HttpStatus.OK)
 public class UserController {
 
     private final UserService userService;
@@ -29,8 +32,11 @@ public class UserController {
      * @return ResponseEntity<SuccessResponseDTO>
      */
     @PostMapping("/me")
-    public ResponseDTO postMe(@RequestBody @Valid UserCreateRequestDTO userCreateRequestDTO){
-        return SuccessResponseDTO.of(userService.createUser(userCreateRequestDTO), SuccessCode.USER_INFO_INSERT);
+    @ApiSuccessData(stateCode = "201")
+    @ApiErrorCode({INVALID_INPUT_VALUE, INVALID_JSON})
+    public ResponseEntity<SuccessResponseDTO> postMe(@RequestBody @Valid UserCreateRequestDTO userCreateRequestDTO){
+        userService.createUser(userCreateRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -43,12 +49,15 @@ public class UserController {
     // 우선 Test 할 동안만 파라미터로 받겠습니다!
     // 차후 수정 예정
     @GetMapping("/me/{userId}")
-    public ResponseDTO getMe(@PathVariable Long userId){
+    @ApiSuccessData(UserFindByIdResponseDTO.class)
+    @ApiErrorCode(USER_INFO_NOT_FOUND)
+    public ResponseEntity<SuccessResponseDTO> getMe(@PathVariable Long userId){
 
         // 토큰 내에 있는 정보 UserId Get!
         // Source 추가
-
-        return SuccessResponseDTO.of(userService.findUserById(userId), SuccessCode.USER_INFO_FIND_BY_ID);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SuccessResponseDTO.of(userService.findUserById(userId)));
     }
 
     /**
@@ -60,12 +69,15 @@ public class UserController {
      * @return ResponseEntity<SuccessResponseDTO>
      */
     @PatchMapping("/me/{userId}")
-    public ResponseDTO patchMe(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
+    @ApiSuccessData()
+    @ApiErrorCode({USER_INFO_NOT_FOUND, INVALID_JSON})
+    public ResponseEntity<SuccessResponseDTO> patchMe(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
 
         // 토큰 내에 있는 정보 UserId Get!
         // Source 추가
 
-        return SuccessResponseDTO.of(userService.updateUser(userId, userUpdateRequestDTO), SuccessCode.USER_INFO_UPDATE);
+        userService.updateUser(userId, userUpdateRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
