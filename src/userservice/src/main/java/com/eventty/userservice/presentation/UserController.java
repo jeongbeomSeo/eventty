@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import static com.eventty.userservice.domain.code.ErrorCode.*;
 
 @RestController
-@RequestMapping("/api/users")
 @Tag(name = "User", description = "User Server - About Users")
 @RequiredArgsConstructor
 public class UserController {
@@ -31,7 +30,7 @@ public class UserController {
      * @param userCreateRequestDTO
      * @return ResponseEntity<SuccessResponseDTO>
      */
-    @PostMapping("/me")
+    @PostMapping("/api/users/me")
     @ApiSuccessData(stateCode = "201")
     @ApiErrorCode({INVALID_INPUT_VALUE, INVALID_JSON})
     public ResponseEntity<SuccessResponseDTO> postMe(@RequestBody @Valid UserCreateRequestDTO userCreateRequestDTO){
@@ -48,7 +47,7 @@ public class UserController {
      */
     // 우선 Test 할 동안만 파라미터로 받겠습니다!
     // 차후 수정 예정
-    @GetMapping("/me/{userId}")
+    @GetMapping("/users/me/{userId}")
     @ApiSuccessData(UserFindByIdResponseDTO.class)
     @ApiErrorCode(USER_INFO_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO> getMe(@PathVariable Long userId){
@@ -68,7 +67,7 @@ public class UserController {
      * @param userUpdateRequestDTO
      * @return ResponseEntity<SuccessResponseDTO>
      */
-    @PatchMapping("/me/{userId}")
+    @PatchMapping("/users/me/{userId}")
     @ApiSuccessData()
     @ApiErrorCode({USER_INFO_NOT_FOUND, INVALID_JSON})
     public ResponseEntity<SuccessResponseDTO> patchMe(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
