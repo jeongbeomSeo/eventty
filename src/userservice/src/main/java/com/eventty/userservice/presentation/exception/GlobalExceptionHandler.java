@@ -1,7 +1,8 @@
-package com.eventty.userservice.presentation;
+package com.eventty.userservice.presentation.exception;
 
 import com.eventty.userservice.domain.exception.UserException;
 import com.eventty.userservice.presentation.dto.ErrorResponseDTO;
+import com.eventty.userservice.presentation.exception.DataErrorLogger;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

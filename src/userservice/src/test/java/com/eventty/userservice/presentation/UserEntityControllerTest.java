@@ -3,6 +3,7 @@ package com.eventty.userservice.presentation;
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.application.UserService;
 import com.eventty.userservice.domain.code.ErrorCode;
+import com.eventty.userservice.presentation.exception.DataErrorLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,4 +1,4 @@
-package com.eventty.userservice.presentation;
+package com.eventty.userservice.presentation.exception;
 
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
