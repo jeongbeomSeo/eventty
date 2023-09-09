@@ -1,10 +1,6 @@
 package com.eventty.gateway.filter;
 
-import com.eventty.gateway.api.ApiClient;
-import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
-import com.eventty.gateway.api.dto.NewTokensResponseDTO;
-import com.eventty.gateway.presentation.TokenEnum;
-import com.eventty.gateway.presentation.dto.ResponseDTO;
+import com.eventty.gateway.util.TokenEnum;
 import com.eventty.gateway.util.CookieCreator;
 import com.eventty.gateway.util.CustomMapper;
 import com.eventty.gateway.util.jwt.JwtUtils;
@@ -15,7 +11,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -53,20 +48,21 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
         // 함수형 인터페이스의 인스턴스를 간결하게 표한하는 람다 표현식
         return ((exchange, chain) -> {
+            log.info("PreLogger: Authentication Filter => ");
             MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
-            Map<String, String> tokens = customMapper.tokenMapping(cookies);
+            String jwtToken = customMapper.jwtMapping(cookies);
 
-            if (tokens.get(TokenEnum.ACCESS_TOKEN.getName()) == null) {} // 예외 발생
-
-            // 이 로직 수정 필요 (내부에서 try-catch로 ExpiredJwtException만 잡아서 null값을 return해주는 형태로 진행중
-            Claims jwtClaims = jwtUtils.getClaimsOrNullOnExpiration(tokens.get(TokenEnum.ACCESS_TOKEN.getName()));
+            Claims jwtClaims = jwtUtils.getClaimsOrNullOnExpiration(jwtToken);
             boolean isExpired = (jwtClaims == null);
 
+            Map<String, String> tokens = null;
             if (isExpired) {
-                // 새로 받아온 Tokens 저장
-                tokens = jwtUtils.getNewTokens(tokens);
+                log.info("JWT is Expired!!");
 
-                log.warn("토큰 받아옵니다.");
+                // Refresh Token을 이용해서 새로 받아온 Tokens 저장
+                String refreshToekn = customMapper.refreshTokenMapping(cookies);
+                tokens = jwtUtils.getNewTokens(refreshToekn);
+                log.info("New tokens have been received from the authentication service server!!");
 
                 // 가져온 토큰을 통해서 Cliams 가져오기. 만약, 여기서도 예외 발생한다면 그냥 전부 발생시키기
                 jwtClaims = jwtUtils.getClaimsOrThrow(tokens.get(TokenEnum.ACCESS_TOKEN.getName()));
@@ -80,7 +76,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     .build();
 
             // 확인하기 위한 로깅
-            log.warn("{}이(가) 지나갑니다 !! {} 여기로 갑니다!!", jwtClaims.getSubject(),exchange.getRequest().getPath());
+            log.info("{}이(가) 지나갑니다 !! {} 여기로 갑니다!!", jwtClaims.getSubject(), exchange.getRequest().getPath());
 
             if (!isExpired)
                 return chain.filter(exchange.mutate().request(requestWithHeader).build());
@@ -89,11 +85,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     final Map<String, String> finalTokens = tokens;
                     return chain.filter(exchange.mutate().request(requestWithHeader).build())
                         .then(Mono.fromRunnable(() -> {
+                            log.info("PostLogger: Authentication Filter");
                             ServerHttpResponse serverHttpResponse = exchange.getResponse();
                             // 위에서 받아온 토큰 Response 쿠키 설정
 
-                            log.warn("token update");
-
+                            log.info("Tokens update!!");
                             ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(finalTokens.get(TokenEnum.ACCESS_TOKEN.getName()));
                             ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(finalTokens.get(TokenEnum.REFRESH_TOKEN.getName()));
 

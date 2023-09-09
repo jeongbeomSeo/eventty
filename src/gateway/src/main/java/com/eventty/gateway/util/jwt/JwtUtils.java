@@ -3,13 +3,15 @@ package com.eventty.gateway.util.jwt;
 import com.eventty.gateway.api.ApiClient;
 import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
 import com.eventty.gateway.api.dto.NewTokensResponseDTO;
-import com.eventty.gateway.presentation.dto.ResponseDTO;
+import com.eventty.gateway.global.dto.ResponseDTO;
+import com.eventty.gateway.global.exception.token.FailGetNewTokensException;
+import com.eventty.gateway.global.exception.token.InvalidIssuerException;
 import com.eventty.gateway.util.CustomMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.eventty.gateway.presentation.TokenEnum;
+import com.eventty.gateway.util.TokenEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,17 +33,17 @@ public class JwtUtils {
     private final CustomMapper customMapper;
 
 
-    public Map<String, String> getNewTokens(Map<String, String> tokens) {
-        if (tokens.get(TokenEnum.REFRESH_TOKEN.getName()) == null) {} // 예외 발생 => Login Page
-
-        Claims refreshTokenCliams = getClaimsOrThrow(tokens.get(TokenEnum.REFRESH_TOKEN.getName())); // 예외 전부 발생 (내부 로직) => Login Page
+    public Map<String, String> getNewTokens(String refreshToken) {
+        Claims refreshTokenCliams = getClaimsOrNullOnExpiration(refreshToken);
 
         String userId = getUserId(refreshTokenCliams);
-        GetNewTokensRequestDTO getNewTokensRequestDTO = customMapper.createGetNewTokensRequestDTO(userId, tokens.get(TokenEnum.REFRESH_TOKEN.getName()));
+        GetNewTokensRequestDTO getNewTokensRequestDTO = customMapper.createGetNewTokensRequestDTO(userId, refreshToken);
 
         ResponseEntity<ResponseDTO<NewTokensResponseDTO>> response = apiClient.getNewTokens(getNewTokensRequestDTO);
 
-        if (Objects.requireNonNull(response.getBody()).getSuccessResponseDTO().getData() == null) {} // 예외 발생 => Login Page
+        // 새로운 토큰 가져오기 실패
+        if (Objects.requireNonNull(response.getBody()).getSuccessResponseDTO().getData() == null)
+            throw FailGetNewTokensException.EXCEPTION;
 
         return Map.of(
                 TokenEnum.ACCESS_TOKEN.getName(), response.getBody().getSuccessResponseDTO().getData().getAccessToken(),
@@ -60,14 +62,18 @@ public class JwtUtils {
         } catch (ExpiredJwtException e) {
             return null;
         }
+        issuerCheck(claims);
         return claims;
     }
 
     public Claims getClaimsOrThrow(String token) {
-        return Jwts.parser()
+        Claims claims = Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
                 .parseClaimsJws(token)
                 .getBody();
+
+        issuerCheck(claims);
+        return claims;
     }
 
     public String getUserId(Claims claims) {
@@ -91,9 +97,10 @@ public class JwtUtils {
                 new TypeReference<List<Authority>>() {}
         );
     }
+
+    // 발급 주체가 우리 애플리케이션이 맞는지 확인
     private void issuerCheck(Claims claims) {
-        if (!claims.getIssuer().equals(jwtProperties.getIssure())) {
-            throw new RuntimeException("Invalid issuer");
-        }
+        if (!claims.getIssuer().equals(jwtProperties.getIssure()))
+            throw InvalidIssuerException.EXCEPTION;
     }
 }

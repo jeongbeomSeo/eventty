@@ -1,4 +1,4 @@
-package com.eventty.gateway.config;
+package com.eventty.gateway.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.eventty.gateway.presentation;
+package com.eventty.gateway.global.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,15 @@ public enum ErrorCode {
     DATABASE_CONSTRAINT_VIOLATION(400, "", "Database constraint violation"),
     REFERENCE_INTEGRITY_VIOLATION(400, "" , "Reference integrity violation"),
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),
-    CONFLICT(409, "", "Conflict occurred");
+    CONFLICT(409, "", "Conflict occurred"),
 
+    // Authenticaiton
+    FAIL_AUTHENTICATION(400, "G000", "Fail Authentication"),
+    ACCESSTOKEN_IS_EMPTY(403, "G000", "AccessToken is empty"),
+    REFRESHTOKEN_IS_EMPTY(403, "G000", "RefreshToken is empty"),
+    REFRESHTOKEN_EXPIRED(403, "G000", "RefreshToken is expired"),
+    FAIL_GET_NEW_TOKENS(400, "G000", "Failed to get new tokens"),
+    INVALID_ISSUER(403, "G000", "Invalid Issuer");
 
     private final int status;
     private final String code;

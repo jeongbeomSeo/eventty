@@ -39,5 +39,4 @@ public class AuthenticationConverter {
             throw new RuntimeException("Error converting JSON to authorities", e);
         }
     }
-
 }

@@ -1,4 +1,4 @@
-package com.eventty.gateway.presentation;
+package com.eventty.gateway.util;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
-package com.eventty.gateway.presentation.dto;
+package com.eventty.gateway.global.dto;
 
-import com.eventty.gateway.presentation.ErrorCode;
+import com.eventty.gateway.global.exception.ErrorCode;
 
 import lombok.*;
 

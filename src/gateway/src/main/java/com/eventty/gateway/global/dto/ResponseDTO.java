@@ -1,4 +1,4 @@
-package com.eventty.gateway.presentation.dto;
+package com.eventty.gateway.global.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

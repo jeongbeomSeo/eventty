@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class AuthException extends RuntimeException{
 
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
 
     protected AuthException(ErrorCode errorCode) {
         this.errorCode = errorCode;
