@@ -22,6 +22,7 @@ spring:
         format_sql: true       # sql pretty show
         use_sql_comments: true # /* */ within the Sql show
         highlight_sql: true    # colorful
+        ddl-auto: none         # Preventing the creation of a new field.
   # 404 Error
   mvc:
     throw-exception-if-no-handler-found: true
