@@ -1,5 +1,6 @@
 package com.eventty.authservice.global.advice;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
@@ -14,10 +15,10 @@ import com.eventty.authservice.global.response.SuccessResponseDTO;
 @RestControllerAdvice(basePackages = "com.eventty")
 public class GlobalResponseAdvice implements ResponseBodyAdvice {
 
-    // 모든 Response에 적용
+    // ResponseDTO로 오는 경우 외에 전부 실행
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
-        return true;
+        return !ResponseDTO.class.isAssignableFrom(returnType.getParameterType());
     }
 
     @Override

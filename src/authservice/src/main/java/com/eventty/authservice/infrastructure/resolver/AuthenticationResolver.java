@@ -3,6 +3,7 @@ package com.eventty.authservice.infrastructure.resolver;
 import com.eventty.authservice.infrastructure.utils.AuthenticationConverter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthenticationResolver implements HandlerMethodArgumentResolver {
@@ -44,6 +46,7 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
 
         Authentication authentication = authenticationConverter.getAuthentication(userId, authoritiesJSON);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("Successfully saved {}'s authentication in the security context holder.", authentication.getPrincipal());
 
         return authentication;
     }

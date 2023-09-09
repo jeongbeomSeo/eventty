@@ -2,9 +2,11 @@ package com.eventty.authservice.global.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+@Slf4j
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
@@ -15,6 +17,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
         // 헤더에서 user Id 와 권한 정보 추출
         String userId = request.getHeader(HEADER_USER_ID);
         String authorities = request.getHeader(HEADER_AUTHORITIES);
@@ -26,6 +29,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         request.setAttribute(USER_ID, userId);
         request.setAttribute(AUTHORITIES, authorities);
 
+        log.info("Authentication interceptor pass \nUser Id: {}", userId);
+
         return true;
     }
+
+
 }

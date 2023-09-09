@@ -2,7 +2,7 @@ package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
-import com.eventty.authservice.infrastructure.annotation.Auth;
+import com.eventty.authservice.infrastructure.annotation.Permission;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
@@ -89,7 +89,7 @@ public class AuthController {
     /**
      * 로그아웃
      */
-    @Auth(Roles = {UserRole.HOST})
+    @Permission(Roles = {UserRole.HOST})
     @DeleteMapping("/me")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal Authentication authentication,
                                        HttpServletRequest request) {
