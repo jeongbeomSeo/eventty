@@ -4,6 +4,7 @@ import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
 import com.eventty.userservice.domain.UserEntity;
+import com.eventty.userservice.domain.exception.DuplicateUserIdException;
 import com.eventty.userservice.domain.exception.UserInfoNotFoundException;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ public class UserEntityServiceTest {
     @Transactional
     public void createUserTest(){
         // Given
-        Long userId = 1L;
+        Long userId = 1000L;
         String name = "홍박사";
         String address = "서울특별시 강남구 테헤란로";
         LocalDate birth = LocalDate.of(1988, 5, 3);
@@ -53,6 +54,33 @@ public class UserEntityServiceTest {
         assertEquals(userEntity.getAddress(), address);
         assertEquals(userEntity.getBirth(), birth);
         assertEquals(userEntity.getPhone(), phone);
+    }
+
+    @Test
+    @DisplayName("[Fail] 회원가입시 userId(PK)값 존재")
+    @Transactional
+    public void createUserFailTest(){
+        // Given
+        Long userId = 1L;
+        String name = "홍박사";
+        String address = "서울특별시 강남구 테헤란로";
+        LocalDate birth = LocalDate.of(1988, 5, 3);
+        String phone = "01045628526";
+
+        UserCreateRequestDTO request = UserCreateRequestDTO
+                .builder()
+                .userId(userId)
+                .name(name)
+                .address(address)
+                .birth(birth)
+                .phone(phone)
+                .build();
+
+        em.persist(request.toEntity());
+
+        // When, Then
+        assertThrows(DuplicateUserIdException.class, () -> userService.createUser(request));
+
     }
 
     @Test

@@ -9,3 +9,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### docker-compose ### 
+src/docker-compose.yml

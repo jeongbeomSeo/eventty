@@ -19,7 +19,8 @@ public enum ErrorCode {
     INVALID_JSON        (HttpStatus.BAD_REQUEST.value(), "", "JSON parse error"),
 
     // User
-    USER_INFO_NOT_FOUND (HttpStatus.BAD_REQUEST.value(), "U001", "User information does not exist");
+    USER_INFO_NOT_FOUND (HttpStatus.BAD_REQUEST.value(), "U001", "User information does not exist"),
+    USER_ID_DUPLICATE(HttpStatus.BAD_REQUEST.value(), "U002", "UserId already exist");
 
     private final int status;
     private final String code;
