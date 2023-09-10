@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserUpdateDTO {
 
-    private Long id;
     private Long userId;
     private String name;
     private String phone;
@@ -19,7 +18,7 @@ public class UserUpdateDTO {
     private String image;
 
     public UserUpdateDTO(UserEntity user){
-        this.id = user.getId();
+
         this.userId = user.getUserId();
         this.name = user.getName();
         this.phone = user.getPhone();
@@ -31,7 +30,6 @@ public class UserUpdateDTO {
     public UserEntity toEntity(UserUpdateRequestDTO dto){
         return UserEntity
                 .builder()
-                .id(this.getId())
                 .userId(this.userId)
                 .name(dto.getName() != null ? dto.getName() : this.name)
                 .phone(dto.getPhone() != null ? dto.getPhone() : this.phone)

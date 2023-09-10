@@ -22,6 +22,12 @@ spring:
         format_sql: true       # sql pretty show
         use_sql_comments: true # /* */ within the Sql show
         highlight_sql: true    # colorful
+  # 404 Error
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 
 
 logging:
@@ -32,9 +38,3 @@ logging:
         orm:
           jdbc:
             bind: trace       # Parameters show
-
-
-# Swagger
-springdoc:
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json

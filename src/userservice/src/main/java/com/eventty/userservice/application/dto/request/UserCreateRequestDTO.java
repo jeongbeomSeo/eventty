@@ -17,7 +17,7 @@ public class UserCreateRequestDTO {
     private String address;
     @Past
     private LocalDate birth;
-    private String image;
+    @NotBlank(message = "a null value or '' value or ' ' value")
     private String phone;
 
     public UserEntity toEntity() {
@@ -27,7 +27,6 @@ public class UserCreateRequestDTO {
                 .name(this.name)
                 .address(this.address)
                 .birth(this.birth)
-                .image(this.image)
                 .phone(this.phone)
                 .build();
     }
