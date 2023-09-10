@@ -115,7 +115,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponseDTO> handleException(Exception e) {
         log.error("Exception Occured: {}", e.getMessage());
-
         final ErrorResponseDTO response = ErrorResponseDTO.of(INTERNAL_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
