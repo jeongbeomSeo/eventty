@@ -5,7 +5,7 @@ server:
 spring:
   # SECRET
   profiles:
-    active: test
+    active: dev
   # MYSQL
   datasource:
     url: ${url}
@@ -42,8 +42,14 @@ logging:
           descriptor:
             sql: trace
 
-## USER SERVER BASE URL
-server.base.url.userServer: ${user-server-url}
+## SERVER BASE URL
+server.base.url.user_server: ${user-server-url}
+
+## Token
+token.access-expired-time: ${token-access}
+token.refresh-expired-time: ${token-refresh}
+token.issuer: ${issuer}
+token.secret_key: ${secret_key}
 
 # Swagger
 springdoc:

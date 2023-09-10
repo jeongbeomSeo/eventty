@@ -18,6 +18,7 @@ public class UserUpdateDTO {
     private String image;
 
     public UserUpdateDTO(UserEntity user){
+
         this.userId = user.getUserId();
         this.name = user.getName();
         this.phone = user.getPhone();

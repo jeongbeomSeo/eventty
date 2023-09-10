@@ -2,23 +2,57 @@ server:
   port: 8001
 
 spring:
+  profiles:
+    active: dev
   cloud:
     gateway:
       routes:
         - id: userservice-server
           # ?? URL (??? http://userservice:8000/ ?? ??)
-          uri: http://localhost:8000/
+          uri: http://${user_server}:8000/
           predicates:
             - Path=/api/users/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/users/(?<segment>.*), /$\{segment}
+            - JwtAuthenticationFilter
+
         - id: event-server
           # ?? URL (??? http://eventservice:8000/ ?? ??)
-          uri: http://localhost:80/
+          uri: http://${event_server}:80/
           predicates:
             - Path=/api/events/**
-        - id: auth-server
-          uri: http://localhost:8002/
+          filters:
+              - RemoveRequestHeader=Cookie
+              - RewritePath=/api/users/(?<segment>.*), /$\{segment}
+              - JwtAuthenticationFilter
+
+        - id: auth-not-authorization-post
+          uri: http://${auth_server}:8002/
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/auth/login, /api/auth/me/*, /api/auth/email
+            - Method=POST
+          filters:
+          - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+
+        - id: auth-authorization-delete
+          uri: http://${auth_server}:8002/
+          predicates:
+            - Path=/api/auth/me
+            - Method=DELETE
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+
+        - id: auth-authentication-post
+          uri: http://${auth_server}:8002/
+          predicates:
+            - Path=/api/auth/logout
+            - Method=POST
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+
       globalcors:
         cors-configurations:
           '[/**]':
@@ -37,5 +71,13 @@ spring:
               - OPTIONS
               - DELETE
 
+## JWT
+jwt.secret_key: ${secret_key}
+jwt.issuer: ${issuer}
+
+## SERVER BASE URL
+server.base.url.user_server: ${user-server-url}
+server.base.url.auth_server: ${auth-server-url}
+server.base.url.event_server: ${event-server-url}
 
 

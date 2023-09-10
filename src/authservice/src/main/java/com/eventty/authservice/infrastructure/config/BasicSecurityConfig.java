@@ -1,11 +1,16 @@
 package com.eventty.authservice.infrastructure.config;
 
+import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -26,6 +31,16 @@ public class BasicSecurityConfig {
                             .anyRequest()
                             .permitAll();
 
+                })
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(httpSecurityLogoutConfigurer -> {
+                    httpSecurityLogoutConfigurer
+                            .logoutUrl("/logout")
+                            .invalidateHttpSession(true)
+                            .clearAuthentication(true)
+                            .deleteCookies(TokenEnum.ACCESS_TOKEN.getName(), TokenEnum.REFRESH_TOKEN.getName())
+                            .logoutSuccessHandler((request, response, authentication) ->
+                                    response.setStatus(HttpServletResponse.SC_OK));
                 })
                 .csrf(csrfconfig -> {
                     csrfconfig

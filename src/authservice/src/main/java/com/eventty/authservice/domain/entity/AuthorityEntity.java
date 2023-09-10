@@ -13,6 +13,7 @@ public class AuthorityEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     private String name;    // 권한 이름(역할)
