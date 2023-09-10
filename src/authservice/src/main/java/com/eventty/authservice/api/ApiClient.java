@@ -26,13 +26,14 @@ public class    ApiClient {
 
     private final RestTemplate customRestTemplate;
 
-    public ResponseEntity<ResponseDTO<Void>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
+    public void createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
 
         HttpEntity<UserCreateRequestDTO> entity = createHttpPostEntity(userCreateRequestDTO);
 
         URI uri = makeUrlService.createUserUri();
 
-        return customRestTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {});
+        customRestTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {
+        });
     }
     private <T> HttpEntity<T> createHttpPostEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();

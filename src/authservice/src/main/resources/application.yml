@@ -48,7 +48,7 @@ server.base.url.user_server: ${user-server-url}
 ## Token
 token.access-expired-time: ${token-access}
 token.refresh-expired-time: ${token-refresh}
-token.issure: ${issuer}
+token.issuer: ${issuer}
 token.secret_key: ${secret_key}
 
 # Swagger

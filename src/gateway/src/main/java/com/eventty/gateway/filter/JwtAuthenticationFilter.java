@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
         // 함수형 인터페이스의 인스턴스를 간결하게 표한하는 람다 표현식
         return ((exchange, chain) -> {
-            log.info("PreLogger: Authentication Filter => ");
+            log.info("PreLogger: Authentication Filter");
             MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
             String jwtToken = customMapper.jwtMapping(cookies);
 
@@ -85,7 +85,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     final Map<String, String> finalTokens = tokens;
                     return chain.filter(exchange.mutate().request(requestWithHeader).build())
                         .then(Mono.fromRunnable(() -> {
-                            log.info("PostLogger: Authentication Filter");
+                            log.info("PostLogger: Authentication Filter get new tokens and update");
                             ServerHttpResponse serverHttpResponse = exchange.getResponse();
                             // 위에서 받아온 토큰 Response 쿠키 설정
 

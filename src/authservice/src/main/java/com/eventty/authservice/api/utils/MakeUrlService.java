@@ -10,10 +10,9 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class MakeUrlService {
 
-    private final String CREATE_USER_API_PATH = "/api/users/me";
-
     private final UrlProperties urlProperties;
     public URI createUserUri() {
+        String CREATE_USER_API_PATH = "/api/users/me";
         return URI.create(urlProperties.getUserServer() + CREATE_USER_API_PATH);
     }
 }

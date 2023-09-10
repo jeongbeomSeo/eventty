@@ -9,6 +9,7 @@ import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -87,11 +88,10 @@ public class AuthController {
     }
 
     /**
-     * 로그아웃
+     * 회원 탈퇴
      */
-    @Permission(Roles = {UserRole.HOST})
     @DeleteMapping("/me")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal Authentication authentication,
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication,
                                        HttpServletRequest request) {
 
         Cookie[] cookies = request.getCookies();

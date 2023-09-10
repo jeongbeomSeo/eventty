@@ -1,6 +1,7 @@
 package com.eventty.authservice.infrastructure.utils;
 
 import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
+import jakarta.servlet.http.Cookie;
 import org.springframework.http.ResponseCookie;
 
 public class CookieCreator {
@@ -22,6 +23,4 @@ public class CookieCreator {
                 .maxAge(3 * 24 * 60 * 60) // 3일
                 .build();
     }
-
-
 }

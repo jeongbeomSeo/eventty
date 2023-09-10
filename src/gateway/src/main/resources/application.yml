@@ -27,15 +27,15 @@ spring:
               #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
               - JwtAuthenticationFilter
 
-        - id: auth-login
+        - id: auth-not-authorization-post
           uri: http://${auth_server}:8002/
           predicates:
-            - Path=/api/auth/login, /api/auth/me, /api/auth/email
+            - Path=/api/auth/login, /api/auth/me/*, /api/auth/email
             - Method=POST
           filters:
           - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
 
-        - id: auth-me-delete
+        - id: auth-authorization-delete
           uri: http://${auth_server}:8002/
           predicates:
             - Path=/api/auth/me
@@ -43,6 +43,16 @@ spring:
           filters:
             - JwtAuthenticationFilter
             - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+
+        - id: auth-authentication-post
+          uri: http://${auth_server}:8002/
+          predicates:
+            - Path=/api/auth/logout
+            - Method=POST
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+
       globalcors:
         cors-configurations:
           '[/**]':
@@ -63,7 +73,7 @@ spring:
 
 ## JWT
 jwt.secret_key: ${secret_key}
-jwt.issure: ${issuer}
+jwt.issuer: ${issuer}
 
 ## SERVER BASE URL
 server.base.url.user_server: ${user-server-url}

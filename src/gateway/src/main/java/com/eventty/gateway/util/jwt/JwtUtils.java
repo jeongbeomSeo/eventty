@@ -57,22 +57,22 @@ public class JwtUtils {
         try {
             claims = Jwts.parser()
                     .setSigningKey(jwtProperties.getSecretKey())
+                    .requireIssuer(jwtProperties.getIssuer())
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
             return null;
         }
-        issuerCheck(claims);
         return claims;
     }
 
     public Claims getClaimsOrThrow(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())
+                .requireIssuer(jwtProperties.getIssuer())
                 .parseClaimsJws(token)
                 .getBody();
 
-        issuerCheck(claims);
         return claims;
     }
 
@@ -96,11 +96,5 @@ public class JwtUtils {
                 claims.get(TokenEnum.AUTHORIZATION.getName()),
                 new TypeReference<List<Authority>>() {}
         );
-    }
-
-    // 발급 주체가 우리 애플리케이션이 맞는지 확인
-    private void issuerCheck(Claims claims) {
-        if (!claims.getIssuer().equals(jwtProperties.getIssure()))
-            throw InvalidIssuerException.EXCEPTION;
     }
 }

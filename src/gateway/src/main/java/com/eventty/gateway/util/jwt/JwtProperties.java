@@ -12,5 +12,5 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("jwt")
 public class JwtProperties {
     private String secretKey;
-    private String issure;
+    private String issuer;
 }

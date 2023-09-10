@@ -7,6 +7,6 @@ public class RefreshTokenNotFoundException extends AuthException {
     public final static RefreshTokenNotFoundException EXCEPTION = new RefreshTokenNotFoundException();
     private RefreshTokenNotFoundException() {
         // Customizing 할지, 그냥 할지 고민
-        super(ErrorCode.NOT_FOUND);
+        super(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
     }
 }

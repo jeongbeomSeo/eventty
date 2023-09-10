@@ -23,7 +23,11 @@ public enum ErrorCode {
     PERMISSION_DENIED(403, "", "Permission Denided"),
 
     // Auth
-    DUPLICATE_EMAIL(409, "C200", "Duplicate Email");
+    DUPLICATE_EMAIL(409, "", "Duplicate Email"),
+    USER_NOT_FOUND(404, "", "User Not Found Exception"),
+    INVALID_PASSWORD(400, "", "Invalid Password Exception"),
+    INVALID_REFRESH_TOKEN(403, "", "Invalid Refresh Token Exception"),
+    REFRESH_TOKEN_NOT_FOUND(404, "", "Refresh Token Not Found Exception");
 
     private final int status;
     private final String code;

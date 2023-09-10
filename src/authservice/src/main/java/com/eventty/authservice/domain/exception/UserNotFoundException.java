@@ -7,6 +7,6 @@ public class UserNotFoundException extends AuthException {
 
     public final static UserNotFoundException EXCEPTION = new UserNotFoundException();
     private UserNotFoundException() {
-        super(ErrorCode.NOT_FOUND);
+        super(ErrorCode.USER_NOT_FOUND);
     }
 }
