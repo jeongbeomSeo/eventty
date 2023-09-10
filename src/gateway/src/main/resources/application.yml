@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: test
+    active: dev
   cloud:
     gateway:
       routes:
@@ -14,7 +14,7 @@ spring:
             - Path=/api/users/**
           filters:
             - RemoveRequestHeader=Cookie
-            #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
+            - RewritePath=/api/users/(?<segment>.*), /$\{segment}
             - JwtAuthenticationFilter
 
         - id: event-server
@@ -24,7 +24,7 @@ spring:
             - Path=/api/events/**
           filters:
               - RemoveRequestHeader=Cookie
-              #- RewritePath=/api/users/(?<segment>.*), /$\{segment}
+              - RewritePath=/api/users/(?<segment>.*), /$\{segment}
               - JwtAuthenticationFilter
 
         - id: auth-not-authorization-post
