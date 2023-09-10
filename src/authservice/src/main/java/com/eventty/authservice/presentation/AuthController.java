@@ -78,23 +78,20 @@ public class AuthController {
         ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(tokensDTO.getAccessToken());
         ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(tokensDTO.getRefreshToken());
 
-        // Combine the two cookies into a single header value
-        String combinedCookies = jwtCookie.toString() + "; " + refreshTokenCookie.toString();
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
-                .header(HttpHeaders.SET_COOKIE, combinedCookies)
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(null);
     }
 
     /**
-     * 회원 탈퇴
+     * 회원 탈퇴(Soft Delete)
      */
     @DeleteMapping("/me")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication,
                                        HttpServletRequest request) {
-
-        Cookie[] cookies = request.getCookies();
 
         return null;
     }
