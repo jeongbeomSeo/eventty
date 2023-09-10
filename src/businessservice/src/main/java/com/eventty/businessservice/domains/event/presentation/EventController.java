@@ -24,7 +24,6 @@ import static com.eventty.businessservice.common.Enum.SuccessCode.*;
 @RestController
 @Validated
 @RequiredArgsConstructor
-@RequestMapping( "/api/events")
 @Tag(name = "Event", description = "Event API")
 public class EventController {
     private final EventService eventService;
