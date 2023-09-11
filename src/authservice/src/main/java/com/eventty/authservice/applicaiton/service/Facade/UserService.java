@@ -6,6 +6,7 @@ import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
+import org.springframework.security.core.Authentication;
 
 public interface UserService {
 
@@ -16,4 +17,6 @@ public interface UserService {
     TokensDTO login(UserLoginRequestDTO userLoginRequestDTO);
 
     NewTokensResponseDTO getNewTokens(GetNewTokensRequestDTO getNewTokensRequestDTO);
+
+    void deleteUser(Long userId);
 }

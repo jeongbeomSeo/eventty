@@ -90,10 +90,20 @@ public class AuthController {
      * 회원 탈퇴(Soft Delete)
      */
     @DeleteMapping("/me")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication,
-                                       HttpServletRequest request) {
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication, HttpServletResponse response) {
 
-        return null;
+        Long userId = (Long)authentication.getPrincipal();
+        userService.deleteUser(userId);
+
+        Cookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
+        Cookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCoolie();
+
+        response.addCookie(deleteAccessToken);
+        response.addCookie(deleteRefreshToken);
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
+                .body(null);
     }
 
     /**
