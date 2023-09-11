@@ -4,6 +4,7 @@ import com.eventty.businessservice.domains.event.application.dto.request.EventCr
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
+import com.eventty.businessservice.domains.event.application.facade.EventFacade;
 import com.eventty.businessservice.domains.event.application.service.EventService;
 import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
@@ -32,7 +33,7 @@ public class EventServiceImpl implements EventService {
     private final TicketRepository ticketRepository;
 
     /**
-     * 이벤트 기본 정보와 상세 정보 모두 조회
+     * 이벤트 상세 조회 (이벤트에 대한 모든 정보 + 티켓 정보)
      */
     @Override
     public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId){
@@ -49,7 +50,9 @@ public class EventServiceImpl implements EventService {
         return EventWithTicketsFindByIdResponseDTO.from(eventWithDetail, tickets);
     }
 
-    // 이벤트 전체 조회
+    /**
+     * 이벤트 전체 조회
+     */
     @Override
     public List<EventBasicFindAllResponseDTO> findAllEvents() {
         return Optional.ofNullable(eventBasicRepository.selectAllEvents())
@@ -59,27 +62,35 @@ public class EventServiceImpl implements EventService {
             .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
-    // 이벤트 생성
+    /**
+     * 이벤트 생성
+     */
     @Override
     public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
 
-        // 이벤트 일반 정보 저장
-        EventBasicEntity event = eventCreateRequestDTO.toEventEntity();
-        eventBasicRepository.insertEvent(event);
-        Long id = event.getId();
+        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
+        return eventFacade.createEvent(eventCreateRequestDTO);
 
-        // 티켓 정보 저장
-        eventCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
-            TicketEntity ticket = ticketCreateRequest.toEntity(id);
-            ticketRepository.insertTicket(ticket);
-        });
 
-        // 이벤트 상세 정보 저장
-        EventDetailEntity eventDetail = eventCreateRequestDTO.toEventDetailEntity(id);
-        return eventDetailRepository.insertEventDetail(eventDetail);
+//        // 이벤트 일반 정보 저장
+//        EventBasicEntity event = eventCreateRequestDTO.toEventEntity();
+//        eventBasicRepository.insertEvent(event);
+//        Long id = event.getId();
+//
+//        // 티켓 정보 저장
+//        eventCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
+//            TicketEntity ticket = ticketCreateRequest.toEntity(id);
+//            ticketRepository.insertTicket(ticket);
+//        });
+//
+//        // 이벤트 상세 정보 저장
+//        EventDetailEntity eventDetail = eventCreateRequestDTO.toEventDetailEntity(id);
+//        return eventDetailRepository.insertEventDetail(eventDetail);
     }
 
-    // 이벤트 수정
+    /**
+     * 이벤트 수정
+     */
     @Override
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO){
 
@@ -100,16 +111,21 @@ public class EventServiceImpl implements EventService {
         return id;
     }
 
-    // 이벤트 삭제
+    /**
+     * 이벤트 삭제
+     */
     @Override
     public Long deleteEvent(Long id){
-        ticketRepository.deleteTicket(id);
-        eventDetailRepository.deleteEventDetail(id);
-        eventBasicRepository.deleteEvent(id);
-        return id;
+        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
+        return eventFacade.deleteEvent(id);
+//        ticketRepository.deleteTicket(id);
+//        eventDetailRepository.deleteEventDetail(id);
+//        eventBasicRepository.deleteEvent(id);
     }
 
-    // 이벤트 카테고리별 조회
+    /**
+     * 이벤트 카테고리별 조회
+     */
     @Override
     public List<EventBasicFindAllResponseDTO> findEventsByCategory(Long categoryId){
 
