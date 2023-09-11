@@ -28,16 +28,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class EventServiceImpl implements EventService {
 
-    private final EventBasicRepository eventBasicRepository;
-    private final EventDetailRepository eventDetailRepository;
-    private final TicketRepository ticketRepository;
+    private final EventFacade eventFacade;
 
     /**
      * 이벤트 상세 조회 (이벤트에 대한 모든 정보 + 티켓 정보)
      */
     @Override
     public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId){
-        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
         return eventFacade.findEventById(eventId);
     }
 
@@ -46,11 +43,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public List<EventBasicFindAllResponseDTO> findAllEvents() {
-        return Optional.ofNullable(eventBasicRepository.selectAllEvents())
-            .map(events -> events.stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
-                .collect(Collectors.toList()))
-            .orElseThrow(()->EventNotFoundException.EXCEPTION);
+        return eventFacade.findAllEvents();
     }
 
     /**
@@ -58,7 +51,6 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
-        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
         return eventFacade.createEvent(eventCreateRequestDTO);
     }
 
@@ -67,7 +59,6 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO){
-        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
         return eventFacade.updateEvent(id, eventUpdateRequestDTO);
     }
 
@@ -76,7 +67,6 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long deleteEvent(Long id){
-        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
         return eventFacade.deleteEvent(id);
     }
 
@@ -85,18 +75,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public List<EventBasicFindAllResponseDTO> findEventsByCategory(Long categoryId){
-
-        if (categoryId < 1 || categoryId > 10) {
-            throw CategoryNotFoundException.EXCEPTION;
-        }
-
-        return Optional.ofNullable(eventBasicRepository.selectEventsByCategory(categoryId))
-                .filter(events -> !events.isEmpty())
-                .orElseThrow(() -> EventNotFoundException.EXCEPTION)
-                .stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
-                .collect(Collectors.toList());
-
+        return eventFacade.findEventsByCategory(categoryId);
     }
 
 }
