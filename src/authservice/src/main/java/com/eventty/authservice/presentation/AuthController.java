@@ -89,7 +89,7 @@ public class AuthController {
     /**
      * 회원 탈퇴(Soft Delete)
      */
-    @DeleteMapping("/me")
+    @DeleteMapping("/secret/me")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication,
                                        HttpServletRequest request) {
 

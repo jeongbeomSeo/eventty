@@ -7,51 +7,61 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: userservice-server
+        - id: user-authorization
+          # ?? URL (??? http://userservice:8000/ ?? ??)
+          uri: http://${user_server}:8000/
+          predicates:
+            - Path=/api/users/secret/**
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/secret/users/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: user-not-authorization
           # ?? URL (??? http://userservice:8000/ ?? ??)
           uri: http://${user_server}:8000/
           predicates:
             - Path=/api/users/**
           filters:
-            - RemoveRequestHeader=Cookie
             - RewritePath=/api/users/(?<segment>.*), /$\{segment}
-            - JwtAuthenticationFilter
+            - RemoveRequestHeader=Cookie
 
-        - id: event-server
+        - id: event-authorization-server
+          # ?? URL (??? http://eventservice:8000/ ?? ??)
+          uri: http://${event_server}:80/
+          predicates:
+            - Path=/api/events/secret/**
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/events/secret/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: event-not-authorization
           # ?? URL (??? http://eventservice:8000/ ?? ??)
           uri: http://${event_server}:80/
           predicates:
             - Path=/api/events/**
           filters:
-              - RemoveRequestHeader=Cookie
-              - RewritePath=/api/events/(?<segment>.*), /$\{segment}
-              - JwtAuthenticationFilter
+            - JwtAuthenticationFilter
+            - RewritePath=/api/events/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
 
-        - id: auth-not-authorization-post
+        - id: auth-authorization
           uri: http://${auth_server}:8002/
           predicates:
-            - Path=/api/auth/login, /api/auth/me/*, /api/auth/email
-            - Method=POST
+            - Path=/api/secret/auth/**
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/secret/auth/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: auth-not-authorization
+          uri: http://${auth_server}:8002/
+          predicates:
+            - Path=/api/auth/**
           filters:
           - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
-
-        - id: auth-authorization-delete
-          uri: http://${auth_server}:8002/
-          predicates:
-            - Path=/api/auth/me
-            - Method=DELETE
-          filters:
-            - JwtAuthenticationFilter
-            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
-
-        - id: auth-authentication-post
-          uri: http://${auth_server}:8002/
-          predicates:
-            - Path=/api/auth/logout
-            - Method=POST
-          filters:
-            - JwtAuthenticationFilter
-            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+          - RemoveRequestHeader=Cookie
 
       globalcors:
         cors-configurations:
