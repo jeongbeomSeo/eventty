@@ -41,8 +41,6 @@ public class GlobalExceptionHandler {
 
         final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.METHOD_NOT_ALLOWED);
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
-
-        // return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED); (body에 code도 담지 않고 보내는 방식)
     }
 
     // 지정하지 않은 API URI 요청이 들어왔을 경우 (404 예외 처리 핸들러 => appication-properties 설정 필요)

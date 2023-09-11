@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.eventty.authservice.api.ApiClient;
@@ -50,6 +51,8 @@ public class UserServiceImpl implements UserService {
 
         AuthUserEntity authUserEntity = userDetailService.findAuthUser(userLoginRequestDTO.getEmail());
 
+        userDetailService.validationUser(authUserEntity);
+
         authService.credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
 
         TokensDTO token = authService.getToken(authUserEntity);
@@ -70,6 +73,13 @@ public class UserServiceImpl implements UserService {
         apiClient.createUserApi(userCreateRequestDTO);
 
         return userId;
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
+
+        userDetailService.delete(authUserEntity);
     }
 
     @Override
