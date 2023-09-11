@@ -24,7 +24,7 @@ services:
       - ./userservice:/src/userservice
     networks:
       eventty:
-        aliases:
+        aliases:s 
           - "user server"
   authservice:
     image: auth:1.3
