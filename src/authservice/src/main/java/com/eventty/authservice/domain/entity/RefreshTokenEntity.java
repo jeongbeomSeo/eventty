@@ -20,6 +20,6 @@ public class RefreshTokenEntity {
     @Column(nullable = false, unique = true)
     private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 }
