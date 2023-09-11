@@ -1,15 +1,22 @@
 package com.eventty.businessservice.domains.event.application.facade;
 
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
+import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +26,37 @@ public class EventFacade {
     private EventBasicRepository eventBasicRepository;
     private EventDetailRepository eventDetailRepository;
     private TicketRepository ticketRepository;
+
+    public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId) {
+        EventFullFindByIdResponseDTO eventWithDetail = Optional.ofNullable(eventBasicRepository.selectEventWithDetailById(eventId))
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION);
+
+        List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
+
+        // 조회수 업데이트 쿼리 execute
+        eventDetailRepository.updateView(eventId);
+
+        // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환
+        return EventWithTicketsFindByIdResponseDTO.from(eventWithDetail, tickets);
+    }
+
+    public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO) {
+        // Event
+        EventBasicEntity event = eventBasicRepository.selectEventById(id);
+        event.updateTitle(eventUpdateRequestDTO.getTitle());
+        event.updateImage(eventUpdateRequestDTO.getImage());
+        event.updateCategory(eventUpdateRequestDTO.getCategory());
+
+        eventBasicRepository.updateEvent(event);
+
+        // Event Detail
+        EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(id);
+        eventDetail.updateContent(eventUpdateRequestDTO.getContent());
+
+        eventDetailRepository.updateEventDetail(eventDetail);
+
+        return id;
+    }
 
     public Long deleteEvent(Long id) {
         ticketRepository.deleteTicket(id);

@@ -37,17 +37,8 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId){
-
-        EventFullFindByIdResponseDTO eventWithDetail = Optional.ofNullable(eventBasicRepository.selectEventWithDetailById(eventId))
-                .orElseThrow(() -> EventNotFoundException.EXCEPTION);
-
-        List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
-
-        // 조회수 업데이트 쿼리 execute
-        eventDetailRepository.updateView(eventId);
-
-        // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환
-        return EventWithTicketsFindByIdResponseDTO.from(eventWithDetail, tickets);
+        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
+        return eventFacade.findEventById(eventId);
     }
 
     /**
@@ -67,25 +58,8 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
-
         EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
         return eventFacade.createEvent(eventCreateRequestDTO);
-
-
-//        // 이벤트 일반 정보 저장
-//        EventBasicEntity event = eventCreateRequestDTO.toEventEntity();
-//        eventBasicRepository.insertEvent(event);
-//        Long id = event.getId();
-//
-//        // 티켓 정보 저장
-//        eventCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
-//            TicketEntity ticket = ticketCreateRequest.toEntity(id);
-//            ticketRepository.insertTicket(ticket);
-//        });
-//
-//        // 이벤트 상세 정보 저장
-//        EventDetailEntity eventDetail = eventCreateRequestDTO.toEventDetailEntity(id);
-//        return eventDetailRepository.insertEventDetail(eventDetail);
     }
 
     /**
@@ -93,22 +67,8 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO){
-
-        // Event
-        EventBasicEntity event = eventBasicRepository.selectEventById(id);
-        event.updateTitle(eventUpdateRequestDTO.getTitle());
-        event.updateImage(eventUpdateRequestDTO.getImage());
-        event.updateCategory(eventUpdateRequestDTO.getCategory());
-
-        eventBasicRepository.updateEvent(event);
-
-        // Event Detail
-        EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(id);
-        eventDetail.updateContent(eventUpdateRequestDTO.getContent());
-
-        eventDetailRepository.updateEventDetail(eventDetail);
-
-        return id;
+        EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
+        return eventFacade.updateEvent(id, eventUpdateRequestDTO);
     }
 
     /**
@@ -118,9 +78,6 @@ public class EventServiceImpl implements EventService {
     public Long deleteEvent(Long id){
         EventFacade eventFacade = new EventFacade(eventBasicRepository, eventDetailRepository, ticketRepository);
         return eventFacade.deleteEvent(id);
-//        ticketRepository.deleteTicket(id);
-//        eventDetailRepository.deleteEventDetail(id);
-//        eventBasicRepository.deleteEvent(id);
     }
 
     /**
