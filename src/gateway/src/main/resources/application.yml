@@ -24,7 +24,7 @@ spring:
             - Path=/api/events/**
           filters:
               - RemoveRequestHeader=Cookie
-              - RewritePath=/api/users/(?<segment>.*), /$\{segment}
+              - RewritePath=/api/events/(?<segment>.*), /$\{segment}
               - JwtAuthenticationFilter
 
         - id: auth-not-authorization-post
