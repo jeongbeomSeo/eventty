@@ -31,11 +31,19 @@ public class EventFacade {
 
         List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
 
-        // 조회수 업데이트 쿼리 execute
-        eventDetailRepository.updateView(eventId);
+        // 조회수 업데이트 (비관적 락)
+        increaseView(eventId);
 
         // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환
         return EventWithTicketsFindByIdResponseDTO.from(eventWithDetail, tickets);
+    }
+
+    public void increaseView(Long eventId){
+        Long eventIdForUpdate = eventDetailRepository.selectEventForUpdate(eventId);
+        if (!eventId.equals(eventIdForUpdate)) {
+            throw new IllegalArgumentException("조회수 증가에 문제가 발생했습니다.");
+        }
+        eventDetailRepository.updateView(eventId);
     }
 
 

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EventServiceImpl implements EventService {
 
     private final EventBasicRepository eventBasicRepository;
@@ -28,7 +29,6 @@ public class EventServiceImpl implements EventService {
      * 이벤트 상세 조회 (이벤트에 대한 모든 정보 + 티켓 정보)
      */
     @Override
-    @Transactional
     public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId){
         return eventFacade.findEventById(eventId);
     }
@@ -50,7 +50,6 @@ public class EventServiceImpl implements EventService {
      * 이벤트 생성
      */
     @Override
-    @Transactional
     public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
         return eventFacade.createEvent(eventCreateRequestDTO);
     }
@@ -59,7 +58,6 @@ public class EventServiceImpl implements EventService {
      * 이벤트 수정
      */
     @Override
-    @Transactional
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO){
         return eventFacade.updateEvent(id, eventUpdateRequestDTO);
     }
@@ -68,7 +66,6 @@ public class EventServiceImpl implements EventService {
      * 이벤트 삭제
      */
     @Override
-    @Transactional
     public Long deleteEvent(Long id){
         return eventFacade.deleteEvent(id);
     }

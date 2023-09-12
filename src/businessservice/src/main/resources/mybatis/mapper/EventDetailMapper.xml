@@ -17,7 +17,8 @@
 
     <!-- 이벤트 상세정보 조회 (테스트시 사용)-->
     <select id="selectEventDetailById" resultMap="EventDetailResultMap" parameterType="java.lang.Long">
-        SELECT * FROM event_details
+        SELECT *
+        FROM event_details
         WHERE ID = #{id} AND DELETE_DATE IS NULL
     </select>
 
@@ -33,6 +34,13 @@
         SET content = #{content}
         WHERE id = #{id}
     </update>
+
+    <!-- 조회 수 업데이트를 위한 SELECT 쿼리 (비관적 락 사용) -->
+    <select id="selectEventForUpdate" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT id
+        FROM event_details
+        WHERE id = #{id} FOR UPDATE
+    </select>
 
     <!-- 이벤트 조회수 증가 -->
     <update id="updateView" parameterType="java.lang.Long">
