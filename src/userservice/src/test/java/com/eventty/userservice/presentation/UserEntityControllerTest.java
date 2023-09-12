@@ -3,6 +3,9 @@ package com.eventty.userservice.presentation;
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.application.UserService;
 import com.eventty.userservice.domain.code.ErrorCode;
+import com.eventty.userservice.infrastructure.BasicSecurityConfig;
+import com.eventty.userservice.infrastructure.WebConfig;
+import com.eventty.userservice.infrastructure.AuthenticationInterceptor;
 import com.eventty.userservice.presentation.exception.DataErrorLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @MockBean(JpaMetamodelMappingContext.class)
+@MockBeans(value = {
+        @MockBean(WebConfig.class),
+        @MockBean(BasicSecurityConfig.class),
+        @MockBean(UserService.class),
+        @MockBean(DataErrorLogger.class),
+        @MockBean(AuthenticationInterceptor.class)
+})
 public class UserEntityControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -36,17 +47,10 @@ public class UserEntityControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    UserService userService;
-
-    @MockBean
-    DataErrorLogger dataErrorLogger;
-
     @BeforeEach
     public void setMockMvc() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
-
 
     @Test
     @DisplayName("[API][POST] 회원가입 성공")
@@ -115,10 +119,10 @@ public class UserEntityControllerTest {
 
     @Test
     @DisplayName("[API][GET] 내 정보 조회")
+    @WithMockCustomUser(authorities = {"USER"})
     public void myInfoTest() throws Exception {
         // Given
-        Long userId = 1L;
-        String url = "/api/users/me/" + userId;
+        String url = "/users/me";
 
         // When
         final ResultActions response = mockMvc.perform(get(url).contentType(MediaType.APPLICATION_JSON));
@@ -133,14 +137,14 @@ public class UserEntityControllerTest {
 
     @Test
     @DisplayName("[API][PATCH] 내 정보 수정")
+    @WithMockCustomUser(authorities = {"USER"})
     public void patchMyInfoTest() throws Exception {
         // Given -- 전역변수로
-        Long userId = 1L;
         String name = "아항";
         String address = "인천 남동구 장아산로 64 1, 2층";
         LocalDate birth = LocalDate.of(2000, 6, 8);
 
-        String url = "/api/users/me/" + userId;
+        String url = "/users/me";
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
                 .builder()

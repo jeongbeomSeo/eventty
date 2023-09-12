@@ -6,12 +6,16 @@ import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.domain.annotation.ApiErrorCode;
 import com.eventty.userservice.domain.annotation.ApiSuccessData;
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
+import com.eventty.userservice.domain.annotation.Permission;
+import com.eventty.userservice.domain.code.UserRole;
 import com.eventty.userservice.presentation.dto.SuccessResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import static com.eventty.userservice.domain.code.ErrorCode.*;
@@ -40,20 +44,16 @@ public class UserController {
 
     /**
      * ID, PW 제외한 회원 정보 조회
-     *
-     * @author khg
-     * @param userId
      * @return ResponseEntity<SuccessResponseDTO>
      */
-    // 우선 Test 할 동안만 파라미터로 받겠습니다!
-    // 차후 수정 예정
-    @GetMapping("/users/me/{userId}")
+    @GetMapping("/users/me")
     @ApiSuccessData(UserFindByIdResponseDTO.class)
     @ApiErrorCode(USER_INFO_NOT_FOUND)
-    public ResponseEntity<SuccessResponseDTO> getMe(@PathVariable Long userId){
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
+    public ResponseEntity<SuccessResponseDTO> getMe(){
 
-        // 토큰 내에 있는 정보 UserId Get!
-        // Source 추가
+        Long userId = getUserIdBySecurityContextHolder();
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(SuccessResponseDTO.of(userService.findUserById(userId)));
@@ -61,22 +61,24 @@ public class UserController {
 
     /**
      * 회원정보 수정
-     * 
-     * @author khg
-     * @param userId
      * @param userUpdateRequestDTO
      * @return ResponseEntity<SuccessResponseDTO>
      */
-    @PatchMapping("/users/me/{userId}")
+    @PatchMapping("/users/me")
     @ApiSuccessData()
     @ApiErrorCode({USER_INFO_NOT_FOUND, INVALID_JSON})
-    public ResponseEntity<SuccessResponseDTO> patchMe(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
+    public ResponseEntity<SuccessResponseDTO> patchMe(@RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
 
-        // 토큰 내에 있는 정보 UserId Get!
-        // Source 추가
+        Long userId = getUserIdBySecurityContextHolder();
 
         userService.updateUser(userId, userUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    private Long getUserIdBySecurityContextHolder(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return Long.parseLong(authentication.getPrincipal().toString());
     }
 
 }
