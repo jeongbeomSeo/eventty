@@ -41,12 +41,12 @@ public class UserDetailServiceImpl implements UserDetailService {
     }
 
     public AuthUserEntity findAuthUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
     @Override
     public AuthUserEntity findAuthUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Transactional
@@ -71,14 +71,14 @@ public class UserDetailServiceImpl implements UserDetailService {
     @Override
     public void validationUser(AuthUserEntity authUserEntity) {
         if (authUserEntity.isDelete())
-            throw AccessDeletedUserException.EXCEPTION;
+            new AccessDeletedUserException(authUserEntity);
     }
 
     public void validateEmail(String email) {
         Optional<AuthUserEntity> existingUser = userRepository.findByEmail(email);
 
         if (existingUser.isPresent()) {
-            throw DuplicateEmailException.EXCEPTION;
+            throw new DuplicateEmailException(email);
         }
     }
 }

@@ -5,8 +5,7 @@ import com.eventty.authservice.global.exception.AuthException;
 
 public class DuplicateEmailException extends AuthException {
 
-    public final static DuplicateEmailException EXCEPTION = new DuplicateEmailException();
-    private DuplicateEmailException() {
-        super(ErrorCode.DUPLICATE_EMAIL);
+    public DuplicateEmailException(String email) {
+        super(ErrorCode.DUPLICATE_EMAIL, email);
     }
 }

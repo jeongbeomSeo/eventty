@@ -45,7 +45,7 @@ public class TokenProvider {
         String existedRefreshToken = refreshTokenProvider.findByRefreshToken(getNewTokensRequestDTO.getUserId());
 
         if (!getNewTokensRequestDTO.getRefreshToken().equals(existedRefreshToken))
-            throw InValidRefreshTokenException.EXCEPTION;
+            throw new InValidRefreshTokenException(getNewTokensRequestDTO);
     }
     private Date createExpiry(Date now, Duration expiredAt) {
         return new Date(now.getTime() + expiredAt.toMillis());

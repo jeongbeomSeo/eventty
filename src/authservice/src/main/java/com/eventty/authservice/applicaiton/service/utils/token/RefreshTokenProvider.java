@@ -25,7 +25,7 @@ public class RefreshTokenProvider {
         Optional<RefreshTokenEntity> refreshTokenEntity = refreshTokenRepository.findByUserId(userId);
 
         if (refreshTokenEntity.isEmpty())
-            throw RefreshTokenNotFoundException.EXCEPTION;
+            throw new RefreshTokenNotFoundException(userId);
 
         return refreshTokenEntity.get().getName();
     }
