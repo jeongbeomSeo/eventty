@@ -8,17 +8,15 @@ spring:
     gateway:
       routes:
         - id: user-authorization
-          # ?? URL (??? http://userservice:8000/ ?? ??)
           uri: http://${user_server}:8000/
           predicates:
             - Path=/api/user/secret/**
           filters:
             - JwtAuthenticationFilter
-            - RewritePath=/api/secret/user/(?<segment>.*), /$\{segment}
+            - RewritePath=/api/user/secret/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
 
         - id: user-not-authorization
-          # ?? URL (??? http://userservice:8000/ ?? ??)
           uri: http://${user_server}:8000/
           predicates:
             - Path=/api/user/**
@@ -26,8 +24,7 @@ spring:
             - RewritePath=/api/user/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
 
-        - id: event-authorization-server
-          # ?? URL (??? http://eventservice:8000/ ?? ??)
+        - id: event-authorization
           uri: http://${event_server}:80/
           predicates:
             - Path=/api/event/secret/**
@@ -37,7 +34,6 @@ spring:
             - RemoveRequestHeader=Cookie
 
         - id: event-not-authorization
-          # ?? URL (??? http://eventservice:8000/ ?? ??)
           uri: http://${event_server}:80/
           predicates:
             - Path=/api/event/**
@@ -48,10 +44,10 @@ spring:
         - id: auth-authorization
           uri: http://${auth_server}:8002/
           predicates:
-            - Path=/api/secret/auth/**
+            - Path=/api/auth/secret/**
           filters:
             - JwtAuthenticationFilter
-            - RewritePath=/api/secret/auth/(?<segment>.*), /$\{segment}
+            - RewritePath=/api/auth/secret/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
 
         - id: auth-not-authorization
