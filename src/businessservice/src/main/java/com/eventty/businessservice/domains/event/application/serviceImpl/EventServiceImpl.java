@@ -30,6 +30,8 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId){
+        // 조회수 증가 (비동기로 처리)
+        eventFacade.increaseView(eventId);
         return eventFacade.findEventById(eventId);
     }
 

@@ -12,6 +12,7 @@ import com.eventty.businessservice.domains.event.domain.repository.EventBasicRep
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,21 +32,19 @@ public class EventFacade {
 
         List<TicketEntity> tickets = ticketRepository.selectTicketByEventId(eventId);
 
-        // 조회수 업데이트 (비관적 락)
-        increaseView(eventId);
-
         // 이벤트 정보와 티켓 정보를 서비스 계층에서 통합하여 DTO 클래스에 담아 반환
         return EventWithTicketsFindByIdResponseDTO.from(eventWithDetail, tickets);
     }
 
+    @Async("asyncExecutor")
     public void increaseView(Long eventId){
-        Long eventIdForUpdate = eventDetailRepository.selectEventForUpdate(eventId);
-        if (!eventId.equals(eventIdForUpdate)) {
-            throw new IllegalArgumentException("조회수 증가에 문제가 발생했습니다.");
-        }
+
+        // 요청된 ID로 객체를 찾아서 확인한 후에 업데이트를 진행
+        EventFullFindByIdResponseDTO eventWithDetail = Optional.ofNullable(eventBasicRepository.selectEventWithDetailById(eventId))
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION);
+
         eventDetailRepository.updateView(eventId);
     }
-
 
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO) {
         // Event
