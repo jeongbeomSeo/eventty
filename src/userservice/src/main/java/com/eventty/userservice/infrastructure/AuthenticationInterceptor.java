@@ -1,5 +1,6 @@
 package com.eventty.userservice.infrastructure;
 
+import com.eventty.userservice.domain.exception.PermissionDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -70,7 +71,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         try{
             return objectMapper.readValue(authJSONString, List.class);
         }catch (Exception e){
-            throw new RuntimeException("Error converting JSON to authorities", e);
+            log.error("Error converting JSON to authorities");
+            throw new PermissionDeniedException();
         }
     }
 
@@ -84,7 +86,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
         for(Map<String, String> auth : authorities){
-            grantedAuthorities.add(new SimpleGrantedAuthority(auth.get("authority")));
+            String role = auth.get("authority");
+            if(role != null && !"".equals(role)){
+                grantedAuthorities.add(new SimpleGrantedAuthority(role));
+            }
         }
 
         return grantedAuthorities;

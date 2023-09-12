@@ -42,10 +42,20 @@ public class UserService {
     }
 
     private void duplicateExceptionCheck(UserCreateRequestDTO userCreateRequestDTO){
-        Optional.ofNullable(em.find(UserEntity.class, userCreateRequestDTO.getUserId())).ifPresent(e -> {throw DuplicateUserIdException.EXCEPTION;});
+        Optional.ofNullable(
+                em.find(UserEntity.class, userCreateRequestDTO.getUserId())
+        ).ifPresent(
+                entity -> {
+                    throw new DuplicateUserIdException(entity);
+                }
+        );
     }
 
     private UserEntity findUserByEMAndDB(Long id){
-        return Optional.ofNullable(em.find(UserEntity.class, id)).orElseThrow(() -> UserInfoNotFoundException.EXCEPTION);
+        return Optional.ofNullable(
+                em.find(UserEntity.class, id)
+        ).orElseThrow(
+                () -> new UserInfoNotFoundException(id)
+        );
     }
 }

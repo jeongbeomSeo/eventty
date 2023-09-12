@@ -74,8 +74,10 @@ public class GlobalExceptionHandler {
     // 유저 정보가 존재하지 않을 경우 예외처리
     @ExceptionHandler(UserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponseDTO handleUserInfoNotFoundException(UserException e) {
-        log.error("UserException occurred : {}", e.getMessage());
+    public ErrorResponseDTO handleUserException(UserException e) {
+        log.error("UserException occurred : {}", e.getErrorCode().getMessage());
+        dataErrorLogger.logging(e);
+
         return ErrorResponseDTO.of(e.getErrorCode());
     }
 
