@@ -153,12 +153,10 @@ public class UserEntityServiceTest {
         em.persist(user);
 
         String address = "인천광역시 남동구";                           // null -> new 값
-        birth = LocalDate.of(1988, 12, 4);     // 값 -> new 값
         image = "";                                                  // 값 -> "" 값
 
         UserUpdateRequestDTO updateRequest = new UserUpdateRequestDTO();
         updateRequest.setAddress(address);
-        updateRequest.setBirth(birth);
         updateRequest.setImage(image);
 
         // When
@@ -167,6 +165,5 @@ public class UserEntityServiceTest {
         // Then
         assertEquals(image, em.find(UserEntity.class, userId).getImage());
         assertEquals(address, em.find(UserEntity.class, userId).getAddress());
-        assertEquals(birth, em.find(UserEntity.class, userId).getBirth());
     }
 }

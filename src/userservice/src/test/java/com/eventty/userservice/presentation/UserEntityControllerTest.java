@@ -142,7 +142,6 @@ public class UserEntityControllerTest {
         // Given -- 전역변수로
         String name = "아항";
         String address = "인천 남동구 장아산로 64 1, 2층";
-        LocalDate birth = LocalDate.of(2000, 6, 8);
 
         String url = "/users/me";
 
@@ -150,7 +149,6 @@ public class UserEntityControllerTest {
                 .builder()
                 .name(name)
                 .address(address)
-                .birth(birth)
                 .build();
 
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
