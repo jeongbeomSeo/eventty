@@ -9,7 +9,6 @@
             │       └─── dto # Service 계층까지 사용하기에 해당 폴더에 넣어둠
             │             ├─── request # 요청 DTO
             │             └─── response # 응답 DTO
-            ├─── config
             ├─── domain # repository + entity
             │       ├─── annotation # Custom Annotation
             │       ├─── code # enum class : 각 SuccessCode 와 ErrorCode 명시
