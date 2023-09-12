@@ -1,5 +1,6 @@
 package com.eventty.authservice.applicaiton.service.Facade;
 
+import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
@@ -14,7 +15,7 @@ public interface UserService {
 
     void validateEmailNotDuplicated(String email);
 
-    TokensDTO login(UserLoginRequestDTO userLoginRequestDTO);
+    LoginSuccessDTO login(UserLoginRequestDTO userLoginRequestDTO);
 
     NewTokensResponseDTO getNewTokens(GetNewTokensRequestDTO getNewTokensRequestDTO);
 

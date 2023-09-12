@@ -1,4 +1,4 @@
-package com.eventty.authservice.global.interceptor;
+package com.eventty.authservice.infrastructure.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,6 +1,6 @@
 package com.eventty.authservice.infrastructure.config;
 
-import com.eventty.authservice.global.interceptor.AuthenticationInterceptor;
+import com.eventty.authservice.infrastructure.interceptor.AuthenticationInterceptor;
 import com.eventty.authservice.infrastructure.resolver.AuthenticationResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

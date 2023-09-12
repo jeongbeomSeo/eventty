@@ -28,7 +28,7 @@ public class PermissionAspect {
 
         // 에러 헨들링
         if (authentication == null || !hasAnyPermission(authentication, permission.Roles()))
-            throw PermissionDeniedException.EXCEPTION;
+            throw new PermissionDeniedException();
 
         log.info("Successfully verified permission for user {}.", authentication.getPrincipal());
     }

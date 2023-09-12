@@ -5,7 +5,7 @@ server:
 spring:
   # SECRET
   profiles:
-    active: dev
+    active: test
   # MYSQL
   datasource:
     url: ${url}
@@ -50,10 +50,3 @@ token.access-expired-time: ${token-access}
 token.refresh-expired-time: ${token-refresh}
 token.issuer: ${issuer}
 token.secret_key: ${secret_key}
-
-# Swagger
-springdoc:
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-
-
