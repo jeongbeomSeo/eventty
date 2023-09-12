@@ -60,7 +60,7 @@ public class EventControllerTest {
         when(eventService.findAllEvents()).thenReturn(mockEventList);
 
         // When & Then
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get("/events"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
@@ -79,7 +79,7 @@ public class EventControllerTest {
         when(eventService.createEvent(eventCreateRequestDTO)).thenReturn(newEventId);
 
         // When & Then
-        mockMvc.perform(post("/")
+        mockMvc.perform(post("/events")
                 .content(objectMapper.writeValueAsString(eventCreateRequestDTO))  // JSON 데이터 추가
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -95,7 +95,7 @@ public class EventControllerTest {
         when(eventService.deleteEvent(eventId)).thenReturn(eventId);
 
         // When & Then
-        mockMvc.perform(delete("/{eventId}", eventId))
+        mockMvc.perform(delete("/events/{eventId}", eventId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
@@ -111,7 +111,7 @@ public class EventControllerTest {
         when(eventService.findEventsByCategory(categoryId)).thenReturn(createEventRespnseDTOList(5L));
 
         // When & Then
-        mockMvc.perform(get("/category/{categoryId}", categoryId))
+        mockMvc.perform(get("/events/category/{categoryId}", categoryId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));

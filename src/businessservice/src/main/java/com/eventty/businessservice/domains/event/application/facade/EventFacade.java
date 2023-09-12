@@ -2,13 +2,11 @@ package com.eventty.businessservice.domains.event.application.facade;
 
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
-import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,13 +38,6 @@ public class EventFacade {
         return EventWithTicketsFindByIdResponseDTO.from(eventWithDetail, tickets);
     }
 
-    public List<EventBasicFindAllResponseDTO> findAllEvents() {
-        return Optional.ofNullable(eventBasicRepository.selectAllEvents())
-                .map(events -> events.stream()
-                        .map(EventBasicFindAllResponseDTO::fromEntity)
-                        .collect(Collectors.toList()))
-                .orElseThrow(()->EventNotFoundException.EXCEPTION);
-    }
 
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO) {
         // Event
@@ -91,18 +81,4 @@ public class EventFacade {
         return eventDetailRepository.insertEventDetail(eventDetail);
     }
 
-    public List<EventBasicFindAllResponseDTO> findEventsByCategory(Long categoryId){
-
-        if (categoryId < 1 || categoryId > 10) {
-            throw CategoryNotFoundException.EXCEPTION;
-        }
-
-        return Optional.ofNullable(eventBasicRepository.selectEventsByCategory(categoryId))
-                .filter(events -> !events.isEmpty())
-                .orElseThrow(() -> EventNotFoundException.EXCEPTION)
-                .stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
-                .collect(Collectors.toList());
-
-    }
 }
