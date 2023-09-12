@@ -19,10 +19,10 @@ public class FullUserCreateRequestDTO {
     private String email;
     @NotNull
     private String password;
+    @NotNull
     private String name;
     @NotNull
-    private LocalDate birth;
-    @NotNull
     private String phone;
+    private LocalDate birth;
     private String address;
 }

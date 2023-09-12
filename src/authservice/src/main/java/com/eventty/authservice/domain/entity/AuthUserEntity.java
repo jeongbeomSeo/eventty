@@ -29,8 +29,9 @@ public class AuthUserEntity {
     @Column(nullable = false)
     private String password;            // 암호화된 Password
 
+    @ColumnDefault("false")
     @Column(name = "is_delete", nullable = false)
-    private boolean isDelete = false;
+    private boolean isDelete;
 
     private LocalDateTime deleteDate;
 
