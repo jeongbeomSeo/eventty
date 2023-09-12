@@ -30,6 +30,7 @@ public class UserEntity {
 
     private String image;               // 유저 사진
 
+    @NotNull
     private String phone;               // 유저 전화번호
 
     @CreatedDate
