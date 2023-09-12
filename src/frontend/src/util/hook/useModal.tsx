@@ -1,8 +1,10 @@
 import {modals} from "@mantine/modals";
 import React from "react";
-import {Button, Stack} from "@mantine/core";
+import {Button, Stack, TextInput, Title} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {useLocation, useNavigate} from "react-router-dom";
+import {IconSearch} from "@tabler/icons-react";
+import WebSearchForm from "../../components/display/web/header/WebSearchForm";
 
 export function useModal() {
     const {classes} = customStyle();
@@ -32,7 +34,7 @@ export function useModal() {
                     <>로그인 후 이용해주세요</>
                     <Button onClick={() => {
                         modals.closeAll()
-                        navigate("/login", {state:pathname})
+                        navigate("/login", {state: pathname})
                     }}
                             className={classes["btn-primary"]}>확인</Button>
                 </Stack>
@@ -44,5 +46,18 @@ export function useModal() {
         })
     }
 
-    return {messageModal, loginAlertModal};
+    const searchModal = () => {
+        return modals.open({
+            children: (
+                <WebSearchForm/>
+            ),
+            withCloseButton: false,
+            xOffset: "",
+            size: "auto",
+            overlayProps: {opacity: 0.5},
+            transitionProps: {transition: "slide-down"}
+        })
+    }
+
+    return {messageModal, loginAlertModal, searchModal};
 }

@@ -26,6 +26,15 @@ const customStyle = createStyles((theme) => ({
                 },
             },
         },
+        "&.search": {
+            width: "100%",
+            input: {
+                fontSize: "1.1rem",
+                ":focus":{
+                    borderWidth: "2px",
+                },
+            },
+        },
     },
     "input-textarea": {
         ".mantine-Textarea-input": {
@@ -175,14 +184,6 @@ const customStyle = createStyles((theme) => ({
         },
         "&.active": {
             color: "var(--primary)",
-        },
-    },
-    "search-box": {
-        width: "100%",
-        input: {
-            borderColor: "var(--primary) !important",
-            fontSize: "1.1rem",
-            borderWidth: "2px",
         },
     },
     "ticket-select": {

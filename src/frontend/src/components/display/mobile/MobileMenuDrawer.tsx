@@ -26,16 +26,19 @@ function MobileMenuDrawer() {
     const [opened, setOpened] = useRecoilState(menuDrawerState);
 
     const MENU_LIST = [
-        {value: "홈", link:"/", icon:<IconHome/>},
+        {value: "홈", link: "/", icon: <IconHome/>},
         {value: "주최하기", link: "/write/event", icon: <IconPlus/>},
-        {value: "마이페이지", link:"/users/profile", icon:<IconUser/>},
-        {value: "주최 내역", link:"/users/events", icon:<IconReceipt/>},
-        {value: "예약 내역", link:"/users/reservations", icon:<IconReceipt/>},
-        {value: "설정", link:"", icon:<IconSettings/>},
+        {value: "마이페이지", link: "/users/profile", icon: <IconUser/>},
+        {value: "주최 내역", link: "/users/events", icon: <IconReceipt/>},
+        {value: "예약 내역", link: "/users/reservations", icon: <IconReceipt/>},
+        {value: "설정", link: "", icon: <IconSettings/>},
     ];
 
     const items = MENU_LIST.map(item => (
-        <UnstyledButton component={Link} to={item.link} style={{padding:"0.2rem 0"}}>
+        <UnstyledButton key={item.value}
+                        component={Link}
+                        to={item.link}
+                        style={{padding: "0.2rem 0"}}>
             <Group>
                 {item.icon}
                 <Text>{item.value}</Text>
@@ -61,7 +64,7 @@ function MobileMenuDrawer() {
                 <Drawer.Content>
                     <Container>
                         <Drawer.Header>
-                            <Drawer.CloseButton/>
+                            {/*<Drawer.CloseButton/>*/}
                         </Drawer.Header>
                         <Drawer.Body>
                             <Stack>

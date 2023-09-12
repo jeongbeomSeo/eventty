@@ -28,8 +28,7 @@ function MobileEventList() {
         return (
             <Card padding={"0"} radius={"md"} key={item.id}
                   onClick={() => navigate(`${item.id}`, {state: pathname})}>
-                <Group noWrap style={{alignItems: "flex-start"}}
-                >
+                <Group noWrap style={{alignItems: "flex-start"}}>
                     <Image
                         src={item.image}
                         height={110}
@@ -58,8 +57,7 @@ function MobileEventList() {
     return (
         <SimpleGrid
             cols={1}
-            verticalSpacing={"md"}
-        >
+            verticalSpacing={"md"}>
             {items}
         </SimpleGrid>
     );

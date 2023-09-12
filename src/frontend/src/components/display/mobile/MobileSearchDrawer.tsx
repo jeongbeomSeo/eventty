@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {Button, Drawer, Flex, Grid, Group, Stack, Title} from "@mantine/core";
+import React, {useEffect, useState} from "react";
+import {Button, Drawer, Flex, Grid, Group, Stack, Title, UnstyledButton} from "@mantine/core";
 import {useRecoilState} from "recoil";
 import {searchDrawerState} from "../../../states/searchDrawerState";
 import {IconChevronLeft, IconX} from "@tabler/icons-react";
@@ -7,38 +7,22 @@ import SearchBox from "../../common/SearchBox";
 import WebCategoryBtn from "../../event/web/WebCategoryBtn";
 import MobileCategoryBtn from "../../event/mobile/MobileCategoryBtn";
 import customStyle from "../../../styles/customStyle";
+import {SearchRecentHistory} from "../../../util/SearchRecentHistory";
 
 function MobileSearchDrawer() {
     const {classes} = customStyle();
     const [opened, setOpened] = useRecoilState(searchDrawerState);
-
-    const [lastestHistory, setLastestHistory] = useState([
-        {key: 1, value: "AAAAAAA"},
-        {key: 2, value: "BB"},
-        {key: 3, value: "CCDDDD"},
-        {key: 4, value: "EEE!2"},
-    ])
+    const {handleAddKeyword, keywords} = SearchRecentHistory();
 
     const handleOpened = () => {
         setOpened(prev => !prev);
     }
 
-    const items = lastestHistory.map((item) => (
-        <Button key={item.key}
-                rightIcon={<IconX/>}
-                radius={"xl"}
-                className={classes["btn-primary-outline"]}
-                onClick={() => deleteHistory(item.key)}
-        >
-            {item.value}
-        </Button>
-    ))
-
-    const deleteHistory = (key: number) => {
-        setLastestHistory(() =>
-            lastestHistory.filter((item) => item.key !== key)
-        );
-    }
+    const items = keywords.map((item:string, idx:number) => (
+        <UnstyledButton key={idx}>
+            {item}
+        </UnstyledButton>
+    ));
 
     return (
         <Drawer.Root opened={opened}

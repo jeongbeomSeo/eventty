@@ -12,7 +12,6 @@ function WebEvents() {
         <>
             <Stack align={"center"} style={{margin: "2rem 0 3vh"}}>
                 <Flex style={{width:"80%"}}>
-                    <SearchBox/>
                 </Flex>
                 <Box style={{width: "100%", height: "auto"}}>
                     <Flex gap={"1.5rem"} justify={"center"}>

@@ -1,28 +1,32 @@
 import React from "react";
 import WebCarousel from "./WebCarousel";
-import {Button, Container, Group, Stack} from "@mantine/core";
-import SearchBox from "../../common/SearchBox";
+import {Button, Container, Divider, Flex, Grid, Group, SimpleGrid, Stack, Title} from "@mantine/core";
 import WebCategoryBtn from "../../event/web/WebCategoryBtn";
-import {MessageAlert} from "../../../util/MessageAlert";
+import WebMainEventList from "./WebMainEventList";
 
 function WebMain() {
     return (
         <>
             <WebCarousel/>
             <Container>
-                <Stack align={"center"} style={{marginTop: "3rem"}}>
-                    <div style={{width: "80%"}}>
-                        <SearchBox/>
-                    </div>
+                <SimpleGrid cols={1} verticalSpacing={"7rem"} style={{margin: "5rem 0"}}>
                     <WebCategoryBtn/>
-                    <Group>
-                        <Button onClick={() => MessageAlert("success", "title", "message")}>성공 메세지 테스트</Button>
-                        <Button onClick={() => MessageAlert("error", "title", "message")}>에러 메세지 테스트</Button>
-                        <Button onClick={() => MessageAlert("notice", "title", "message")}>경고 메세지 테스트</Button>
-                        <Button onClick={() => MessageAlert("info", "title", "message")}>인포 메세지 테스트</Button>
-                    </Group>
-                    <p style={{height: "100vh"}}>스크롤바 테스트</p>
-                </Stack>
+
+                    <div>
+                        <Title order={3}>인기 상승중인 행사</Title>
+                        <WebMainEventList/>
+                    </div>
+
+                    <div>
+                        <Title order={3}>신규 행사</Title>
+                        <WebMainEventList/>
+                    </div>
+
+                    <div>
+                        <Title order={3}>마감 임박</Title>
+                        <WebMainEventList/>
+                    </div>
+                </SimpleGrid>
             </Container>
         </>
     );

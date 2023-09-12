@@ -1,29 +1,39 @@
-import React, {useState} from "react";
-import {ActionIcon, TextInput} from "@mantine/core";
+import React, {useEffect, useState} from "react";
+import {ActionIcon, Button, TextInput} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {IconSearch} from "@tabler/icons-react";
 import {Link} from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {ISignup} from "../../types/IUser";
+import {loadingState} from "../../states/loadingState";
+import {SearchRecentHistory} from "../../util/SearchRecentHistory";
+
+interface ISearch {
+    keyword: string;
+}
 
 function SearchBox() {
     const {classes} = customStyle();
-    const [keyword, setKeyword] = useState("");
+    const { register, handleSubmit, reset } = useForm<ISearch>();
+    const {handleAddKeyword} = SearchRecentHistory();
 
-    const onSubmit = () => {
-        keyword && alert(keyword);
+    const onSubmit = (data:ISearch) => {
+        if (data.keyword !== ""){
+            handleAddKeyword(data.keyword);
+            reset();
+        }
     }
 
     return (
-        <TextInput className={classes["search-box"]}
-                   size={"md"}
-                   radius={"sm"}
-                   rightSection={
-                       <ActionIcon component={Link} to={"/"} variant={"transparent"}>
-                           <IconSearch onClick={onSubmit}/>
-                       </ActionIcon>}
-                   value={keyword}
-                   onChange={(e) => setKeyword(e.target.value)}
-                   onKeyDown={(e) => (e.key === "Enter") && onSubmit()}
-        />
+        <form onSubmit={handleSubmit(onSubmit)} style={{width:"100%"}}>
+            <TextInput {...register("keyword")}
+                size={"md"}
+                radius={"md"}
+                icon={<IconSearch/>}
+                className={`${classes["input"]} search`}
+            />
+            <Button type={"submit"} display={"none"} />
+        </form>
     );
 }
 

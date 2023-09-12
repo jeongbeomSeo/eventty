@@ -1,6 +1,6 @@
 import {Button, Checkbox, Grid, Stack, TextInput} from "@mantine/core";
 import {useNavigate} from "react-router-dom";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {userState} from "../../states/userState";
 import {Controller, useForm} from "react-hook-form";
 import customStyles from "../../styles/customStyle";
@@ -10,12 +10,15 @@ import "dayjs/locale/ko";
 import {postSignupEmailValid, postSignupHost, postSignupUser} from "../../service/user/fetchUser";
 import BirthdayPicker from "../common/BirthdayPicker";
 import {useModal} from "../../util/hook/useModal";
+import {loadingState} from "../../states/loadingState";
+import {MessageAlert} from "../../util/MessageAlert";
+import PhoneNumberInput from "../common/PhoneNumberInput";
 
 function SignupForm({isHost}: { isHost: boolean }) {
     const {classes} = customStyles();
     const navigate = useNavigate();
     const {messageModal} = useModal();
-    const [userStateValue, setUserStateValue] = useRecoilState(userState);
+    const [loadingStateValue, setLoadingStateValue] = useRecoilState(loadingState);
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
     const nameRegEX = /^[가-힣]{2,}$/;
@@ -36,28 +39,31 @@ function SignupForm({isHost}: { isHost: boolean }) {
             messageModal("이메일 중복 확인 해주세요");
             setFocus("email");
             return;
+        }
+
+        setLoadingStateValue(true);
+        if (isHost) {
+            postSignupHost(data)
+                .then(res => {
+                    if (res.success) {
+                        MessageAlert("success", "회원 가입 완료", "로그인 해주세요");
+                        navigate("/");
+                    } else {
+                        MessageAlert("error", "회원 가입 실패", "다시 시도해주세요");
+                    }
+                })
+                .finally(() => setLoadingStateValue(false));
         } else {
-            if (isHost) {
-                postSignupHost(data)
-                    .then(res => {
-                        if (res.success) {
-                            navigate("/");
-                        } else {
-                            alert("회원 가입 실패")
-                        }
-                    })
-                    .then((res) => console.log(res));
-            } else {
-                postSignupUser(data)
-                    .then(res => {
-                        if (res.success) {
-                            console.log("회원 가입 성공");
-                            navigate("/");
-                        } else {
-                            alert("회원 가입 실패")
-                        }
-                    });
-            }
+            postSignupUser(data)
+                .then(res => {
+                    if (res.success) {
+                        MessageAlert("success", "회원 가입 완료", "로그인 해주세요");
+                        navigate("/");
+                    } else {
+                        MessageAlert("error", "회원 가입 실패", "다시 시도해주세요");
+                    }
+                })
+                .finally(() => setLoadingStateValue(false));
         }
     };
 
@@ -82,18 +88,8 @@ function SignupForm({isHost}: { isHost: boolean }) {
             messageModal("이메일을 입력해주세요");
         }
     }
-    // 이메일 입력 값 변경시, 중복 확인 초기화
+// 이메일 입력 값 변경시, 중복 확인 초기화
     useMemo(() => setIsEmailValid(false), [emailInputValue]);
-
-    const handlePhoneInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const {value} = e.target;
-        const formattedValue = value
-            .replace(/[^0-9]/g, '')
-            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
-            .replace(/(\-{1,2})$/g, "");
-
-        setValue("phone", formattedValue);
-    }
 
     return (
         <form>
@@ -109,6 +105,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                         })}
                                    placeholder="이메일"
                                    label="이메일"
+                                   withAsterisk
                                    error={errors.email && errors.email?.message}
                                    className={`${classes["input"]} ${errors.email && "error"}`}
                         />
@@ -133,6 +130,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                     type="password"
                     placeholder="비밀번호"
                     label="비밀번호"
+                    withAsterisk
                     error={errors.password && errors.password?.message}
                     className={`${classes["input"]} ${errors.password && "error"}`}/>
                 <TextInput {...register("passwordConfirm", {
@@ -158,9 +156,10 @@ function SignupForm({isHost}: { isHost: boolean }) {
                 })}
                            placeholder="이름"
                            label="이름"
+                           withAsterisk
                            error={errors.name && errors.name?.message}
                            className={`${classes["input"]} ${errors.name && "error"}`}/>
-                <TextInput {...register("phone", {
+                {/*<TextInput {...register("phone", {
                     required: "휴대폰 번호를 입력해주세요",
                     pattern: {
                         value: phoneRegEX,
@@ -169,19 +168,34 @@ function SignupForm({isHost}: { isHost: boolean }) {
                 })}
                            placeholder="휴대폰 번호"
                            label="휴대폰 번호"
+                           withAsterisk
                            maxLength={13}
                            error={errors.phone && errors.phone?.message}
                            className={`${classes["input"]} ${errors.phone && "error"}`}
-                           onInput={handlePhoneInputChange}/>
+                           onInput={handlePhoneInputChange}/>*/}
+                <Controller control={control}
+                            name={"phone"}
+                            rules={{
+                                required: "휴대폰 번호를 입력해주세요",
+                                pattern: {
+                                    value: phoneRegEX,
+                                    message: "휴대폰 번호가 올바르지 않습니다",
+                                },
+                            }}
+                            render={({field: {ref, ...rest}}) => (
+                                <PhoneNumberInput {...rest}
+                                                  inputRef={ref}
+                                                  asterisk={true}
+                                                  error={errors.phone?.message}/>
+                            )}/>
+
                 <Controller control={control}
                             name={"birth"}
-                            rules={{required: "날짜를 선택해주세요"}}
                             render={({field}) => (
                                 <BirthdayPicker label={"생년월일"}
                                                 placeholder={"생년월일"}
                                                 value={field.value}
-                                                onChange={field.onChange}
-                                                error={errors.birth && errors.birth?.message}/>
+                                                onChange={field.onChange}/>
                             )}/>
                 <TextInput {...register("address")}
                            placeholder="주소"
@@ -193,6 +207,8 @@ function SignupForm({isHost}: { isHost: boolean }) {
                     className={`${classes["input-checkbox"]} signup`}/>
                 {termOfServiceCheck ?
                     <Button onClick={handleSubmit(onSubmit)}
+                            loading={loadingStateValue}
+                            loaderPosition={"center"}
                             style={{height: "2.6rem"}}
                             className={classes["btn-primary"]}>회원가입</Button> :
                     <Button style={{height: "2.6rem"}}

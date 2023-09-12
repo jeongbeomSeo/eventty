@@ -1,5 +1,5 @@
 import {notifications} from "@mantine/notifications";
-import {IconCheck, IconExclamationMark, IconX} from "@tabler/icons-react";
+import {IconCheck, IconExclamationMark, IconInfoCircle, IconX} from "@tabler/icons-react";
 
 type TAlert = "success" | "error" | "notice" | "info";
 
@@ -11,13 +11,11 @@ const TYPE_PROPERTY = {
 }
 
 export const MessageAlert = (type:TAlert, title:string|null, message:string|null) => {
-
     notifications.show({
         title: title,
         message: message,
         icon: TYPE_PROPERTY[type].icon,
         color: TYPE_PROPERTY[type].color,
-        autoClose: 2200,
-        withCloseButton: false,
+        autoClose: 2500,
     })
 }

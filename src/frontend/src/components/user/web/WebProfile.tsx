@@ -43,7 +43,7 @@ function WebProfile() {
                     <Stack style={{width: "100%"}}>
                         <TextInput label={"이메일"} disabled className={classes["input"]}/>
                         <TextInput label={"이름"} className={classes["input"]}/>
-                        <PhoneNumberInput value={phoneNumber} onInput={handlePhoneNumberChange}/>
+                        {/*<PhoneNumberInput value={phoneNumber} onInput={handlePhoneNumberChange}/>*/}
                         <BirthdayPicker label={"생년월일"} value={selectedDate} onChange={handleDateChange}/>
                         <Group position={"right"}>
                             <Button className={classes["btn-gray-outline"]}>취소</Button>

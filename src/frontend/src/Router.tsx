@@ -8,13 +8,9 @@ import SignupHost from './pages/signup/SignupHost';
 import Logout from './pages/Logout';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
-import SignupMember from './pages/signup/SignupUser';
 import Error from './pages/Error';
-import WebLayout from "./components/display/web/WebLayout";
-import Detail from "./pages/events/EventDetail";
 import {loader as eventListLoader} from "./routes/events";
 import Events from "./pages/Events";
-import ScrollToTop from "./components/ScrollToTop";
 import {loader as eventLoader} from "./routes/event";
 import Layout from "./components/display/Layout";
 import RootSetStates from "./components/RootSetStates";
@@ -112,6 +108,10 @@ const Router = createBrowserRouter([
             {
                 path: "/logout",
                 element: <Logout/>,
+            },
+            {
+                path: "/test",
+                element: <Test/>
             },
         ],
     },

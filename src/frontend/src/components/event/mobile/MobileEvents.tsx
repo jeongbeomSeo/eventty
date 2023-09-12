@@ -11,7 +11,6 @@ function MobileEvents() {
     return (
         <>
             <Stack align={"center"} style={{margin: "2rem 0 3vh"}}>
-                <SearchBox/>
                 <Box style={{width: "100%", height: "auto"}}>
                     <Flex gap={"5vw"} className={classes["category-scroll"]}>
                         <MobileCategoryBtn/>

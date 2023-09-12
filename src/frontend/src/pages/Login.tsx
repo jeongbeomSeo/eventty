@@ -21,13 +21,12 @@ enum ERROR_MESSAGE {
 function Login() {
     const setIsLoggedIn = useSetRecoilState(loginState);
 
-    const {register, handleSubmit, setFocus} = useForm<ILogin>();
+    const {register, handleSubmit, setFocus, setError, formState:{errors}} = useForm<ILogin>();
     const onSubmit = (data: ILogin) => {
         if (!data.email || !data.password) {
             const field = !data.email ? "email" : "password";
-            setErrorMessage(ERROR_MESSAGE[field]);
+            setError(field, {message: ERROR_MESSAGE[field]});
             setFocus(field);
-            setShowAlert(true);
             return;
         }
 
@@ -36,15 +35,11 @@ function Login() {
                 if (res.success) {
                     setIsLoggedIn((prev) => !prev);
                 } else {
-                    setErrorMessage(ERROR_MESSAGE.fail);
-                    setShowAlert(true);
+                    setError("root", {message: ERROR_MESSAGE["fail"]});
                 }
             })
             .catch(res => console.error(res));
     };
-
-    const [showAlert, setShowAlert] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
 
     const {classes} = customStyle();
 
@@ -73,10 +68,8 @@ function Login() {
                     {/* 에러 메세지 */}
                     <Text fz={"0.75rem"}
                           color={"#f44336"}
-                          display={!showAlert ? "none" : ""}
-                          style={{whiteSpace:"pre-wrap"}}
-                    >
-                        {errorMessage}
+                          style={{whiteSpace:"pre-wrap"}}>
+                        {errors.email?.message || errors.password?.message || errors.root?.message}
                     </Text>
 
                     <Button type="submit"

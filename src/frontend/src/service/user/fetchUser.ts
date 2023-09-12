@@ -38,6 +38,14 @@ export const postLogin = async (data: ILogin) => {
         .then((res) => res.json());
 }
 
+export const postLogout = async () => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/logout`,{
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+    })
+        .then(res => res.json());
+}
+
 export const putChangePW = async (data: IChangePW) => {
     return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/changePW`,{
         method: "PUT",
@@ -61,9 +69,10 @@ export const patchMyInfo = async (data: IMyInfo) => {
         .then((res) => res.json());
 }
 
-export const patchDeleteAccount = async () => {
-    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/myInfo`,{ //  왜 myInfo?
-        method: "PATCH",
+export const deleteAccount = async () => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/secret/me`,{ //  왜 myInfo?
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
     })
         .then((res) => res.json());
 }

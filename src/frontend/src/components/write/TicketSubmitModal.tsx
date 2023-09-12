@@ -104,7 +104,7 @@ function TicketSubmitModal({open, title, left}: { open: boolean, title: string[]
                                         <Text fz={"xs"}>
                                             {left >= 0 ?
                                                 `${left}명 남았습니다` :
-                                                `${left*-1}명 초과했습니다`
+                                                `${left * -1}명 초과했습니다`
                                             }
                                         </Text>
                                     </Flex>

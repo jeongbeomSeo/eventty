@@ -13,7 +13,6 @@ function MobileMain() {
             <MobileCarousel/>
             <Container>
                 <Stack align={"center"} style={{marginTop: "3rem"}}>
-                    <SearchBox/>
                     <Box style={{width:"100%"}}>
                         <Flex gap={"7vw"} className={classes["category-scroll"]}>
                             <MobileCategoryBtn/>

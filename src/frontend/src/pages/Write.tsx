@@ -14,8 +14,6 @@ import {
 import customStyle from "../styles/customStyle";
 import {Controller, FormProvider, useFieldArray, useForm} from "react-hook-form";
 import {IEventTicket, IEventWrite} from "../types/IEvent";
-import ToastEditor from "../components/common/ToastEditor";
-import {Editor} from "@toast-ui/react-editor";
 import WriteHeader from "../components/display/WriteHeader";
 import {
     IconAlertCircle,
@@ -31,15 +29,26 @@ import TicketSubmitModal from "../components/write/TicketSubmitModal";
 import TicketEditModal from "../components/write/TicketEditModal";
 import {CheckMobile} from "../util/CheckMobile";
 import {types} from "util";
+import {useModal} from "../util/hook/useModal";
+import QuillEditor from "../components/common/QuillEditor";
 
 function Write() {
     const {classes} = customStyle();
     const isMobile = CheckMobile();
     const [ticketModalOpened, setTicketModalOpened] = useState(false);
     const [ticketEditModalOpened, setTicketEditModalOpened] = useState(false);
-    const editorRef = useRef<Editor>(null);
 
-    const {register, handleSubmit, control, watch, getValues, setError, clearErrors, setFocus, formState: {errors}} = useForm<IEventWrite>();
+    const {
+        register,
+        handleSubmit,
+        control,
+        watch,
+        getValues,
+        setError,
+        clearErrors,
+        setFocus,
+        formState: {errors}
+    } = useForm<IEventWrite>();
     const {fields, append, remove, update} = useFieldArray({
         control,
         name: "ticket",
@@ -71,8 +80,8 @@ function Write() {
     const leftTicket = watch("participateNum") - fields.reduce((acc, cur) => acc + cur.limit, 0);
 
     const onSubmit = (data: IEventWrite) => {
-        if (leftTicket !== 0){
-            setError("ticket", {types:{validate: "총 인원수를 확인해주세요"}},);
+        if (leftTicket !== 0) {
+            setError("ticket", {types: {validate: "총 인원수를 확인해주세요"}},);
             return;
         }
         console.log("error submit 확인");
@@ -91,8 +100,8 @@ function Write() {
     const handleTicketModalOpened = () => {
         if (getValues("participateNum") > 0) {
             setTicketModalOpened(prev => !prev);
-        }else{
-            setError("ticket", {types:{validate: "우선 인원수를 설정해주세요"}});
+        } else {
+            setError("ticket", {types: {validate: "우선 인원수를 설정해주세요"}});
         }
     }
 
@@ -125,9 +134,9 @@ function Write() {
     });
 
     useEffect(() => {
-        if (leftTicket !== 0 && ticketItems.length !== 0){
-            setError("ticket", {types:{validate: "총 인원수를 확인해주세요"}});
-        }else {
+        if (leftTicket !== 0 && ticketItems.length !== 0) {
+            setError("ticket", {types: {validate: "총 인원수를 확인해주세요"}});
+        } else {
             clearErrors("ticket");
         }
     }, [leftTicket]);
@@ -205,7 +214,7 @@ function Write() {
 
                         <Stack>
                             <Title order={3}>티켓 정보</Title>
-                            <SimpleGrid cols={4} breakpoints={[{maxWidth: "xs", cols:2}]}>
+                            <SimpleGrid cols={4} breakpoints={[{maxWidth: "xs", cols: 2}]}>
                                 {ticketItems}
                                 <UnstyledButton onClick={handleTicketModalOpened}
                                                 hidden={(ticketItems.length === TICKET_LIMIT) ||
@@ -228,7 +237,7 @@ function Write() {
                             </Text>
                         </Stack>
 
-                        <SimpleGrid cols={2} breakpoints={[{maxWidth: "xs", cols:1, verticalSpacing: "2.5rem"}]}>
+                        <SimpleGrid cols={2} breakpoints={[{maxWidth: "xs", cols: 1, verticalSpacing: "2.5rem"}]}>
                             <Stack>
                                 <Title order={3}>행사 일정</Title>
                                 <Stack>
@@ -307,12 +316,9 @@ function Write() {
                                         name={"content"}
                                         rules={{required: "내용을 입력해주세요"}}
                                         defaultValue={""}
-                                        render={({field}) => (
+                                        render={({field: {ref, ...rest}}) => (
                                             <>
-                                                <ToastEditor
-                                                    {...field}
-                                                    editorRef={editorRef}
-                                                />
+                                                <QuillEditor {...rest} inputRef={ref}/>
                                                 <Text className={"mantine-mve552"}>{errors.content?.message}</Text>
                                             </>
                                         )}/>
