@@ -3,6 +3,7 @@ package com.eventty.authservice.infrastructure.aspect;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.exception.PermissionDeniedException;
 import com.eventty.authservice.infrastructure.annotation.Permission;
+import com.eventty.authservice.infrastructure.resolver.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,13 +25,15 @@ public class PermissionAspect {
     // Controller Method가 실행되기 '직전에만' 실행
     @Before("@annotation(permission)")
     public void checkAuthorization(JoinPoint joinPoint, Permission permission){
+        log.info("Currrent Position: Permission Aspect");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // 에러 헨들링
         if (authentication == null || !hasAnyPermission(authentication, permission.Roles()))
             throw new PermissionDeniedException();
 
-        log.info("Successfully verified permission for user {}.", authentication.getPrincipal());
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        log.info("Successfully verified permission for user {}.\n", loginUser.getUserId());
     }
 
     private boolean hasAnyPermission(Authentication authentication, UserRole[] roles) {

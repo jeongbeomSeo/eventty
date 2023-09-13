@@ -2,6 +2,8 @@ package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
+import com.eventty.authservice.infrastructure.annotation.Permission;
+import com.eventty.authservice.infrastructure.resolver.LoginUser;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
@@ -10,6 +12,7 @@ import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +35,7 @@ import com.eventty.authservice.global.Enum.SuccessCode;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("")
+@Slf4j
 @Tag(name= "Auth", description = "Auth API")
 public class AuthController {
 
@@ -43,6 +47,8 @@ public class AuthController {
     @PostMapping("/me/{userRole}")
     public ResponseEntity<Void> createUser(@Valid @RequestBody FullUserCreateRequestDTO userCreateRequestDTO,
                                            @PathVariable("userRole") UserRole userRole) {
+        log.info("Current Position: Controller :: 회원가입");
+
 
         userService.createUser(userCreateRequestDTO, userRole);
 
@@ -56,6 +62,7 @@ public class AuthController {
      */
     @PostMapping("/email")
     public ResponseEntity<Void> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
+        log.info("Current Position: Controller :: 이메일 검증");
 
         userService.validateEmailNotDuplicated(isUserDuplicateRequestDTO.getEmail());
 
@@ -72,6 +79,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
+        log.info("Current Position: Controller :: 로그인");
 
         // JWT & Refresh Token
         LoginSuccessDTO loginSuccessDTO = userService.login(userLoginRequestDTO);
@@ -93,9 +101,11 @@ public class AuthController {
      * 회원 탈퇴(Soft Delete)
      */
     @DeleteMapping("/me")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication, HttpServletResponse response) {
+    // @Permission(Roles = {UserRole.USER})
+    public ResponseEntity<Void> delete(LoginUser loginUser, HttpServletResponse response) {
+        log.info("Current Position: Controller :: 회원 탈퇴");
 
-        Long userId = (Long)authentication.getPrincipal();
+        Long userId = loginUser.getUserId();
         userService.deleteUser(userId);
 
         Cookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
@@ -114,6 +124,7 @@ public class AuthController {
      */
     @PostMapping("/api/newtokens")
     public ResponseEntity<SuccessResponseDTO<NewTokensResponseDTO>> getNewTokens(@RequestBody GetNewTokensRequestDTO getNewTokensRequestDTO) {
+        log.info("Current Position: Controller :: 새로운 Token 발급");
 
         NewTokensResponseDTO newTokensResponseDTO = userService.getNewTokens(getNewTokensRequestDTO);
 

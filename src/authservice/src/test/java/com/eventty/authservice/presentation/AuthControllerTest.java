@@ -3,15 +3,23 @@ package com.eventty.authservice.presentation;
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
+import com.eventty.authservice.domain.exception.InValidRefreshTokenException;
 import com.eventty.authservice.domain.exception.UserNotFoundException;
 import com.eventty.authservice.global.Enum.ErrorCode;
 import com.eventty.authservice.global.Enum.SuccessCode;
 import com.eventty.authservice.global.utils.DataErrorLogger;
 import com.eventty.authservice.infrastructure.config.WebConfig;
 import com.eventty.authservice.infrastructure.interceptor.AuthenticationInterceptor;
+import com.eventty.authservice.infrastructure.resolver.AuthenticationResolver;
+import com.eventty.authservice.infrastructure.resolver.LoginUser;
 import com.eventty.authservice.infrastructure.utils.AuthenticationConverter;
+import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
+import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,6 +28,9 @@ import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.eventty.authservice.domain.Enum.UserRole;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -65,7 +77,8 @@ import static org.mockito.Mockito.*;
         @MockBean(BasicSecurityConfig.class),
         @MockBean(DataErrorLogger.class),
         @MockBean(AuthenticationInterceptor.class),
-        @MockBean(AuthenticationConverter.class)
+        @MockBean(AuthenticationConverter.class),
+        @MockBean(AuthenticationResolver.class)
 })
 public class AuthControllerTest {
     @Autowired
@@ -79,6 +92,9 @@ public class AuthControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private AuthenticationConverter authenticationConverter;
 
     @BeforeEach
     public void setMockMvc() {
@@ -181,7 +197,6 @@ public class AuthControllerTest {
     public void login_USER_NOT_FOUND() throws Exception {
         // Given
         UserLoginRequestDTO userLoginRequestDTO = createUserLoginRequestDTO();
-        LoginSuccessDTO loginSuccessDTO = createLoginSuccessDTO();
         final String requestBody = objectMapper.writeValueAsString(userLoginRequestDTO);
 
         // when
@@ -198,12 +213,98 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.errorResponseDTO").hasJsonPath());
     }
 
+    @Test
+    @DisplayName("회원 삭제 성공")
+    public void delete_SUCCESS() throws Exception {
+        // Given
+        LoginUser loginUser = LoginUser.builder()
+                .userId(1L)
+                .authorities(new ArrayList<>())
+                .build();
+
+        final String requestBody = objectMapper.writeValueAsString(loginUser);
+
+        // When
+        when(userService.deleteUser(loginUser.getUserId())).thenReturn(loginUser.getUserId());
+
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().is(SuccessCode.IS_OK.getStatus()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("새로운 토큰 발급 성공")
+    public void getNewTokens_SUCCESS() throws Exception {
+        // Given
+        GetNewTokensRequestDTO getNewTokensRequestDTO = createGetNewTokensRequestDTO();
+        NewTokensResponseDTO newTokensResponseDTO = createNewTokensResponseDTO();
+
+        final String requestBody = objectMapper.writeValueAsString(getNewTokensRequestDTO);
+
+        // When
+        when(userService.getNewTokens(getNewTokensRequestDTO)).thenReturn(newTokensResponseDTO);
+
+        // When & Then
+        mockMvc.perform(post("/api/newtokens")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().is(SuccessCode.IS_OK.getStatus()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.successResponseDTO").hasJsonPath());
+    }
+
+    @Test
+    @DisplayName("새로운 토큰 발급 실패 - INVALID_REFRESH_TOKEN")
+    public void getNewTokens_INVALID_REFRESH_TOKEN() throws Exception{
+        // Given
+        GetNewTokensRequestDTO getNewTokensRequestDTO = createGetNewTokensRequestDTO();
+
+        final String requestBody = objectMapper.writeValueAsString(getNewTokensRequestDTO);
+
+        // When
+        doThrow(new InValidRefreshTokenException(getNewTokensRequestDTO))
+                .when(userService).getNewTokens(any(GetNewTokensRequestDTO.class));
+
+        // When & Then
+        mockMvc.perform(post("/api/newtokens")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .with(csrf()))
+                .andExpect(status().is(ErrorCode.INVALID_REFRESH_TOKEN.getStatus()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorResponseDTO").hasJsonPath());
+    }
+
+    private static GetNewTokensRequestDTO createGetNewTokensRequestDTO() {
+        return GetNewTokensRequestDTO.builder()
+                .userId(1L)
+                .refreshToken("Old RefreshToken")
+                .build();
+    }
+
+    private static NewTokensResponseDTO createNewTokensResponseDTO() {
+        return NewTokensResponseDTO.builder()
+                .accessToken("New AccessToken")
+                .refreshToken("New RefreshToken")
+                .build();
+    }
+
+
     private static UserLoginRequestDTO createUserLoginRequestDTO() {
         return UserLoginRequestDTO.builder()
                 .email("example1@mm.mm")
                 .password("123123")
                 .build();
     }
+
 
     private static LoginSuccessDTO createLoginSuccessDTO() {
         List<String> authoritiesNameList = new ArrayList<>();
