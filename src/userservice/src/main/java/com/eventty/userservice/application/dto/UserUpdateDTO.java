@@ -5,6 +5,7 @@ import com.eventty.userservice.domain.UserEntity;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.StringTokenizer;
 
 @Setter @Getter @Builder @ToString
 @AllArgsConstructor
@@ -33,9 +34,18 @@ public class UserUpdateDTO {
                 .userId(this.userId)
                 .name(dto.getName() != null ? dto.getName() : this.name)
                 .phone(dto.getPhone() != null ? dto.getPhone() : this.phone)
-                .birth(dto.getBirth() != null ? dto.getBirth() : this.birth)
+                .birth(dto.getBirth() != null ? StringToLocalDate(dto.getBirth()) : this.birth)
                 .address(dto.getAddress() != null ? dto.getAddress() : this.address)
                 .image(dto.getImage() != null ? dto.getImage() : this.image)
                 .build();
+    }
+
+    private LocalDate StringToLocalDate(String birth){
+        if("".equals(birth)){
+            return null;
+        }
+
+        StringTokenizer st = new StringTokenizer(birth,"-");
+        return LocalDate.of(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
     }
 }

@@ -8,7 +8,7 @@ import com.eventty.businessservice.common.annotation.ApiSuccessData;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventService;
+import com.eventty.businessservice.domains.event.application.Facade.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
@@ -32,7 +32,7 @@ public class EventController {
      * 특정 행사 조회
      *
      */
-    @GetMapping( "/{eventId}")
+    @GetMapping( "/events/{eventId}")
     @Operation(summary = "특정 행사 조회")
     @ApiSuccessData(EventWithTicketsFindByIdResponseDTO.class)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
@@ -49,7 +49,7 @@ public class EventController {
      * 행사 전체 조회
      *
      */
-    @GetMapping( "")
+    @GetMapping( "/events")
     @Operation(summary = "행사 전체 조회")
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
@@ -66,7 +66,7 @@ public class EventController {
      * 행사 주회
      *
      */
-    @PostMapping("")
+    @PostMapping("/events")
     @Operation(summary = "행사 주최")
     @ApiSuccessData()
     public ResponseEntity<Void> postEvent(@RequestBody EventCreateRequestDTO eventCreateRequestDTO){
@@ -83,7 +83,7 @@ public class EventController {
      * 주최한 행사 수정
      *
      */
-    @PutMapping(value = "/{eventId}")
+    @PutMapping(value = "/events/{eventId}")
     @Operation(summary = "행사 수정")
     @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<Long>> postEvent(
@@ -103,7 +103,7 @@ public class EventController {
      * 주최한 행사 삭제
      *
      */
-    @DeleteMapping("/{eventId}")
+    @DeleteMapping("/events/{eventId}")
     @Operation(summary = "행사 삭제")
     @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(@PathVariable @Min(1) Long eventId){
@@ -121,7 +121,7 @@ public class EventController {
      * 행사 카테고리별 조회
      *
      */
-    @GetMapping( "/category/{categoryId}")
+    @GetMapping( "/events/category/{categoryId}")
     @Operation(summary = "카테고리 별 행사 조회")
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.CATEGORY_NOT_FOUND)
