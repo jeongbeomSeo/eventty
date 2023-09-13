@@ -1,6 +1,5 @@
 package com.eventty.authservice.presentation.dto.response;
 
-import com.eventty.authservice.domain.entity.AuthorityEntity;
 import lombok.*;
 
 import java.util.List;
@@ -12,5 +11,5 @@ import java.util.List;
 @ToString
 public class LoginResponseDTO {
     private String email;
-    private List<AuthorityEntity> authorityEntityList;
+    private List<String> authoritiesNameList;
 }

@@ -26,7 +26,7 @@ public class CookieCreator {
 
     public static Cookie deleteAccessTokenCookie() {
         // JWT 쿠키 무효화
-        Cookie jwtCookie = new Cookie("JWT_TOKEN_NAME", null); // 이름은 실제 JWT 쿠키 이름으로 교체해야 합니다.
+        Cookie jwtCookie = new Cookie(TokenEnum.ACCESS_TOKEN.getName(), null);
         jwtCookie.setPath("/");
         jwtCookie.setHttpOnly(true);
         jwtCookie.setMaxAge(0); // 쿠키의 유효 기간을 0으로 설정하여 즉시 만료시킵니다.
@@ -36,7 +36,7 @@ public class CookieCreator {
 
     public static Cookie deleteRefreshTokenCoolie() {
         // RefreshToken 쿠키 무효화
-        Cookie refreshTokenCookie = new Cookie("REFRESH_TOKEN_NAME", null); // 이름은 실제 RefreshToken 쿠키 이름으로 교체해야 합니다.
+        Cookie refreshTokenCookie = new Cookie(TokenEnum.REFRESH_TOKEN.getName(), null);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(0); // 쿠키의 유효 기간을 0으로 설정하여 즉시 만료시킵니다.

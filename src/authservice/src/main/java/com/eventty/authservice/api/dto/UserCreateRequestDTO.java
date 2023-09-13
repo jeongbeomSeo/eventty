@@ -18,6 +18,5 @@ public class UserCreateRequestDTO {
     private String name;
     private String address;
     private LocalDate birth;
-    private String image;
     private String phone;
 }

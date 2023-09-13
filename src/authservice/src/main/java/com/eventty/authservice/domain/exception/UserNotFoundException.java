@@ -6,10 +6,10 @@ import com.eventty.authservice.global.exception.AuthException;
 public class UserNotFoundException extends AuthException {
 
     public UserNotFoundException(String email) {
-        super(ErrorCode.USER_NOT_FOUND, email);
+        super(ErrorCode.USER_NOT_FOUND, email, new String[]{"email"});
     }
 
     public UserNotFoundException(Long userId) {
-        super(ErrorCode.USER_NOT_FOUND, userId);
+        super(ErrorCode.USER_NOT_FOUND, userId, new String[]{"userId"});
     }
 }

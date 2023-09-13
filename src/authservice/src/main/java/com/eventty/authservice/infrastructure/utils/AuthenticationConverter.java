@@ -1,6 +1,7 @@
 package com.eventty.authservice.infrastructure.utils;
 
 import com.eventty.authservice.infrastructure.model.Authority;
+import com.eventty.authservice.infrastructure.resolver.LoginUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +22,12 @@ public class AuthenticationConverter {
 
     private final ObjectMapper objectMapper;
 
-    public Authentication getAuthentication(String userId, String jsonRoels) {
-        return new UsernamePasswordAuthenticationToken(userId, "", getAuthorities(jsonRoels));
+    public Authentication getAuthentication(String userId, String jsonRoles) {
+        LoginUser loginUser = LoginUser.builder()
+                .userId(Long.parseLong(userId))
+                .authorities(getAuthorities(jsonRoles))
+                .build();
+        return new UsernamePasswordAuthenticationToken(loginUser, "", getAuthorities(jsonRoles));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(String authoritiesJSON) {

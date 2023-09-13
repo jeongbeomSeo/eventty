@@ -18,6 +18,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        log.info("Current Position: Authentication interceptor");
+
         // 헤더에서 user Id 와 권한 정보 추출
         String userId = request.getHeader(HEADER_USER_ID);
         String authorities = request.getHeader(HEADER_AUTHORITIES);
@@ -29,7 +31,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         request.setAttribute(USER_ID, userId);
         request.setAttribute(AUTHORITIES, authorities);
 
-        log.info("Authentication interceptor pass \nUser Id: {}", userId);
+        log.info("User Id: {}\n", userId);
 
         return true;
     }
