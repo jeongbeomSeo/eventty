@@ -37,5 +37,5 @@ out/
 .vscode/
 
 ### application.yml ###
-src/businessservice/src/main/resources/application-dev.yml
-src/businessservice/src/main/resources/application-test.yml
+application-dev.yml
+application-test.yml

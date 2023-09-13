@@ -1,14 +1,12 @@
-package com.eventty.businessservice.domains.event.application.serviceImpl;
+package com.eventty.businessservice.domains.event.application.Facade;
 
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.facade.EventFacade;
-import com.eventty.businessservice.domains.event.application.service.EventService;
+import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
-import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class EventServiceImpl implements EventService {
-
     private final EventBasicRepository eventBasicRepository;
-    private final EventFacade eventFacade; // 여러 Repository 의 메소드를 사용하는 로직의 경우 Facade 패턴 적용
+    private final EventSubService eventSubService; // 복잡한 로직의 경우 하위 서비스 호출 (Facade 패턴)
 
     /**
      * 이벤트 상세 조회 (이벤트에 대한 모든 정보 + 티켓 정보)
@@ -31,8 +27,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventWithTicketsFindByIdResponseDTO findEventById(Long eventId){
         // 조회수 증가 (비동기로 처리)
-        eventFacade.increaseView(eventId);
-        return eventFacade.findEventById(eventId);
+        eventSubService.increaseView(eventId);
+        return eventSubService.findEventById(eventId);
     }
 
     /**
@@ -53,7 +49,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
-        return eventFacade.createEvent(eventCreateRequestDTO);
+        return eventSubService.createEvent(eventCreateRequestDTO);
     }
 
     /**
@@ -61,7 +57,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO){
-        return eventFacade.updateEvent(id, eventUpdateRequestDTO);
+        return eventSubService.updateEvent(id, eventUpdateRequestDTO);
     }
 
     /**
@@ -69,7 +65,7 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Long deleteEvent(Long id){
-        return eventFacade.deleteEvent(id);
+        return eventSubService.deleteEvent(id);
     }
 
     /**

@@ -8,7 +8,7 @@ import com.eventty.businessservice.common.annotation.ApiSuccessData;
 import com.eventty.businessservice.common.response.SuccessResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventService;
+import com.eventty.businessservice.domains.event.application.Facade.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;

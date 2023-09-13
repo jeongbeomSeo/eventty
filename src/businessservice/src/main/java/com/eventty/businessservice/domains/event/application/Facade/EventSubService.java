@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domains.event.application.facade;
+package com.eventty.businessservice.domains.event.application.Facade;
 
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
@@ -7,20 +7,22 @@ import com.eventty.businessservice.domains.event.application.dto.response.EventW
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
-import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
+import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class EventFacade {
+@Transactional
+public class EventSubService {
 
     private final EventBasicRepository eventBasicRepository;
     private final EventDetailRepository eventDetailRepository;
