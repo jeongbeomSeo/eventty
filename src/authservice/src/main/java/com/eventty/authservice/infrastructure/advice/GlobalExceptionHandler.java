@@ -5,6 +5,7 @@ import com.eventty.authservice.global.exception.AuthException;
 import com.eventty.authservice.global.utils.DataErrorLogger;
 import jakarta.validation.ConstraintViolationException;
 
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -100,6 +101,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
+    // JSON을 파싱하다 문제가 발생한 경우(@Valid @Request Body와 형식이 맞지 않는 경우, JSON 형태가 지켜지지 않았을 경우)
+    @ExceptionHandler
+    protected ResponseEntity<ErrorResponseDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
+        log.error("HttpMessageNotReadableException occurred: {}", e.getMessage());
+
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     // 서버간의 API 통신에서 발생한 예외 처리 (분기점 X => 상태 코드만 그대로 전달)
     @ExceptionHandler
     protected  ResponseEntity<ErrorResponseDTO> handleApiException(ApiException e) {
@@ -113,7 +123,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<ErrorResponseDTO> handleAuthenticationException(AuthException e) {
         log.error("AuthenticationException Occurred: {}", e.getErrorCode().getMessage());
-        dataErrorLogger.loggingAuth(e);
+        dataErrorLogger.logging(e);
 
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponseDTO response = ErrorResponseDTO.of(errorCode);

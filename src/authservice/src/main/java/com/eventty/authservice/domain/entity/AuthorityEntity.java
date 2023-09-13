@@ -20,7 +20,6 @@ public class AuthorityEntity {
     private String name;    // 권한 이름(역할)
 
     @JoinColumn(name = "auth_user_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private AuthUserEntity authUserEntity;
-
 }

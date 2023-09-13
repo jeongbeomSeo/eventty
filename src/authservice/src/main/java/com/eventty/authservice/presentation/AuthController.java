@@ -1,11 +1,8 @@
 package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
-import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
-import com.eventty.authservice.infrastructure.annotation.Permission;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
-import com.eventty.authservice.infrastructure.utils.SessionCreator;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
@@ -74,8 +71,7 @@ public class AuthController {
      * ResponseEntity만 사용하여 응답의 명시성을 높이는 방향으로 진행했습니다.
      */
     @PostMapping("/login")
-    public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO,
-                                                                      HttpServletRequest request) {
+    public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
 
         // JWT & Refresh Token
         LoginSuccessDTO loginSuccessDTO = userService.login(userLoginRequestDTO);
@@ -85,8 +81,6 @@ public class AuthController {
 
         ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(
                 loginSuccessDTO.getTokensDTO().getRefreshToken());
-
-        SessionCreator.createSession(request, loginSuccessDTO.getLoginResponseDTO());
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
@@ -98,7 +92,7 @@ public class AuthController {
     /**
      * 회원 탈퇴(Soft Delete)
      */
-    @DeleteMapping("/secret/me")
+    @DeleteMapping("/me")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication, HttpServletResponse response) {
 
         Long userId = (Long)authentication.getPrincipal();

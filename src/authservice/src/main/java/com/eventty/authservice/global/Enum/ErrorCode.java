@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_INPUT_VALUE(400, "", "Invalid input type"),
     INVALID_TYPE_VALUE(400, "", "Invalid type value"),
     BAD_CREDENTIALS(400, "", "Bad credentials"),
+    BAD_REQUEST(400, "", "Bad Request"),
     DATABASE_CONSTRAINT_VIOLATION(400, "", "Database constraint violation"),
     REFERENCE_INTEGRITY_VIOLATION(400, "" , "Reference integrity violation"),
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),

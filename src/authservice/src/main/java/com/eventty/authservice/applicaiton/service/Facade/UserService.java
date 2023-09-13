@@ -19,5 +19,5 @@ public interface UserService {
 
     NewTokensResponseDTO getNewTokens(GetNewTokensRequestDTO getNewTokensRequestDTO);
 
-    void deleteUser(Long userId);
+    Long deleteUser(Long userId);
 }

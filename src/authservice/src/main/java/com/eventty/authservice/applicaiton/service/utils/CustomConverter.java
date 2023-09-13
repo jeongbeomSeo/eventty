@@ -6,10 +6,13 @@ import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
+import com.eventty.authservice.domain.entity.AuthorityEntity;
 import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class CustomConverter {
@@ -36,7 +39,7 @@ public class CustomConverter {
         TokensDTO token = authService.getToken(authUserEntity);
         LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
                 .email(authUserEntity.getEmail())
-                .authorityEntityList(authUserEntity.getAuthorities())
+                .authoritiesNameList(convertAuthorities(authUserEntity.getAuthorities()))
                 .build();
 
         return LoginSuccessDTO.builder()
@@ -51,5 +54,11 @@ public class CustomConverter {
                 .accessToken(tokensDTO.getAccessToken())
                 .refreshToken(tokensDTO.getRefreshToken())
                 .build();
+    }
+
+    private static List<String> convertAuthorities(List<AuthorityEntity> list) {
+        return list.stream()
+                .map(AuthorityEntity::getName)
+                .toList();
     }
 }
