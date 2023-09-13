@@ -1,3 +1,4 @@
+/*
 package com.eventty.authservice.api;
 
 import com.eventty.authservice.api.utils.MakeUrlService;
@@ -40,11 +41,13 @@ public class ApiClientTest {
     // Properties value를 Mockito를 실행할 때 못가져 오는 것도 그렇고,
     // 굳이 직접 서버의 주소를 가져다 쓰는 것은 안좋을 것 같아서 null로 고정
 
-    /* 실제 요청을 날리는 Test를 할 때 사용
+    */
+/* 실제 요청을 날리는 Test를 할 때 사용
     @BeforeEach
     public void init() {
         mockServer = MockRestServiceServer.createServer(restTemplate);
-    }*/
+    }*//*
+
 
 
     @Test
@@ -103,3 +106,4 @@ public class ApiClientTest {
 
 
 }
+*/

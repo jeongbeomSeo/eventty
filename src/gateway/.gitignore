@@ -36,5 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 
+### application properties ###
+src/main/resources/application-dev.yml
+src/main/resources/application-test.yml
+
 ### Docker ###
 Dockerfile

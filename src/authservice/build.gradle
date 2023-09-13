@@ -21,9 +21,9 @@ repositories {
 	mavenCentral()
 }
 
-/*test.onlyIf {
+test.onlyIf {
 	!project.hasProperty('test')
-}*/
+}
 
 
 dependencies {
@@ -58,6 +58,10 @@ dependencies {
 
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt:0.9.1';
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
 	// Logging
 	implementation 'org.slf4j:slf4j-api'

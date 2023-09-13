@@ -2,23 +2,62 @@ server:
   port: 8001
 
 spring:
+  profiles:
+    active: dev
   cloud:
     gateway:
       routes:
-        - id: userservice-server
-          # ?? URL (??? http://userservice:8000/ ?? ??)
-          uri: http://localhost:8000/
+        - id: user-authorization
+          uri: http://${user_server}:8000/
           predicates:
-            - Path=/api/users/**
-        - id: event-server
-          # ?? URL (??? http://eventservice:8000/ ?? ??)
-          uri: http://localhost:80/
+            - Path=/api/user/secret/**
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/user/secret/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: user-not-authorization
+          uri: http://${user_server}:8000/
           predicates:
-            - Path=/api/events/**
-        - id: auth-server
-          uri: http://localhost:8002/
+            - Path=/api/user/**
+          filters:
+            - RewritePath=/api/user/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: event-authorization
+          uri: http://${event_server}:80/
+          predicates:
+            - Path=/api/event/secret/**
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/event/secret/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: event-not-authorization
+          uri: http://${event_server}:80/
+          predicates:
+            - Path=/api/event/**
+          filters:
+            - RewritePath=/api/event/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: auth-authorization
+          uri: http://${auth_server}:8002/
+          predicates:
+            - Path=/api/auth/secret/**
+          filters:
+            - JwtAuthenticationFilter
+            - RewritePath=/api/auth/secret/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: auth-not-authorization
+          uri: http://${auth_server}:8002/
           predicates:
             - Path=/api/auth/**
+          filters:
+          - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
+          - RemoveRequestHeader=Cookie
+
       globalcors:
         cors-configurations:
           '[/**]':
@@ -37,5 +76,13 @@ spring:
               - OPTIONS
               - DELETE
 
+## JWT
+jwt.secret_key: ${secret_key}
+jwt.issuer: ${issuer}
+
+## SERVER BASE URL
+server.base.url.user_server: ${user-server-url}
+server.base.url.auth_server: ${auth-server-url}
+server.base.url.event_server: ${event-server-url}
 
 
