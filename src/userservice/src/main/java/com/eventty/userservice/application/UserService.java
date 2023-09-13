@@ -26,7 +26,7 @@ public class UserService {
 
     @Transactional
     public UserEntity createUser(UserCreateRequestDTO userCreateRequestDTO){
-        duplicateExceptionCheck(userCreateRequestDTO);
+        duplicateUserExceptionCheck(userCreateRequestDTO);
         return userJPARepository.save(userCreateRequestDTO.toEntity());
     }
 
@@ -41,7 +41,7 @@ public class UserService {
         return userJPARepository.save(userUpdateDTO.toEntity(userUpdateRequestDTO));
     }
 
-    private void duplicateExceptionCheck(UserCreateRequestDTO userCreateRequestDTO){
+    private void duplicateUserExceptionCheck(UserCreateRequestDTO userCreateRequestDTO){
         Optional.ofNullable(
                 em.find(UserEntity.class, userCreateRequestDTO.getUserId())
         ).ifPresent(
