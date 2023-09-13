@@ -39,7 +39,7 @@ function TicketSubmitModal({open, title, left}: { open: boolean, title: string[]
 
     useEffect(() => {
         handleModalOpened();
-        setValue("limit", 0);
+        setValue("quantity", 0);
     }, [open]);
 
     return (
@@ -52,7 +52,7 @@ function TicketSubmitModal({open, title, left}: { open: boolean, title: string[]
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack style={{padding: "1rem"}}>
                     <Controller control={control}
-                                name={"title"}
+                                name={"name"}
                                 rules={{required: "종류를 선택해주세요"}}
                                 render={({field}) => (
                                     <Select
@@ -62,7 +62,7 @@ function TicketSubmitModal({open, title, left}: { open: boolean, title: string[]
                                             {value: "얼리버드", label: "얼리버드", disabled: title?.includes("얼리버드")},
                                             {value: "일반", label: "일반", disabled: title?.includes("일반")},
                                             {value: "VIP", label: "VIP", disabled: title?.includes("VIP")},]}
-                                        error={errors.title && errors.title.message}
+                                        error={errors.name && errors.name.message}
                                         className={classes["input-select"]}/>
                                 )}/>
 
@@ -85,7 +85,7 @@ function TicketSubmitModal({open, title, left}: { open: boolean, title: string[]
                                 )}/>
                     <Checkbox label={"무료"} onChange={handleTicketPriceFree} className={classes["input-checkbox"]}/>
                     <Controller control={control}
-                                name={"limit"}
+                                name={"quantity"}
                                 rules={{
                                     required: "인원을 입력해주세요",
                                     validate: (value) => value > 0 || "최소 1명 이상 입력해주세요"
@@ -99,7 +99,7 @@ function TicketSubmitModal({open, title, left}: { open: boolean, title: string[]
                                             max={left}
                                             defaultValue={0}
                                             type={"number"}
-                                            error={errors.limit && errors.limit.message}
+                                            error={errors.quantity && errors.quantity.message}
                                             className={classes["input"]}/>
                                         <Text fz={"xs"}>
                                             {left >= 0 ?

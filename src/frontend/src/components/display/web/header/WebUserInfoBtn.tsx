@@ -34,7 +34,7 @@ function WebUserInfoBtn() {
                     <Menu.Item style={{pointerEvents: "none"}}>
                         <Group>
                             <Avatar src={""} radius={"xl"}/>
-                            {userInfo.name}
+                            {/*{userInfo.name}*/}
                         </Group>
                     </Menu.Item>
                     <Divider/>

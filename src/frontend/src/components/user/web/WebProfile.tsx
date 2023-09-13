@@ -15,9 +15,12 @@ import {
 import customStyle from "../../../styles/customStyle";
 import BirthdayPicker from "../../common/BirthdayPicker";
 import PhoneNumberInput from "../../common/PhoneNumberInput";
+import {Link, useLoaderData} from "react-router-dom";
+import {IUser} from "../../../types/IUser";
 
 function WebProfile() {
     const {classes} = customStyle();
+    const DATA = useLoaderData() as IUser;
 
     const [phoneNumber, setPhoneNumber] = useState("");
     const [selectedDate, setSelectedDate] = useState<Date>();
@@ -42,8 +45,8 @@ function WebProfile() {
 
                     <Stack style={{width: "100%"}}>
                         <TextInput label={"이메일"} disabled className={classes["input"]}/>
-                        <TextInput label={"이름"} className={classes["input"]}/>
-                        {/*<PhoneNumberInput value={phoneNumber} onInput={handlePhoneNumberChange}/>*/}
+                        <TextInput label={"이름"} defaultValue={DATA.name} className={classes["input"]}/>
+                        <TextInput label={"휴대폰 번호"} defaultValue={DATA.phone} className={classes["input"]}/>
                         <BirthdayPicker label={"생년월일"} value={selectedDate} onChange={handleDateChange}/>
                         <Group position={"right"}>
                             <Button className={classes["btn-gray-outline"]}>취소</Button>
@@ -62,6 +65,15 @@ function WebProfile() {
                 <Title order={3}>주소</Title>
                 <Divider/>
                 <TextInput label={"주소"} className={classes["input"]}/>
+
+                <Title order={3} color={"red"}>회원 탈퇴</Title>
+                <Divider/>
+                <Group position={"apart"}>
+                    <Title order={5}>회원 탈퇴</Title>
+                    <Button component={Link}
+                            to={"/delete-account"}
+                        color={"red"}>회원 탈퇴</Button>
+                </Group>
             </Stack>
         </>
     );

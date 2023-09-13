@@ -1,4 +1,4 @@
-import {IChangePW, ILogin, IMyInfo, ISignup} from "../../types/IUser";
+import {ILogin, ISignup} from "../../types/IUser";
 
 export const postSignupEmailValid = async (data: string) => {
     return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/email`,{
@@ -43,28 +43,12 @@ export const postLogout = async () => {
         method: "POST",
         headers: {"Content-Type": "application/json"},
     })
-        .then(res => res.json());
+        .then(res => res.status);
 }
 
-export const putChangePW = async (data: IChangePW) => {
-    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/auth/changePW`,{
-        method: "PUT",
-        body: JSON.stringify(data),
-    })
-        .then((res) => res.json());
-}
-
-export const getMyInfo = async (refreshToken: string) => {
-    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/user/myInfo`,{
+export const getProfile = async () => {
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/users/me`,{
         method: "GET",
-    })
-        .then((res) => res.json());
-}
-
-export const patchMyInfo = async (data: IMyInfo) => {
-    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/user/myinfo`,{
-        method: "PATCH",
-        body: JSON.stringify(data),
     })
         .then((res) => res.json());
 }
@@ -74,5 +58,5 @@ export const deleteAccount = async () => {
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
     })
-        .then((res) => res.json());
+        .then((res) => res.status);
 }

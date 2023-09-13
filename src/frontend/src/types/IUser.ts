@@ -14,10 +14,11 @@ export interface ILogin {
 }
 
 export interface IUser {
-    email: string;
-    password: string;
+    userId: number;
     name: string;
-    isHost: boolean;
+    address: string;
+    birth: Date;
+    phone: string;
 }
 
 export interface IMyInfo {

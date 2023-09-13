@@ -4,7 +4,7 @@ import {Button, Stack, TextInput, Title} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {useLocation, useNavigate} from "react-router-dom";
 import {IconSearch} from "@tabler/icons-react";
-import WebSearchForm from "../../components/display/web/header/WebSearchForm";
+import WebSearchKeywordsList from "../../components/display/web/WebSearchKeywordsList";
 
 export function useModal() {
     const {classes} = customStyle();
@@ -49,7 +49,7 @@ export function useModal() {
     const searchModal = () => {
         return modals.open({
             children: (
-                <WebSearchForm/>
+                <WebSearchKeywordsList/>
             ),
             withCloseButton: false,
             xOffset: "",

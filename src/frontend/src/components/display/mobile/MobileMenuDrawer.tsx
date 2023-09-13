@@ -15,14 +15,16 @@ import {
 import {Link, Navigate, useLocation} from "react-router-dom";
 import {IconHome, IconLogout, IconMenu2, IconPlus, IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
 import customStyle from "../../../styles/customStyle";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {menuDrawerState} from "../../../states/menuDrawerState";
 import {CheckLogin} from "../../../util/CheckLogin";
+import {userState} from "../../../states/userState";
 
 function MobileMenuDrawer() {
     const {classes} = customStyle();
     const {pathname} = useLocation();
     const isLoggedIn = CheckLogin();
+    const userStateValue = useRecoilValue(userState);
     const [opened, setOpened] = useRecoilState(menuDrawerState);
 
     const MENU_LIST = [
@@ -34,17 +36,23 @@ function MobileMenuDrawer() {
         {value: "설정", link: "", icon: <IconSettings/>},
     ];
 
-    const items = MENU_LIST.map(item => (
-        <UnstyledButton key={item.value}
-                        component={Link}
-                        to={item.link}
-                        style={{padding: "0.2rem 0"}}>
-            <Group>
-                {item.icon}
-                <Text>{item.value}</Text>
-            </Group>
-        </UnstyledButton>
-    ));
+    const items = MENU_LIST.map(item => {
+        if ((item.value === "주최 내역" && !userStateValue.isHost) ||
+            (item.value === "예약 내역" && userStateValue.isHost)){
+            return;
+        }
+        return(
+            <UnstyledButton key={item.value}
+                            component={Link}
+                            to={item.link}
+                            style={{padding: "0.2rem 0"}}>
+                <Group>
+                    {item.icon}
+                    <Text>{item.value}</Text>
+                </Group>
+            </UnstyledButton>
+        )
+    });
 
     const handleMenuDrawer = () => {
         setOpened((prev) => !prev);

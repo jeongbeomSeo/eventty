@@ -1,7 +1,7 @@
 import React from "react";
 import {Badge, Button, Group, Image, Stack, Text, Title, UnstyledButton} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 enum State {
     open,
@@ -54,11 +54,11 @@ function StateBadge({state}: { state: number }) {
 
 function WebEventsDetailBtn(props: IEventState) {
     const {classes} = customStyle();
+    const navigate = useNavigate();
 
     return (
         <UnstyledButton
-            component={Link}
-            to={`/events/${props.id}`}
+            onClick={() => navigate(`/events/${props.id}`)}
             style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
             <Group noWrap position={"apart"} style={{opacity: props.state === 2 ? "0.3" : "",}}>
                 <Group>
@@ -68,7 +68,7 @@ function WebEventsDetailBtn(props: IEventState) {
                            radius={"md"}
                            withPlaceholder/>
                     <Stack>
-                        <Title order={4}>{props.title}</Title>
+                        <Title order={4} lineClamp={1}>{props.title}</Title>
                         <Group noWrap>
                             <StateBadge state={props.state}/>
                             <Text>{props.date.toLocaleDateString()} 까지</Text>
@@ -76,8 +76,10 @@ function WebEventsDetailBtn(props: IEventState) {
                     </Stack>
                 </Group>
                 {props.state !== 2 &&
-                    <Button component={Link}
-                            to={`/applices/${props.id}`}
+                    <Button onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/applices/${props.id}`)
+                    }}
                             className={classes["btn-primary"]}>
                         신청내역
                     </Button>}

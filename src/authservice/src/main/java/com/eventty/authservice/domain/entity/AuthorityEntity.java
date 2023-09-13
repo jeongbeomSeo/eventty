@@ -13,8 +13,10 @@ public class AuthorityEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
+    @Column(nullable = false)
     private String name;    // 권한 이름(역할)
 
     @JoinColumn(name = "auth_user_id")

@@ -27,7 +27,7 @@ function TicketEditModal({open, title, left, data}: {
         formState: {errors}
     } = useFormContext<IEventTicket>();
 
-    const disabledTitle = title.filter(item => item !== data.title);
+    const disabledTitle = title.filter(item => item !== data.name);
 
     const handleTicketPriceFree = () => {
         clearErrors("price");
@@ -49,9 +49,9 @@ function TicketEditModal({open, title, left, data}: {
 
     useEffect(() => {
         setValue("id", data.id);
-        setValue("title", data.title);
+        setValue("name", data.name);
         setValue("price", data.price);
-        setValue("limit", data.limit);
+        setValue("quantity", data.quantity);
 
         if (data.price === 0) {
             setTicketPriceFree(true);
@@ -68,7 +68,7 @@ function TicketEditModal({open, title, left, data}: {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack style={{padding: "1rem"}}>
                     <Controller control={control}
-                                name={"title"}
+                                name={"name"}
                                 rules={{required: "종류를 선택해주세요"}}
                                 render={({field}) => (
                                     <Select
@@ -78,8 +78,8 @@ function TicketEditModal({open, title, left, data}: {
                                             {value: "얼리버드", label: "얼리버드", disabled: disabledTitle.includes("얼리버드")},
                                             {value: "일반", label: "일반", disabled: disabledTitle.includes("일반")},
                                             {value: "VIP", label: "VIP", disabled: disabledTitle.includes("VIP")},]}
-                                        defaultValue={data.title}
-                                        error={errors.title && errors.title.message}
+                                        defaultValue={data.name}
+                                        error={errors.name && errors.name.message}
                                         className={classes["input-select"]}/>
                                 )}/>
 
@@ -106,7 +106,7 @@ function TicketEditModal({open, title, left, data}: {
                               onChange={handleTicketPriceFree}
                               className={classes["input-checkbox"]}/>
                     <Controller control={control}
-                                name={"limit"}
+                                name={"quantity"}
                                 rules={{
                                     required: "인원을 정해주세요",
                                     validate: (value) => value > 0 || "최소 1명 이상 입력해주세요"
@@ -117,12 +117,12 @@ function TicketEditModal({open, title, left, data}: {
                                             {...field}
                                             label={"인원"}
                                             min={0}
-                                            max={left+data.limit}
+                                            max={left+data.quantity}
                                             type={"number"}
-                                            defaultValue={data.limit}
-                                            error={errors.limit && errors.limit.message}
+                                            defaultValue={data.quantity}
+                                            error={errors.quantity && errors.quantity.message}
                                             className={classes["input"]}/>
-                                        <Text fz={"xs"}>{data.limit+left-watch("limit")}명 남았습니다</Text>
+                                        <Text fz={"xs"}>{data.quantity+left-watch("quantity")}명 남았습니다</Text>
                                     </Flex>
                                 )}/>
                     <Group grow>

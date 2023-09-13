@@ -14,15 +14,16 @@ function Logout() {
     useEffect(() => {
         postLogout()
             .then(res => {
-                if (res.success){
+                if (res === 200){
                     setIsLoggedIn(false);
                     resetUserState();
+                    sessionStorage.clear();
                     MessageAlert("success", "로그아웃", null);
                 }else{
                     MessageAlert("error", "로그아웃 실패", null);
                 }
             }).finally(() => navigate("/"));
-    }, [])
+    })
 
     return (
         <></>

@@ -32,8 +32,9 @@ function WebEventDetail() {
     const {classes} = customStyle();
 
     const DATA = useLoaderData() as IEventDetail;
-    const EVENT_DETAIL = DATA.eventDetailResponseDTO;
-    const EVENT_INFO = DATA.eventResponseDTO;
+
+    const eventStartAt = new Date(DATA.eventStartAt);
+    const eventEndtAt = new Date(DATA.eventEndAt);
 
     const onClickTicket = () => {
         if (isLoggedIn) {
@@ -47,16 +48,25 @@ function WebEventDetail() {
         <Container>
             <Grid style={{marginTop: "5vh"}} gutter={"xl"}>
                 <Grid.Col span={8}>
-                    <Image src={EVENT_INFO.image}
+                    <Image src={DATA.image}
                            height={"400"}
                            withPlaceholder
                     />
                 </Grid.Col>
                 <Grid.Col span={"auto"}>
-                    <Stack>
-                        <Text fz={"xs"} color={"var(--primary)"}>{EVENT_INFO.category}</Text>
-                        <Title order={2}>{EVENT_INFO.title}</Title>
-                        <Text>{EVENT_INFO.location}</Text>
+                    <Stack justify={"space-between"} style={{height: "100%"}}>
+                        <Stack>
+                            <Text fz={"1rem"} color={"var(--primary)"}>{DATA.categoryName}</Text>
+                            <Title order={2}>{DATA.title}</Title>
+                            <Title order={4}>
+                                {`${eventStartAt.getMonth() + 1}월 ${eventStartAt.getDate()}일`}
+                                {((eventStartAt.getMonth() === eventEndtAt.getMonth()) && (eventStartAt.getDate() === eventEndtAt.getDate())) ?
+                                    ` ${eventStartAt.getHours()}시 ~ ${eventEndtAt.getHours()}시` :
+                                    ` ~ ${eventEndtAt.getMonth() + 1}월 ${eventEndtAt.getDate()}일`
+                                }
+                            </Title>
+                            <Text>{DATA.location}</Text>
+                        </Stack>
                         {userStateValue.isHost ?
                             <Button className={`${classes["btn-primary"]} disable`}
                                     style={{height: "2.5rem"}}>
@@ -76,7 +86,7 @@ function WebEventDetail() {
 
             <Grid gutter={"xl"}>
                 <Grid.Col span={8}>
-                    {EVENT_DETAIL.content}
+                    {DATA.content}
                 </Grid.Col>
                 <Grid.Col span={"auto"}>
                     <Stack spacing={"3rem"}>
@@ -84,7 +94,7 @@ function WebEventDetail() {
                             <Group noWrap>
                                 <Avatar radius={"xl"}/>
                                 <div>
-                                    {EVENT_INFO.hostId}
+                                    {DATA.userId}
                                 </div>
                             </Group>
                             <Group>
@@ -92,14 +102,7 @@ function WebEventDetail() {
                             </Group>
                         </Paper>
 
-                        <Stack>
-                            <Title order={4}>티켓 선택</Title>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
-                                       onClick={onClickTicket}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
-                                       onClick={onClickTicket}/>
-                        </Stack>
-                        <WebTicketInfo/>
+                        <WebTicketInfo tickets={DATA.tickets} onClick={onClickTicket}/>
                     </Stack>
                 </Grid.Col>
             </Grid>

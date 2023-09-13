@@ -7,8 +7,14 @@ import {DrawerContent} from "@mantine/core/lib/Drawer/DrawerContent/DrawerConten
 import {useLocation, useNavigate} from "react-router-dom";
 import {CheckLogin} from "../../../util/CheckLogin";
 import {useModal} from "../../../util/hook/useModal";
+import {IEventTicket} from "../../../types/IEvent";
 
-function MobileTicketInfo({open}: { open: boolean }) {
+interface ITickets {
+    open: boolean;
+    tickets: IEventTicket[];
+}
+
+function MobileTicketInfo({open, tickets}:ITickets) {
     const [opened, setOpened] = useState(open);
     const navigate = useNavigate();
     const {pathname} = useLocation();
@@ -26,6 +32,10 @@ function MobileTicketInfo({open}: { open: boolean }) {
             loginAlertModal();
         }
     }
+
+    const items = tickets.map(item => (
+        <TicketBtn name={item.name} price={item.price} quantity={item.quantity} onClick={onClickTicket}/>
+    ));
 
     useEffect(() => {
         handleOpen();
@@ -46,14 +56,7 @@ function MobileTicketInfo({open}: { open: boolean }) {
                     </Drawer.Header>
                     <Drawer.Body style={{paddingBottom: "15vh"}}>
                         <Stack onClick={onClickTicket}>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
-                                       onClick={onClickTicket}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
-                                       onClick={onClickTicket}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
-                                       onClick={onClickTicket}/>
-                            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}
-                                       onClick={onClickTicket}/>
+                            {items}
                         </Stack>
                     </Drawer.Body>
                 </Drawer.Content>

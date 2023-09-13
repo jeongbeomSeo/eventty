@@ -3,7 +3,7 @@ import {
     Alert,
     Button, Center,
     Container, Flex,
-    Group, Notification, NumberInput,
+    Group, Image, Notification, NumberInput,
     Paper,
     Select, SimpleGrid,
     Stack, Text,
@@ -76,8 +76,8 @@ function Write() {
     const TICKET_LIMIT = 3;
     const [ticketEdit, setTicketEdit] = useState<IEventTicket | null>(null);
     const [ticketIdx, setTicketIdx] = useState(0);
-    const disabledTitle = fields.map((ticket) => ticket.title);
-    const leftTicket = watch("participateNum") - fields.reduce((acc, cur) => acc + cur.limit, 0);
+    const disabledTitle = fields.map((ticket) => ticket.name);
+    const leftTicket = watch("participateNum") - fields.reduce((acc, cur) => acc + cur.quantity, 0);
 
     const onSubmit = (data: IEventWrite) => {
         if (leftTicket !== 0) {
@@ -124,9 +124,9 @@ function Write() {
                                remove(idx);
                            }}/>
                     <Stack spacing={"0.5rem"}>
-                        <Title order={4}>{item.title}</Title>
-                        <Text>{item.limit}명</Text>
-                        <Text>{item.price === 0 ? "무료" : `${item.price}원`}</Text>
+                        <Title order={4}>{item.name}</Title>
+                        <Text>{item.quantity}명</Text>
+                        <Text>{item.price === 0 ? "무료" : `${item.price.toLocaleString("ko-KR")}원`}</Text>
                     </Stack>
                 </Paper>
             </UnstyledButton>
@@ -308,6 +308,13 @@ function Write() {
 
                         <Stack>
                             <Title order={3}>커버 이미지</Title>
+                            <Group align={"flex-start"}>
+                                <Image width={"280px"} height={"210px"} withPlaceholder/>
+                                <div>
+                                    <Text>50MB이하의 jpg, png파일 업로드 가능합니다</Text>
+                                    <Button className={classes["btn-primary"]}>이미지 선택</Button>
+                                </div>
+                            </Group>
                         </Stack>
 
                         <Stack>

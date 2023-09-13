@@ -18,11 +18,8 @@ import java.time.LocalDateTime;
 @Table(name = "user")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                    // PK값
-
     @NotNull
-    private Long authId;                // auth Server에 저장 후 받을 FK값
+    private Long userId;                // auth Server에 저장 후 받을 PK값
 
     @NotNull
     private String name;                // 이름

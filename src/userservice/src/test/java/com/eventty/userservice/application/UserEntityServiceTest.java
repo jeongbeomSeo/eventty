@@ -1,7 +1,6 @@
 package com.eventty.userservice.application;
 
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
-import com.eventty.userservice.application.dto.response.UserCreateAndUpdateResponseDTO;
 import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
 import com.eventty.userservice.domain.UserEntity;
@@ -30,28 +29,30 @@ public class UserEntityServiceTest {
     @Transactional
     public void createUserTest(){
         // Given
-        Long authId = 1L;
+        Long userId = 1L;
         String name = "홍박사";
         String address = "서울특별시 강남구 테헤란로";
         LocalDate birth = LocalDate.of(1988, 5, 3);
-        String image = "image.jpg";
         String phone = "01045628526";
 
         UserCreateRequestDTO request = UserCreateRequestDTO
                                                     .builder()
-                                                    .authId(authId)
+                                                    .userId(userId)
                                                     .name(name)
                                                     .address(address)
                                                     .birth(birth)
-                                                    .image(image)
                                                     .phone(phone)
                                                     .build();
 
         // When
-        UserCreateAndUpdateResponseDTO response =  userService.createUser(request);
+        UserEntity userEntity = userService.createUser(request);
 
         // Then
-        assertTrue(response.getId() instanceof Long);
+        assertEquals(userEntity.getUserId(), userId);
+        assertEquals(userEntity.getName(), name);
+        assertEquals(userEntity.getAddress(), address);
+        assertEquals(userEntity.getBirth(), birth);
+        assertEquals(userEntity.getPhone(), phone);
     }
 
     @Test
@@ -59,7 +60,7 @@ public class UserEntityServiceTest {
     @Transactional
     public void userFindByIdTest(){
         // Given
-        Long authId = 1L;
+        Long userId = 1L;
         String name = "홍박사";
         String address = "서울특별시 강남구 테헤란로";
         LocalDate birth = LocalDate.of(1988, 5, 3);
@@ -68,7 +69,7 @@ public class UserEntityServiceTest {
 
         UserEntity user = UserEntity
                 .builder()
-                .authId(authId)
+                .userId(userId)
                 .name(name)
                 .address(address)
                 .birth(birth)
@@ -77,14 +78,17 @@ public class UserEntityServiceTest {
                 .build();
 
         em.persist(user);
-        Long userId = user.getId();
 
         // When
         UserFindByIdResponseDTO response =  userService.findUserById(userId);
 
         // Then
-        assertNotNull(response);
-        assertEquals(userId, response.getId());
+        assertEquals(response.getUserId(), userId);
+        assertEquals(response.getName(), name);
+        assertEquals(response.getAddress(), address);
+        assertEquals(response.getBirth(), birth);
+        assertEquals(response.getPhone(), phone);
+        assertEquals(response.getImage(), image);
     }
 
     @Test
@@ -103,7 +107,7 @@ public class UserEntityServiceTest {
     @Transactional
     public void userUpdateTest(){
         // Given
-        Long authId = 1L;
+        Long userId = 1L;
         String name = "홍박사";
         LocalDate birth = LocalDate.of(1988, 5, 3);
         String image = "image.jpg";
@@ -111,7 +115,7 @@ public class UserEntityServiceTest {
 
         UserEntity user = UserEntity
                 .builder()
-                .authId(authId)
+                .userId(userId)
                 .name(name)
                 .birth(birth)
                 .image(image)
@@ -120,7 +124,6 @@ public class UserEntityServiceTest {
 
         em.persist(user);
 
-        Long userId = user.getId();
         String address = "인천광역시 남동구";                           // null -> new 값
         birth = LocalDate.of(1988, 12, 4);     // 값 -> new 값
         image = "";                                                  // 값 -> "" 값
@@ -131,11 +134,10 @@ public class UserEntityServiceTest {
         updateRequest.setImage(image);
 
         // When
-        UserCreateAndUpdateResponseDTO updateResponse =  userService.updateUser(userId, updateRequest);
+        UserEntity userEntity =  userService.updateUser(userId, updateRequest);
 
         // Then
-        assertEquals(userId, updateResponse.getId());
-        assertEquals(name, em.find(UserEntity.class, userId).getName());
+        assertEquals(image, em.find(UserEntity.class, userId).getImage());
         assertEquals(address, em.find(UserEntity.class, userId).getAddress());
         assertEquals(birth, em.find(UserEntity.class, userId).getBirth());
     }

@@ -1,9 +1,8 @@
 package com.eventty.userservice.presentation;
 
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
-import com.eventty.userservice.domain.code.ErrorCode;
-import com.eventty.userservice.domain.code.SuccessCode;
 import com.eventty.userservice.application.UserService;
+import com.eventty.userservice.domain.code.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,32 +38,33 @@ public class UserEntityControllerTest {
     @MockBean
     UserService userService;
 
+    @MockBean
+    DataErrorLogger dataErrorLogger;
+
     @BeforeEach
     public void setMockMvc() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
+
     @Test
     @DisplayName("[API][POST] 회원가입 성공")
     public void postMeSuccessTest() throws Exception {
         // Given
-        Long authId = 1L;
+        Long userId = 1L;
         String name = "길동";
         String address = "서울특별시 도봉구 도봉동 1";
         LocalDate birth = LocalDate.of(1998, 06, 23);
         String phone = "01012345678";
-        String image = "/url/url/url.jpeg";
         String url = "/api/users/me";
-        SuccessCode successCode = SuccessCode.USER_INFO_INSERT;
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
                 .builder()
-                .authId(authId)
+                .userId(userId)
                 .name(name)
                 .address(address)
                 .birth(birth)
                 .phone(phone)
-                .image(image)
                 .build();
 
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
@@ -74,29 +74,29 @@ public class UserEntityControllerTest {
 
         // Then
         response
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("message").value(successCode.getMessage()));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(jsonPath("SuccessResponseDTO").doesNotHaveJsonPath())
+                .andExpect(jsonPath("ErrorResponseDTO").doesNotHaveJsonPath());
     }
 
     @Test
     @DisplayName("[API][POST] 회원가입 실패 - 필수값 부재")
     public void postMeNullParameterTest() throws Exception {
         // Given -- 전역변수로
-        Long authId = 1L;
+        Long userId = 1L;
         String address = "서울특별시 도봉구 도봉동 1";
         LocalDate birth = LocalDate.of(1998, 06, 23);
         String phone = "01012345678";
-        String image = "/url/url/url.jpeg";
         String url = "/api/users/me";
         ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
                 .builder()
-                .authId(authId)
+                .userId(userId)
                 .address(address)
                 .birth(birth)
                 .phone(phone)
-                .image(image)
                 .build();
 
         final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
@@ -108,8 +108,8 @@ public class UserEntityControllerTest {
         response
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("success").value(false))
-                .andExpect(jsonPath("code").value(errorCode.getCode()))
-                .andExpect(jsonPath("message").value(errorCode.getMessage()));
+                .andExpect(jsonPath("errorResponseDTO").hasJsonPath())
+                .andExpect(jsonPath("successResponseDTO").doesNotHaveJsonPath());
     }
 
     @Test
@@ -117,7 +117,6 @@ public class UserEntityControllerTest {
     public void myInfoTest() throws Exception {
         // Given
         Long userId = 1L;
-        SuccessCode successCode = SuccessCode.USER_INFO_FIND_BY_ID;
         String url = "/api/users/me/" + userId;
 
         // When
@@ -126,7 +125,9 @@ public class UserEntityControllerTest {
         // Then
         response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("message").value(successCode.getMessage()));
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(jsonPath("errorResponseDTO").doesNotHaveJsonPath())
+                .andExpect(jsonPath("successResponseDTO").hasJsonPath());
     }
 
     @Test
@@ -139,7 +140,6 @@ public class UserEntityControllerTest {
         LocalDate birth = LocalDate.of(2000, 6, 8);
 
         String url = "/api/users/me/" + userId;
-        SuccessCode successCode = SuccessCode.USER_INFO_UPDATE;
 
         UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
                 .builder()
@@ -154,8 +154,9 @@ public class UserEntityControllerTest {
         final ResultActions response = mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(requestBody));
 
         // Then
-        response
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("message").value(successCode.getMessage()));
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(jsonPath("SuccessResponseDTO").doesNotHaveJsonPath())
+                .andExpect(jsonPath("ErrorResponseDTO").doesNotHaveJsonPath());
     }
 }

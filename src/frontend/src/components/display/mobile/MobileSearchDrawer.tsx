@@ -1,28 +1,33 @@
 import React, {useEffect, useState} from "react";
-import {Button, Drawer, Flex, Grid, Group, Stack, Title, UnstyledButton} from "@mantine/core";
+import {Button, Container, Drawer, Flex, Grid, Group, Stack, Text, Title, UnstyledButton} from "@mantine/core";
 import {useRecoilState} from "recoil";
 import {searchDrawerState} from "../../../states/searchDrawerState";
-import {IconChevronLeft, IconX} from "@tabler/icons-react";
+import {IconChevronLeft, IconClock, IconX} from "@tabler/icons-react";
 import SearchBox from "../../common/SearchBox";
 import WebCategoryBtn from "../../event/web/WebCategoryBtn";
 import MobileCategoryBtn from "../../event/mobile/MobileCategoryBtn";
 import customStyle from "../../../styles/customStyle";
 import {SearchRecentHistory} from "../../../util/SearchRecentHistory";
+import {Link, useNavigate} from "react-router-dom";
+import SearchKeywordsItem from "../SearchKeywordsItem";
 
 function MobileSearchDrawer() {
     const {classes} = customStyle();
     const [opened, setOpened] = useRecoilState(searchDrawerState);
-    const {handleAddKeyword, keywords} = SearchRecentHistory();
+    const {keywords, handleAddKeyword, handleDeleteKeyword} = SearchRecentHistory();
+    const [items, setItems] = useState<React.ReactNode[] | null>(null);
 
     const handleOpened = () => {
         setOpened(prev => !prev);
     }
 
-    const items = keywords.map((item:string, idx:number) => (
-        <UnstyledButton key={idx}>
-            {item}
-        </UnstyledButton>
-    ));
+    useEffect(() => {
+        const mappedItems = keywords.map((item: string, idx: number) => (
+            <SearchKeywordsItem key={idx} item={item} onClick={handleAddKeyword} onDelete={handleDeleteKeyword}/>
+        ));
+
+        setItems(mappedItems);
+    }, [keywords]);
 
     return (
         <Drawer.Root opened={opened}
@@ -37,20 +42,20 @@ function MobileSearchDrawer() {
                                      onClick={handleOpened}
                                      style={{paddingRight: "2vh"}}
                     />
-                    <SearchBox/>
+                    <SearchBox onAddKeyword={handleAddKeyword}/>
                 </Drawer.Header>
                 <Drawer.Body>
-                    <Stack>
-                        <Title order={4}>최근 검색 기록</Title>
-                        <Group>
-                            {items}
-                        </Group>
+                        <Stack spacing={"2rem"} style={{marginTop: "1rem"}}>
+                            <Stack spacing={"2rem"}>
+                                <Title order={4}>최근 검색어</Title>
+                                {items}
+                            </Stack>
 
-                        <Title order={4}>카테고리</Title>
-                        <Flex gap={"7vw"} className={classes["category-scroll"]}>
-                            <MobileCategoryBtn/>
-                        </Flex>
-                    </Stack>
+                            <Title order={4}>카테고리</Title>
+                            <Flex gap={"7vw"} className={classes["category-scroll"]}>
+                                <MobileCategoryBtn/>
+                            </Flex>
+                        </Stack>
                 </Drawer.Body>
             </Drawer.Content>
         </Drawer.Root>

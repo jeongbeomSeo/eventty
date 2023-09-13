@@ -12,6 +12,7 @@ public class MakeUrlService {
 
     private final UrlProperties urlProperties;
     public URI createUserUri() {
-        return URI.create(urlProperties.getUserServer() + "/api/users/me");
+        String CREATE_USER_API_PATH = "/api/users/me";
+        return URI.create(urlProperties.getUserServer() + CREATE_USER_API_PATH);
     }
 }
