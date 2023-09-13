@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 public @interface ApiSuccessData {
     Class<?> value() default Void.class;
     String stateCode() default "200";
-    boolean array() default false;
+    boolean isArray() default false;
 }
