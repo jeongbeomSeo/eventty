@@ -3,7 +3,7 @@ package com.eventty.businessservice.application;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.serviceImpl.EventServiceImpl;
+import com.eventty.businessservice.domains.event.application.Facade.EventServiceImpl;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EventServiceImplTest {
+public class EventServiceImplImplTest {
 
     @Mock
     private EventBasicRepository eventBasicRepository;
@@ -39,7 +39,7 @@ public class EventServiceImplTest {
     private TicketRepository ticketRepository;
 
     @InjectMocks
-    private EventServiceImpl eventService;
+    private EventServiceImpl eventServiceImpl;
 
     @Test
     @DisplayName("존재하는 이벤트 조회 테스트")
@@ -53,7 +53,7 @@ public class EventServiceImplTest {
         when(ticketRepository.selectTicketByEventId(eventId)).thenReturn(mockTickets);
 
         // When
-        EventWithTicketsFindByIdResponseDTO responseDTO = eventService.findEventById(eventId);
+        EventWithTicketsFindByIdResponseDTO responseDTO = eventServiceImpl.findEventById(eventId);
 
         // Then
         assertEquals(mockEvent.getId(), responseDTO.getId());
@@ -71,7 +71,7 @@ public class EventServiceImplTest {
         when(eventBasicRepository.selectEventWithDetailById(eventId)).thenReturn(null);
 
         // When & Then
-        assertThrows(EventNotFoundException.class, () -> eventService.findEventById(eventId));
+        assertThrows(EventNotFoundException.class, () -> eventServiceImpl.findEventById(eventId));
         verify(eventBasicRepository, times(1)).selectEventWithDetailById(eventId);
     }
 
@@ -83,7 +83,7 @@ public class EventServiceImplTest {
         when(eventBasicRepository.selectAllEvents()).thenReturn(mockEventEntities);
 
         // When
-        List<EventBasicFindAllResponseDTO> responseDTOs = eventService.findAllEvents();
+        List<EventBasicFindAllResponseDTO> responseDTOs = eventServiceImpl.findAllEvents();
 
         // Then
         assertEquals(mockEventEntities.size(), responseDTOs.size());
@@ -100,7 +100,7 @@ public class EventServiceImplTest {
         when(ticketRepository.deleteTicket(eventId)).thenReturn(1L);
 
         // When
-        eventService.deleteEvent(eventId);
+        eventServiceImpl.deleteEvent(eventId);
 
         // Then
         assertNull(eventBasicRepository.selectEventById(eventId));
@@ -128,7 +128,7 @@ public class EventServiceImplTest {
         when(eventBasicRepository.selectEventById(eventId)).thenReturn(existingEvent);
         when(eventDetailRepository.selectEventDetailById(eventId)).thenReturn(existingEventDetail);
 
-        eventService.updateEvent(eventId, updateRequestDTO);
+        eventServiceImpl.updateEvent(eventId, updateRequestDTO);
 
         verify(eventBasicRepository, times(1)).updateEvent(any(EventBasicEntity.class));
         verify(eventDetailRepository, times(1)).updateEventDetail(any(EventDetailEntity.class));
@@ -142,7 +142,7 @@ public class EventServiceImplTest {
         when(eventBasicRepository.selectEventsByCategory(categoryId)).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventService.findEventsByCategory(categoryId);
+        List<EventBasicFindAllResponseDTO> result = eventServiceImpl.findEventsByCategory(categoryId);
 
         // then
         assertNotNull(result);
@@ -157,7 +157,7 @@ public class EventServiceImplTest {
 
         // when & then
         assertThrows(CategoryNotFoundException.class, () -> {
-            eventService.findEventsByCategory(invalidCategoryId);
+            eventServiceImpl.findEventsByCategory(invalidCategoryId);
         });
     }
 
@@ -169,7 +169,7 @@ public class EventServiceImplTest {
 
         // when & then
         assertThrows(EventNotFoundException.class, () -> {
-            eventService.findEventsByCategory(categoryId);
+            eventServiceImpl.findEventsByCategory(categoryId);
         });
     }
 

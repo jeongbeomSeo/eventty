@@ -3,7 +3,7 @@ package com.eventty.businessservice.presentation;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventService;
+import com.eventty.businessservice.domains.event.application.Facade.EventServiceImpl;
 import com.eventty.businessservice.domains.event.presentation.EventController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ public class EventControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private EventService eventService;
+    private EventServiceImpl eventServiceImpl;
 
 //    @Test
 //    @DisplayName("특정 행사 조회 테스트")
@@ -57,17 +57,17 @@ public class EventControllerTest {
     public void findAllEventsTest() throws Exception {
         // Given
         List<EventBasicFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
-        when(eventService.findAllEvents()).thenReturn(mockEventList);
+        when(eventServiceImpl.findAllEvents()).thenReturn(mockEventList);
 
         // When & Then
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get("/events"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.successResponseDTO.data").isArray())
                 .andExpect(jsonPath("$.successResponseDTO.data.length()").value(mockEventList.size()));
 
-        verify(eventService, times(1)).findAllEvents();
+        verify(eventServiceImpl, times(1)).findAllEvents();
     }
 
     @Test
@@ -76,10 +76,10 @@ public class EventControllerTest {
         // Given
         Long newEventId = 10L;
         EventCreateRequestDTO eventCreateRequestDTO = createEventFullCreateRequestDTO();
-        when(eventService.createEvent(eventCreateRequestDTO)).thenReturn(newEventId);
+        when(eventServiceImpl.createEvent(eventCreateRequestDTO)).thenReturn(newEventId);
 
         // When & Then
-        mockMvc.perform(post("/")
+        mockMvc.perform(post("/events")
                 .content(objectMapper.writeValueAsString(eventCreateRequestDTO))  // JSON 데이터 추가
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -92,15 +92,15 @@ public class EventControllerTest {
     public void deleteEventTest() throws Exception {
         // Given
         Long eventId = 1L;
-        when(eventService.deleteEvent(eventId)).thenReturn(eventId);
+        when(eventServiceImpl.deleteEvent(eventId)).thenReturn(eventId);
 
         // When & Then
-        mockMvc.perform(delete("/{eventId}", eventId))
+        mockMvc.perform(delete("/events/{eventId}", eventId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(eventService, times(1)).deleteEvent(eventId);
+        verify(eventServiceImpl, times(1)).deleteEvent(eventId);
     }
 
     @Test
@@ -108,15 +108,15 @@ public class EventControllerTest {
     public void findEventsByCategoryTest() throws Exception {
         // Given
         Long categoryId = 3L;
-        when(eventService.findEventsByCategory(categoryId)).thenReturn(createEventRespnseDTOList(5L));
+        when(eventServiceImpl.findEventsByCategory(categoryId)).thenReturn(createEventRespnseDTOList(5L));
 
         // When & Then
-        mockMvc.perform(get("/category/{categoryId}", categoryId))
+        mockMvc.perform(get("/events/category/{categoryId}", categoryId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(eventService, times(1)).findEventsByCategory(categoryId);
+        verify(eventServiceImpl, times(1)).findEventsByCategory(categoryId);
     }
 
     private static EventCreateRequestDTO createEventFullCreateRequestDTO() {

@@ -27,7 +27,7 @@ services:
         aliases:
           - "user server"
   authservice:
-    image: auth:1.3
+    image: jeongbeom4693/auth:1.3
     build:
       context: ./authservice
       dockerfile: Dockerfile
@@ -40,7 +40,7 @@ services:
         aliases:
           - "auth server"
   gateway:
-    image: gateway:1.3
+    image: jeongbeom4693/gateway:1.3
     build:
       context: ./gateway
       dockerfile: Dockerfile
