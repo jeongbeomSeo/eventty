@@ -1,6 +1,7 @@
 package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
+import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
 import com.eventty.authservice.infrastructure.annotation.Permission;
 import com.eventty.authservice.infrastructure.resolver.LoginUser;
@@ -102,20 +103,19 @@ public class AuthController {
      */
     @DeleteMapping("/me")
     // @Permission(Roles = {UserRole.USER})
-    public ResponseEntity<Void> delete(LoginUser loginUser, HttpServletResponse response) {
+    public ResponseEntity<Void> delete(LoginUser loginUser) {
         log.info("Current Position: Controller :: 회원 탈퇴");
 
         Long userId = loginUser.getUserId();
         userService.deleteUser(userId);
 
-        Cookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
-        Cookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCoolie();
-
-        response.addCookie(deleteAccessToken);
-        response.addCookie(deleteRefreshToken);
+        ResponseCookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
+        ResponseCookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCookie();
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
+                .header(HttpHeaders.SET_COOKIE, deleteAccessToken.toString())
+                .header(HttpHeaders.SET_COOKIE, deleteRefreshToken.toString())
                 .body(null);
     }
 

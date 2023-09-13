@@ -61,7 +61,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "http://localhost:3000"
+            allowedOrigins: "http://${frontend_server}:3000"
             allowedHeaders:
               - x-requested-with
               - authorization
@@ -75,6 +75,7 @@ spring:
               - PUT
               - OPTIONS
               - DELETE
+            allowCredentials: true
 
 ## JWT
 jwt.secret_key: ${secret_key}
