@@ -1,7 +1,8 @@
-package com.eventty.userservice.presentation;
+package com.eventty.userservice.presentation.exception;
 
 import com.eventty.userservice.domain.exception.UserException;
 import com.eventty.userservice.presentation.dto.ErrorResponseDTO;
+import com.eventty.userservice.presentation.exception.DataErrorLogger;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +74,10 @@ public class GlobalExceptionHandler {
     // 유저 정보가 존재하지 않을 경우 예외처리
     @ExceptionHandler(UserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponseDTO handleUserInfoNotFoundException(UserException e) {
-        log.error("UserException occurred : {}", e.getMessage());
+    public ErrorResponseDTO handleUserException(UserException e) {
+        log.error("UserException occurred : {}", e.getErrorCode().getMessage());
+        dataErrorLogger.logging(e);
+
         return ErrorResponseDTO.of(e.getErrorCode());
     }
 
