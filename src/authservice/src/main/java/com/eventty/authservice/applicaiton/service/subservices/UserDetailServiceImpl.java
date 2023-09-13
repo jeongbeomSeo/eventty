@@ -1,5 +1,6 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
+import com.eventty.authservice.domain.exception.AccessDeletedUserException;
 import com.eventty.authservice.domain.exception.UserNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -7,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import com.eventty.authservice.domain.Enum.UserRole;
@@ -29,14 +32,21 @@ public class UserDetailServiceImpl implements UserDetailService {
         this.userRepository = userRepository;
         this.em = em;
     }
+    @Override
+    public Long delete(AuthUserEntity authUserEntity) {
+        authUserEntity.setDelete(true);
+        authUserEntity.setDeleteDate(LocalDateTime.now());
+
+        return authUserEntity.getId();
+    }
 
     public AuthUserEntity findAuthUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
     @Override
     public AuthUserEntity findAuthUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Transactional
@@ -58,11 +68,17 @@ public class UserDetailServiceImpl implements UserDetailService {
         return authUserEntity.getId();
     }
 
+    @Override
+    public void validationUser(AuthUserEntity authUserEntity) {
+        if (authUserEntity.isDelete())
+            new AccessDeletedUserException(authUserEntity);
+    }
+
     public void validateEmail(String email) {
         Optional<AuthUserEntity> existingUser = userRepository.findByEmail(email);
 
         if (existingUser.isPresent()) {
-            throw DuplicateEmailException.EXCEPTION;
+            throw new DuplicateEmailException(email);
         }
     }
 }

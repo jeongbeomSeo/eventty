@@ -1,4 +1,4 @@
-package com.eventty.authservice.global.advice;
+package com.eventty.authservice.infrastructure.advice;
 
 import com.eventty.authservice.global.Enum.ErrorCode;
 import com.eventty.authservice.global.exception.AuthException;
@@ -23,11 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 import com.eventty.authservice.global.response.ErrorResponseDTO;
 import com.eventty.authservice.api.exception.ApiException;
 
+import java.util.Objects;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private DataErrorLogger dataErrorLogger;
+    private final DataErrorLogger dataErrorLogger;
 
     @Autowired
     GlobalExceptionHandler (@Lazy DataErrorLogger dataErrorLogger) {
@@ -41,8 +43,6 @@ public class GlobalExceptionHandler {
 
         final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.METHOD_NOT_ALLOWED);
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
-
-        // return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED); (body에 code도 담지 않고 보내는 방식)
     }
 
     // 지정하지 않은 API URI 요청이 들어왔을 경우 (404 예외 처리 핸들러 => appication-properties 설정 필요)
@@ -80,11 +80,16 @@ public class GlobalExceptionHandler {
         log.error("MethodArgumentTypeMismatchException occurred: {}", e.getMessage());
 
         final String value = e.getValue() == null ? "" : e.getValue().toString();
-        log.error(e.getName() + ": " + value + ", and ErrorCode: " + e.getErrorCode() + "\n");
+        log.error("Input value is {} and type is {}", value, e.getValue().getClass());
+
+        // 로깅 추가
+        log.error("Method name: {}", Objects.requireNonNull(e.getParameter().getMethod()).getName());
+        log.error("Parameter name: {}", e.getName());
 
         final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.INVALID_TYPE_VALUE);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 
     // 리소스 상태의 충돌로 인해 요청이 완료될 수 경우에 대한 예외 처리
     @ExceptionHandler
@@ -108,6 +113,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<ErrorResponseDTO> handleAuthenticationException(AuthException e) {
         log.error("AuthenticationException Occurred: {}", e.getErrorCode().getMessage());
+        dataErrorLogger.loggingAuth(e);
 
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponseDTO response = ErrorResponseDTO.of(errorCode);

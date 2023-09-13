@@ -21,7 +21,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
         if (!passwordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
-            throw InvalidPasswordException.EXCEPTION;
+            throw new InvalidPasswordException(userLoginRequestDTO);
         }
 
         return true;

@@ -71,7 +71,7 @@ public class SwaggerConfig {
     public OperationCustomizer customOperationCutomizer() {
         return (Operation operation, HandlerMethod handlerMethod) -> {
             // 커스텀 어노테이션 값 불러오기
-            ApiErrorCode apiErrorCodeExample = handlerMethod.getMethodAnnotation(ApiErrorCode.class);
+            ApiErrorCode apiErrorCode = handlerMethod.getMethodAnnotation(ApiErrorCode.class);
             ApiSuccessData apiSuccessData = handlerMethod.getMethodAnnotation(ApiSuccessData.class);
 
             // 전처리
@@ -79,12 +79,12 @@ public class SwaggerConfig {
 
             // @ApiSuccessData가 있을 경우 실행
             if (apiSuccessData != null){
-                generateSucdessResponseDoc(operation, apiSuccessData);
+                generateSucessResponseDoc(operation, apiSuccessData);
             }
 
             // @ApiErrorCode가 있을 경우 실행
-            if (apiErrorCodeExample != null) {
-                generateErrorCodeResponseDoc(operation, apiErrorCodeExample.value());
+            if (apiErrorCode != null) {
+                generateErrorCodeResponseDoc(operation, apiErrorCode.value());
             }
 
             return operation;
@@ -97,7 +97,7 @@ public class SwaggerConfig {
      * @param apiSuccessData
      * @param <T>
      */
-    private <T> void generateSucdessResponseDoc(Operation operation, ApiSuccessData apiSuccessData){
+    private <T> void generateSucessResponseDoc(Operation operation, ApiSuccessData apiSuccessData){
         Class<?> responseDTO = apiSuccessData.value();
         String status = apiSuccessData.stateCode();
 
@@ -110,7 +110,7 @@ public class SwaggerConfig {
 
         //-----------------------------------------------------settingInstance
         try{
-            if(apiSuccessData.array())
+            if(apiSuccessData.isArray())
                 successExample.setValue(ResponseDTO.of(SuccessResponseDTO.of(List.of(responseDTO.getConstructor().newInstance()))));
             else
                 successExample.setValue(ResponseDTO.of(SuccessResponseDTO.of(responseDTO.getConstructor().newInstance())));

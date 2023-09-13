@@ -39,11 +39,6 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
         String userId = (String) request.getAttribute(USER_ID);
         String authoritiesJSON = (String) request.getAttribute(AUTHORITIES);
 
-        // 필요한 정보 없다면 넘기기
-        if (userId == null) {
-            return null;
-        }
-
         Authentication authentication = authenticationConverter.getAuthentication(userId, authoritiesJSON);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         log.info("Successfully saved {}'s authentication in the security context holder.", authentication.getPrincipal());

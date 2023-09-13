@@ -1,15 +1,18 @@
 package com.eventty.authservice.applicaiton.service.Facade;
 
+import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.eventty.authservice.api.ApiClient;
@@ -46,15 +49,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokensDTO login(UserLoginRequestDTO userLoginRequestDTO) {
+    public LoginSuccessDTO login(UserLoginRequestDTO userLoginRequestDTO) {
 
         AuthUserEntity authUserEntity = userDetailService.findAuthUser(userLoginRequestDTO.getEmail());
 
+        userDetailService.validationUser(authUserEntity);
+
         authService.credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
 
-        TokensDTO token = authService.getToken(authUserEntity);
+        LoginSuccessDTO loginSuccessDTO = customConverter.authUserEntityTologinSuccessDTO(authService, authUserEntity);
 
-        return token;
+        return loginSuccessDTO;
     }
 
     @Override
@@ -66,10 +71,17 @@ public class UserServiceImpl implements UserService {
         Long userId = userDetailService.create(authUserEntity, role);
 
         // API 요청 로직
-        UserCreateRequestDTO userCreateRequestDTO = customConverter.fullUserDTOToUserDTOConvert(fullUserCreateRequestDTO, userId);
+        UserCreateRequestDTO userCreateRequestDTO = customConverter.fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId);
         apiClient.createUserApi(userCreateRequestDTO);
 
         return userId;
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
+
+        userDetailService.delete(authUserEntity);
     }
 
     @Override
@@ -87,6 +99,6 @@ public class UserServiceImpl implements UserService {
 
         // 추가적으로 ResponseDTO에 담을 필요한 정보가 추가 될 수 있음.
 
-        return customConverter.TokensDTOToNewTokensResponseDTO(newTokens);
+        return customConverter.tokensDTOToNewTokensResponseDTO(newTokens);
     }
 }

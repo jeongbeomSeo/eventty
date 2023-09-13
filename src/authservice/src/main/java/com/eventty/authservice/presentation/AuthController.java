@@ -1,11 +1,14 @@
 package com.eventty.authservice.presentation;
 
+import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
 import com.eventty.authservice.infrastructure.annotation.Permission;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
+import com.eventty.authservice.infrastructure.utils.SessionCreator;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,29 +74,45 @@ public class AuthController {
      * ResponseEntity만 사용하여 응답의 명시성을 높이는 방향으로 진행했습니다.
      */
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO,
+                                                                      HttpServletRequest request) {
 
         // JWT & Refresh Token
-        TokensDTO tokensDTO = userService.login(userLoginRequestDTO);
-        ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(tokensDTO.getAccessToken());
-        ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(tokensDTO.getRefreshToken());
+        LoginSuccessDTO loginSuccessDTO = userService.login(userLoginRequestDTO);
 
+        ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(
+                loginSuccessDTO.getTokensDTO().getAccessToken());
+
+        ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(
+                loginSuccessDTO.getTokensDTO().getRefreshToken());
+
+        SessionCreator.createSession(request, loginSuccessDTO.getLoginResponseDTO());
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(null);
+                .body(SuccessResponseDTO.of(loginSuccessDTO.getLoginResponseDTO()));
     }
 
     /**
      * 회원 탈퇴(Soft Delete)
      */
-    @DeleteMapping("/me")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication,
-                                       HttpServletRequest request) {
+    @DeleteMapping("/secret/me")
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal Authentication authentication, HttpServletResponse response) {
 
-        return null;
+        Long userId = (Long)authentication.getPrincipal();
+        userService.deleteUser(userId);
+
+        Cookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
+        Cookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCoolie();
+
+        response.addCookie(deleteAccessToken);
+        response.addCookie(deleteRefreshToken);
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
+                .body(null);
     }
 
     /**

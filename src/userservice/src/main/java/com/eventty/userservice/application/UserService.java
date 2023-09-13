@@ -5,6 +5,7 @@ import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
 import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.domain.UserEntity;
+import com.eventty.userservice.domain.exception.DuplicateUserIdException;
 import com.eventty.userservice.domain.exception.UserInfoNotFoundException;
 import com.eventty.userservice.domain.UserJPARepository;
 import jakarta.persistence.EntityManager;
@@ -25,6 +26,7 @@ public class UserService {
 
     @Transactional
     public UserEntity createUser(UserCreateRequestDTO userCreateRequestDTO){
+        duplicateUserExceptionCheck(userCreateRequestDTO);
         return userJPARepository.save(userCreateRequestDTO.toEntity());
     }
 
@@ -39,7 +41,21 @@ public class UserService {
         return userJPARepository.save(userUpdateDTO.toEntity(userUpdateRequestDTO));
     }
 
+    private void duplicateUserExceptionCheck(UserCreateRequestDTO userCreateRequestDTO){
+        Optional.ofNullable(
+                em.find(UserEntity.class, userCreateRequestDTO.getUserId())
+        ).ifPresent(
+                entity -> {
+                    throw new DuplicateUserIdException(entity);
+                }
+        );
+    }
+
     private UserEntity findUserByEMAndDB(Long id){
-        return Optional.ofNullable(em.find(UserEntity.class, id)).orElseThrow(() -> UserInfoNotFoundException.EXCEPTION);
+        return Optional.ofNullable(
+                em.find(UserEntity.class, id)
+        ).orElseThrow(
+                () -> new UserInfoNotFoundException(id)
+        );
     }
 }
