@@ -1,7 +1,7 @@
 function Test() {
+
     return (
         <>
-            test
         </>
     )
 }

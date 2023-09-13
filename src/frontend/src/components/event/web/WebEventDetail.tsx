@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
 import {
     Avatar,
@@ -20,101 +20,93 @@ import {userState} from "../../../states/userState";
 import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
-import AlertModal from "../../common/AlertModal";
+import TicketBtn from "../TicketBtn";
+import {useModal} from "../../../util/hook/useModal";
 
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
     const {pathname} = useLocation();
-
+    const {loginAlertModal} = useModal();
     const isLoggedIn = CheckLogin();
-
-    const DATA = useLoaderData() as IEventDetail;
-    const EVENT_DETAIL = DATA.eventDetailResponseDTO;
-    const EVENT_INFO = DATA.eventResponseDTO;
-
-    const [modalOpened, setModalOpened] = useState(false);
     const {classes} = customStyle();
 
-    const handleModalOpened = () => {
-        setModalOpened(prev => !prev);
-    }
+    const DATA = useLoaderData() as IEventDetail;
+
+    const eventStartAt = new Date(DATA.eventStartAt);
+    const eventEndtAt = new Date(DATA.eventEndAt);
 
     const onClickTicket = () => {
         if (isLoggedIn) {
             navigate("ticket", {state: pathname});
         } else {
-            handleModalOpened();
+            loginAlertModal();
         }
     }
 
     return (
-        <>
-            <Modal opened={modalOpened}
-                   onClose={handleModalOpened}
-                   withCloseButton={false}
-                   centered
-                   padding={"4rem"}
-                   style={{textAlign: "center"}}>
-                <Flex align={"center"} direction={"column"} gap={"1rem"} >
-                    <Text align={"center"}>로그인 후 이용해주세요</Text>
-                    <Button onClick={() => navigate("/login", {state: pathname})}
-                            className={classes["btn-primary"]}>확인</Button>
-                </Flex>
-            </Modal>
-
-            <Container>
-                <Grid style={{marginTop: "5vh"}} gutter={"xl"}>
-                    <Grid.Col span={8}>
-                        <Image src={EVENT_INFO.image}
-                               height={"400"}
-                               withPlaceholder
-                        />
-                    </Grid.Col>
-                    <Grid.Col span={"auto"}>
+        <Container>
+            <Grid style={{marginTop: "5vh"}} gutter={"xl"}>
+                <Grid.Col span={8}>
+                    <Image src={DATA.image}
+                           height={"400"}
+                           withPlaceholder
+                    />
+                </Grid.Col>
+                <Grid.Col span={"auto"}>
+                    <Stack justify={"space-between"} style={{height: "100%"}}>
                         <Stack>
-                            <Title>{EVENT_INFO.title}</Title>
-                            <div>{EVENT_INFO.location}</div>
-                            {userStateValue.isHost ?
-                                <Button className={`${classes["btn-primary"]} disable`}
-                                        style={{height: "2.5rem"}}>
-                                    예약 불가
-                                </Button> :
-                                <Button className={classes["btn-primary"]}
-                                        style={{height: "2.5rem"}}
-                                        onClick={onClickTicket}>
-                                    예약
-                                </Button>
-                            }
+                            <Text fz={"1rem"} color={"var(--primary)"}>{DATA.categoryName}</Text>
+                            <Title order={2}>{DATA.title}</Title>
+                            <Title order={4}>
+                                {`${eventStartAt.getMonth() + 1}월 ${eventStartAt.getDate()}일`}
+                                {((eventStartAt.getMonth() === eventEndtAt.getMonth()) && (eventStartAt.getDate() === eventEndtAt.getDate())) ?
+                                    ` ${eventStartAt.getHours()}시 ~ ${eventEndtAt.getHours()}시` :
+                                    ` ~ ${eventEndtAt.getMonth() + 1}월 ${eventEndtAt.getDate()}일`
+                                }
+                            </Title>
+                            <Text>{DATA.location}</Text>
                         </Stack>
-                    </Grid.Col>
-                </Grid>
+                        {userStateValue.isHost ?
+                            <Button className={`${classes["btn-primary"]} disable`}
+                                    style={{height: "2.5rem"}}>
+                                예약 불가
+                            </Button> :
+                            <Button className={classes["btn-primary"]}
+                                    style={{height: "2.5rem"}}
+                                    onClick={onClickTicket}>
+                                예약
+                            </Button>
+                        }
+                    </Stack>
+                </Grid.Col>
+            </Grid>
 
-                <Divider my={"3rem"}/>
+            <Divider my={"3rem"}/>
 
-                <Grid gutter={"xl"}>
-                    <Grid.Col span={8}>
-                        {EVENT_DETAIL.content}
-                    </Grid.Col>
-                    <Grid.Col span={"auto"}>
-                        <Stack>
-                            <Paper p={"md"} withBorder>
-                                <Group noWrap>
-                                    <Avatar radius={"xl"}/>
-                                    <div>
-                                        {EVENT_INFO.hostId}
-                                    </div>
-                                </Group>
-                                <Group>
-                                    content
-                                </Group>
-                            </Paper>
-                            <WebTicketInfo/>
-                        </Stack>
-                    </Grid.Col>
-                </Grid>
-            </Container>
-        </>
+            <Grid gutter={"xl"}>
+                <Grid.Col span={8}>
+                    {DATA.content}
+                </Grid.Col>
+                <Grid.Col span={"auto"}>
+                    <Stack spacing={"3rem"}>
+                        <Paper p={"md"} withBorder>
+                            <Group noWrap>
+                                <Avatar radius={"xl"}/>
+                                <div>
+                                    {DATA.userId}
+                                </div>
+                            </Group>
+                            <Group>
+                                content
+                            </Group>
+                        </Paper>
+
+                        <WebTicketInfo tickets={DATA.tickets} onClick={onClickTicket}/>
+                    </Stack>
+                </Grid.Col>
+            </Grid>
+        </Container>
     );
 }
 

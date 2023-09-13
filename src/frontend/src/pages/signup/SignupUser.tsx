@@ -3,7 +3,7 @@ import { cardTitleState } from '../../states/cardTitleState';
 import { useEffect } from 'react';
 import SignupForm from '../../components/signup/SignupForm';
 
-function SignupMember() {
+function SignupUser() {
     const setCardTitleState = useSetRecoilState(cardTitleState);
 
     useEffect(() => {
@@ -15,4 +15,4 @@ function SignupMember() {
     );
 }
 
-export default SignupMember; 
+export default SignupUser;

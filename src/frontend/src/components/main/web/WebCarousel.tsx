@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {Container, Paper, Title} from "@mantine/core";
+import {Container, Title} from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import {Carousel} from "@mantine/carousel";
 
@@ -17,29 +17,32 @@ function WebCarousel() {
     const autoPlay = useRef(Autoplay({delay: CAROUSEL_DELAY}));
 
     const items = CAROUSEL_ITEMS.map((item) => (
-        <Carousel.Slide key={item.value}>
-            <Paper
-                p={"xl"}
-                radius={"md"}
-                style={{backgroundColor: item.color, height: "100%"}}>
+        <Carousel.Slide key={item.value} style={{backgroundColor: item.color}}>
+            <Container style={{height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <Title>{item.value}</Title>
-            </Paper>
+            </Container>
         </Carousel.Slide>
     ));
 
     return (
-        <Carousel slideSize={"80%"}
+        <Carousel slideSize={"100%"}
                   height={CAROUSEL_HEIGHT}
-                  slidesToScroll={1}
-                  slideGap={"1rem"}
-                  controlSize={30}
-                  // controlsOffset={"xl"}
-                  align={"center"}
+                  sx={{flex: 1}}
                   draggable
                   withControls
+                  withIndicators
                   loop
                   plugins={[autoPlay.current]}
-                  style={{marginTop: "3vh"}}
+                  styles={{
+                      indicator: {
+                          width: "0.5rem",
+                          height: "0.5rem",
+                          transition: "width 250ms ease",
+                          "&[data-active]": {
+                              width: "2.5rem",
+                          },
+                      },
+                  }}
         >
             {items}
         </Carousel>

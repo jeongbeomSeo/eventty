@@ -1,12 +1,11 @@
 export interface ISignup {
     email: string;
     password: string;
-    passwordConfirm: string;
+    passwordConfirm?: string;
     name: string;
     phone: string;
-    nickname: string;
-    birth: Date;
-    address: string;
+    birth?: Date;
+    address?: string;
 }
 
 export interface ILogin {
@@ -15,10 +14,11 @@ export interface ILogin {
 }
 
 export interface IUser {
-    email: string;
-    password: string;
+    userId: number;
     name: string;
-    isHost: boolean;
+    address: string;
+    birth: Date;
+    phone: string;
 }
 
 export interface IMyInfo {

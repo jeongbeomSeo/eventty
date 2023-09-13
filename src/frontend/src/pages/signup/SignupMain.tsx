@@ -17,11 +17,11 @@ function SignupMain() {
 
     return (
         <Stack>
-            <Button className={classes["btn-primary"]} component={Link} to={"member"}>
+            <Button style={{height:"2.6rem"}} className={classes["btn-primary"]} component={Link} to={"user"}>
                 개인 회원가입
             </Button>
-            <Button className={classes["btn-gray-outline"]} component={Link} to={"host"}>
-                주최자 회원가입
+            <Button style={{height:"2.6rem"}} className={classes["btn-gray-outline"]} component={Link} to={"host"}>
+                <span style={{color:"var(--primary)"}}>주최자&nbsp;</span> 회원가입
             </Button>
 
             <Divider my={"xs"} labelPosition={"center"} label={`또는 \n SNS 가입하기`}

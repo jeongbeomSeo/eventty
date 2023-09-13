@@ -1,8 +1,8 @@
 import React from "react";
-import {Avatar, Button, Grid, Group, Menu, UnstyledButton} from "@mantine/core";
+import {Avatar, Button, Divider, Grid, Group, Indicator, Menu, UnstyledButton} from "@mantine/core";
 import {useRecoilValue} from "recoil";
 import {userState} from "../../../../states/userState";
-import {IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
+import {IconBell, IconHome, IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import customStyles from "../../../../styles/customStyle";
 
@@ -18,27 +18,30 @@ function WebUserInfoBtn() {
         <Group>
             {userStateValue.isHost &&
                 <Button component={Link}
-                        to={"/"}
+                        to={"/write/event"}
                         className={classes["btn-primary-outline"]}
                         style={{padding: "0 2rem", marginRight: "1rem"}}>
                     주최하기
                 </Button>
             }
-            <Menu width={"20vw"} shadow={"sm"} position={"top-end"}>
+            <Menu width={"12rem"} shadow={"sm"} position={"top-end"}>
                 <Menu.Target>
-                    <UnstyledButton>
-                        <Avatar src={""} radius={"xl"}/>
-                    </UnstyledButton>
+                    <Indicator color={"red"} offset={5} inline withBorder disabled={false}>
+                        <Avatar src={""} radius={"xl"} style={{cursor:"pointer"}}/>
+                    </Indicator>
                 </Menu.Target>
                 <Menu.Dropdown>
                     <Menu.Item style={{pointerEvents: "none"}}>
                         <Group>
                             <Avatar src={""} radius={"xl"}/>
-                            {userInfo.nickname}
+                            {/*{userInfo.name}*/}
                         </Group>
                     </Menu.Item>
-                    <Menu.Label>내 프로필</Menu.Label>
-                    <Menu.Item icon={<IconUser/>}>마이페이지</Menu.Item>
+                    <Divider/>
+
+                    <Menu.Item icon={<IconHome/>} component={Link} to={"/"}>홈</Menu.Item>
+                    <Menu.Item icon={<IconBell/>}>알림</Menu.Item>
+                    <Menu.Item icon={<IconUser/>} component={Link} to={"/users/profile"}>마이페이지</Menu.Item>
                     <Menu.Item icon={<IconReceipt/>}>예약 내역</Menu.Item>
                     <Menu.Item icon={<IconSettings/>}>설정</Menu.Item>
 

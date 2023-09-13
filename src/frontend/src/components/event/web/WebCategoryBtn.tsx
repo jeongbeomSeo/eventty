@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Flex, Group, SimpleGrid, Stack, Text, UnstyledButton, useMantineTheme} from "@mantine/core";
 import {Link} from "react-router-dom";
-import customStyle from "../../styles/customStyle";
+import customStyle from "../../../styles/customStyle";
 import {
     IconBallBaseball, IconBook,
     IconCategoryFilled, IconCode,
@@ -10,7 +10,6 @@ import {
     IconPalette, IconPiano, IconPresentation,
     IconTent
 } from "@tabler/icons-react";
-import {useMediaQuery} from "react-responsive";
 
 const ICON_SIZE = "40px"
 
@@ -27,12 +26,15 @@ const CATEGORY_LIST = [
     {category: "TOPIC", link: "", icon: <IconPresentation size={ICON_SIZE}/>},
 ]
 
-function CategoryBtn() {
+function WebCategoryBtn() {
     const {classes} = customStyle();
 
     const items = CATEGORY_LIST.map((item) => (
 
-        <UnstyledButton component={Link} to={item.link} key={item.category} style={{textAlign: "center"}}>
+        <UnstyledButton component={Link}
+                        to={item.link}
+                        key={item.category}
+                        style={{textAlign: "center"}}>
             {item.icon}
             <Text fz={"xs"}>{item.category}</Text>
         </UnstyledButton>
@@ -50,4 +52,4 @@ function CategoryBtn() {
     );
 }
 
-export default CategoryBtn;
+export default WebCategoryBtn;

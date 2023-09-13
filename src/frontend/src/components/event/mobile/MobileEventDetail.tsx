@@ -1,7 +1,13 @@
 import React from "react";
-import {Avatar, Container, Divider, Group, Image, Paper, Stack, Title} from "@mantine/core";
+import {Avatar, Container, Divider, Group, Image, Paper, Stack, Text, Title} from "@mantine/core";
 import {IEventDetail} from "../../../types/IEvent";
-import {useLoaderData} from "react-router-dom";
+import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
+import EventDetailNavBar from "../../display/mobile/navbar/EventDetailNavBar";
+import MobileTicketInfo from "./MobileTicketInfo";
+import {useRecoilValue} from "recoil";
+import {eventTicketDrawerState} from "../../../states/eventTicketDrawerState";
+import {CheckLogin} from "../../../util/CheckLogin";
+import {useModal} from "../../../util/hook/useModal";
 
 function HostInfo({hostId}: {hostId: number}) {
     return(
@@ -20,24 +26,31 @@ function HostInfo({hostId}: {hostId: number}) {
 }
 
 function MobileEventDetail() {
+    const eventTicketDrawerValue = useRecoilValue(eventTicketDrawerState);
     const DATA = useLoaderData() as IEventDetail;
-    const EVENT_DETAIL = DATA.eventDetailResponseDTO;
-    const EVENT_INFO = DATA.eventResponseDTO;
+
+    const eventStartAt = new Date(DATA.eventStartAt);
+    const eventEndtAt = new Date(DATA.eventEndAt);
 
     return (
         <>
-            <Image src={EVENT_INFO.image}
+            <Image src={DATA.image}
                    height={"30vh"}
                    withPlaceholder/>
             <Container>
                 <Stack style={{marginTop: "5vh"}}>
-                    <Title>{EVENT_INFO.title}</Title>
-                    <div>{EVENT_INFO.location}</div>
+                    <Text fz={"1rem"} color={"var(--primary)"}>{DATA.categoryName}</Text>
+                    <Title>{DATA.title}</Title>
+                    <Title order={4}>{`${eventStartAt.getMonth()+1}월 ${eventStartAt.getDate()}일`}
+                        {DATA.eventStartAt !== DATA.eventEndAt &&
+                        `~ ${eventEndtAt.getMonth()+1}월 ${eventEndtAt.getDate()}일`}
+                    </Title>
                     <Divider/>
-                    <HostInfo hostId={EVENT_INFO.hostId}/>
-                    <div>{EVENT_DETAIL.content}</div>
+                    <HostInfo hostId={DATA.userId}/>
+                    <div>{DATA.content}</div>
                 </Stack>
             </Container>
+            <MobileTicketInfo open={eventTicketDrawerValue} tickets={DATA.tickets}/>
         </>
     );
 }

@@ -28,7 +28,8 @@ function WebEventList() {
                         </Group>
                         <Text fz={"sm"} fw={700} color={"var(--primary)"}>
                             {`${startAt.getMonth()+1}월 ${startAt.getDate()}일`}
-                            {startAt !== endtAt && ` ~ ${endtAt.getMonth()+1}월 ${endtAt.getDate()}일`}
+                            {!((startAt.getMonth() === endtAt.getMonth()) && (startAt.getDate() === endtAt.getDate())) &&
+                                ` ~ ${endtAt.getMonth()+1}월 ${endtAt.getDate()}일`}
                         </Text>
                         <Title order={5}>{item.title}</Title>
                         <Text fz={"sm"} c={"gray"}>{item.location}</Text>

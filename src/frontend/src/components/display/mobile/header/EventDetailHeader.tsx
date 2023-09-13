@@ -16,14 +16,17 @@ function EventDetailHeader() {
 
     return (
         <Group position={"apart"} style={{width:"100%"}}>
-            <UnstyledButton onClick={() => navigate(state)}>
+            <UnstyledButton className={classes["mobile-nav-link"]}
+                            onClick={() => navigate(state)}>
                 <IconChevronLeft size={"3.5vh"}/>
             </UnstyledButton>
             <Group>
-                <UnstyledButton onClick={() => setSearchDrawer(prev => !prev)}>
+                <UnstyledButton className={classes["mobile-nav-link"]}
+                                onClick={() => setSearchDrawer(prev => !prev)}>
                     <IconSearch size={"3.5vh"}/>
                 </UnstyledButton>
-                <UnstyledButton component={Link} to={"/"}>
+                <UnstyledButton className={classes["mobile-nav-link"]}
+                                component={Link} to={"/"}>
                     <IconHome size={"3.5vh"}/>
                 </UnstyledButton>
             </Group>

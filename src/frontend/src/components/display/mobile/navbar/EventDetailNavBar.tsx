@@ -3,9 +3,11 @@ import {Button, Container, Group, UnstyledButton} from "@mantine/core";
 import {IconBell, IconHeart,} from "@tabler/icons-react";
 import customStyle from "../../../../styles/customStyle";
 import MobileTicketInfo from "../../../event/mobile/MobileTicketInfo";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {eventTicketDrawerState} from "../../../../states/eventTicketDrawerState";
 
 function EventDetailNavBar() {
-    const [openTicketInfo, setOpenTicketInfo] = useState(false);
+    const setEventTicketDrawerValue = useSetRecoilState(eventTicketDrawerState);
     const {classes} = customStyle();
 
     return (
@@ -21,9 +23,8 @@ function EventDetailNavBar() {
                     <IconBell/>
                     info
                 </UnstyledButton>
-                <MobileTicketInfo open={openTicketInfo}/>
                 <Button className={classes["btn-primary"]} style={{width: "100%", height: "80%"}}
-                        onClick={() => setOpenTicketInfo(prev => !prev)}>예약하기</Button>
+                        onClick={() => setEventTicketDrawerValue(prev => !prev)}>예약하기</Button>
             </Group>
         </Container>
     );

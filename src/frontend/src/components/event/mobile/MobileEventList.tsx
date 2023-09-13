@@ -28,8 +28,7 @@ function MobileEventList() {
         return (
             <Card padding={"0"} radius={"md"} key={item.id}
                   onClick={() => navigate(`${item.id}`, {state: pathname})}>
-                <Group noWrap style={{alignItems: "flex-start"}}
-                >
+                <Group noWrap style={{alignItems: "flex-start"}}>
                     <Image
                         src={item.image}
                         height={110}
@@ -43,9 +42,10 @@ function MobileEventList() {
                             <Badge radius={"sm"} color={"lime"}>인기</Badge>
                             <Badge radius={"sm"} color={"indigo"}>신규</Badge>
                         </Group>
-                        <Text fz={"xs"} fw={700} color={"var(--primary)"}>
-                            {`${startAt.getMonth() + 1}월 ${startAt.getDate()}일`}
-                            {startAt !== endtAt && ` ~ ${endtAt.getMonth() + 1}월 ${endtAt.getDate()}일`}
+                        <Text fz={"0.7rem"} fw={700} color={"var(--primary)"}>
+                            {`${startAt.getMonth()+1}월 ${startAt.getDate()}일`}
+                            {!(startAt.getMonth() === endtAt.getMonth()) && (startAt.getDate() === endtAt.getDate()) &&
+                                ` ~ ${endtAt.getMonth()+1}월 ${endtAt.getDate()}일`}
                         </Text>
                         <Title order={6}>{item.title}</Title>
                         <Text fz={"xs"} c={"gray"}>{item.location}</Text>
@@ -58,8 +58,7 @@ function MobileEventList() {
     return (
         <SimpleGrid
             cols={1}
-            verticalSpacing={"md"}
-        >
+            verticalSpacing={"md"}>
             {items}
         </SimpleGrid>
     );

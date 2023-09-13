@@ -2,14 +2,23 @@ import React from "react";
 import {Badge, Divider, Group, Paper, Stack, Text, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import TicketBtn from "../TicketBtn";
+import {useLoaderData} from "react-router-dom";
+import {IEventDetail, IEventTicket, IEventTicketDetail} from "../../../types/IEvent";
 
-function WebTicketInfo() {
+interface ITickets {
+    tickets: IEventTicket[];
+    onClick: () => void;
+}
+
+function WebTicketInfo({tickets, onClick}:ITickets) {
+    const items = tickets.map(item => (
+        <TicketBtn name={item.name} price={item.price} quantity={item.quantity} onClick={onClick}/>
+    ));
+
     return (
         <Stack>
             <Title order={4}>티켓 선택</Title>
-            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
-            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
-            <TicketBtn title={"제목"} content={"내용"} price={99999999} left={1234}/>
+            {items}
         </Stack>
     );
 }

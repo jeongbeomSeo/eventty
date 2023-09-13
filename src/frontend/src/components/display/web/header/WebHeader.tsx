@@ -1,4 +1,4 @@
-import {Container, Group, Header, Menu, UnstyledButton,} from "@mantine/core";
+import {ActionIcon, Box, Button, Container, Group, Header, Menu, TextInput, UnstyledButton,} from "@mantine/core";
 import {Link} from "react-router-dom";
 import WebLoginBtn from "./WebLoginBtn";
 import Logo from "../../../common/Logo";
@@ -7,12 +7,15 @@ import React from "react";
 import {useRecoilValue} from "recoil";
 import {loginState} from "../../../../states/loginState";
 import WebUserInfoBtn from "./WebUserInfoBtn";
+import {IconSearch} from "@tabler/icons-react";
+import {useModal} from "../../../../util/hook/useModal";
 
 const HEADER_HEIGHT = "65px";
 
 function WebHeader() {
     const isLoggedIn = useRecoilValue(loginState);
     const {classes} = customStyle();
+    const {searchModal} = useModal();
 
     return (
         <Header height={HEADER_HEIGHT} className={classes["header"]}>
@@ -38,7 +41,14 @@ function WebHeader() {
                         </Menu>
                     </Group>
                 </Group>
-                {isLoggedIn ? <WebUserInfoBtn/> : <WebLoginBtn/>}
+                <Group>
+                    <Button onClick={() => searchModal()}
+                            style={{padding: "0 0.4rem"}}
+                            className={classes["btn-gray-outline"]}>
+                        <IconSearch/>
+                    </Button>
+                    {isLoggedIn ? <WebUserInfoBtn/> : <WebLoginBtn/>}
+                </Group>
             </Container>
         </Header>
     )

@@ -1,17 +1,29 @@
-import {useRecoilState, useRecoilValue, useResetRecoilState} from 'recoil';
+import {useResetRecoilState, useSetRecoilState} from 'recoil';
 import { loginState } from '../states/loginState';
 import { useEffect } from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {Navigate, useNavigate} from 'react-router-dom';
 import {userState} from "../states/userState";
+import {postLogout} from "../service/user/fetchUser";
+import {MessageAlert} from "../util/MessageAlert";
 
 function Logout() {
-    const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+    const setIsLoggedIn = useSetRecoilState(loginState);
     const resetUserState = useResetRecoilState(userState);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        setIsLoggedIn(false);
-        resetUserState();
-    }, [])
+        postLogout()
+            .then(res => {
+                if (res === 200){
+                    setIsLoggedIn(false);
+                    resetUserState();
+                    sessionStorage.clear();
+                    MessageAlert("success", "로그아웃", null);
+                }else{
+                    MessageAlert("error", "로그아웃 실패", null);
+                }
+            }).finally(() => navigate("/"));
+    })
 
     return (
         <></>

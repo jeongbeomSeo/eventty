@@ -1,104 +1,98 @@
-import {Button, Grid, Stack, TextInput} from "@mantine/core";
+import {Button, Checkbox, Grid, Stack, TextInput} from "@mantine/core";
 import {useNavigate} from "react-router-dom";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import {userState} from "../../states/userState";
 import {Controller, useForm} from "react-hook-form";
 import customStyles from "../../styles/customStyle";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useMemo, useState} from "react";
 import {ISignup} from "../../types/IUser";
-import {DatePickerInput} from "@mantine/dates";
 import "dayjs/locale/ko";
+import {postSignupEmailValid, postSignupHost, postSignupUser} from "../../service/user/fetchUser";
+import BirthdayPicker from "../common/BirthdayPicker";
+import {useModal} from "../../util/hook/useModal";
+import {loadingState} from "../../states/loadingState";
+import {MessageAlert} from "../../util/MessageAlert";
+import PhoneNumberInput from "../common/PhoneNumberInput";
 
-function SignupForm(props: { isHost: boolean }) {
+function SignupForm({isHost}: { isHost: boolean }) {
+    const {classes} = customStyles();
     const navigate = useNavigate();
-    const [userStateValue, setUserStateValue] = useRecoilState(userState);
+    const {messageModal} = useModal();
+    const [loadingStateValue, setLoadingStateValue] = useRecoilState(loadingState);
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
     const {
-        register,
-        handleSubmit,
-        getValues,
-        setValue,
-        control,
-        watch,
-        formState: {errors}
+        register, handleSubmit, getValues, setValue, control, watch, setFocus, formState: {errors}
     } = useForm<ISignup>({mode: "onChange"});
 
     const emailInputValue = watch("email");
-    const nicknameInputValue = watch("nickname");
     const [isEmailValid, setIsEmailValid] = useState(false);
-    const [isNicknameValid, setIsNicknameValid] = useState(false);
+
+    const [termOfServiceCheck, setTermOfServiceCheck] = useState(false);
 
     const onSubmit = (data: ISignup) => {
-        if (isEmailValid && isNicknameValid) {
-            setUserStateValue({
-                ...data,
-                ...props
-            });
-            navigate("/");
+        delete data.passwordConfirm;
+
+        if (!isEmailValid) {
+            messageModal("이메일 중복 확인 해주세요");
+            setFocus("email");
+            return;
+        }
+
+        setLoadingStateValue(true);
+        if (isHost) {
+            postSignupHost(data)
+                .then(res => {
+                    if (res.success) {
+                        MessageAlert("success", "회원 가입 완료", "로그인 해주세요");
+                        navigate("/");
+                    } else {
+                        MessageAlert("error", "회원 가입 실패", "다시 시도해주세요");
+                    }
+                })
+                .finally(() => setLoadingStateValue(false));
         } else {
-            !isEmailValid ?
-                alert("이메일 중복 확인해주세요") :
-                alert("닉네임 중복 확인해주세요");
+            postSignupUser(data)
+                .then(res => {
+                    if (res.success) {
+                        MessageAlert("success", "회원 가입 완료", "로그인 해주세요");
+                        navigate("/");
+                    } else {
+                        MessageAlert("error", "회원 가입 실패", "다시 시도해주세요");
+                    }
+                })
+                .finally(() => setLoadingStateValue(false));
         }
     };
 
     const onEmailValid = () => {
         if (typeof emailInputValue !== "undefined" && emailInputValue !== "") {
             if (errors.email) {
-                alert("사용 불가능");
+                messageModal("사용 할 수 없는 형식입니다");
                 setIsEmailValid(false);
             } else {
-                if (userStateValue.email !== emailInputValue) {
-                    alert("사용 가능");
-                    setIsEmailValid(true);
-                } else {
-                    alert("중복된 이메일");
-                    setIsEmailValid(false);
-                }
+                postSignupEmailValid(emailInputValue)
+                    .then(res => {
+                        if (res.success) {
+                            messageModal("사용 가능합니다");
+                            setIsEmailValid(true);
+                        } else {
+                            messageModal("이미 사용 중입니다");
+                            setIsEmailValid(false);
+                        }
+                    })
             }
         } else {
-            alert("이메일을 입력해주세요")
-            setIsEmailValid(false);
+            messageModal("이메일을 입력해주세요");
         }
     }
-
-    const onNicknameValid = () => {
-        if (typeof nicknameInputValue !== "undefined" && nicknameInputValue !== "") {
-            if (errors.nickname) {
-                alert("사용 불가능");
-                setIsNicknameValid(false);
-            } else {
-                if (userStateValue.nickname !== nicknameInputValue) {
-                    alert("사용 가능");
-                    setIsNicknameValid(true);
-                } else {
-                    alert("중복된 닉네임");
-                    setIsNicknameValid(false);
-                }
-            }
-        } else {
-            alert("닉네임을 입력해주세요")
-            setIsNicknameValid(false);
-        }
-    }
-
-    const handlePhoneInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const {value} = e.target;
-        const formattedValue = value
-            .replace(/[^0-9]/g, '')
-            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
-            .replace(/(\-{1,2})$/g, "");
-
-        setValue("phone", formattedValue);
-    }
-
-    const {classes} = customStyles();
+// 이메일 입력 값 변경시, 중복 확인 초기화
+    useMemo(() => setIsEmailValid(false), [emailInputValue]);
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form>
             <Stack>
                 <Grid>
                     <Grid.Col span={"auto"}>
@@ -111,6 +105,7 @@ function SignupForm(props: { isHost: boolean }) {
                         })}
                                    placeholder="이메일"
                                    label="이메일"
+                                   withAsterisk
                                    error={errors.email && errors.email?.message}
                                    className={`${classes["input"]} ${errors.email && "error"}`}
                         />
@@ -135,8 +130,9 @@ function SignupForm(props: { isHost: boolean }) {
                     type="password"
                     placeholder="비밀번호"
                     label="비밀번호"
+                    withAsterisk
                     error={errors.password && errors.password?.message}
-                    className={`${classes["input"]} ${errors.email && "error"}`}/>
+                    className={`${classes["input"]} ${errors.password && "error"}`}/>
                 <TextInput {...register("passwordConfirm", {
                     required: "비밀번호를 다시 입력해주세요",
                     validate: {
@@ -150,7 +146,7 @@ function SignupForm(props: { isHost: boolean }) {
                            type="password"
                            placeholder="비밀번호 확인"
                            error={errors.passwordConfirm && errors.passwordConfirm?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}/>
+                           className={`${classes["input"]} ${errors.passwordConfirm && "error"}`}/>
                 <TextInput {...register("name", {
                     required: "이름을 입력해주세요",
                     pattern: {
@@ -160,9 +156,10 @@ function SignupForm(props: { isHost: boolean }) {
                 })}
                            placeholder="이름"
                            label="이름"
+                           withAsterisk
                            error={errors.name && errors.name?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}/>
-                <TextInput {...register("phone", {
+                           className={`${classes["input"]} ${errors.name && "error"}`}/>
+                {/*<TextInput {...register("phone", {
                     required: "휴대폰 번호를 입력해주세요",
                     pattern: {
                         value: phoneRegEX,
@@ -171,66 +168,52 @@ function SignupForm(props: { isHost: boolean }) {
                 })}
                            placeholder="휴대폰 번호"
                            label="휴대폰 번호"
+                           withAsterisk
                            maxLength={13}
                            error={errors.phone && errors.phone?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}
-                           onInput={handlePhoneInputChange}/>
-                <Grid>
-                    <Grid.Col span={"auto"}>
-                        <TextInput {...register("nickname", {
-                            required: "닉네임을 입력해주세요",
-                            minLength: {
-                                value: 2,
-                                message: "최소 2글자 이상 입력해주세요",
-                            },
-                        })}
-                                   placeholder={"닉네임"}
-                                   label={"닉네임"}
-                                   error={errors.nickname && errors.nickname?.message}
-                                   className={`${classes["input"]} ${errors.email && "error"}`}/>
-                    </Grid.Col>
-                    <Grid.Col span={"content"}>
-                        <Button className={classes["btn-primary"]} style={{marginTop: "24px"}}
-                                onClick={onNicknameValid}>중복확인</Button>
-                    </Grid.Col>
-                </Grid>
+                           className={`${classes["input"]} ${errors.phone && "error"}`}
+                           onInput={handlePhoneInputChange}/>*/}
+                <Controller control={control}
+                            name={"phone"}
+                            rules={{
+                                required: "휴대폰 번호를 입력해주세요",
+                                pattern: {
+                                    value: phoneRegEX,
+                                    message: "휴대폰 번호가 올바르지 않습니다",
+                                },
+                            }}
+                            render={({field: {ref, ...rest}}) => (
+                                <PhoneNumberInput {...rest}
+                                                  inputRef={ref}
+                                                  asterisk={true}
+                                                  error={errors.phone?.message}/>
+                            )}/>
+
                 <Controller control={control}
                             name={"birth"}
-                            rules={{required: "날짜를 선택해주세요"}}
                             render={({field}) => (
-                                <DatePickerInput
-                                    placeholder="생년월일"
-                                    label="생년월일"
-                                    error={errors.birth && errors.birth?.message}
-                                    valueFormat="YYYY-MM-DD"
-                                    onChange={(date) => field.onChange(date)}
-                                    value={field.value}
-                                    firstDayOfWeek={0}
-                                    getDayProps={(date) => {
-                                        if (date.getDay() === 6) {
-                                            return {
-                                                sx: () => ({
-                                                    color: "#3381ff",
-                                                }),
-                                            };
-                                        }
-                                        return {};
-                                    }}
-                                    weekendDays={[0]}
-                                    locale={"ko"}
-                                    className={classes["input-date"]}
-                                />
+                                <BirthdayPicker label={"생년월일"}
+                                                placeholder={"생년월일"}
+                                                value={field.value}
+                                                onChange={field.onChange}/>
                             )}/>
-                <TextInput {...register("address", {
-                    required: "주소를 입력해주세요"
-                })}
+                <TextInput {...register("address")}
                            placeholder="주소"
                            label="주소"
-                           error={errors.address && errors.address?.message}
-                           className={`${classes["input"]} ${errors.email && "error"}`}/>
-                <Button type="submit" className={classes["btn-primary"]}>
-                    회원가입
-                </Button>
+                           className={classes["input"]}/>
+                <Checkbox
+                    label={<><b style={{color: "var(--primary)"}}>[필수]</b> 서비스 이용 약관과 개인정보 취급 방침 및 개인정보 3자 제공 동의</>}
+                    onClick={() => setTermOfServiceCheck(prev => !prev)}
+                    className={`${classes["input-checkbox"]} signup`}/>
+                {termOfServiceCheck ?
+                    <Button onClick={handleSubmit(onSubmit)}
+                            loading={loadingStateValue}
+                            loaderPosition={"center"}
+                            style={{height: "2.6rem"}}
+                            className={classes["btn-primary"]}>회원가입</Button> :
+                    <Button style={{height: "2.6rem"}}
+                            className={`${classes["btn-primary"]} disable`}>회원가입</Button>
+                }
             </Stack>
         </form>
     );

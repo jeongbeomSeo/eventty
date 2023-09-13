@@ -1,34 +1,33 @@
-import React from "react";
-import {Button, Drawer, Flex, Group, Stack, Title} from "@mantine/core";
+import React, {useEffect, useState} from "react";
+import {Button, Container, Drawer, Flex, Grid, Group, Stack, Text, Title, UnstyledButton} from "@mantine/core";
 import {useRecoilState} from "recoil";
 import {searchDrawerState} from "../../../states/searchDrawerState";
-import {IconChevronLeft, IconX} from "@tabler/icons-react";
+import {IconChevronLeft, IconClock, IconX} from "@tabler/icons-react";
 import SearchBox from "../../common/SearchBox";
-import CategoryBtn from "../../event/CategoryBtn";
+import WebCategoryBtn from "../../event/web/WebCategoryBtn";
 import MobileCategoryBtn from "../../event/mobile/MobileCategoryBtn";
 import customStyle from "../../../styles/customStyle";
+import {SearchRecentHistory} from "../../../util/SearchRecentHistory";
+import {Link, useNavigate} from "react-router-dom";
+import SearchKeywordsItem from "../SearchKeywordsItem";
 
 function MobileSearchDrawer() {
     const {classes} = customStyle();
     const [opened, setOpened] = useRecoilState(searchDrawerState);
+    const {keywords, handleAddKeyword, handleDeleteKeyword} = SearchRecentHistory();
+    const [items, setItems] = useState<React.ReactNode[] | null>(null);
+
     const handleOpened = () => {
         setOpened(prev => !prev);
     }
 
-    const LASTEST_HISTORY = [
-        {value: "AAAAAAA"},
-        {value: "BB"},
-        {value: "CCDDDD"},
-        {value: "EEE!2"},
-    ];
+    useEffect(() => {
+        const mappedItems = keywords.map((item: string, idx: number) => (
+            <SearchKeywordsItem key={idx} item={item} onClick={handleAddKeyword} onDelete={handleDeleteKeyword}/>
+        ));
 
-    const items = LASTEST_HISTORY.map((item) => (
-        <Button rightIcon={<IconX/>}
-                radius={"xl"}
-                className={classes["btn-primary-outline"]}>
-            {item.value}
-        </Button>
-    ))
+        setItems(mappedItems);
+    }, [keywords]);
 
     return (
         <Drawer.Root opened={opened}
@@ -41,25 +40,27 @@ function MobileSearchDrawer() {
                 <Drawer.Header>
                     <IconChevronLeft size={"3vh"}
                                      onClick={handleOpened}
-                                     style={{paddingRight: "5vw"}}/>
-                    <SearchBox/>
+                                     style={{paddingRight: "2vh"}}
+                    />
+                    <SearchBox onAddKeyword={handleAddKeyword}/>
                 </Drawer.Header>
                 <Drawer.Body>
-                    <Stack>
-                        <Title order={4}>최근 검색 기록</Title>
-                        <Group>
-                            {items}
-                        </Group>
+                        <Stack spacing={"2rem"} style={{marginTop: "1rem"}}>
+                            <Stack spacing={"2rem"}>
+                                <Title order={4}>최근 검색어</Title>
+                                {items}
+                            </Stack>
 
-                        <Title order={4}>카테고리</Title>
-                        <Flex gap={"7vw"} className={classes["category-scroll"]}>
-                            <MobileCategoryBtn/>
-                        </Flex>
-                    </Stack>
+                            <Title order={4}>카테고리</Title>
+                            <Flex gap={"7vw"} className={classes["category-scroll"]}>
+                                <MobileCategoryBtn/>
+                            </Flex>
+                        </Stack>
                 </Drawer.Body>
             </Drawer.Content>
         </Drawer.Root>
-    );
+    )
+        ;
 }
 
 export default MobileSearchDrawer;

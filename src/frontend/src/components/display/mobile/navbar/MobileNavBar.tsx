@@ -16,22 +16,23 @@ function MobileNavBar() {
 
     const ICON_SIZE = "7vw"
     const MENU_LIST = [
-        {value: "메뉴", link: "", icon: <IconMenu2 size={ICON_SIZE}/>},
-        {value: "행사", link: "/events", icon: <IconConfetti size={ICON_SIZE}/>},
         {value: "홈", link: "/", icon: <IconHome size={ICON_SIZE}/>},
+        {value: "행사", link: "/events", icon: <IconConfetti size={ICON_SIZE}/>},
         {value: "검색", link: "", icon: <IconSearch size={ICON_SIZE}/>},
-        {value: "내정보", link: "/user", icon: <IconUser size={ICON_SIZE}/>},
+        {value: "메뉴", link: "", icon: <IconMenu2 size={ICON_SIZE}/>},
     ];
 
     const items = MENU_LIST.map((item) => (
-            item.link !== "" ?
-            <UnstyledButton component={Link}
+        item.link !== "" ?
+            <UnstyledButton key={item.value}
+                            component={Link}
                             to={item.link}
                             className={classes["mobile-nav-link"]}>
                 {item.icon}
                 <Text fz={"0.7rem"}>{item.value}</Text>
             </UnstyledButton> :
-            <UnstyledButton className={classes["mobile-nav-link"]}
+            <UnstyledButton key={item.value}
+                            className={classes["mobile-nav-link"]}
                             onClick={() => {
                                 item.value === "메뉴" ?
                                     setMenuDrawerValue(true) :
@@ -43,7 +44,7 @@ function MobileNavBar() {
     ));
 
     return (
-        <SimpleGrid cols={5} style={{width:"100%", alignItems:"flex-end", padding: "0 3vw"}}>
+        <SimpleGrid cols={4} style={{width: "100%", alignItems: "flex-end", padding: "0 3vw"}}>
             {items}
         </SimpleGrid>
     );
