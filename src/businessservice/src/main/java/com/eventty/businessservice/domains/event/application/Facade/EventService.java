@@ -37,8 +37,8 @@ public class EventService {
     public List<EventBasicFindAllResponseDTO> findAllEvents() {
         return Optional.ofNullable(eventBasicRepository.selectAllEvents())
                 .map(events -> events.stream()
-                        .map(EventBasicFindAllResponseDTO::fromEntity)
-                        .collect(Collectors.toList()))
+                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .collect(Collectors.toList()))
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
@@ -80,6 +80,19 @@ public class EventService {
                 .map(EventBasicFindAllResponseDTO::fromEntity)
                 .collect(Collectors.toList());
 
+    }
+
+    /**
+     * 행사 검색
+     */
+    @Transactional(readOnly = true)
+    public List<EventBasicFindAllResponseDTO> findEventsBySearch(String keyword){
+        return Optional.ofNullable(eventBasicRepository.selectEventsBySearch(keyword))
+                .filter(events -> !events.isEmpty())
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION)
+                .stream()
+                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
 }
