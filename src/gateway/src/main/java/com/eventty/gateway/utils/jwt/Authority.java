@@ -1,4 +1,4 @@
-package com.eventty.gateway.util.jwt;
+package com.eventty.gateway.utils.jwt;
 
 import lombok.Getter;
 import lombok.Setter;

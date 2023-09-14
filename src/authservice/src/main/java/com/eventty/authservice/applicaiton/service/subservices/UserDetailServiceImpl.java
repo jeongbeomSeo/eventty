@@ -36,6 +36,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     public Long delete(AuthUserEntity authUserEntity) {
         authUserEntity.setDelete(true);
         authUserEntity.setDeleteDate(LocalDateTime.now());
+        userRepository.save(authUserEntity);
 
         return authUserEntity.getId();
     }
@@ -44,7 +45,6 @@ public class UserDetailServiceImpl implements UserDetailService {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
-    @Override
     public AuthUserEntity findAuthUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }

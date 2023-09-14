@@ -33,7 +33,7 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-        log.info("Current Position: Authentication Resolver");
+        log.debug("Current Position: Authentication Resolver");
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 

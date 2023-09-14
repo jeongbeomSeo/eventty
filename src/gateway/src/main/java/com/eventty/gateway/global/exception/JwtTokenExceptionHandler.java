@@ -2,6 +2,7 @@ package com.eventty.gateway.global.exception;
 
 import com.eventty.gateway.global.dto.ErrorResponseDTO;
 import com.eventty.gateway.global.dto.ResponseDTO;
+import com.eventty.gateway.global.exception.utils.DataErrorLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class JwtTokenExceptionHandler implements ErrorWebExceptionHandler {
     private final ObjectMapper objectMapper;
-
+    private final DataErrorLogger dataErrorLogger;
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
 
@@ -33,19 +34,27 @@ public class JwtTokenExceptionHandler implements ErrorWebExceptionHandler {
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         ErrorResponseDTO errorResponseDTO;
         if (ex instanceof JwtException) {
-            log.warn("Error Message: {}", ((JwtException) ex).getErrorCode().getMessage());
+            log.error("Error Message: {}", ((JwtException) ex).getErrorCode().getMessage());
+            dataErrorLogger.logging((JwtException) ex);
+
             response.setStatusCode(HttpStatusCode.valueOf(((JwtException) ex).getErrorCode().getStatus()));
 
             errorResponseDTO = ErrorResponseDTO.of(((JwtException) ex).getErrorCode());
         }
+        else if (ex instanceof JsonProcessingException) {
+            log.error("Error Message: {}", ex.getMessage());
+            response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.BAD_CREDENTIALS.getStatus()));
+
+            errorResponseDTO = ErrorResponseDTO.of(ErrorCode.BAD_CREDENTIALS);
+        }
         else if (ex instanceof IOException){
-            log.warn("Error Message: {}", ErrorCode.INTERNAL_ERROR);
+            log.error("Error Message: {}", ErrorCode.INTERNAL_ERROR);
             response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.INTERNAL_ERROR.getStatus()));
 
             errorResponseDTO = ErrorResponseDTO.of(ErrorCode.INTERNAL_ERROR);
         }
         else {
-            log.warn("Error Meesage: {}", ex.getMessage());
+            log.error("Error Meesage: {}", ex.getMessage());
             response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.FAIL_AUTHENTICATION.getStatus()));
 
             errorResponseDTO = ErrorResponseDTO.of(ErrorCode.FAIL_AUTHENTICATION);
@@ -60,9 +69,5 @@ public class JwtTokenExceptionHandler implements ErrorWebExceptionHandler {
         }
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
         return exchange.getResponse().writeWith(Flux.just(buffer));
-
-/*        byte[] bytes = ResponseDTO.of(errorResponseDTO).toString().getBytes(StandardCharsets.UTF_8);
-        DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
-        return exchange.getResponse().writeWith(Flux.just(buffer));*/
     }
 }

@@ -26,6 +26,7 @@ public class CookieCreator {
     // JWT 쿠키 무효화
     public static ResponseCookie deleteAccessTokenCookie() {
         return ResponseCookie.from(TokenEnum.ACCESS_TOKEN.getName())
+                .path("/")
                 .httpOnly(true)
                 .maxAge(0) // 쿠키의 유효 기간을 0으로 설정하여 즉시 만료시킵니다.
                 .build();

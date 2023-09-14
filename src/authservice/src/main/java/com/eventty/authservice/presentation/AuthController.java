@@ -48,7 +48,7 @@ public class AuthController {
     @PostMapping("/me/{userRole}")
     public ResponseEntity<Void> createUser(@Valid @RequestBody FullUserCreateRequestDTO userCreateRequestDTO,
                                            @PathVariable("userRole") UserRole userRole) {
-        log.info("Current Position: Controller :: 회원가입");
+        log.debug("Current Position: Controller :: 회원가입");
 
 
         userService.createUser(userCreateRequestDTO, userRole);
@@ -63,7 +63,7 @@ public class AuthController {
      */
     @PostMapping("/email")
     public ResponseEntity<Void> isDuplicateEmail(@Valid @RequestBody IsUserDuplicateRequestDTO isUserDuplicateRequestDTO) {
-        log.info("Current Position: Controller :: 이메일 검증");
+        log.debug("Current Position: Controller :: 이메일 검증");
 
         userService.validateEmailNotDuplicated(isUserDuplicateRequestDTO.getEmail());
 
@@ -80,7 +80,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
-        log.info("Current Position: Controller :: 로그인");
+        log.debug("Current Position: Controller :: 로그인");
 
         // JWT & Refresh Token
         LoginSuccessDTO loginSuccessDTO = userService.login(userLoginRequestDTO);
@@ -104,7 +104,7 @@ public class AuthController {
     @DeleteMapping("/me")
     // @Permission(Roles = {UserRole.USER})
     public ResponseEntity<Void> delete(LoginUser loginUser) {
-        log.info("Current Position: Controller :: 회원 탈퇴");
+        log.debug("Current Position: Controller :: 회원 탈퇴");
 
         Long userId = loginUser.getUserId();
         userService.deleteUser(userId);
@@ -124,7 +124,7 @@ public class AuthController {
      */
     @PostMapping("/api/newtokens")
     public ResponseEntity<SuccessResponseDTO<NewTokensResponseDTO>> getNewTokens(@RequestBody GetNewTokensRequestDTO getNewTokensRequestDTO) {
-        log.info("Current Position: Controller :: 새로운 Token 발급");
+        log.debug("Current Position: Controller :: 새로운 Token 발급");
 
         NewTokensResponseDTO newTokensResponseDTO = userService.getNewTokens(getNewTokensRequestDTO);
 

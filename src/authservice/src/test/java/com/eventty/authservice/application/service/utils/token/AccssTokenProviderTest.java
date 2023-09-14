@@ -33,7 +33,7 @@ public class AccssTokenProviderTest {
 
     @Test
     @DisplayName("Access Token 토큰 생성 성공")
-    void generateToken_Success() {
+    public void generateToken_Success() {
         // Given
         Long id = 1L;
         String email = "example1@mm.mm";
