@@ -1,9 +1,9 @@
 import MobileMain from "../components/main/mobile/MobileMain";
 import WebMain from "../components/main/web/WebMain";
-import {CheckMobile} from "../util/CheckMobile";
+import {CheckXsSize} from "../util/CheckMediaQuery";
 
 function Main() {
-    const isMobile = CheckMobile();
+    const isMobile = CheckXsSize();
 
     return (
         <>

@@ -3,6 +3,8 @@ import {Button, TextInput} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {IconSearch} from "@tabler/icons-react";
 import {useForm} from "react-hook-form";
+import {useNavigate} from "react-router-dom";
+import {modals} from "@mantine/modals";
 
 interface ISearch {
     keyword: string;
@@ -10,12 +12,15 @@ interface ISearch {
 
 function SearchBox({onAddKeyword}: { onAddKeyword: (keyword: string) => void }) {
     const {classes} = customStyle();
+    const navigate = useNavigate();
     const {register, handleSubmit, reset} = useForm<ISearch>();
 
     const onSubmit = (data: ISearch) => {
         if (data.keyword !== "") {
             onAddKeyword(data.keyword);
+            modals.closeAll();
             reset();
+            navigate(`/events?search=${data.keyword}`);
         }
     }
 

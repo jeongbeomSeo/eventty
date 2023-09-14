@@ -8,22 +8,13 @@ import {CheckLogin} from "../../../../util/CheckLogin";
 
 function MobileHeader() {
     const {classes} = customStyle();
-    const isLoggedIn = CheckLogin();
 
     return (
-        <Group position={"apart"} style={{width: "100%"}}>
+        <Flex justify={"center"} style={{width: "100%"}}>
             <Link to={"/"}>
                 <Logo fill={"var(--primary)"} height={"3.5vh"}/>
             </Link>
-
-            {isLoggedIn &&
-                <UnstyledButton>
-                    <Indicator color={"red"} offset={3} inline withBorder disabled={false}>
-                        <IconBell size={"1.8rem"} className={classes["mobile-nav-link"]}/>
-                    </Indicator>
-                </UnstyledButton>
-            }
-        </Group>
+        </Flex>
     )
 }
 

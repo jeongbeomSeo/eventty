@@ -5,6 +5,7 @@ import Footer from "../Footer";
 import WebHeader from "./header/WebHeader";
 
 function WebLayout() {
+
     return (
         <>
             <WebHeader/>

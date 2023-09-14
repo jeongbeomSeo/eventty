@@ -6,13 +6,17 @@ import {useLoaderData} from "react-router-dom";
 import {IEventDetail, IEventTicket, IEventTicketDetail} from "../../../types/IEvent";
 
 interface ITickets {
-    tickets: IEventTicket[];
+    tickets: IEventTicketDetail[];
     onClick: () => void;
 }
 
 function WebTicketInfo({tickets, onClick}:ITickets) {
-    const items = tickets.map(item => (
-        <TicketBtn name={item.name} price={item.price} quantity={item.quantity} onClick={onClick}/>
+    const items = tickets.map((item) => (
+        <TicketBtn key={item.id}
+                   name={item.name}
+                   price={item.price}
+                   quantity={item.quantity}
+                   onClick={onClick}/>
     ));
 
     return (

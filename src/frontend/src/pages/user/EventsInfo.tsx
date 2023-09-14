@@ -1,10 +1,10 @@
 import React from "react";
-import {CheckMobile} from "../../util/CheckMobile";
+import {CheckXsSize} from "../../util/CheckMediaQuery";
 import WebEventsInfo from "../../components/user/web/WebEventsInfo";
 import MobileEventsInfo from "../../components/user/mobile/MobileEventsInfo";
 
 function EventsInfo() {
-    const isMobile = CheckMobile();
+    const isMobile = CheckXsSize();
 
     return (
         <>

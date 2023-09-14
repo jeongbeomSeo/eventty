@@ -1,10 +1,10 @@
 import React from "react";
-import {CheckMobile} from "../../util/CheckMobile";
+import {CheckXsSize} from "../../util/CheckMediaQuery";
 import MobileProfile from "../../components/user/mobile/MobileProfile";
 import WebProfile from "../../components/user/web/WebProfile";
 
 function Profile() {
-    const isMobile = CheckMobile();
+    const isMobile = CheckXsSize();
 
     return (
         <>

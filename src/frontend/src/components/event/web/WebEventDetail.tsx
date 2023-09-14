@@ -1,14 +1,13 @@
-import React, {useState} from "react";
+import React, {useCallback, useMemo} from "react";
 import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
 import {
     Avatar,
-    Badge,
     Button,
     Container,
-    Divider, Flex,
+    Divider,
     Grid,
     Group,
-    Image, Modal,
+    Image,
     Paper,
     Stack,
     Text,
@@ -20,7 +19,6 @@ import {userState} from "../../../states/userState";
 import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
-import TicketBtn from "../TicketBtn";
 import {useModal} from "../../../util/hook/useModal";
 
 function WebEventDetail() {
@@ -33,16 +31,16 @@ function WebEventDetail() {
 
     const DATA = useLoaderData() as IEventDetail;
 
-    const eventStartAt = new Date(DATA.eventStartAt);
-    const eventEndtAt = new Date(DATA.eventEndAt);
+    const eventStartAt = useMemo(() => new Date(DATA.eventStartAt), [DATA.eventStartAt]);
+    const eventEndtAt = useMemo(() => new Date(DATA.eventEndAt), [DATA.eventEndAt]);
 
-    const onClickTicket = () => {
+    const onClickTicket = useCallback(() => {
         if (isLoggedIn) {
             navigate("ticket", {state: pathname});
         } else {
             loginAlertModal();
         }
-    }
+    }, [isLoggedIn]);
 
     return (
         <Container>
@@ -110,4 +108,4 @@ function WebEventDetail() {
     );
 }
 
-export default WebEventDetail;
+export default React.memo(WebEventDetail);

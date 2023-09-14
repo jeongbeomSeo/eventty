@@ -47,7 +47,7 @@ export const postLogout = async () => {
 }
 
 export const getProfile = async () => {
-    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/users/me`,{
+    return await fetch(`${process.env["REACT_APP_GATEWAY_SERVER_URL"]}/api/user/secret/users/me`,{
         method: "GET",
     })
         .then((res) => res.json());

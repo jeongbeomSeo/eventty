@@ -29,19 +29,18 @@ function MobileMenuDrawer() {
 
     const MENU_LIST = [
         {value: "홈", link: "/", icon: <IconHome/>},
-        {value: "주최하기", link: "/write/event", icon: <IconPlus/>},
+        {value: "주최하기", link: "/write", icon: <IconPlus/>},
         {value: "마이페이지", link: "/users/profile", icon: <IconUser/>},
         {value: "주최 내역", link: "/users/events", icon: <IconReceipt/>},
         {value: "예약 내역", link: "/users/reservations", icon: <IconReceipt/>},
-        {value: "설정", link: "", icon: <IconSettings/>},
     ];
 
     const items = MENU_LIST.map(item => {
-        if ((item.value === "주최 내역" && !userStateValue.isHost) ||
-            (item.value === "예약 내역" && userStateValue.isHost)){
+        if (((item.value === "주최 내역" || item.value === "주최하기") && !userStateValue.isHost) ||
+            (item.value === "예약 내역" && userStateValue.isHost)) {
             return;
         }
-        return(
+        return (
             <UnstyledButton key={item.value}
                             component={Link}
                             to={item.link}
@@ -62,11 +61,10 @@ function MobileMenuDrawer() {
         <>
             <Drawer.Root opened={opened}
                          onClose={handleMenuDrawer}
-                         title={"사이드 메뉴"}
                          position={"right"}
                          size={"70%"}
                          transitionProps={{duration: 400}}
-                         style={{zIndex: 1}}
+                         zIndex={1001}
             >
                 <Drawer.Overlay opacity={0.5} blur={2}/>
                 <Drawer.Content>
@@ -77,14 +75,17 @@ function MobileMenuDrawer() {
                         <Drawer.Body>
                             <Stack>
                                 <Flex align={"center"} gap={"1rem"}>
-                                    <Avatar size={"4rem"} radius={"4rem"}/>
-                                    <Text style={{whiteSpace: "pre-wrap"}}>{!isLoggedIn && "로그인 후 \n이용 가능합니다"}</Text>
+                                    <Avatar size={"3.5rem"} radius={"4rem"}/>
+                                    <Text style={{whiteSpace: "pre-wrap"}}>
+                                        {isLoggedIn ?
+                                            userStateValue.email :
+                                            "로그인 후 \n이용 가능합니다"}
+                                    </Text>
                                 </Flex>
                                 <Divider/>
 
                                 {items}
 
-                                <Divider/>
                                 <Button component={Link}
                                         to={isLoggedIn ? "/logout" : "/login"}
                                         state={pathname}

@@ -51,11 +51,12 @@ export function useModal() {
             children: (
                 <WebSearchKeywordsList/>
             ),
+            zIndex: 1001,
             withCloseButton: false,
             xOffset: "",
             size: "auto",
             overlayProps: {opacity: 0.5},
-            transitionProps: {transition: "slide-down"}
+            transitionProps: {transition: "slide-down"},
         })
     }
 

@@ -20,8 +20,9 @@ enum ERROR_MESSAGE {
 
 function Login() {
     const setIsLoggedIn = useSetRecoilState(loginState);
+    const setUsersStateValue = useSetRecoilState(userState);
 
-    const {register, handleSubmit, setFocus, setError, formState:{errors}} = useForm<ILogin>();
+    const {register, handleSubmit, setFocus, setError, formState: {errors}} = useForm<ILogin>();
     const onSubmit = (data: ILogin) => {
         if (!data.email || !data.password) {
             const field = !data.email ? "email" : "password";
@@ -33,7 +34,17 @@ function Login() {
         postLogin(data)
             .then(res => {
                 if (res.success) {
+                    const resEmail = res.successResponseDTO.data.email;
+                    const resIsHost = res.successResponseDTO.data.authoritiesNameList[0] === "ROLE_HOST";
+
                     setIsLoggedIn((prev) => !prev);
+                    setUsersStateValue({
+                        email: resEmail,
+                        isHost: resIsHost,
+                    });
+
+                    sessionStorage.setItem("EMAIL", resEmail);
+                    sessionStorage.setItem("AUTHORITY", resIsHost ? "HOST" : "USER");
                 } else {
                     setError("root", {message: ERROR_MESSAGE["fail"]});
                 }
@@ -68,7 +79,7 @@ function Login() {
                     {/* 에러 메세지 */}
                     <Text fz={"0.75rem"}
                           color={"#f44336"}
-                          style={{whiteSpace:"pre-wrap"}}>
+                          style={{whiteSpace: "pre-wrap"}}>
                         {errors.email?.message || errors.password?.message || errors.root?.message}
                     </Text>
 

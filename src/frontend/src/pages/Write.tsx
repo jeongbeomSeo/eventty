@@ -27,14 +27,16 @@ import {
 import EventDatePicker from "../components/write/EventDatePicker";
 import TicketSubmitModal from "../components/write/TicketSubmitModal";
 import TicketEditModal from "../components/write/TicketEditModal";
-import {CheckMobile} from "../util/CheckMobile";
-import {types} from "util";
-import {useModal} from "../util/hook/useModal";
+import {CheckXsSize} from "../util/CheckMediaQuery";
 import QuillEditor from "../components/common/QuillEditor";
+import {postEvent} from "../service/event/fetchEvent";
+import {MessageAlert} from "../util/MessageAlert";
+import {useNavigate} from "react-router-dom";
 
 function Write() {
     const {classes} = customStyle();
-    const isMobile = CheckMobile();
+    const navigate = useNavigate();
+    const isMobile = CheckXsSize();
     const [ticketModalOpened, setTicketModalOpened] = useState(false);
     const [ticketEditModalOpened, setTicketEditModalOpened] = useState(false);
 
@@ -51,7 +53,7 @@ function Write() {
     } = useForm<IEventWrite>();
     const {fields, append, remove, update} = useFieldArray({
         control,
-        name: "ticket",
+        name: "tickets",
         rules: {
             required: "티켓을 설정해주세요",
         }
@@ -81,12 +83,19 @@ function Write() {
 
     const onSubmit = (data: IEventWrite) => {
         if (leftTicket !== 0) {
-            setError("ticket", {types: {validate: "총 인원수를 확인해주세요"}},);
+            setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}},);
             return;
         }
-        console.log("error submit 확인");
 
-        // data.content = editorRef.current?.getInstance().getMarkdown()!;
+        postEvent(data)
+            .then(res => {
+                if (res.success){
+                    MessageAlert("success", "작성 성공", null);
+                    navigate("/");
+                }else{
+                    MessageAlert("error", "작성 실패", "다시 시도해주세요");
+                }
+            })
     }
 
     const onTicketCreate = (data: IEventTicket) => {
@@ -101,7 +110,7 @@ function Write() {
         if (getValues("participateNum") > 0) {
             setTicketModalOpened(prev => !prev);
         } else {
-            setError("ticket", {types: {validate: "우선 인원수를 설정해주세요"}});
+            setError("tickets", {types: {validate: "우선 인원수를 설정해주세요"}});
         }
     }
 
@@ -135,9 +144,9 @@ function Write() {
 
     useEffect(() => {
         if (leftTicket !== 0 && ticketItems.length !== 0) {
-            setError("ticket", {types: {validate: "총 인원수를 확인해주세요"}});
+            setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}});
         } else {
-            clearErrors("ticket");
+            clearErrors("tickets");
         }
     }, [leftTicket]);
 
@@ -232,8 +241,8 @@ function Write() {
                                 </UnstyledButton>
                             </SimpleGrid>
                             <Text fz={"12px"} color={"#f44336"}>
-                                {errors.ticket?.root?.message}
-                                {errors.ticket?.types?.validate}
+                                {errors.tickets?.root?.message}
+                                {errors.tickets?.types?.validate}
                             </Text>
                         </Stack>
 

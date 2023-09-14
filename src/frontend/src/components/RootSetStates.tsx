@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {searchDrawerState} from "../states/searchDrawerState";
-import {useLocation, useNavigation} from "react-router-dom";
+import {ScrollRestoration, useLocation, useNavigation} from "react-router-dom";
 import ScrollToTop from "./ScrollToTop";
 import {menuDrawerState} from "../states/menuDrawerState";
 import {Notifications} from "@mantine/notifications";
@@ -11,6 +11,8 @@ import {loadingState} from "../states/loadingState";
 import {loginState} from "../states/loginState";
 import {userState} from "../states/userState";
 import {eventTicketDrawerState} from "../states/eventTicketDrawerState";
+import {useModal} from "../util/hook/useModal";
+import {ModalsProvider} from "@mantine/modals";
 
 function RootSetStates() {
     const {state} = useNavigation();
@@ -22,6 +24,7 @@ function RootSetStates() {
     const setEventTicketDrawer = useSetRecoilState(eventTicketDrawerState);
     const setMenuDrawer = useSetRecoilState(menuDrawerState);
     const mobile = useMediaQuery({query: `(max-width:${useMantineTheme().breakpoints.xs})`});
+    const {searchModal} = useModal();
 
     useEffect(() => {
         return () => {
@@ -33,28 +36,31 @@ function RootSetStates() {
 
     // 로그인 확인
     useEffect(() => {
-        const email = sessionStorage.getItem("email");
-        const authorities = sessionStorage.getItem("authorities");
+        const email = sessionStorage.getItem("EMAIL");
+        const authority = sessionStorage.getItem("AUTHORITY");
 
-        if (email && authorities && !loginStateValue){
+        if (email && authority && !loginStateValue) {
             setloginStateValue(true);
-            setUserState({email: email, isHost: authorities === "HOST"});
+            setUserState({email: email, isHost: authority === "HOST"});
         }
     });
 
     return (
         <>
-            {/* Router Loader 로딩 오버레이 */}
-            {(state === "loading" || loadingValue) &&
-                <LoadingOverlay visible
-                                loaderProps={{size: "md", color: "var(--primary)", variant: "dots"}}
-                                overlayBlur={2}
-                                style={{position:"fixed"}}
-                />
-            }
-
-            <Notifications position={mobile ? "top-center" : "bottom-right"}/>
-            <ScrollToTop/>
+            <ModalsProvider>
+                {/* Router Loader 로딩 오버레이 */}
+                {(state === "loading" || loadingValue) &&
+                    <LoadingOverlay visible
+                                    loaderProps={{size: "md", color: "var(--primary)", variant: "dots"}}
+                                    overlayBlur={2}
+                                    style={{position: "fixed"}}
+                                    zIndex={1002}
+                    />
+                }
+                <Notifications position={mobile ? "top-center" : "bottom-right"}/>
+                <ScrollToTop/>
+                <ScrollRestoration/>
+            </ModalsProvider>
         </>
     );
 }

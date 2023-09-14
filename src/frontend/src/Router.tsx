@@ -23,6 +23,7 @@ import DeleteAccount from "./pages/DeleteAccount";
 import {loader as eventLoader} from "./routes/event";
 import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
+import HostRoute from "./components/HostRoute";
 
 const Router = createBrowserRouter([
     {
@@ -53,8 +54,8 @@ const Router = createBrowserRouter([
                         element: <PrivateRoute/>,
                         children: [
                             {
-                                element:<User/>,
-                                children:[
+                                element: <User/>,
+                                children: [
                                     {
                                         path: "users/profile",
                                         element: <Profile/>,
@@ -74,6 +75,10 @@ const Router = createBrowserRouter([
                                 element: <Test/>,
                             },
                         ]
+                    },
+                    {
+                        path: "/test",
+                        element: <Test/>,
                     },
                 ],
             },
@@ -106,7 +111,7 @@ const Router = createBrowserRouter([
             },
             {
                 element: <PrivateRoute/>,
-                children:[
+                children: [
                     {
                         path: "/logout",
                         element: <Logout/>,
@@ -115,15 +120,16 @@ const Router = createBrowserRouter([
                         path: "/delete-account",
                         element: <DeleteAccount/>,
                     },
+                    {
+                        element: <HostRoute/>,
+                        children: [
+                            {
+                                path: "write",
+                                element: <Write/>,
+                            },
+                        ]
+                    },
                 ]
-            },
-            {
-                path: "write/event",
-                element: <Write/>,
-            },
-            {
-                path: "/test",
-                element: <Test/>
             },
         ],
     },

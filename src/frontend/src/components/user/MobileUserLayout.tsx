@@ -1,10 +1,9 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React from "react";
 import {Container, Stack, Tabs} from "@mantine/core";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
-import {tab} from "@testing-library/user-event/dist/tab";
-import customStyle from "../../../styles/customStyle";
+import customStyle from "../../styles/customStyle";
 import {useRecoilValue} from "recoil";
-import {userState} from "../../../states/userState";
+import {userState} from "../../states/userState";
 
 function MobileUserLayout() {
     const navigate = useNavigate();

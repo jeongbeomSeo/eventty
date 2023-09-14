@@ -33,37 +33,47 @@ function MobileProfile() {
     }
 
     return (
-        <Stack>
-            <Title order={3}>프로필</Title>
-            <PaperItem>
-                <Stack align={"center"}>
-                    <Avatar size={"6rem"} radius={"6rem"}/>
-                    <Button className={classes["btn-primary"]}>이미지 변경</Button>
-                </Stack>
-                <TextInput label={"이메일"} disabled className={classes["input"]}/>
-                <TextInput label={"이름"} className={classes["input"]}/>
-                <TextInput label={"휴대폰 번호"}
-                           maxLength={13}
-                           value={phoneNumber}
-                           onInput={handlePhoneInputChange}
-                           className={classes["input"]}/>
-                <BirthdayPicker label={"생년월일"} value={selectedDate}
-                                onChange={handleDateChange}/>
-                <Button className={classes["btn-primary"]}>저장하기</Button>
-            </PaperItem>
+        <Stack spacing={"2rem"}>
+            <div>
+                <Title order={3}>프로필</Title>
+                <PaperItem>
+                    <Stack align={"center"}>
+                        <Avatar size={"6rem"} radius={"6rem"}/>
+                        <Button className={classes["btn-primary"]}>이미지 변경</Button>
+                    </Stack>
+                    <TextInput label={"이메일"} disabled className={classes["input"]}/>
+                    <TextInput label={"이름"} className={classes["input"]}/>
+                    <TextInput label={"휴대폰 번호"}
+                               maxLength={13}
+                               value={phoneNumber}
+                               onInput={handlePhoneInputChange}
+                               className={classes["input"]}/>
+                    <BirthdayPicker label={"생년월일"} value={selectedDate}
+                                    onChange={handleDateChange}/>
+                    <TextInput label={"주소"} className={classes["input"]}/>
+                    <Button className={classes["btn-primary"]}>저장하기</Button>
+                </PaperItem>
+            </div>
 
-            <Title order={3}>보안</Title>
-            <PaperItem>
-                <Group position={"apart"}>
-                    <Text>비밀번호</Text>
-                    <Button className={classes["btn-primary"]}>비밀번호 변경</Button>
-                </Group>
-            </PaperItem>
+            <div>
+                <Title order={3}>보안</Title>
+                <PaperItem>
+                    <Group position={"apart"}>
+                        <Text>비밀번호</Text>
+                        <Button className={classes["btn-primary"]}>비밀번호 변경</Button>
+                    </Group>
+                </PaperItem>
+            </div>
 
-            <Title order={3}>주소</Title>
-            <PaperItem>
-                <TextInput label={"주소"} className={classes["input"]}/>
-            </PaperItem>
+            <div>
+                <Title order={3}>회원탈퇴</Title>
+                <PaperItem>
+                    <Group position={"apart"}>
+                        <Text>회원탈퇴</Text>
+                        <Button color={"red"}>회원탈퇴</Button>
+                    </Group>
+                </PaperItem>
+            </div>
         </Stack>
     );
 }

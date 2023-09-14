@@ -29,7 +29,9 @@ const items = () => {
 
 function WebMainEventList() {
     return (
-        <SimpleGrid cols={5} verticalSpacing={"2rem"}>
+        <SimpleGrid cols={5}
+                    breakpoints={[{maxWidth: "62rem", cols: 3}]}
+                    verticalSpacing={"2rem"}>
             {items()}
         </SimpleGrid>
     );

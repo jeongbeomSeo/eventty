@@ -48,7 +48,6 @@ function TicketEditModal({open, title, left, data}: {
     }, [open]);
 
     useEffect(() => {
-        setValue("id", data.id);
         setValue("name", data.name);
         setValue("price", data.price);
         setValue("quantity", data.quantity);

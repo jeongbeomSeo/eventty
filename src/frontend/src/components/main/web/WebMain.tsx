@@ -11,7 +11,6 @@ function WebMain() {
             <WebCarousel/>
             <Container>
                 <SimpleGrid cols={1} verticalSpacing={"7rem"} style={{margin: "5rem 0"}}>
-                    <WebCategoryBtn/>
 
                     <div>
                         <Title order={3}>인기 상승중인 행사</Title>

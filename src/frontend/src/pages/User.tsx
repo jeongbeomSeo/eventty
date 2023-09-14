@@ -1,12 +1,10 @@
 import React from "react";
-import {CheckMobile} from "../util/CheckMobile";
-import WebUserLayout from "../components/user/web/WebUserLayout";
-import MobileUserLayout from "../components/user/mobile/MobileUserLayout";
-import {Link, Navigate, redirect, useLocation, useNavigate} from "react-router-dom";
-import {CheckLogin} from "../util/CheckLogin";
+import {CheckXsSize} from "../util/CheckMediaQuery";
+import WebUserLayout from "../components/user/WebUserLayout";
+import MobileUserLayout from "../components/user/MobileUserLayout";
 
 function User() {
-    const isMobile = CheckMobile();
+    const isMobile = CheckXsSize();
 
     return (
         <>

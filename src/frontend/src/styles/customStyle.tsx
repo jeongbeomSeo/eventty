@@ -2,14 +2,15 @@ import {createStyles} from '@mantine/core';
 
 const customStyle = createStyles((theme) => ({
     "header": {
-        zIndex: 99,
-        boxShadow: "0 2px 6px #e6e6e6",
+        zIndex: 1000,
+        position: "relative",
+        border: "none",
         "&.mobile-event-detail": {
             position: "sticky",
         }
     },
     "input": {
-        input: {
+        ".mantine-Input-input": {
             borderColor: "#cdcdcd",
             color: "#000000 !important",
             "::placeholder": {
@@ -30,7 +31,7 @@ const customStyle = createStyles((theme) => ({
             width: "100%",
             input: {
                 fontSize: "1.1rem",
-                ":focus":{
+                ":focus": {
                     borderWidth: "2px",
                 },
             },
@@ -121,7 +122,7 @@ const customStyle = createStyles((theme) => ({
                 fontSize: "0.5rem",
             },
         },
-        "&.login":{
+        "&.login": {
             label: {
                 color: "#666666",
             },
@@ -157,7 +158,12 @@ const customStyle = createStyles((theme) => ({
         color: "#666666 !important",
         ":hover": {
             filter: "brightness(0.96)",
-        }
+        },
+        "&.non":{
+            ":hover":{
+                filter: "none",
+            },
+        },
     },
     "signup-footer": {
         fontSize: "0.8rem",
@@ -172,8 +178,11 @@ const customStyle = createStyles((theme) => ({
     },
     "web-nav-link": {
         fontWeight: "bold",
+        fontSize: "1.2rem",
+        padding: "0.5rem",
+        height: "100%",
         ":hover": {
-            opacity: "0.7",
+            color: "var(--primary)",
         }
     },
     "mobile-nav-link": {
@@ -205,6 +214,17 @@ const customStyle = createStyles((theme) => ({
         ".mantine-Tabs-tab[data-active]": {
             borderBottom: "3px solid var(--primary) !important",
         },
+    },
+    "web-menu-drawer": {
+        visibility: "visible",
+        transition: "all",
+        ".mantine-Drawer-inner": {
+            zIndex: 999,
+            height: "250px",
+        },
+        "&.hidden": {
+            visibility: "hidden",
+        }
     },
 }))
 
