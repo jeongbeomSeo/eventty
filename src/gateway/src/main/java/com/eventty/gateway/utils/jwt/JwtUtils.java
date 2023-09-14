@@ -46,7 +46,7 @@ public class JwtUtils {
         return claims;
     }
 
-    public TokenDetails updateNewTokenInfo(ResponseEntity<ResponseDTO<NewTokensResponseDTO>> response) {
+    public TokenDetails createNewTokenDetails(ResponseEntity<ResponseDTO<NewTokensResponseDTO>> response) {
         return TokenDetails.builder()
                 .accessToken(response.getBody().getSuccessResponseDTO().getData().getAccessToken())
                 .refreshToken(response.getBody().getSuccessResponseDTO().getData().getRefreshToken())

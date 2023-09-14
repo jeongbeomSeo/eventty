@@ -85,7 +85,7 @@ public class TokenAuthenticationServiceImplTest {
         when(customMappper.createGetNewTokensRequestDTO(userId, tokenDetails.getRefreshToken())).thenReturn(getNewTokensRequestDTO);
         when(apiClient.getNewTokens(getNewTokensRequestDTO)).thenReturn(response);
 
-        when(jwtUtils.updateNewTokenInfo(response)).thenReturn(TokenDetails.builder()
+        when(jwtUtils.createNewTokenDetails(response)).thenReturn(TokenDetails.builder()
                 .accessToken(response.getBody().getSuccessResponseDTO().getData().getAccessToken())
                 .refreshToken(response.getBody().getSuccessResponseDTO().getData().getRefreshToken())
                 .claims(claims)

@@ -56,7 +56,7 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
             log.info("New tokens have been received from the authentication service server!!");
 
             // tokenDetails 전부 업데이트 한 후 filter에 건네주기
-            tokenDetails = jwtUtils.updateNewTokenInfo(response);
+            tokenDetails = jwtUtils.createNewTokenDetails(response);
 
             tokenDetails.setUserId(userId);
             tokenDetails.setAuthoritiesJson(jwtUtils.getAuthoritiesToJson(tokenDetails.getClaims()));
