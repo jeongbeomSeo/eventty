@@ -4,6 +4,6 @@ import com.eventty.gateway.global.exception.ErrorCode;
 import com.eventty.gateway.global.exception.JwtException;
 
 public class FailGetNewTokensException extends JwtException {
-    public final static FailGetNewTokensException EXCEPTION = new FailGetNewTokensException();
-    private FailGetNewTokensException() { super(ErrorCode.FAIL_GET_NEW_TOKENS); }
+    private static final String[] fields = {"userId"};
+    public FailGetNewTokensException(String userId) { super(ErrorCode.FAIL_GET_NEW_TOKENS, userId, fields); }
 }

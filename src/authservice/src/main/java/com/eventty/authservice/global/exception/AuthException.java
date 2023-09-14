@@ -13,11 +13,6 @@ public class AuthException extends RuntimeException{
         this.errorCode = errorCode;
     }
 
-    protected AuthException(ErrorCode errorCode, Object causedErrorData) {
-        this.errorCode = errorCode;
-        this.causedErrorData = causedErrorData;
-    }
-
     protected AuthException(ErrorCode errorCode, Object causedErrorData, String[] fields) {
         this.errorCode = errorCode;
         this.causedErrorData = causedErrorData;

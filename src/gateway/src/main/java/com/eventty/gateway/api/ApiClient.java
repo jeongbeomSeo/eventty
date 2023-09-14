@@ -16,7 +16,6 @@ import java.util.Collections;
 @Component
 @AllArgsConstructor
 public class ApiClient {
-
     private final MakeUrlService makeUrlService;
     private final RestTemplate customRestTemplate;
 
@@ -24,9 +23,10 @@ public class ApiClient {
 
         HttpEntity<GetNewTokensRequestDTO> entity = createHttpPostEntity(getNewTokensRequestDTO);
 
-        URI uri = makeUrlService.getNewTokenUri();
+        URI uri = makeUrlService.createNewTokenUri();
 
-        return customRestTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<NewTokensResponseDTO>>() {});
+        return customRestTemplate.exchange(
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<NewTokensResponseDTO>>() {});
     }
 
     private <T> HttpEntity<T> createHttpPostEntity(T dto) {

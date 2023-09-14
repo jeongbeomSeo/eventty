@@ -13,5 +13,5 @@ public class MakeUrlService {
     private final String GET_NEW_TOKENS_URL = "/api/newtokens";
     private final UrlProperties urlProperties;
 
-    public URI getNewTokenUri() { return URI.create(urlProperties.getAuthServer() + GET_NEW_TOKENS_URL); }
+    public URI createNewTokenUri() { return URI.create(urlProperties.getAuthServer() + GET_NEW_TOKENS_URL); }
 }

@@ -21,13 +21,14 @@ public enum ErrorCode {
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),
     CONFLICT(409, "", "Conflict occurred"),
 
+    // 400: 잘못된 요청 401: 유효한 자격 증명 없음 403: 서버에 요청이 전달되었지만, 권한 떄문에 거절
     // Authenticaiton
     FAIL_AUTHENTICATION(400, "G000", "Fail Authentication"),
-    ACCESSTOKEN_IS_EMPTY(403, "G000", "AccessToken is empty"),
-    REFRESHTOKEN_IS_EMPTY(403, "G000", "RefreshToken is empty"),
-    REFRESHTOKEN_EXPIRED(403, "G000", "RefreshToken is expired"),
+    ACCESS_TOKEN_IS_EMPTY(401, "G000", "Access Token is empty"),
+    REFRESH_TOKEN_IS_EMPTY(401, "G000", "Refresh Token is empty"),
+    REFRESH_TOKEN_EXPIRED(401, "G000", "RefreshToken is expired"),
     FAIL_GET_NEW_TOKENS(400, "G000", "Failed to get new tokens"),
-    INVALID_ISSUER(403, "G000", "Invalid Issuer");
+    NO_ACCESS_TOKEN(401, "G000", "No Access Token");
 
     private final int status;
     private final String code;

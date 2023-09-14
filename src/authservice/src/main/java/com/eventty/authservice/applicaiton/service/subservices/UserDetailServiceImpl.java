@@ -36,6 +36,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     public Long delete(AuthUserEntity authUserEntity) {
         authUserEntity.setDelete(true);
         authUserEntity.setDeleteDate(LocalDateTime.now());
+        userRepository.save(authUserEntity);
 
         return authUserEntity.getId();
     }
