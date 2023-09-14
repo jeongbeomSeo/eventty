@@ -37,7 +37,7 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
 
         // JWT 만료된 경우
         if (tokenDetails.getClaims() == null) {
-            log.info("JWT is Expired!!");
+            log.debug("JWT is Expired!!");
 
             // JWT가 만료되었고 Refresh Token도 없는 경우 예외 발생
             if (tokenDetails.getRefreshToken() == null)
@@ -53,7 +53,7 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
             if (!Objects.requireNonNull(response.getBody()).isSuccess())
                 throw new FailGetNewTokensException(userId);
 
-            log.info("New tokens have been received from the authentication service server!!");
+            log.debug("New tokens have been received from the authentication service server!!");
 
             // tokenDetails 전부 업데이트 한 후 filter에 건네주기
             tokenDetails = jwtUtils.createNewTokenDetails(response);

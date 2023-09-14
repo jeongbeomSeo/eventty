@@ -1,5 +1,6 @@
 package com.eventty.authservice.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,7 @@ import com.eventty.authservice.api.dto.UserCreateRequestDTO;
 import com.eventty.authservice.api.utils.MakeUrlService;
 import com.eventty.authservice.global.response.ResponseDTO;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class ApiClient {
@@ -32,7 +34,10 @@ public class ApiClient {
 
         URI uri = makeUrlService.createUserUri();
 
-        return customRestTemplate.exchange(uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {
+        // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
+        log.info("API 호출 From: {} To: {} Purpose: {}", "Auth Server", "User Server", "Create User");
+        return customRestTemplate.exchange(
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {
         });
     }
     private <T> HttpEntity<T> createHttpPostEntity(T dto) {

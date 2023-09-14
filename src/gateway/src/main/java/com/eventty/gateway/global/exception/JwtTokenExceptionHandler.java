@@ -34,7 +34,7 @@ public class JwtTokenExceptionHandler implements ErrorWebExceptionHandler {
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         ErrorResponseDTO errorResponseDTO;
         if (ex instanceof JwtException) {
-            log.warn("Error Message: {}", ((JwtException) ex).getErrorCode().getMessage());
+            log.error("Error Message: {}", ((JwtException) ex).getErrorCode().getMessage());
             dataErrorLogger.logging((JwtException) ex);
 
             response.setStatusCode(HttpStatusCode.valueOf(((JwtException) ex).getErrorCode().getStatus()));
@@ -42,19 +42,19 @@ public class JwtTokenExceptionHandler implements ErrorWebExceptionHandler {
             errorResponseDTO = ErrorResponseDTO.of(((JwtException) ex).getErrorCode());
         }
         else if (ex instanceof JsonProcessingException) {
-            log.warn("Error Message: {}", ex.getMessage());
+            log.error("Error Message: {}", ex.getMessage());
             response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.BAD_CREDENTIALS.getStatus()));
 
             errorResponseDTO = ErrorResponseDTO.of(ErrorCode.BAD_CREDENTIALS);
         }
         else if (ex instanceof IOException){
-            log.warn("Error Message: {}", ErrorCode.INTERNAL_ERROR);
+            log.error("Error Message: {}", ErrorCode.INTERNAL_ERROR);
             response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.INTERNAL_ERROR.getStatus()));
 
             errorResponseDTO = ErrorResponseDTO.of(ErrorCode.INTERNAL_ERROR);
         }
         else {
-            log.warn("Error Meesage: {}", ex.getMessage());
+            log.error("Error Meesage: {}", ex.getMessage());
             response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.FAIL_AUTHENTICATION.getStatus()));
 
             errorResponseDTO = ErrorResponseDTO.of(ErrorCode.FAIL_AUTHENTICATION);

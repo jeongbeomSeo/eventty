@@ -45,7 +45,6 @@ public class UserDetailServiceImpl implements UserDetailService {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
-    @Override
     public AuthUserEntity findAuthUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }

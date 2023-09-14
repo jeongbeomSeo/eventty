@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
         // API 요청 로직
         UserCreateRequestDTO userCreateRequestDTO = customConverter.fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId);
-        ResponseEntity<ResponseDTO<Void>> response = apiClient.createUserApi(userCreateRequestDTO);
+        apiClient.createUserApi(userCreateRequestDTO);
 
         return userId;
     }

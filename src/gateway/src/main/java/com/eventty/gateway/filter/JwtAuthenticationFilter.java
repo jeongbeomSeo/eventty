@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     .header(HEADER_AUTHORITIES, tokenDetails.getAuthoritiesJson())
                     .build();
 
-            log.info("User: {}, Path: {}", tokenDetails.getClaims().getSubject(), exchange.getRequest().getPath());
+            log.debug("User: {}, Path: {}", tokenDetails.getClaims().getSubject(), exchange.getRequest().getPath());
 
             if (!tokenDetails.isNeedsUpdate())
                 return chain.filter(exchange.mutate().request(requestWithHeader).build());
@@ -70,11 +70,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                     // Response에 새로 받아온 JWT와 Refresh Token Update
                     return chain.filter(exchange.mutate().request(requestWithHeader).build())
                         .then(Mono.fromRunnable(() -> {
-                            log.info("PostLogger: Authentication Filter get new tokens and update");
+                            log.debug("PostLogger: Authentication Filter get new tokens and update");
                             ServerHttpResponse serverHttpResponse = exchange.getResponse();
 
                             // 위에서 받아온 토큰 Response 쿠키 설정
-                            log.info("Tokens update!!");
+                            log.debug("Tokens update!!");
                             ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(tokenDetails.getAccessToken());
                             ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(tokenDetails.getRefreshToken());
 
