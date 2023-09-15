@@ -1,0 +1,97 @@
+package com.eventty.applyservice.presentation;
+
+import com.eventty.applyservice.application.ApplyServiceImpl;
+import com.eventty.applyservice.application.dto.request.CreateApplyRequestDTO;
+import com.eventty.applyservice.infrastructure.AuthenticationInterceptor;
+import com.eventty.applyservice.infrastructure.BasicSecurityConfig;
+import com.eventty.applyservice.infrastructure.WebConfig;
+import com.eventty.applyservice.presentation.exception.DataErrorLogger;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(ApplyController.class)
+@MockBeans(value = {
+        @MockBean(ApplyServiceImpl.class),
+        @MockBean(WebConfig.class),
+        @MockBean(BasicSecurityConfig.class),
+        @MockBean(DataErrorLogger.class),
+        @MockBean(AuthenticationInterceptor.class)
+})
+public class ApplyControllertest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    public void setMockMvc(){
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
+
+    @Test
+    @DisplayName("[POST][Success] 이벤트 신청")
+    @WithMockCustom(authorities = {"USER"})
+    public void createApplySuccessTest() throws Exception{
+        // Assignment
+        Long eventId = 1L;
+        Long ticketId = 1L;
+        Long participateNum = 22L;
+        String url = "/applies";
+
+        CreateApplyRequestDTO createApplyRequestDTO = new CreateApplyRequestDTO(eventId, ticketId, participateNum);
+        final String requestBody = objectMapper.writeValueAsString(createApplyRequestDTO);
+
+        // Act
+        final ResultActions response = mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(requestBody));
+
+        // Assert
+        response
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(jsonPath("successResponseDTO").doesNotHaveJsonPath())
+                .andExpect(jsonPath("errorResponseDTO").doesNotHaveJsonPath());
+    }
+
+    @Test
+    @DisplayName("[POST][Fail - ticketId null value] 이벤트 신청")
+    @WithMockCustom(authorities = {"USER"})
+    public void createApplyTicketIdNullValueFailTest() throws Exception{
+        // Assignment
+        Long eventId = 3L;
+        Long ticketId = null;
+        Long participateNum = 22L;
+        String url = "/applies";
+
+        CreateApplyRequestDTO createApplyRequestDTO = new CreateApplyRequestDTO(eventId, ticketId, participateNum);
+        final String requestBody = objectMapper.writeValueAsString(createApplyRequestDTO);
+
+        final ResultActions response = mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(requestBody));
+
+        response
+                .andDo(System.out::println)
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("success").value(false))
+                .andExpect(jsonPath("successResponseDTO").doesNotHaveJsonPath())
+                .andExpect(jsonPath("errorResponseDTO").hasJsonPath());
+
+    }
+}
