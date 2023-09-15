@@ -1,6 +1,5 @@
 package com.eventty.businessservice.domain;
 
-import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
@@ -49,7 +48,18 @@ public class EventBasicRepositoryTest {
         List<EventBasicEntity> events = eventBasicRepository.selectAllEvents();
         // then
         assertNotNull(events);
-        assertEquals(events.size(), 1);
+        assertEquals(events.size(), 6);
+    }
+
+    @Test
+    @DisplayName("주최자가 등록한 이벤트 전체 조회 테스트")
+    public void selectAllEventsByUserIdTest() {
+        // given & when
+        Long userId = 1L;
+        List<EventBasicEntity> events = eventBasicRepository.selectEventsByHostId(userId);
+        // then
+        assertNotNull(events);
+        assertEquals(events.size(), 4);
     }
 
     @Test
@@ -71,7 +81,7 @@ public class EventBasicRepositoryTest {
 
         // then
         assertNotNull(list);
-        assertEquals(list.size(), 1);
+        assertEquals(list.size(), 3);
     }
 
     @Test
