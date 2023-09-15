@@ -71,6 +71,20 @@ public class EventController {
                 //.body(SuccessResponseDTO.of(newEventId));
     }
 
+    @GetMapping( "/events/host/{hostId}")
+    @Operation(summary = "(HOST) 특정 호스트가 등록한 이벤트 리스트를 가져옵니다.")
+    @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
+    @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
+    public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findEventsByHostId(
+            @PathVariable Long hostId
+    ) {
+        List<EventBasicFindAllResponseDTO> events = eventService.findEventsByHostId(hostId);
+
+        return ResponseEntity
+                .status(GET_EVENT_INFO_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(events));
+    }
+
     @PutMapping(value = "/events/{eventId}")
     @Operation(summary = "(HOST) 이벤트의 정보를 수정합니다.")
     @ApiSuccessData()

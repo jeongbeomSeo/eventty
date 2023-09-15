@@ -40,6 +40,15 @@ public class EventService {
         return eventSubService.createEvent(eventCreateRequestDTO);
     }
 
+    public List<EventBasicFindAllResponseDTO> findEventsByHostId(Long hostId){
+        return Optional.ofNullable(eventBasicRepository.selectEventsByHostId(hostId))
+                .filter(events -> !events.isEmpty())
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION)
+                .stream()
+                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public Long updateEvent(Long id, EventUpdateRequestDTO eventUpdateRequestDTO){
         return eventSubService.updateEvent(id, eventUpdateRequestDTO);
     }
