@@ -1,5 +1,6 @@
 package com.eventty.businessservice.domains.event.presentation;
 
+import com.eventty.businessservice.domains.event.application.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.common.Enum.ErrorCode;
@@ -100,14 +101,14 @@ public class EventController {
                 //.body(SuccessResponseDTO.of(deleteEventId));
     }
 
-    @GetMapping( "/events/category/{categoryId}")
+    @GetMapping( "/events/category/{category}")
     @Operation(summary = "(ALL) 이벤트를 카테고리별로 조회합니다.")
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.CATEGORY_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findEventsByCategory(
-            @PathVariable Long categoryId
+            @PathVariable Category category
     ) {
-        List<EventBasicFindAllResponseDTO> events = eventService.findEventsByCategory(categoryId);
+        List<EventBasicFindAllResponseDTO> events = eventService.findEventsByCategory(category);
 
         return ResponseEntity
                 .status(GET_EVENT_INFO_SUCCESS.getStatus())

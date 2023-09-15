@@ -1,5 +1,6 @@
 package com.eventty.businessservice.domains.event.application.service;
 
+import com.eventty.businessservice.domains.event.application.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
@@ -49,19 +50,13 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<EventBasicFindAllResponseDTO> findEventsByCategory(Long categoryId){
-
-        if (categoryId < 1 || categoryId > 10) {
-            throw CategoryNotFoundException.EXCEPTION;
-        }
-
-        return Optional.ofNullable(eventBasicRepository.selectEventsByCategory(categoryId))
+    public List<EventBasicFindAllResponseDTO> findEventsByCategory(Category category){
+        return Optional.ofNullable(eventBasicRepository.selectEventsByCategory(category.getId()))
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
                 .map(EventBasicFindAllResponseDTO::fromEntity)
                 .collect(Collectors.toList());
-
     }
 
     @Transactional(readOnly = true)

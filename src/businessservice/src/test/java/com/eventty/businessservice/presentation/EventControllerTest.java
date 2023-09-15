@@ -1,5 +1,6 @@
 package com.eventty.businessservice.presentation;
 
+import com.eventty.businessservice.domains.event.application.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
@@ -108,16 +109,16 @@ public class EventControllerTest {
     @DisplayName("카테고리 별 행사 조회 테스트")
     public void findEventsByCategoryTest() throws Exception {
         // Given
-        Long categoryId = 3L;
-        when(eventService.findEventsByCategory(categoryId)).thenReturn(createEventRespnseDTOList(5L));
+        Category category = Category.콘서트;
+        when(eventService.findEventsByCategory(category)).thenReturn(createEventRespnseDTOList(5L));
 
         // When & Then
-        mockMvc.perform(get("/events/category/{categoryId}", categoryId))
+        mockMvc.perform(get("/events/category/{category}", category))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(eventService, times(1)).findEventsByCategory(categoryId);
+        verify(eventService, times(1)).findEventsByCategory(category);
     }
 
     @Test

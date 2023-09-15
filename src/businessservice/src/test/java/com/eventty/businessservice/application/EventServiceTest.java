@@ -1,18 +1,12 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
+import com.eventty.businessservice.domains.event.application.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.service.EventService;
-import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
-import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
 import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
-import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
-import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,12 +49,12 @@ public class EventServiceTest {
     @DisplayName("이벤트 카테고리별 조회 테스트")
     public void findEventsByCategoryTest() {
         // given
-        Long categoryId = 1L;
+        Category category = Category.교양;
         List<EventBasicEntity> mockEvents = createEventEntityList(3L);
-        when(eventBasicRepository.selectEventsByCategory(categoryId)).thenReturn(mockEvents);
+        when(eventBasicRepository.selectEventsByCategory(category.getId())).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventService.findEventsByCategory(categoryId);
+        List<EventBasicFindAllResponseDTO> result = eventService.findEventsByCategory(category);
 
         // then
         assertNotNull(result);
@@ -72,7 +66,7 @@ public class EventServiceTest {
     @DisplayName("이벤트 카테고리별 조회 테스트 - 존재하지 않는 카테고리")
     public void findEventsByCategoryTest_InvalidCategoryId() {
         // given
-        Long invalidCategoryId = 15L;
+        Category invalidCategoryId = null;
 
         // when & then
         assertThrows(CategoryNotFoundException.class, () -> {
@@ -84,12 +78,12 @@ public class EventServiceTest {
     @DisplayName("이벤트 카테고리별 조회 테스트 - 이벤트 없음")
     public void findEventsByCategoryTest_NoEventsFound() {
         // given
-        Long categoryId = 7L;
-        when(eventBasicRepository.selectEventsByCategory(categoryId)).thenReturn(new ArrayList<>());
+        Category category = Category.교양;
+        when(eventBasicRepository.selectEventsByCategory(category.getId())).thenReturn(new ArrayList<>());
 
         // when & then
         assertThrows(EventNotFoundException.class, () -> {
-            eventService.findEventsByCategory(categoryId);
+            eventService.findEventsByCategory(category);
         });
     }
 
