@@ -113,6 +113,7 @@
         FROM events_basic
         WHERE title LIKE CONCAT('%', #{search}, '%')
         AND is_deleted = false
+        ORDER BY event_start_at DESC
     </select>
 
 </mapper>
