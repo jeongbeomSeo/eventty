@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,7 +48,7 @@ public class ApplyControllertest {
     }
 
     @Test
-    @DisplayName("[POST][Success] 이벤트 신청")
+    @DisplayName("[POST][Success] 행사 신청")
     @WithMockCustom(authorities = {"USER"})
     public void createApplySuccessTest() throws Exception{
         // Assignment
@@ -93,5 +93,43 @@ public class ApplyControllertest {
                 .andExpect(jsonPath("successResponseDTO").doesNotHaveJsonPath())
                 .andExpect(jsonPath("errorResponseDTO").hasJsonPath());
 
+    }
+
+    @Test
+    @DisplayName("[DELETE][Success] 행사 신청 취소")
+    @WithMockCustom(authorities = {"USER"})
+    public void cancelApplySuccessTest() throws Exception{
+        // Assignment
+        Long applyId = 1L;
+        String url = "/applies/" + applyId;
+
+        // Act
+        final ResultActions response = mockMvc.perform(delete(url).contentType(MediaType.APPLICATION_JSON));
+
+        // Assert
+        response
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("success").value(true))
+                .andExpect(jsonPath("successResponseDTO").doesNotHaveJsonPath())
+                .andExpect(jsonPath("errorResponseDTO").doesNotHaveJsonPath());
+    }
+
+    @Test
+    @DisplayName("[DELETE][FAIL - applyId is null value]")
+    @WithMockCustom(authorities = {"USER"})
+    public void cancelApplyApplyIdNullValueFailTest() throws Exception{
+        // Assignment
+        Long applyId = null;
+        String url = "/applies/" + applyId;
+
+        // Act
+        final ResultActions response = mockMvc.perform(delete(url).contentType(MediaType.APPLICATION_JSON));
+
+        // Assert
+        response
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("success").value(false))
+                .andExpect(jsonPath("successResponseDTO").doesNotHaveJsonPath())
+                .andExpect(jsonPath("errorResponseDTO").hasJsonPath());
     }
 }

@@ -53,4 +53,34 @@ public class ApplyRepositoryTest {
 
         assertNotNull(response);
     }
+
+    @Test
+    @DisplayName("행사 신청 취소")
+    public void deleteApplyTest(){
+        Long eventId = 1L;
+
+        Long response = applyReposiroty.deleteApply(eventId);
+
+        assertNotNull(response);
+    }
+
+    @Test
+    @DisplayName("행사 신청 취소 - applyId가 없을 경우")
+    public void deleteApplyNonExistAppyIdFailTest(){
+        Long eventId = 100L;
+
+        Boolean response = applyReposiroty.deleteCheck(eventId);
+
+        assertNull(response);
+    }
+
+    @Test
+    @DisplayName("행사 신청 취소 - 이미 신청한 경우")
+    public void deleteApplyAlreadyCancelApplyFailTest(){
+        Long eventId = 2L;
+
+        Boolean response = applyReposiroty.deleteCheck(eventId);
+
+        assertEquals(false, response);
+    }
 }

@@ -32,4 +32,20 @@
             APPLY(USER_ID, EVENT_ID, TICKET_ID)
         VALUES(#{userId}, #{eventId}, #{ticketId})
     </insert>
+
+    <update id="deleteApply" parameterType="Long">
+        UPDATE APPLY
+           SET DELETE_DATE = NOW()
+         WHERE ID = #{applyId}
+    </update>
+
+    <select id="deleteCheck" parameterType="Long" resultType="Boolean">
+        SELECT
+            CASE
+                WHEN DELETE_DATE IS NULL THEN TRUE
+                ELSE FALSE
+            END AS result
+          FROM APPLY
+         WHERE ID = #{applyId}
+    </select>
 </mapper>

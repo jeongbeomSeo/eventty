@@ -17,7 +17,9 @@ public enum ErrorCode {
 
     // apply
     ALREADY_APPLY_USER  (HttpStatus.BAD_REQUEST.value(), "A001", "Already applied a user"),
-    EXCEED_APPLICANTS   (HttpStatus.BAD_REQUEST.value(), "A002", "Exceeded the number of applicants");
+    EXCEED_APPLICANTS   (HttpStatus.BAD_REQUEST.value(), "A002", "Exceeded the number of applicants"),
+    NON_EXISTENT_ID       (HttpStatus.BAD_REQUEST.value(), "A003", "Non existent applyId"),
+    ALREADY_CANCELED_APPLY(HttpStatus.BAD_REQUEST.value(), "A004", "ApplyId already canceled");
 
     private final int status;
     private final String code;
