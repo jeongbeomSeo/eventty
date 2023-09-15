@@ -15,4 +15,5 @@ public interface EventBasicRepository {
     Long updateEvent(EventBasicEntity request);
     Long deleteEvent(Long id);
     List<EventBasicEntity> selectEventsByCategory(Long categoryId);
+    List<EventBasicEntity> selectEventsBySearch(String keyword);
 }
