@@ -46,6 +46,23 @@ public class EventServiceTest {
     }
 
     @Test
+    @DisplayName("주최자가 등록한 이벤트 조회 테스트")
+    public void findEventsByHostIdTest() {
+        // given
+        Long hostId = 1L;
+        List<EventBasicEntity> mockEvents = createEventEntityList(3L);
+        when(eventBasicRepository.selectEventsByHostId(hostId)).thenReturn(mockEvents);
+
+        // when
+        List<EventBasicFindAllResponseDTO> result = eventService.findEventsByHostId(hostId);
+
+        // then
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(mockEvents.size(), result.size());
+    }
+
+    @Test
     @DisplayName("이벤트 카테고리별 조회 테스트")
     public void findEventsByCategoryTest() {
         // given

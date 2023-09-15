@@ -90,6 +90,25 @@ public class EventControllerTest {
     }
 
     @Test
+    @DisplayName("주최자가 등록한 행사 조회 테스트")
+    public void findEventsByHostIdTest() throws Exception {
+        // Given
+        Long hostId = 1L;
+        List<EventBasicFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
+        when(eventService.findEventsByHostId(hostId)).thenReturn(mockEventList);
+
+        // When & Then
+        mockMvc.perform(get("/events/host/{hostId}", hostId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.successResponseDTO.data").isArray())
+                .andExpect(jsonPath("$.successResponseDTO.data.length()").value(mockEventList.size()));
+
+        verify(eventService, times(1)).findEventsByHostId(hostId);
+    }
+
+    @Test
     @DisplayName("행사 삭제 테스트")
     public void deleteEventTest() throws Exception {
         // Given
