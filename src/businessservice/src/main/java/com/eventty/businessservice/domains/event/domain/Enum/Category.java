@@ -1,4 +1,4 @@
-package com.eventty.businessservice.domains.event.application.Enum;
+package com.eventty.businessservice.domains.event.domain.Enum;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

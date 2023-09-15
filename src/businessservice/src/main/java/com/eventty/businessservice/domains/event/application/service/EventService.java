@@ -1,11 +1,10 @@
 package com.eventty.businessservice.domains.event.application.service;
 
-import com.eventty.businessservice.domains.event.application.Enum.Category;
+import com.eventty.businessservice.domains.event.domain.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
-import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
 import lombok.RequiredArgsConstructor;

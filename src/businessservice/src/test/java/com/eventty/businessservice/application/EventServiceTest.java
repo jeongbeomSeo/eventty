@@ -1,6 +1,6 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.domains.event.application.Enum.Category;
+import com.eventty.businessservice.domains.event.domain.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
 import com.eventty.businessservice.domains.event.application.service.EventService;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
@@ -60,18 +60,6 @@ public class EventServiceTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(mockEvents.size(), result.size());
-    }
-
-    @Test
-    @DisplayName("이벤트 카테고리별 조회 테스트 - 존재하지 않는 카테고리")
-    public void findEventsByCategoryTest_InvalidCategoryId() {
-        // given
-        Category invalidCategoryId = null;
-
-        // when & then
-        assertThrows(CategoryNotFoundException.class, () -> {
-            eventService.findEventsByCategory(invalidCategoryId);
-        });
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.eventty.businessservice.domains.event.presentation;
 
-import com.eventty.businessservice.domains.event.application.Enum.Category;
+import com.eventty.businessservice.domains.event.domain.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.common.Enum.ErrorCode;
