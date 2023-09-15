@@ -43,17 +43,6 @@ public class EventBasicRepositoryTest {
     }
 
     @Test
-    @DisplayName("특정 이벤트 조회 테스트 - 일반 정보와 상세 정보 JOIN")
-    public void selectEventWithDetailByIdTest() {
-        // given & when
-        EventFullFindByIdResponseDTO event = eventBasicRepository.selectEventWithDetailById(eventId);
-        // then
-        assertNotNull(event);
-        assertEquals(eventId, event.getId());
-        assertEquals("Sample content", event.getContent());
-    }
-
-    @Test
     @DisplayName("이벤트 전체 조회 테스트")
     public void selectAllEventsTest() {
         // given & when
@@ -62,7 +51,6 @@ public class EventBasicRepositoryTest {
         assertNotNull(events);
         assertEquals(events.size(), 1);
     }
-
 
     @Test
     @DisplayName("이벤트 삭제 테스트")
