@@ -28,12 +28,8 @@ import static com.eventty.businessservice.common.Enum.SuccessCode.*;
 public class EventController {
     private final EventService eventService;
 
-    /**
-     * 특정 행사 조회
-     *
-     */
     @GetMapping( "/events/{eventId}")
-    @Operation(summary = "특정 행사 조회")
+    @Operation(summary = "(ALL) 특정 이벤트의 상세 정보를 가져옵니다.")
     @ApiSuccessData(EventWithTicketsFindByIdResponseDTO.class)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<EventWithTicketsFindByIdResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId
@@ -46,12 +42,8 @@ public class EventController {
                 .body(SuccessResponseDTO.of(data));
     }
 
-    /**
-     * 행사 전체 조회
-     *
-     */
     @GetMapping( "/events")
-    @Operation(summary = "행사 전체 조회")
+    @Operation(summary = "(ALL) 전체 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findAllEvents()
@@ -64,12 +56,8 @@ public class EventController {
                 .body(SuccessResponseDTO.of(eventList));
     }
 
-    /**
-     * 행사 주회
-     *
-     */
     @PostMapping("/events")
-    @Operation(summary = "행사 주최")
+    @Operation(summary = "(HOST) 이벤트의 정보를 등록하여, 새로운 이벤트를 생성합니다.")
     @ApiSuccessData()
     public ResponseEntity<Void> postEvent(@RequestBody EventCreateRequestDTO eventCreateRequestDTO
     ){
@@ -82,12 +70,8 @@ public class EventController {
                 //.body(SuccessResponseDTO.of(newEventId));
     }
 
-    /**
-     * 주최한 행사 수정
-     *
-     */
     @PutMapping(value = "/events/{eventId}")
-    @Operation(summary = "행사 수정")
+    @Operation(summary = "(HOST) 이벤트의 정보를 수정합니다.")
     @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<Long>> postEvent(
             @PathVariable Long eventId,
@@ -102,13 +86,8 @@ public class EventController {
                 //.body(SuccessResponseDTO.of(updatedEventId));
     }
 
-
-    /**
-     * 주최한 행사 삭제
-     *
-     */
     @DeleteMapping("/events/{eventId}")
-    @Operation(summary = "행사 삭제")
+    @Operation(summary = "(HOST) 이벤트를 삭제합니다.")
     @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(@PathVariable @Min(1) Long eventId
     ){
@@ -121,13 +100,8 @@ public class EventController {
                 //.body(SuccessResponseDTO.of(deleteEventId));
     }
 
-
-    /**
-     * 행사 카테고리별 조회
-     *
-     */
     @GetMapping( "/events/category/{categoryId}")
-    @Operation(summary = "카테고리 별 행사 조회")
+    @Operation(summary = "(ALL) 이벤트를 카테고리별로 조회합니다.")
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.CATEGORY_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findEventsByCategory(
@@ -140,12 +114,8 @@ public class EventController {
                 .body(SuccessResponseDTO.of(events));
     }
 
-    /**
-     * 행사 검색
-     *
-     */
     @GetMapping( "/events/search")
-    @Operation(summary = "행사 검색")
+    @Operation(summary = "(ALL) 이벤트를 키워드로 검색하여, 최신순으로 가져옵니다.")
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findEventsBySearch(
