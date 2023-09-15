@@ -3,7 +3,7 @@ package com.eventty.businessservice.presentation;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.Facade.EventService;
+import com.eventty.businessservice.domains.event.application.service.EventService;
 import com.eventty.businessservice.domains.event.presentation.EventController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,24 +34,24 @@ public class EventControllerTest {
     @MockBean
     private EventService eventService;
 
-//    @Test
-//    @DisplayName("특정 행사 조회 테스트")
-//    public void findEventByIdTest() throws Exception {
-//        // Given
-//        Long eventId = 1L;
-//        EventWithTicketsFindByIdResponseDTO MockEvent = createEventWithDetailDTO(eventId);
-//        when(eventService.findEventById(eventId)).thenReturn(MockEvent);
-//
-//        // When & Then
-//        mockMvc.perform(get("/api/events/{eventId}", eventId))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.success").value(true))
-//                .andExpect(jsonPath("$.successResponseDTO.data.id", equalTo(eventId.intValue())))
-//                .andExpect(jsonPath("$.successResponseDTO.data.title", equalTo("Sample Event")));
-//
-//        verify(eventService, times(1)).findEventById(eventId);
-//    }
+    @Test
+    @DisplayName("특정 행사 조회 테스트")
+    public void findEventByIdTest() throws Exception {
+        // Given
+        Long eventId = 1L;
+        EventWithTicketsFindByIdResponseDTO MockEvent = createEventWithDetailDTO(eventId);
+        when(eventService.findEventById(eventId)).thenReturn(MockEvent);
+
+        // When & Then
+        mockMvc.perform(get("/events/{eventId}", eventId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.successResponseDTO.data.id", equalTo(eventId.intValue())))
+                .andExpect(jsonPath("$.successResponseDTO.data.title", equalTo("Sample Event")));
+
+        verify(eventService, times(1)).findEventById(eventId);
+    }
 
     @Test
     @DisplayName("전체 행사 조회 테스트")
@@ -117,6 +118,23 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.success").value(true));
 
         verify(eventService, times(1)).findEventsByCategory(categoryId);
+    }
+
+    @Test
+    @DisplayName("행사 검색 테스트")
+    public void searchEventsTest() throws Exception {
+        // Given
+        String keyword = "Sample";
+        when(eventService.findEventsBySearch(keyword)).thenReturn(createEventRespnseDTOList(5L));
+
+        // When & Then
+        mockMvc.perform(get("/events/search")
+                .param("keyword", keyword))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.success").value(true));
+
+        verify(eventService, times(1)).findEventsBySearch(keyword);
     }
 
     private static EventCreateRequestDTO createEventFullCreateRequestDTO() {

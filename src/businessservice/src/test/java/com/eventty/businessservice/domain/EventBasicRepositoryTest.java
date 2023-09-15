@@ -86,6 +86,18 @@ public class EventBasicRepositoryTest {
         assertEquals(list.size(), 1);
     }
 
+    @Test
+    @DisplayName("이벤트 검색")
+    public void selectEventsBySearchTest(){
+        // given & when
+        String keyword = "Sample";
+        List<EventBasicEntity> list = eventBasicRepository.selectEventsBySearch(keyword);
+
+        // then
+        assertNotNull(list);
+        assertEquals(list.size(), 1);
+    }
+
     private static EventBasicEntity createEventEntity(){
         return EventBasicEntity.builder()
                 //.id(10L)
