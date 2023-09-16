@@ -1,8 +1,10 @@
 package com.eventty.authservice.applicaiton.service.utils.token;
 
-import com.eventty.authservice.applicaiton.dto.AuthenticationDetailsDTO;
+import com.eventty.authservice.applicaiton.dto.TokenParsingDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
+import com.eventty.authservice.domain.entity.CsrfTokenEntity;
+import com.eventty.authservice.domain.exception.CsrfTokenNotFoundException;
 import com.eventty.authservice.domain.exception.InValidRefreshTokenException;
 import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
@@ -25,6 +27,7 @@ public class TokenProvider {
     private final AccessTokenProvider accessTokenProvider;
 
     private final RefreshTokenProvider refreshTokenProvider;
+    private final CSRFTokenProvider csrfTokenProvider;
 
     public TokensDTO getAllToken(AuthUserEntity authUserEntity) {
 
@@ -53,7 +56,8 @@ public class TokenProvider {
             throw new InValidRefreshTokenException(getNewTokensRequestDTO);
     }
 
-    public AuthenticationDetailsDTO authenticateUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+    // Token Parsing해서 User Id와 needsUpdate 반환 (1차 검증)
+    public TokenParsingDTO parsingToken(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
 
         // JWT를 이용해서 JWT Cliams 가져오기
         Claims claims = getClaimsOrNullOnExpiration(authenticationUserRequestDTO.accessToken());
@@ -65,12 +69,30 @@ public class TokenProvider {
             claims = getClaimsOrThrow(authenticationUserRequestDTO.refreshToken());
 
             // User ID 가져오기
-            Long userid = getUserId(claims);
+            Long userId = getUserId(claims);
 
+            // Refresh Token Validation Check
+            refreshTokenProvider.validationCheck(userId, authenticationUserRequestDTO.refreshToken());
 
-
+            // 새로 업데이트 해주기
+            return new TokenParsingDTO(userId, true);
         }
+        return new TokenParsingDTO(getUserId(claims), false);
+    }
 
+    public String getCsrfToken(Long userId) {
+        // User Id 이용해서 저장되어 있는 CSRF Token 가저오기
+        return csrfTokenProvider.getCsrfTokenByUserId(userId)
+                .orElseThrow(() -> new CsrfTokenNotFoundException(userId))
+                .getName();
+    }
+
+    public String updateCsrfToken(Long userId) {
+        return csrfTokenProvider.update(userId);
+    }
+
+    public String saveCsrfToken(Long userId) {
+        return csrfTokenProvider.save(userId);
     }
 
     // 토큰 Proivder에 두어서 직접 파싱

@@ -7,14 +7,14 @@ import com.eventty.authservice.domain.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RefreshTokenProvider {
 
     private final TokenProperties tokenProperties;

@@ -1,6 +1,7 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
-import com.eventty.authservice.applicaiton.dto.AuthenticationDetailsDTO;
+import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
+import com.eventty.authservice.applicaiton.dto.TokenParsingDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
@@ -18,5 +19,7 @@ public interface AuthService {
 
 
     TokensDTO getNewTokens(AuthUserEntity authUserEntity, GetNewTokensRequestDTO getNewTokensRequestDTO);
-    AuthenticationDetailsDTO authticateTokens(AuthenticationUserRequestDTO authenticationUserRequestDTO);
+    TokenParsingDTO getTokenParsingDTO(AuthenticationUserRequestDTO authenticationUserRequestDTO);
+    void csrfTokenValidationCheck(CsrfTokenDTO csrfTokenDTO);
+    String getNewCsrfToken(CsrfTokenDTO csrfTokenDTO);
 }

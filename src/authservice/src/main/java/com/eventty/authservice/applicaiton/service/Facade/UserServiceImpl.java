@@ -1,9 +1,12 @@
 package com.eventty.authservice.applicaiton.service.Facade;
 
+import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
+import com.eventty.authservice.applicaiton.dto.TokenParsingDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
+import com.eventty.authservice.domain.entity.AuthorityEntity;
 import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
@@ -13,6 +16,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.eventty.authservice.api.ApiClient;
@@ -100,9 +104,36 @@ public class UserServiceImpl implements UserService {
     @Override
     public AuthenticationDetailsResponseDTO authenticateUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
 
+        // 1차 검증을 통해 userId와 Token Update 필요한지 정보 가져오기
+        TokenParsingDTO tokenParsingDTO = authService.getTokenParsingDTO(authenticationUserRequestDTO);
 
+        // 2차 검증 (삭제되어 있는 User인지 확인)
+        AuthUserEntity authUserEntity = userDetailService.findAuthUser(tokenParsingDTO.userId());
 
-        return null;
+        // 3차 검증 (CSRF 검증) => 성공시 재발급 및 저장
+        CsrfTokenDTO csrfTokenDTO = new CsrfTokenDTO(authUserEntity.getId(), authenticationUserRequestDTO.csrfToken());
+        authService.csrfTokenValidationCheck(csrfTokenDTO);
+        String newCsrfToken = authService.getNewCsrfToken(csrfTokenDTO);
+
+        // 모든 검증을 마친 후 토큰 업데이트가 필요하면 수행
+        TokensDTO tokensDTO = new TokensDTO(authenticationUserRequestDTO.accessToken(), authenticationUserRequestDTO.refreshToken());
+
+        if (tokenParsingDTO.needsUpdate()) {
+            // 검증 로직 없이 새로운 토큰 가져오기
+            tokensDTO = authService.getToken(authUserEntity);
+        }
+
+        // 모든 권한 가져온 후 Json형태로 변환
+        String authoritiesJson = customConverter.convertAuthoritiesJson(authUserEntity);
+
+        return new AuthenticationDetailsResponseDTO(
+                authUserEntity.getId(),
+                tokensDTO.getAccessToken(),
+                tokensDTO.getRefreshToken(),
+                newCsrfToken,
+                authoritiesJson,
+                tokenParsingDTO.needsUpdate()
+        );
     }
 
     @Override

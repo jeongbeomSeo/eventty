@@ -115,10 +115,14 @@ public class AuthController {
      * 유저에 대한 검증
      */
     @PostMapping("/api/authenticate/user")
-    public ResponseEntity<ResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
 
+        AuthenticationDetailsResponseDTO authenticationDetailsResponseDTO = userService.authenticateUser(authenticationUserRequestDTO);
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
+                .body(SuccessResponseDTO.of(authenticationDetailsResponseDTO));
     }
-
 
     /**
      * Refresh Token 검증 및 새로운 Tokens 발급

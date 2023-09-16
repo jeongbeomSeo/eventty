@@ -30,7 +30,9 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(403, "", "Invalid Refresh Token Exception"),
     REFRESH_TOKEN_NOT_FOUND(404, "", "Refresh Token Not Found Exception"),
     ACCESS_DELETED_USER(400, "", "User has been deactivated."),
-    USER_ROLE_NOT_FOUND(400, "", "User Role Not Found.");
+    USER_ROLE_NOT_FOUND(400, "", "User Role Not Found."),
+    CSRF_TOKEN_NOT_FOUND(401, "", "Csrf Token Not Found Exception"),
+    INVALID_CSRF_TOKEN(401, "", "Invalid CSRF Token Exception");
 
     private final int status;
     private final String code;
