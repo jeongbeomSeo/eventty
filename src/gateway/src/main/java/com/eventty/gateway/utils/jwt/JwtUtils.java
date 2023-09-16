@@ -70,7 +70,6 @@ public class JwtUtils {
             throw new RuntimeException("Error converting authorities to JSON", e);
         }
     }
-
     private Claims getClaimsOrThrow(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtProperties.getSecretKey())

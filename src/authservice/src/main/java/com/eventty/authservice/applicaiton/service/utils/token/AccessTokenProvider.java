@@ -23,9 +23,8 @@ public class AccessTokenProvider {
     public String generateToken(AuthUserEntity authUserEntity, Date now, Date expiry) {
 
         Claims claims = Jwts.claims().setSubject(authUserEntity.getEmail());
-        String USER_ID = "userId";
 
-        claims.put(USER_ID, authUserEntity.getId());
+        claims.put(TokenEnum.USERID.getName(), authUserEntity.getId());
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)

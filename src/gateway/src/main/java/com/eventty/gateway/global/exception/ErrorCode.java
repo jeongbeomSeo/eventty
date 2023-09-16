@@ -28,7 +28,8 @@ public enum ErrorCode {
     REFRESH_TOKEN_IS_EMPTY(401, "G000", "Refresh Token is empty"),
     REFRESH_TOKEN_EXPIRED(401, "G000", "RefreshToken is expired"),
     FAIL_GET_NEW_TOKENS(400, "G000", "Failed to get new tokens"),
-    NO_ACCESS_TOKEN(401, "G000", "No Access Token");
+    NO_ACCESS_TOKEN(401, "G000", "No Access Token"),
+    NO_CSRF_TOKEN(401, "G000", "No CSRF Token");
 
     private final int status;
     private final String code;

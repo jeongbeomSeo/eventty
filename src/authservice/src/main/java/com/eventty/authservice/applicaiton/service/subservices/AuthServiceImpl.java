@@ -1,10 +1,12 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
+import com.eventty.authservice.applicaiton.dto.AuthenticationDetailsDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.applicaiton.service.utils.token.TokenProvider;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
+import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,15 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService{
 
     private final TokenProvider tokenProvider;
+
+
+    @Override
+    public AuthenticationDetailsDTO authticateTokens(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+
+        AuthenticationDetailsDTO authenticationDetailsDTO = tokenProvider.
+
+        return null;
+    }
 
     @Override
     public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {

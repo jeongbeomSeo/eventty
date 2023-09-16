@@ -24,17 +24,20 @@ public class ApiClient {
     private final RestTemplate customRestTemplate;
 
     public ResponseEntity<ResponseDTO<AuthenticationDetailsResponseDTO>> authenticateUser(AuthenticateUserRequestDTO authenticateUserRequestDTO) {
-
         HttpEntity<AuthenticateUserRequestDTO> entity = createHttpPostEntity(authenticateUserRequestDTO);
-
         URI uri = makeUrlService.authenticateUri();
+        logApiCall("Gateway", "Auth Server", "Authenticate User");
+        return executeApiCall(uri, entity);
+    }
 
-        // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
-        log.info("API 호출 From: {} To: {} Purpose: {}", "Gateway", "Auth Server", "Authenticate User");
+    private void logApiCall(String from, String to, String purpose) {
+        log.info("API 호출 From: {} To: {} Purpose: {}", from, to, purpose);
+    }
+
+    private ResponseEntity<ResponseDTO<AuthenticationDetailsResponseDTO>> executeApiCall(URI uri, HttpEntity<AuthenticateUserRequestDTO> entity) {
         return customRestTemplate.exchange(
                 uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<AuthenticationDetailsResponseDTO>>() {}
         );
-
     }
 
     public ResponseEntity<ResponseDTO<NewTokensResponseDTO>> getNewTokens(GetNewTokensRequestDTO getNewTokensRequestDTO) {

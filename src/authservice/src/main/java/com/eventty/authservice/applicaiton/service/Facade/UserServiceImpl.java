@@ -4,17 +4,15 @@ import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
-import com.eventty.authservice.global.response.ResponseDTO;
+import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
-import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
+import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.eventty.authservice.api.ApiClient;
@@ -97,6 +95,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void validateEmailNotDuplicated(String email) {
         userDetailService.validateEmail(email);
+    }
+
+    @Override
+    public AuthenticationDetailsResponseDTO authenticateUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+
+
+
+        return null;
     }
 
     @Override

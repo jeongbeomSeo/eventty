@@ -62,4 +62,15 @@ public class RefreshTokenProvider {
             return refreshTokenRepository.save(newRefreshToken);
         }
     }
+
+    public void validationCheck(Long userId, String refreshToken) {
+
+        // userId 이용해서 저장되어 있는 Enitty 가져오기
+        Optional<RefreshTokenEntity> existedRefreshToken = refreshTokenRepository.findByUserId(userId);
+
+        // userId로 저장되어 있는 refreshToken이 없던가, Matching에 실패한 경우 예외 발생
+        if (existedRefreshToken.isEmpty() || !existedRefreshToken.get().getName().equals(refreshToken))
+            throw new RefreshTokenNotFoundException(userId);
+
+    }
 }

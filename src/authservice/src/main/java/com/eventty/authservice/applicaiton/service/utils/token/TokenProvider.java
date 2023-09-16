@@ -1,10 +1,15 @@
 package com.eventty.authservice.applicaiton.service.utils.token;
 
+import com.eventty.authservice.applicaiton.dto.AuthenticationDetailsDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.InValidRefreshTokenException;
+import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
-import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -47,6 +52,56 @@ public class TokenProvider {
         if (!getNewTokensRequestDTO.getRefreshToken().equals(existedRefreshToken))
             throw new InValidRefreshTokenException(getNewTokensRequestDTO);
     }
+
+    public AuthenticationDetailsDTO authenticateUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+
+        // JWT를 이용해서 JWT Cliams 가져오기
+        Claims claims = getClaimsOrNullOnExpiration(authenticationUserRequestDTO.accessToken());
+
+        // 만약 만료 기간이 지났다면,
+        if (claims == null) {
+
+            // Refresh Token 이용해서 Claims update
+            claims = getClaimsOrThrow(authenticationUserRequestDTO.refreshToken());
+
+            // User ID 가져오기
+            Long userid = getUserId(claims);
+
+
+
+        }
+
+    }
+
+    // 토큰 Proivder에 두어서 직접 파싱
+    // 만료 기간이 지난 경우에는 예외
+    private Claims getClaimsOrNullOnExpiration(String token) {
+        Claims claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(tokenProperties.getSecretKey())
+                    .requireIssuer(tokenProperties.getIssuer())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return null;
+        }
+        return claims;
+    }
+
+    // 서명이 유효하지 않은 경우, 만료 기간 지난 경우, 파싱 실패 전부 예외 터트리기
+    private Claims getClaimsOrThrow(String token) {
+        return Jwts.parser()
+                .setSigningKey(tokenProperties.getSecretKey())
+                .requireIssuer(tokenProperties.getIssuer())
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private Long getUserId(Claims claims) {
+        return Long.parseLong(claims.get(TokenEnum.USERID.getName()).toString());
+    }
+
     private Date createExpiry(Date now, Duration expiredAt) {
         return new Date(now.getTime() + expiredAt.toMillis());
     }

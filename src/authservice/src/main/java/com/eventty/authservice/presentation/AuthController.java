@@ -1,24 +1,18 @@
 package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
-import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
+import com.eventty.authservice.global.response.ResponseDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
-import com.eventty.authservice.infrastructure.annotation.Permission;
 import com.eventty.authservice.infrastructure.resolver.LoginUser;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
-import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
-import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.request.*;
+import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -27,10 +21,8 @@ import lombok.RequiredArgsConstructor;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
 import com.eventty.authservice.domain.Enum.UserRole;
-import com.eventty.authservice.presentation.dto.request.IsUserDuplicateRequestDTO;
 import com.eventty.authservice.global.Enum.SuccessCode;
 
 @RestController
@@ -118,6 +110,15 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, deleteRefreshToken.toString())
                 .body(null);
     }
+
+    /**
+     * 유저에 대한 검증
+     */
+    @PostMapping("/api/authenticate/user")
+    public ResponseEntity<ResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+
+    }
+
 
     /**
      * Refresh Token 검증 및 새로운 Tokens 발급

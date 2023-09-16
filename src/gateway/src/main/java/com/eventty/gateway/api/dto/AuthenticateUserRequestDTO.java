@@ -1,7 +1,9 @@
 package com.eventty.gateway.api.dto;
 
-public class AuthenticateUserRequestDTO {
-    String accessToken;
-    String refreshToken;
-    String csrfToken;
-}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record AuthenticateUserRequestDTO(
+        @JsonProperty("accessToken") String accessToken,
+        @JsonProperty("refreshToken") String refreshToken,
+        @JsonProperty("csrfToken") String csrfToken
+) {}
