@@ -11,5 +11,6 @@ import java.util.List;
 @ToString
 public class LoginResponseDTO {
     private String email;
-    private List<String> authoritiesNameList;
+    private String role;
+    private String csrfToken;
 }

@@ -1,25 +1,26 @@
 package com.eventty.gateway.filter;
 
+import com.eventty.gateway.api.ApiClient;
+import com.eventty.gateway.api.dto.AuthenticationDetailsResponseDTO;
 import com.eventty.gateway.dto.TokenDetails;
+import com.eventty.gateway.global.dto.SuccessResponseDTO;
 import com.eventty.gateway.global.exception.token.NoAccessTokenException;
 import com.eventty.gateway.service.TokenAuthenticationService;
 import com.eventty.gateway.service.TokenAuthenticationServiceImpl;
 import com.eventty.gateway.utils.jwt.TokenEnum;
 import com.eventty.gateway.utils.CookieCreator;
-import com.eventty.gateway.utils.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 @Component
 @Slf4j
@@ -27,12 +28,15 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     private final String HEADER_USER_ID = "X-User-Id";
     private final String HEADER_AUTHORITIES = "X-User-Authorities";
+    private final String HEADER_CSRF = "X-CSRF-Token";
     private final TokenAuthenticationService tokenAuthenticationService;
+    private final ApiClient apiClient;
 
     @Autowired
-    public JwtAuthenticationFilter(TokenAuthenticationServiceImpl tokenAuthenticationServiceImpl) {
+    public JwtAuthenticationFilter(TokenAuthenticationServiceImpl tokenAuthenticationServiceImpl, ApiClient apiClient) {
         super(Config.class); // Config.class를 매개변수로 전달
         this.tokenAuthenticationService = tokenAuthenticationServiceImpl;
+        this.apiClient = apiClient;
     }
 
     public static class Config {
@@ -49,9 +53,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return ((exchange, chain) -> {
 
             MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
+            String csrfToken = exchange.getRequest().getHeaders().get(HEADER_CSRF).get(0);
             boolean hasAccessToken = cookies.get(TokenEnum.ACCESS_TOKEN.getName()) != null;
             if (!hasAccessToken)
                 throw new NoAccessTokenException();
+
+            // 이 부분이 API 요청 보내는 로직으로 변경되어야 함
+            ResponseEntity<SuccessResponseDTO<AuthenticationDetailsResponseDTO>> response = apiClient.authenticateUser()
 
             TokenDetails tokenDetails = tokenAuthenticationService.getTokenDetails(cookies);
 

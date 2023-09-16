@@ -29,7 +29,8 @@ public enum ErrorCode {
     INVALID_PASSWORD(400, "", "Invalid Password Exception"),
     INVALID_REFRESH_TOKEN(403, "", "Invalid Refresh Token Exception"),
     REFRESH_TOKEN_NOT_FOUND(404, "", "Refresh Token Not Found Exception"),
-    ACCESS_DELETED_USER(400, "", "User has been deactivated.");
+    ACCESS_DELETED_USER(400, "", "User has been deactivated."),
+    USER_ROLE_NOT_FOUND(400, "", "User Role Not Found.");
 
     private final int status;
     private final String code;

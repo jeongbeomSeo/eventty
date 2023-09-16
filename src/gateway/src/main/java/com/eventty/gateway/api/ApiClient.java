@@ -1,5 +1,7 @@
 package com.eventty.gateway.api;
 
+import com.eventty.gateway.api.dto.AuthenticateUserRequestDTO;
+import com.eventty.gateway.api.dto.AuthenticationDetailsResponseDTO;
 import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
 import com.eventty.gateway.api.dto.NewTokensResponseDTO;
 import com.eventty.gateway.api.utils.MakeUrlService;
@@ -20,6 +22,20 @@ import java.util.Collections;
 public class ApiClient {
     private final MakeUrlService makeUrlService;
     private final RestTemplate customRestTemplate;
+
+    public ResponseEntity<ResponseDTO<AuthenticationDetailsResponseDTO>> authenticateUser(AuthenticateUserRequestDTO authenticateUserRequestDTO) {
+
+        HttpEntity<AuthenticateUserRequestDTO> entity = createHttpPostEntity(authenticateUserRequestDTO);
+
+        URI uri = makeUrlService.authenticateUri();
+
+        // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
+        log.info("API 호출 From: {} To: {} Purpose: {}", "Gateway", "Auth Server", "Authenticate User");
+        return customRestTemplate.exchange(
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<AuthenticationDetailsResponseDTO>>() {}
+        );
+
+    }
 
     public ResponseEntity<ResponseDTO<NewTokensResponseDTO>> getNewTokens(GetNewTokensRequestDTO getNewTokensRequestDTO) {
 

@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         // 비밀번호 매칭
         authService.credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
 
-        // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환
+        // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환 => 권한 X 역할만 담기
         LoginSuccessDTO loginSuccessDTO = customConverter.authUserEntityTologinSuccessDTO(authService, authUserEntity);
 
         return loginSuccessDTO;

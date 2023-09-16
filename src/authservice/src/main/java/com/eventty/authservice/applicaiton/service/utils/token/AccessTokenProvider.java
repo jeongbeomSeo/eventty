@@ -24,10 +24,8 @@ public class AccessTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(authUserEntity.getEmail());
         String USER_ID = "userId";
-        String AUTHORITIES = "authorities";
 
         claims.put(USER_ID, authUserEntity.getId());
-        claims.put(AUTHORITIES, getAuthorities(authUserEntity));
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -41,10 +39,12 @@ public class AccessTokenProvider {
                 .compact();
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(AuthUserEntity authUserEntity) {
+
+/*    private Collection<? extends GrantedAuthority> getAuthorities(AuthUserEntity authUserEntity) {
         return authUserEntity.getAuthorities().stream()
                 .map(authorityEntity -> new SimpleGrantedAuthority(
                         authorityEntity.getName()
                 )).collect(Collectors.toList());
-    }
+    }*/
+
 }

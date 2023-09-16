@@ -26,7 +26,8 @@ public class TokenMapper {
     public String jwtMapping(MultiValueMap<String, HttpCookie> cookies) {
         List<HttpCookie> cookie = cookies.get(TokenEnum.ACCESS_TOKEN.getName());
 
-        if (cookie == null) return null;
+        if (cookie == null)
+            ㅅhthsfdsfz
 
         return cookie.get(0).toString().replace(TokenEnum.ACCESS_TOKEN.getName()+ "=", "");
     }

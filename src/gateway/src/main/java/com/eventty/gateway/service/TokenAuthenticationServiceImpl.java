@@ -60,8 +60,7 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
 
             tokenDetails.setUserId(userId);
             tokenDetails.setAuthoritiesJson(jwtUtils.getAuthoritiesToJson(tokenDetails.getClaims()));
-        }
-        else {  // JWT가 유효한 경우
+        } else {  // JWT가 유효한 경우
             String userId = jwtUtils.getUserId(tokenDetails.getAccessToken());
             String authoritiesJson = jwtUtils.getAuthoritiesToJson(tokenDetails.getClaims());
 

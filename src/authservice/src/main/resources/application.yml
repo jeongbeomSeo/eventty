@@ -49,4 +49,4 @@ server.base.url.user_server: ${user-server-url}
 token.access-expired-time: ${token-access}
 token.refresh-expired-time: ${token-refresh}
 token.issuer: ${issuer}
-token.secret_key: ${secret_key}
+token.secret_key: ${secret-key}

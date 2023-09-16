@@ -7,7 +7,6 @@ import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
-import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
