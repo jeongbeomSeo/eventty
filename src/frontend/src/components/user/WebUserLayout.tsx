@@ -1,19 +1,73 @@
-import React, {useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Box, Container, Divider, Flex, Grid, Group, Stack, Text, Title, UnstyledButton} from "@mantine/core";
-import {Link, Outlet} from "react-router-dom";
+import {Link, Outlet, useLocation} from "react-router-dom";
 import {useRecoilValue} from "recoil";
 import {userState} from "../../states/userState";
 import {set} from "react-hook-form";
+import {CheckHost} from "../../util/CheckHost";
 
-const MENU_LIST = [
-    {link: "users/profile", value: "내 정보"},
-    {link: "users/events", value: "주최 내역"},
-    {link: "users/reservations", value: "예약 내역"},
-]
+const TABS = [
+    {
+        key: "profile",
+        label: "내 정보",
+        path: "users/profile",
+    },
+    {
+        key: "events",
+        label: "주최 내역",
+        path: "users/events",
+    },
+    {
+        key: "reservations",
+        label: "예약 내역",
+        path: "users/reservations",
+    },
+];
+
+function Tab(item: {key:string, label:string, path:string, isActive:boolean}) {
+    return (
+        <Flex gap={"0.5rem"}>
+            <Box
+                style={{
+                    height: "auto",
+                    width: "5px",
+                    background: "var(--primary)",
+                    borderRadius: "10rem",
+                    visibility: item.isActive ? "inherit" : "hidden",
+                }}
+            />
+            <UnstyledButton
+                component={Link}
+                to={item.path}
+                style={{
+                    background: item.isActive ? "#eeeeee" : "",
+                    borderRadius: "0.3rem",
+                    padding: "0.7rem",
+                    width: "100%",
+                }}
+            >
+                {item.label}
+            </UnstyledButton>
+        </Flex>
+    );
+}
 
 function WebUserLayout() {
-    const userStateValue = useRecoilValue(userState);
-    const [profile, setProfile] = useState(true);
+    const isHost = CheckHost();
+    const {pathname} = useLocation();
+    const curPath = pathname.split("/").pop();
+    const [activeTab, setActiveTab] = useState(curPath);
+
+    const filteredTabs = useMemo(() => {
+        return TABS.filter((item) => (
+            (isHost && item.key !== "reservations") ||
+            (!isHost && item.key !== "events")
+        ));
+    }, [isHost]);
+
+    useEffect(() => {
+        setActiveTab(curPath);
+    }, [curPath]);
 
     return (
         <Container>
@@ -22,68 +76,9 @@ function WebUserLayout() {
                     <Stack>
                         <Title order={3}>마이페이지</Title>
                         <Divider/>
-                        <Flex gap={"0.5rem"}>
-                            <Box style={{
-                                height: "auto",
-                                width: "5px",
-                                background: "var(--primary)",
-                                borderRadius: "10rem",
-                                visibility: profile ? "inherit" : "hidden",
-                            }}/>
-                            <UnstyledButton component={Link}
-                                            to={"users/profile"}
-                                            onClick={() => setProfile(true)}
-                                            style={{
-                                                background: profile ? "#eeeeee" : "",
-                                                borderRadius: "0.3rem",
-                                                padding: "0.7rem",
-                                                width: "100%",
-                                            }}>
-                                내 정보
-                            </UnstyledButton>
-                        </Flex>
-                        {userStateValue.isHost ?
-                            <Flex gap={"0.5rem"}>
-                                <Box style={{
-                                    height: "auto",
-                                    width: "5px",
-                                    background: "var(--primary)",
-                                    borderRadius: "10rem",
-                                    visibility: !profile ? "inherit" : "hidden",
-                                }}/>
-                                <UnstyledButton component={Link}
-                                                to={"users/events"}
-                                                onClick={() => setProfile(false)}
-                                                style={{
-                                                    background: !profile ? "#eeeeee" : "",
-                                                    borderRadius: "0.3rem",
-                                                    padding: "0.7rem",
-                                                    width: "100%",
-                                                }}>
-                                    주최 내역
-                                </UnstyledButton>
-                            </Flex> :
-                            <Flex gap={"0.5rem"}>
-                                <Box style={{
-                                    height: "auto",
-                                    width: "5px",
-                                    background: "var(--primary)",
-                                    borderRadius: "10rem",
-                                    visibility: !profile ? "inherit" : "hidden",
-                                }}/>
-                                <UnstyledButton component={Link}
-                                                to={"users/reservations"}
-                                                onClick={() => setProfile(false)}
-                                                style={{
-                                                    background: !profile ? "#eeeeee" : "",
-                                                    borderRadius: "0.3rem",
-                                                    padding: "0.7rem",
-                                                    width: "100%",
-                                                }}>
-                                    예약 내역
-                                </UnstyledButton>
-                            </Flex>
-                        }
+                        {filteredTabs.map((item) => (
+                            <Tab key={item.key} label={item.label} path={item.path} isActive={activeTab === item.key}/>
+                        ))}
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={9}>

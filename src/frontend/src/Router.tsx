@@ -5,7 +5,6 @@ import Main from './pages/Main';
 import Signup from './pages/Signup';
 import SignupMain from './pages/signup/SignupMain';
 import SignupHost from './pages/signup/SignupHost';
-import Logout from './pages/Logout';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import Error from './pages/Error';
@@ -19,11 +18,11 @@ import Profile from "./pages/user/Profile";
 import EventsInfo from "./pages/user/EventsInfo";
 import Write from "./pages/Write";
 import SignupUser from "./pages/signup/SignupUser";
-import DeleteAccount from "./pages/DeleteAccount";
 import {loader as eventLoader} from "./routes/event";
 import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
 import HostRoute from "./components/HostRoute";
+import Reservation from "./pages/user/Reservation";
 
 const Router = createBrowserRouter([
     {
@@ -62,11 +61,17 @@ const Router = createBrowserRouter([
                                         loader: profileLoader,
                                     },
                                     {
-                                        path: "users/events",
-                                        element: <EventsInfo/>,
+                                        element: <HostRoute/>,
+                                        children: [
+                                            {
+                                                path: "users/events",
+                                                element: <EventsInfo/>,
+                                            },
+                                        ]
                                     },
                                     {
                                         path: "users/reservations",
+                                        element: <Reservation/>,
                                     },
                                 ]
                             },
@@ -112,14 +117,6 @@ const Router = createBrowserRouter([
             {
                 element: <PrivateRoute/>,
                 children: [
-                    {
-                        path: "/logout",
-                        element: <Logout/>,
-                    },
-                    {
-                        path: "/delete-account",
-                        element: <DeleteAccount/>,
-                    },
                     {
                         element: <HostRoute/>,
                         children: [

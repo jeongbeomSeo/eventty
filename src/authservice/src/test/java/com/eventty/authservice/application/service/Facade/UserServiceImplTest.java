@@ -1,8 +1,19 @@
-/*
 package com.eventty.authservice.application.service.Facade;
 
 import com.eventty.authservice.api.ApiClient;
 import com.eventty.authservice.api.exception.ApiException;
+import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
+import com.eventty.authservice.applicaiton.dto.TokensDTO;
+import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
+import com.eventty.authservice.applicaiton.service.subservices.UserDetailServiceImpl;
+import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
+import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
+import com.eventty.authservice.domain.exception.AccessDeletedUserException;
+import com.eventty.authservice.domain.exception.InvalidPasswordException;
+import com.eventty.authservice.domain.exception.UserNotFoundException;
+import com.eventty.authservice.global.response.ResponseDTO;
+import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +26,6 @@ import java.util.List;
 
 import com.eventty.authservice.api.dto.UserCreateRequestDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserServiceImpl;
-import com.eventty.authservice.applicaiton.service.subservices.UserDetailServiceImpl;
-import com.eventty.authservice.common.response.ResponseDTO;
-import com.eventty.authservice.common.response.SuccessResponseDTO;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.entity.AuthorityEntity;
@@ -34,78 +42,211 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceImplTest {
 
     @InjectMocks
-    private UserServiceImpl authService;
+    private UserServiceImpl userService;
 
     @Mock
-    private UserDetailServiceImpl userService;
-
+    private UserDetailServiceImpl userDetailService;
+    @Mock
+    private AuthServiceImpl authService;
     @Mock
     private ApiClient apiClient;
+    @Mock
+    CustomConverter customConverter;
+    @Mock
+    CustomPasswordEncoder customPasswordEncoder;
 
     @Test
-    @DisplayName("[POST] 회원가입 성공")
-    public void createUser_SUCESS_USER() {
-
+    @DisplayName("로그인 성공")
+    public void login_SUCCESS() {
         // Given
-
-        // Local
-        Long id = 1L;
-        String email = createEmail(id);
-        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
-        UserRole userRole = UserRole.USER;
-        AuthUserEntity authUserEntity = createAuthUserEntity(id, email, userRole);
-
-        // API
-        // API의 예상된 응답값을 설정
-        SuccessResponseDTO successResponse = SuccessResponseDTO.of(null);
-        ResponseDTO mockedResponse = ResponseDTO.of(successResponse);
-        ResponseEntity<ResponseDTO> responseEntity = new ResponseEntity<>(mockedResponse, HttpStatus.CREATED);
-
-        when(userService.create(fullUserCreateRequestDTO, userRole)).thenReturn(authUserEntity);
-        doReturn(responseEntity).when(apiClient).createUserApi(any(UserCreateRequestDTO.class));
+        Long userId = 1L;
+        String email = "example1@mm.mm";
+        String password = "123123";
+        UserRole role = UserRole.USER;
+        UserLoginRequestDTO userLoginRequestDTO = createUserLoginRequestDTO(email, password, customPasswordEncoder);
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
+        LoginSuccessDTO loginSuccessDTO = LoginSuccessDTO.builder()
+                .loginResponseDTO(new LoginResponseDTO(email, new ArrayList<>()))
+                .tokensDTO(new TokensDTO("", ""))
+                .build();
 
         // When
-        authService.createUser(fullUserCreateRequestDTO, userRole);
+        when(userDetailService.findAuthUser(userLoginRequestDTO.getEmail())).thenReturn(authUserEntity);
+        doNothing().when(userDetailService).validationUser(authUserEntity);
+        when(authService.credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder)).thenReturn(true);
+        when(customConverter.authUserEntityTologinSuccessDTO(authService, authUserEntity)).thenReturn(loginSuccessDTO);
+
         // Then
-        verify(userService, times(1)).create(fullUserCreateRequestDTO, userRole);
-        verify(apiClient, times(1)).createUserApi(any(UserCreateRequestDTO.class));
+        assertEquals(userService.login(userLoginRequestDTO), loginSuccessDTO);
+        verify(userDetailService, times(1)).findAuthUser(userLoginRequestDTO.getEmail());
+        verify(customConverter, times(1)).authUserEntityTologinSuccessDTO(authService, authUserEntity);
     }
 
     @Test
-    @DisplayName("[POST][ERROR] 회원 가입 실패 - 이메일 중복")
+    @DisplayName("로그인 실패 - 유저가 삭제되어 있는 경우")
+    public void login_ACCESS_DELETED_USER() {
+        // Given
+        Long userId = 1L;
+        String email = "example1@mm.mm";
+        String password = "123123";
+        UserRole role = UserRole.USER;
+        UserLoginRequestDTO userLoginRequestDTO = createUserLoginRequestDTO(email, password, customPasswordEncoder);
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
+
+        // When
+        when(userDetailService.findAuthUser(userLoginRequestDTO.getEmail())).thenReturn(authUserEntity);
+        doThrow(new AccessDeletedUserException(authUserEntity)).when(userDetailService).validationUser(authUserEntity);
+
+        // Then
+        assertThrows(AccessDeletedUserException.class, () -> userService.login(userLoginRequestDTO));
+        verify(authService, never()).credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
+        verify(customConverter, never()).authUserEntityTologinSuccessDTO(authService, authUserEntity);
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - 비밀번호 매칭 실패")
+    public void login_INVALID_PASSWORD() {
+        // Given
+        Long userId = 1L;
+        String email = "example1@mm.mm";
+        String password = "123123";
+        UserRole role = UserRole.USER;
+        UserLoginRequestDTO userLoginRequestDTO = createUserLoginRequestDTO(email, password, customPasswordEncoder);
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
+
+        // When
+        when(userDetailService.findAuthUser(userLoginRequestDTO.getEmail())).thenReturn(authUserEntity);
+        doNothing().when(userDetailService).validationUser(authUserEntity);
+        doThrow(new InvalidPasswordException(userLoginRequestDTO)).when(authService).credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
+
+        // Then
+        assertThrows(InvalidPasswordException.class, () -> userService.login(userLoginRequestDTO));
+        verify(customConverter, never()).authUserEntityTologinSuccessDTO(authService, authUserEntity);
+    }
+
+
+    @Test
+    @DisplayName("회원가입 성공")
+    public void createUser_SUCESS_USER() {
+        // Given
+        Long userId = 1L;
+        String email = createEmail(userId);
+        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+        UserRole role = UserRole.USER;
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
+        UserCreateRequestDTO userCreateRequestDTO = createUserCreateRequestDTO(fullUserCreateRequestDTO, userId);
+        ResponseEntity<ResponseDTO<Void>> responseEntity = createResponseEntity();
+
+        // When
+        when(customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder)).thenReturn(authUserEntity);
+        when(userDetailService.create(authUserEntity, role)).thenReturn(userId);
+        when(customConverter.fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId)).thenReturn(userCreateRequestDTO);
+        when(apiClient.createUserApi(userCreateRequestDTO)).thenReturn(responseEntity);
+
+        // Then
+        assertEquals(userService.createUser(fullUserCreateRequestDTO, role), userId);
+
+        verify(customConverter, times(1)).userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder);
+        verify(userDetailService, times(1)).create(authUserEntity, role);
+        verify(customConverter, times(1)).fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId);
+    }
+
+    @Test
+    @DisplayName("회원 가입 실패 - 이메일 중복")
     public void createUser_INVALID_INPUT_VALUE() {
 
         // Given
-        Long id = 1L;
-        String email = createEmail(id);
-        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
-        UserRole userRole = UserRole.USER;
-
-        // when
-        doThrow(DuplicateEmailException.class).when(userService).create(fullUserCreateRequestDTO, userRole);
-
-        // Then
-        assertThrows(DuplicateEmailException.class, () -> authService.createUser(fullUserCreateRequestDTO, userRole));
-        // verify(apiClient, times(0)).createUserApi(any(UserCreateRequestDTO.class));
-    }
-
-    @Test
-    @DisplayName("[POST][ERROR] 회원 가입 실패 - API 요청 실패")
-    public void createUser_API_EXCEPTION() {
-
-        // Given
-        Long id = 1L;
-        String email = createEmail(id);
+        Long userId = 1L;
+        String email = createEmail(userId);
         FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
         UserRole role = UserRole.USER;
-        AuthUserEntity authUserEntity = createAuthUserEntity(id, email, role);
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
 
         // when
-        when(userService.create(fullUserCreateRequestDTO, role)).thenReturn(authUserEntity);
+        when(customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder)).thenReturn(authUserEntity);
+        doThrow(DuplicateEmailException.class).when(userDetailService).create(authUserEntity, role);
+
+        // Then
+        assertThrows(DuplicateEmailException.class, () -> userService.createUser(fullUserCreateRequestDTO, role));
+
+        verify(customConverter, times(0)).fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId);
+    }
+    @Test
+    @DisplayName("회원 가입 실패 - API 요청 실패")
+    public void createUser_API_EXCEPTION() {
+        // Given
+        Long userId = 1L;
+        String email = createEmail(userId);
+        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+        UserRole role = UserRole.USER;
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
+        UserCreateRequestDTO userCreateRequestDTO = createUserCreateRequestDTO(fullUserCreateRequestDTO, userId);
+
+        // when
+        when(customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder)).thenReturn(authUserEntity);
+        when(userDetailService.create(authUserEntity, role)).thenReturn(userId);
+        when(customConverter.fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId)).thenReturn(userCreateRequestDTO);
         doThrow(ApiException.class).when(apiClient).createUserApi(any(UserCreateRequestDTO.class));
 
         // then
-        assertThrows(ApiException.class, () -> authService.createUser(fullUserCreateRequestDTO, role));
+        assertThrows(ApiException.class, () -> userService.createUser(fullUserCreateRequestDTO, role));
+    }
+
+    @Test
+    @DisplayName("유저 삭제 성공")
+    public void deleteUser_SUCCESS() {
+        // Given
+        Long userId = 1L;
+        String email = "example1@mm.mm";
+        UserRole role = UserRole.USER;
+
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
+
+        // When
+        when(userDetailService.findAuthUser(userId)).thenReturn(authUserEntity);
+        when(userDetailService.delete(authUserEntity)).thenReturn(1L);
+
+        // Then
+        assertEquals(userService.deleteUser(userId), 1L);
+        verify(userDetailService, times(1)).findAuthUser(userId);
+        verify(userDetailService, times(1)).delete(authUserEntity);
+    }
+
+    @Test
+    @DisplayName("유저 삭제 실패 - 해당 ID로 User를 찾을 수 없는 경우")
+    public void deleteUser_USER_NOT_FOUND() {
+        // Given
+        Long userId = 1L;
+
+        // When
+        doThrow(new UserNotFoundException(userId)).when(userDetailService).findAuthUser(userId);
+
+        // Then
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));
+        verify(userDetailService, never()).delete(any(AuthUserEntity.class));
+    }
+
+    private ResponseEntity<ResponseDTO<Void>> createResponseEntity() {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ResponseDTO.of(true));
+    }
+
+    private UserLoginRequestDTO createUserLoginRequestDTO(String email, String password, CustomPasswordEncoder customPasswordEncoder) {
+        return UserLoginRequestDTO.builder()
+                .email(email)
+                .password(customPasswordEncoder.encode(password))
+                .build();
+    }
+
+    private UserCreateRequestDTO createUserCreateRequestDTO(FullUserCreateRequestDTO fullUserCreateRequestDTO, Long id) {
+        return UserCreateRequestDTO.builder()
+                .userId(id)
+                .name(fullUserCreateRequestDTO.getName())
+                .address(fullUserCreateRequestDTO.getAddress())
+                .birth(fullUserCreateRequestDTO.getBirth())
+                .phone(fullUserCreateRequestDTO.getPhone())
+                .build();
     }
 
     private static AuthUserEntity createAuthUserEntity(Long id, String email, UserRole role) {
@@ -144,4 +285,3 @@ public class UserServiceImplTest {
                 .build();
     }
 }
-*/

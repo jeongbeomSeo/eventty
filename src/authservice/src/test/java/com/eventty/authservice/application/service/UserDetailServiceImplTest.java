@@ -1,6 +1,7 @@
-/*
 package com.eventty.authservice.application.service;
 
+import com.eventty.authservice.domain.exception.AccessDeletedUserException;
+import com.eventty.authservice.domain.exception.UserNotFoundException;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -27,18 +29,12 @@ import com.eventty.authservice.domain.exception.DuplicateEmailException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-*/
-/*
-패스워드 검증에는 인코더가 필요한 상황이므로 TestConfig에서 @Bean으로 등록 후 @Mock으로 등록
-
- *//*
-
 
 @ExtendWith(MockitoExtension.class)
 public class UserDetailServiceImplTest {
 
     @InjectMocks
-    private UserDetailServiceImpl userServiceImpl;
+    private UserDetailServiceImpl userDetailService;
 
     @Mock
     private AuthUserRepository userRepository;
@@ -46,70 +42,127 @@ public class UserDetailServiceImplTest {
     @Mock
     private EntityManager em;
 
+    // 패스워드 검증에는 인코더가 필요한 상황이므로 TestConfig에서 @Bean으로 등록 후 @Mock으로 등록
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Test
+    @DisplayName("회원 삭제 성공")
+    public void delete_SUCCESS() {
+        // Given
+        Long userId = 1L;
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId);
+
+        // When
+        userDetailService.delete(authUserEntity);
+
+        // Then
+        assertTrue(authUserEntity.isDelete());
+    }
 
     @Test
-    @DisplayName("[Local] 회원가입 및 권한 정보 저장 성공")
-    public void create_SUCCESS() {
+    @DisplayName("회원 찾기 성공 - Email")
+    public void findAuthUser_BY_EMAIL_SUCCESS() {
+        // Given
+        String email = "example1@mm.mm";
+        AuthUserEntity authUserEntity = createAuthUserEntity(email);
+
+        // When
+        when(userRepository.findByEmail(email)).thenReturn(Optional.ofNullable(authUserEntity));
+
+        // Then
+        assertEquals(userDetailService.findAuthUser(email), authUserEntity);
+    }
+
+    @Test
+    @DisplayName("회원 찾기 성공 - UserId")
+    public void findAuthUser_BY_USER_ID_SUCCESS() {
+        // Given
         Long id = 1L;
-        String email = createEmail(id);
-        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+        AuthUserEntity authUserEntity = createAuthUserEntity(id);
+
+        // When
+        when(userRepository.findById(id)).thenReturn(Optional.of(authUserEntity));
+
+        // Then
+        assertEquals(userDetailService.findAuthUser(id), authUserEntity);
+    }
+
+    @Test
+    @DisplayName("회원 찾기 실패 - USER_NOT_FOUND")
+    public void findAuthUser_USER_NOT_FOUND() {
+        // Given
+        Long id = 1L;
+        String email = "example1@mm.mm";
+
+        // When
+        doThrow(new UserNotFoundException(id)).when(userRepository).findById(id);
+        doThrow(new UserNotFoundException(email)).when(userRepository).findByEmail(email);
+
+        // Then
+        assertThrows(UserNotFoundException.class, () -> userDetailService.findAuthUser(id));
+        assertThrows(UserNotFoundException.class, () -> userDetailService.findAuthUser(email));
+    }
+
+    @Test
+    @DisplayName("회원 생성 성공")
+    public void create_SUCCESS() {
+        // Given
+        Long userId = 1L;
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId);
         UserRole userRole = UserRole.USER;
 
         // When
-        //AuthUserEntity newUser = userServiceImpl.create(fullUserCreateRequestDTO, userRole);
-
-        */
-/*  오류: 새로운 생성자를 만들면 위에서 실행했을 때 만들어 지는 newAutority 랑은 다른 생성자로 만들어 지는 것임.
-        AuthorityEntity newAuthority = AuthorityEntity.builder()
-                .name(userRole.getRole())
-                .authUserEntity(newUser)
-                .build();
-                *//*
-
+        when(userRepository.findByEmail(authUserEntity.getEmail())).thenReturn(Optional.empty());
+        doNothing().when(em).persist(authUserEntity);
+        doNothing().when(em).persist(any(AuthorityEntity.class));
 
         // Then
-       //verify(em, times(1)).persist(newUser);
-       verify(em, times(1)).persist(any(AuthorityEntity.class));
+        assertEquals(userDetailService.create(authUserEntity, userRole), userId);
     }
 
     @Test
-    @DisplayName("회원가입 실패 - Duplicate Email")
-    public void createUser_Duplicate_Email() {
-        // given: authUserRepository의 findByEmail 메서드를 Stubbing하여 이미 중복된 이메일이 존재하는 것으로 설정
-        Long id = 1L;
-        String email = createEmail(id);
-        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email);
+    @DisplayName("회원 생성 실패 - DUPLICATED_EMAIL")
+    public void create_DUPLICATED_EMAIL() {
+        // Given
+        Long userId = 1L;
+        AuthUserEntity authUserEntity = createAuthUserEntity(userId);
         UserRole userRole = UserRole.USER;
-        //AuthUserEntity authUserEntity = fullUserCreateRequestDTO.toAuthUserEntity(bCryptPasswordEncoder);
 
-        // when: authUserRepository의 findByEmail 메서드를 Stubbing하여 이미 중복된 이메일이 존재하는 것으로 설정
-        //when(userRepository.findByEmail(email)).thenReturn(Optional.of(authUserEntity));
+        // When
+        when(userRepository.findByEmail(authUserEntity.getEmail())).thenReturn(Optional.of(authUserEntity));
 
         // Then
-        //assertThrows(DuplicateEmailException.class, () -> userServiceImpl.create(fullUserCreateRequestDTO, userRole));
-        verify(em, times(0)).persist(any(AuthUserEntity.class));
-        verify(em, times(0)).persist(any(AuthorityEntity.class));
+        assertThrows(DuplicateEmailException.class, () -> userDetailService.create(authUserEntity, userRole));
     }
 
     @Test
-    @DisplayName("이메일 검증 - Duplicate Email")
-    public void isEmailDuplicate_Duplicate_Email() {
-        // given
-        Long id = 1L;
-        String email = createEmail(id);
-        AuthUserEntity authUserEntity = createAuthUserEntity(id);
+    @DisplayName("삭제된 회원 조회 - ACCESS_DELETED_USER")
+    public void validationUser() {
+        // Given
+        AuthUserEntity deletedAuthUserEntity = deletedAuthUserEntity();
 
-        // when
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(authUserEntity));
-
-        // Then
-        assertThrows(DuplicateEmailException.class, () -> userServiceImpl.validateEmail(email));
-        verify(userRepository, times(1)).findByEmail(email);
+        // When && Then
+        assertThrows(AccessDeletedUserException.class, () -> userDetailService.validationUser(deletedAuthUserEntity));
     }
 
+    private static AuthUserEntity deletedAuthUserEntity() {
+        return AuthUserEntity.builder()
+                .id(1L)
+                .email("example1@mm.mm")
+                .password("123123")
+                .isDelete(true)
+                .deleteDate(LocalDateTime.now())
+                .build();
+    }
+
+    private static AuthUserEntity createAuthUserEntity(String email) {
+        return AuthUserEntity.builder()
+                .id(1L)
+                .email(email)
+                .password("123123")
+                .build();
+    }
 
     private static AuthUserEntity createAuthUserEntity(Long id) {
         return AuthUserEntity.builder()
@@ -133,7 +186,5 @@ public class UserDetailServiceImplTest {
                 .phone("000-0000-0000")
                 .build();
     }
-
 }
 
-*/

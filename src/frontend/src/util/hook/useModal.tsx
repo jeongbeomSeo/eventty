@@ -1,10 +1,10 @@
 import {modals} from "@mantine/modals";
 import React from "react";
-import {Button, Stack, TextInput, Title} from "@mantine/core";
+import {Button, Stack} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {useLocation, useNavigate} from "react-router-dom";
-import {IconSearch} from "@tabler/icons-react";
 import WebSearchKeywordsList from "../../components/display/web/WebSearchKeywordsList";
+import WebChangePWModal from "../../components/user/web/WebChangePWModal";
 
 export function useModal() {
     const {classes} = customStyle();
@@ -60,5 +60,19 @@ export function useModal() {
         })
     }
 
-    return {messageModal, loginAlertModal, searchModal};
+    const changePWModal = () => {
+        return modals.open({
+            children:(
+                <WebChangePWModal/>
+            ),
+            zIndex: 1001,
+            withCloseButton: false,
+            centered: true,
+            xOffset: "",
+            size: "auto",
+            overlayProps: {opacity: 0.5},
+        })
+    }
+
+    return {messageModal, loginAlertModal, searchModal, changePWModal};
 }

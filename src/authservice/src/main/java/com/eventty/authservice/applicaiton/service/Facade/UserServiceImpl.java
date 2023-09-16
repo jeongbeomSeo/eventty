@@ -4,6 +4,7 @@ import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
+import com.eventty.authservice.global.response.ResponseDTO;
 import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -51,12 +53,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginSuccessDTO login(UserLoginRequestDTO userLoginRequestDTO) {
 
+        // email을 이용해서 user 조회
         AuthUserEntity authUserEntity = userDetailService.findAuthUser(userLoginRequestDTO.getEmail());
 
+        // 유저 삭제되어 있는지 확인
         userDetailService.validationUser(authUserEntity);
 
+        // 비밀번호 매칭
         authService.credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
 
+        // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환
         LoginSuccessDTO loginSuccessDTO = customConverter.authUserEntityTologinSuccessDTO(authService, authUserEntity);
 
         return loginSuccessDTO;
@@ -66,22 +72,26 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Long createUser(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole role) {
 
+        // 전달 받은 DTO로 Entity로 변환
         AuthUserEntity authUserEntity = customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder);
 
+        // 유저 생성
         Long userId = userDetailService.create(authUserEntity, role);
 
         // API 요청 로직
         UserCreateRequestDTO userCreateRequestDTO = customConverter.fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId);
-        apiClient.createUserApi(userCreateRequestDTO);
+        ResponseEntity<ResponseDTO<Void>> response = apiClient.createUserApi(userCreateRequestDTO);
 
         return userId;
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public Long deleteUser(Long userId) {
+        // User Id로 유저 조회
         AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
 
-        userDetailService.delete(authUserEntity);
+        // 유저 삭제
+        return userDetailService.delete(authUserEntity);
     }
 
     @Override
@@ -92,12 +102,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public NewTokensResponseDTO getNewTokens(GetNewTokensRequestDTO getNewTokensRequestDTO) {
 
-        // Auth Service를 이용해서 accessToken과 RefreshToken을 받아오기. 내부 로직에서 ResponseDTO로 Mapping하는 과정 필요
+        // User Id를 이용해서 유저 조회
         AuthUserEntity authUserEntity = userDetailService.findAuthUser(getNewTokensRequestDTO.getUserId());
 
+        // JWT와 RefreshToken 받아오기
         TokensDTO newTokens = authService.getNewTokens(authUserEntity, getNewTokensRequestDTO);
-
-        // 추가적으로 ResponseDTO에 담을 필요한 정보가 추가 될 수 있음.
 
         return customConverter.tokensDTOToNewTokensResponseDTO(newTokens);
     }

@@ -5,11 +5,13 @@ import {userState} from "../../../../states/userState";
 import {IconBell, IconHome, IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import customStyles from "../../../../styles/customStyle";
+import {useFetch} from "../../../../util/hook/useFetch";
 
 function WebUserInfoBtn() {
     const navigate = useNavigate();
     const {pathname} = useLocation();
     const userStateValue = useRecoilValue(userState);
+    const {logoutFetch} = useFetch();
 
     const {classes} = customStyles();
 
@@ -36,7 +38,6 @@ function WebUserInfoBtn() {
                     </Menu.Item>
                     <Divider/>
 
-                    <Menu.Item icon={<IconHome/>} component={Link} to={"/"}>홈</Menu.Item>
                     <Menu.Item icon={<IconUser/>} component={Link} to={"/users/profile"}>마이페이지</Menu.Item>
                     <Menu.Item icon={<IconReceipt/>}
                                component={Link}
@@ -45,7 +46,7 @@ function WebUserInfoBtn() {
                     </Menu.Item>
                     <Menu.Divider/>
 
-                    <Menu.Item onClick={() => navigate("/logout", {state: pathname})}>로그아웃</Menu.Item>
+                    <Menu.Item onClick={() => logoutFetch()}>로그아웃</Menu.Item>
                 </Menu.Dropdown>
             </Menu>
         </>

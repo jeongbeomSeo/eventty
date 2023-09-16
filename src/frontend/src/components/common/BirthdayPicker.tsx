@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {DatePickerInput} from "@mantine/dates";
 import customStyle from "../../styles/customStyle";
 import {IDatePicker} from "../../types/IDate";
@@ -16,7 +16,6 @@ function BirthdayPicker(props:IDatePicker) {
                          onChange={props.onChange}
                          weekendDays={[0]}
                          firstDayOfWeek={0}
-                         // minDate={new Date(currentDate.getFullYear()-120, 1, 1)}
                          maxDate={new Date(currentDate.getFullYear()-14, currentDate.getMonth(), currentDate.getDate())}
                          getDayProps={(date) => {
                              if (date.getDay() === 6) {
@@ -29,6 +28,7 @@ function BirthdayPicker(props:IDatePicker) {
                              return {};
                          }}
                          locale={"ko"}
+                         ref={props.inputRef}
                          error={props.error}
                          className={classes["input-date"]}/>
     );

@@ -48,8 +48,8 @@ function MobileProfile() {
                                value={phoneNumber}
                                onInput={handlePhoneInputChange}
                                className={classes["input"]}/>
-                    <BirthdayPicker label={"생년월일"} value={selectedDate}
-                                    onChange={handleDateChange}/>
+                    {/*<BirthdayPicker label={"생년월일"} value={selectedDate}
+                                    onChange={handleDateChange}/>*/}
                     <TextInput label={"주소"} className={classes["input"]}/>
                     <Button className={classes["btn-primary"]}>저장하기</Button>
                 </PaperItem>

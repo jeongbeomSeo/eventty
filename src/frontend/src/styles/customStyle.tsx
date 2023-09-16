@@ -145,7 +145,7 @@ const customStyle = createStyles((theme) => ({
         borderColor: "var(--primary) !important",
         color: "var(--primary) !important",
         ":hover": {
-            filter: "brightness(0.95)",
+            filter: "brightness(0.97)",
         }
     },
     "btn-gray": {
@@ -157,7 +157,7 @@ const customStyle = createStyles((theme) => ({
         borderColor: "#b3b3b3 !important",
         color: "#666666 !important",
         ":hover": {
-            filter: "brightness(0.96)",
+            filter: "brightness(0.97)",
         },
         "&.non":{
             ":hover":{

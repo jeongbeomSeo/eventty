@@ -20,12 +20,14 @@ import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
 import {useModal} from "../../../util/hook/useModal";
+import {useFetch} from "../../../util/hook/useFetch";
 
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
     const {pathname} = useLocation();
     const {loginAlertModal} = useModal();
+    const {deleteEventFetch} = useFetch();
     const isLoggedIn = CheckLogin();
     const {classes} = customStyle();
 
@@ -66,9 +68,11 @@ function WebEventDetail() {
                             <Text>{DATA.location}</Text>
                         </Stack>
                         {userStateValue.isHost ?
-                            <Button className={`${classes["btn-primary"]} disable`}
+                            <Button color={"red"}
+                                    variant={"outline"}
+                                    onClick={() => deleteEventFetch(DATA.id)}
                                     style={{height: "2.5rem"}}>
-                                예약 불가
+                                행사 취소
                             </Button> :
                             <Button className={classes["btn-primary"]}
                                     style={{height: "2.5rem"}}

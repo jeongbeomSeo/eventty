@@ -34,9 +34,16 @@ function WebCategoryBtn() {
         <UnstyledButton component={Link}
                         to={item.link}
                         key={item.category}
-                        style={{textAlign: "center",
+                        style={{
+                            textAlign: "center",
                             padding: "0.5rem",
-                        }}>
+                        }}
+                        sx={{
+                            ":hover": {
+                                color: "var(--primary)",
+                            },
+                        }}
+        >
             {item.icon}
             <Text fz={"xs"}>{item.category}</Text>
         </UnstyledButton>

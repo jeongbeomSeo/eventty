@@ -14,18 +14,19 @@ import java.io.IOException;
 @Component
 public class LoggerFilter extends OncePerRequestFilter {
 
-    private final String USER_ID = "userId";
-    private final String AUTHORITIES = "authorities";
+    private final String HEADER_USER_ID = "X-User-Id";
+    private final String HEADER_AUTHORITIES = "X-User-Authorities";
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // URL & Method
-        log.info("This request URL is {} and method is {}\n", request.getRequestURL(), request.getMethod());
+        log.info("This request URL is {} and method is {}", request.getRequestURL(), request.getMethod());
         // Authentication
         log.info("Request Header have user Id and authorities ? {} || {}",
-                (request.getHeader(USER_ID) != null), (request.getHeader(AUTHORITIES) != null));
+                (request.getHeader(HEADER_USER_ID) != null), (request.getHeader(HEADER_AUTHORITIES) != null));
         // Client Ip Address
-        log.info("Client ip address: {}", request.getRemoteAddr());
+        log.info("Client ip address: {}\n", request.getRemoteAddr());
 
         filterChain.doFilter(request, response);
     }

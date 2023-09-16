@@ -133,6 +133,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                     withAsterisk
                     error={errors.password && errors.password?.message}
                     className={`${classes["input"]} ${errors.password && "error"}`}/>
+
                 <TextInput {...register("passwordConfirm", {
                     required: "비밀번호를 다시 입력해주세요",
                     validate: {
@@ -147,6 +148,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                            placeholder="비밀번호 확인"
                            error={errors.passwordConfirm && errors.passwordConfirm?.message}
                            className={`${classes["input"]} ${errors.passwordConfirm && "error"}`}/>
+
                 <TextInput {...register("name", {
                     required: "이름을 입력해주세요",
                     pattern: {
@@ -159,20 +161,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                            withAsterisk
                            error={errors.name && errors.name?.message}
                            className={`${classes["input"]} ${errors.name && "error"}`}/>
-                {/*<TextInput {...register("phone", {
-                    required: "휴대폰 번호를 입력해주세요",
-                    pattern: {
-                        value: phoneRegEX,
-                        message: "휴대폰 번호가 올바르지 않습니다",
-                    },
-                })}
-                           placeholder="휴대폰 번호"
-                           label="휴대폰 번호"
-                           withAsterisk
-                           maxLength={13}
-                           error={errors.phone && errors.phone?.message}
-                           className={`${classes["input"]} ${errors.phone && "error"}`}
-                           onInput={handlePhoneInputChange}/>*/}
+
                 <Controller control={control}
                             name={"phone"}
                             rules={{
@@ -191,16 +180,18 @@ function SignupForm({isHost}: { isHost: boolean }) {
 
                 <Controller control={control}
                             name={"birth"}
-                            render={({field}) => (
-                                <BirthdayPicker label={"생년월일"}
-                                                placeholder={"생년월일"}
-                                                value={field.value}
-                                                onChange={field.onChange}/>
+                            render={({field: {ref, ...rest}}) => (
+                                <BirthdayPicker {...rest}
+                                                inputRef={ref}
+                                                label={"생년월일"}
+                                                placeholder={"생년월일"}/>
                             )}/>
+
                 <TextInput {...register("address")}
                            placeholder="주소"
                            label="주소"
                            className={classes["input"]}/>
+
                 <Checkbox
                     label={<><b style={{color: "var(--primary)"}}>[필수]</b> 서비스 이용 약관과 개인정보 취급 방침 및 개인정보 3자 제공 동의</>}
                     onClick={() => setTermOfServiceCheck(prev => !prev)}

@@ -26,12 +26,14 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return Authentication.class
+        return LoginUser.class
                 .isAssignableFrom(parameter.getParameterType());
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+
+        log.info("Current Position: Authentication Resolver");
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
 
@@ -41,8 +43,9 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
 
         Authentication authentication = authenticationConverter.getAuthentication(userId, authoritiesJSON);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info("Successfully saved {}'s authentication in the security context holder.", authentication.getPrincipal());
 
-        return authentication;
+        log.info("Successfully saved {}'s authentication in the security context holder.\n", userId);
+
+        return authentication.getPrincipal();
     }
 }

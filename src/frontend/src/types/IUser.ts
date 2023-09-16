@@ -18,16 +18,12 @@ export interface IUser {
     name: string;
     address: string;
     birth: Date;
+    image: string;
     phone: string;
-}
-
-export interface IMyInfo {
-    name: string;
-    phone: string;
-    address: string;
 }
 
 export interface IChangePW {
     currentPassword: string;
     newPassword: string;
+    newPasswordConfirm?: string;
 }

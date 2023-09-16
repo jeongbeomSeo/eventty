@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import java.lang.reflect.Field;
 import java.util.Set;
 
 @Slf4j
@@ -50,44 +51,28 @@ public class DataErrorLogger {
             );
         log.error(sb.toString());
     }
-
-    public void loggingAuth(AuthException e) {
+    public void logging(AuthException e) {
         Object causedErrorData = e.getCausedErrorData();
-        log.error("Input Data Details\n");
 
-         if (e instanceof UserNotFoundException) {
-             if (causedErrorData instanceof String email) {
-                 log.error("Email: {}", email);
-             }
-             if (causedErrorData instanceof Long userId) {
-                 log.error("User Id: {}", userId);
-             }
-         }
-         if (e instanceof AccessDeletedUserException) {
-             if (causedErrorData instanceof AuthUserEntity authUserEntity) {
-                 log.error("User Id: {}, Email: {}", authUserEntity.getId(), authUserEntity.getEmail());
-             }
-         }
-         if (e instanceof DuplicateEmailException) {
-             if (causedErrorData instanceof String email) {
-                 log.error("Eamil: {}", email);
-             }
-         }
-         if (e instanceof InvalidPasswordException) {
-             if (causedErrorData instanceof UserLoginRequestDTO userLoginRequestDTO) {
-                 log.error("Email: {}, password: {}", userLoginRequestDTO.getEmail(), userLoginRequestDTO.getPassword());
-             }
-         }
-         if (e instanceof InValidRefreshTokenException) {
-             if (causedErrorData instanceof GetNewTokensRequestDTO getNewTokensRequestDTO) {
-                 log.error("User Id: {}, Refresh Token: {}", getNewTokensRequestDTO.getUserId(), getNewTokensRequestDTO.getRefreshToken());
-             }
-         }
-         if (e instanceof RefreshTokenNotFoundException) {
-             if (causedErrorData instanceof Long userId) {
-                 log.error("User Id: {}", userId);
-             }
-         }
+        // 기본생성자일 경우
+        if(e.getFields() == null && causedErrorData == null)
+            return;
+
+        StringBuffer sb = new StringBuffer("Input Data Details :\n");
+        for(String field : e.getFields()){
+            sb.append(field).append("=");
+            try {
+                // causedErrorData가 DTO or Entity 일 경우 해당 필드값 매핑
+                Field fieldName = causedErrorData.getClass().getDeclaredField(field);
+                fieldName.setAccessible(true);
+                sb.append(fieldName.get(causedErrorData));
+            }catch (Exception error){
+                // causedErrorData가 Wrapper Class일 경우 causedErrorData 매핑
+                sb.append(causedErrorData);
+            }
+            sb.append("\n");
+        }
+        log.error(sb.toString());
     }
 
 }

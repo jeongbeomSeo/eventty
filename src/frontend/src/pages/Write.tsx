@@ -1,9 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
-    Alert,
-    Button, Center,
-    Container, Flex,
-    Group, Image, Notification, NumberInput,
+    Button,
+    Container, FileButton,
+    Group, Image, NumberInput,
     Paper,
     Select, SimpleGrid,
     Stack, Text,
@@ -16,12 +15,11 @@ import {Controller, FormProvider, useFieldArray, useForm} from "react-hook-form"
 import {IEventTicket, IEventWrite} from "../types/IEvent";
 import WriteHeader from "../components/display/WriteHeader";
 import {
-    IconAlertCircle,
     IconBallBaseball, IconBook, IconCode,
     IconHandRock,
     IconHorseToy, IconMovie,
     IconPalette,
-    IconPiano, IconPlus, IconPresentation, IconSquareRoundedPlusFilled,
+    IconPiano, IconPlus, IconPresentation,
     IconTent, IconX
 } from "@tabler/icons-react";
 import EventDatePicker from "../components/write/EventDatePicker";
@@ -48,7 +46,6 @@ function Write() {
         getValues,
         setError,
         clearErrors,
-        setFocus,
         formState: {errors}
     } = useForm<IEventWrite>();
     const {fields, append, remove, update} = useFieldArray({
@@ -64,16 +61,16 @@ function Write() {
 
     const currentDate = new Date();
     const CATEGORY_LIST = [
-        {label: "콘서트", value: "concert", icon: <IconHandRock/>},
-        {label: "클래식", value: "classic", icon: <IconPiano/>},
-        {label: "전시", value: "art", icon: <IconPalette/>},
-        {label: "스포츠", value: "sports", icon: <IconBallBaseball/>},
-        {label: "캠핑", value: "camping", icon: <IconTent/>},
-        {label: "아동", value: "kids", icon: <IconHorseToy/>},
-        {label: "영화", value: "movie", icon: <IconMovie/>},
-        {label: "IT", value: "it", icon: <IconCode/>},
-        {label: "교양", value: "elective", icon: <IconBook/>},
-        {label: "TOPIC", value: "topic", icon: <IconPresentation/>},
+        {label: "콘서트", value: "0", icon: <IconHandRock/>},
+        {label: "클래식", value: "1", icon: <IconPiano/>},
+        {label: "전시", value: "2", icon: <IconPalette/>},
+        {label: "스포츠", value: "3", icon: <IconBallBaseball/>},
+        {label: "캠핑", value: "4", icon: <IconTent/>},
+        {label: "아동", value: "5", icon: <IconHorseToy/>},
+        {label: "영화", value: "6", icon: <IconMovie/>},
+        {label: "IT", value: "7", icon: <IconCode/>},
+        {label: "교양", value: "8", icon: <IconBook/>},
+        {label: "TOPIC", value: "9", icon: <IconPresentation/>},
     ];
     const TICKET_LIMIT = 3;
     const [ticketEdit, setTicketEdit] = useState<IEventTicket | null>(null);
@@ -89,10 +86,10 @@ function Write() {
 
         postEvent(data)
             .then(res => {
-                if (res.success){
+                if (res.success) {
                     MessageAlert("success", "작성 성공", null);
                     navigate("/");
-                }else{
+                } else {
                     MessageAlert("error", "작성 실패", "다시 시도해주세요");
                 }
             })
@@ -240,7 +237,7 @@ function Write() {
                                     </Paper>
                                 </UnstyledButton>
                             </SimpleGrid>
-                            <Text fz={"12px"} color={"#f44336"}>
+                            <Text fz={"13px"} color={"#f44336"}>
                                 {errors.tickets?.root?.message}
                                 {errors.tickets?.types?.validate}
                             </Text>
@@ -321,9 +318,23 @@ function Write() {
                                 <Image width={"280px"} height={"210px"} withPlaceholder/>
                                 <div>
                                     <Text>50MB이하의 jpg, png파일 업로드 가능합니다</Text>
-                                    <Button className={classes["btn-primary"]}>이미지 선택</Button>
+                                    <Controller control={control}
+                                                name={"image"}
+                                                rules={{
+                                                    required: "이미지를 설정해주세요",
+                                                }}
+                                                render={({field}) => (
+                                                    <FileButton {...field}
+                                                                accept={"image/png, image/jpeg, image/webp"}>
+                                                        {(props) =>
+                                                            <Button {...props} className={classes["btn-primary"]}>
+                                                                이미지 선택
+                                                            </Button>}
+                                                    </FileButton>
+                                                )}/>
                                 </div>
                             </Group>
+                            <Text fz={"13px"} color={"red"}>{errors.image?.message}</Text>
                         </Stack>
 
                         <Stack>
@@ -335,7 +346,7 @@ function Write() {
                                         render={({field: {ref, ...rest}}) => (
                                             <>
                                                 <QuillEditor {...rest} inputRef={ref}/>
-                                                <Text className={"mantine-mve552"}>{errors.content?.message}</Text>
+                                                <Text fz={"13px"} color={"red"}>{errors.content?.message}</Text>
                                             </>
                                         )}/>
                         </Stack>

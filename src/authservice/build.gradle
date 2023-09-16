@@ -22,7 +22,7 @@ repositories {
 }
 
 test.onlyIf {
-	!project.hasProperty('test')
+	!project.hasProperty('dev')
 }
 
 

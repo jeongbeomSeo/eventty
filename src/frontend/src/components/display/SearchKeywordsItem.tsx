@@ -17,7 +17,14 @@ function SearchKeywordsItem({item, onClick, onDelete}: IKeywords) {
             onClick(item);
             navigate(`/events?search=${item}`);
             modals.closeAll();
-        }} style={{width: "100%"}}>
+        }}
+                        style={{width: "100%", height: "2.5rem", borderRadius: "0.5rem"}}
+                        sx={{
+                            ":hover":{
+                                background: "rgba(0, 0, 0, 0.1)",
+                            },
+                        }}
+        >
             <Grid style={{alignItems: "center"}}>
                 <Grid.Col span={1} style={{textAlign: "center"}}>
                     <IconClock color={"#666666"}/>

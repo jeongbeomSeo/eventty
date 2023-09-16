@@ -71,7 +71,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     @Override
     public void validationUser(AuthUserEntity authUserEntity) {
         if (authUserEntity.isDelete())
-            new AccessDeletedUserException(authUserEntity);
+            throw new AccessDeletedUserException(authUserEntity);
     }
 
     public void validateEmail(String email) {
