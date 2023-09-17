@@ -32,6 +32,13 @@
         WHERE id = #{id}
     </update>
 
+    <!-- 개별 티켓 삭제 -->
+    <update id="deleteTicketById" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
+        UPDATE tickets
+        SET is_deleted = true
+        WHERE id = #{id}
+    </update>
+
     <!-- 이벤트 별 티켓 생성 -->
     <insert id="insertTicket" parameterType="com.eventty.businessservice.domains.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
         INSERT INTO tickets (name, price, quantity, event_id, is_deleted)
@@ -39,7 +46,7 @@
     </insert>
 
     <!--티켓 정보 삭제-->
-    <update id="deleteTicket" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
+    <update id="deleteTicketsByEventId" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
         UPDATE tickets
         SET is_deleted = true
         WHERE event_id = #{event_id}

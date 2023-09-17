@@ -10,6 +10,7 @@ public interface TicketRepository {
     List<TicketEntity> selectTicketByEventId(Long eventId);
     TicketEntity selectTicketById(Long ticketId);
     Long updateTicket(TicketEntity ticket);
+    Long deleteTicketById(Long ticketId);
     Long insertTicket(TicketEntity ticket);
-    Long deleteTicket(Long eventId);
+    Long deleteTicketsByEventId(Long eventId);
 }

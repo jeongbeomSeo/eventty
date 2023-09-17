@@ -69,7 +69,7 @@ public class EventSubService {
     }
 
     public Long deleteEvent(Long id) {
-        ticketRepository.deleteTicket(id);
+        ticketRepository.deleteTicketsByEventId(id);
         eventDetailRepository.deleteEventDetail(id);
         eventBasicRepository.deleteEvent(id);
         return id;
@@ -102,12 +102,25 @@ public class EventSubService {
             throw TicketNotFoundException.EXCEPTION;
         }
 
+        // 티켓 업데이트
         ticket.updateName(ticketUpdateRequestDTO.getName());
         ticket.updatePrice(ticketUpdateRequestDTO.getPrice());
+        return ticketRepository.updateTicket(ticket);
+    }
 
-        // 티켓 업데이트
-        ticketRepository.updateTicket(ticket);
-        return ticketId;
+    public Long deleteTicket(Long ticketId) {
+        // 티켓 존재하는지 확인
+        TicketEntity ticket = ticketRepository.selectTicketById(ticketId);
+        if(ticket == null) {
+            throw TicketNotFoundException.EXCEPTION;
+        }
+        // 행사 인원 수 감소
+        EventBasicEntity event = eventBasicRepository.selectEventById(ticket.getEventId());
+        event.subtractParticipateNum(ticket.getQuantity());
+        eventBasicRepository.updateEvent(event);
+
+        // 티켓 삭제
+        return ticketRepository.deleteTicketById(ticketId);
     }
 
 }

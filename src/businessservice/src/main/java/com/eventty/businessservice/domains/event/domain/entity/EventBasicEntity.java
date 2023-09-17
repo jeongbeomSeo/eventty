@@ -25,6 +25,9 @@ public class EventBasicEntity {
     public void addParticipateNum(Long participateNumPerTicket){
         this.participateNum += participateNumPerTicket;
     }
+    public void subtractParticipateNum(Long participateNumPerTicket){
+        this.participateNum -= participateNumPerTicket;
+    }
     public void updateTitle(String title){
         this.title = title;
     }

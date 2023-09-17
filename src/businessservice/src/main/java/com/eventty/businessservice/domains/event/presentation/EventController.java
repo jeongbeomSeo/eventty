@@ -89,6 +89,21 @@ public class EventController {
                 .body(SuccessResponseDTO.of(updatedTicketId));
     }
 
+    @DeleteMapping("/events/ticket/{ticketId}")
+    @Operation(summary = "(HOST) 티켓을 삭제합니다.")
+    @ApiSuccessData()
+    public ResponseEntity<SuccessResponseDTO<?>> deleteTicket(
+            @PathVariable @Min(1) Long ticketId
+    ){
+
+        Long deleteTicketId = eventService.deleteTicket(ticketId);
+
+        return ResponseEntity
+                .status(DELETE_TICKET_SUCCESS.getStatus())
+                .body(null);
+                //.body(SuccessResponseDTO.of(deleteTicketId));
+    }
+
     @GetMapping( "/events/host/{hostId}")
     @Operation(summary = "(HOST) 특정 호스트가 등록한 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)

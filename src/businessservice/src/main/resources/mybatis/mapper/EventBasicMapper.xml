@@ -47,6 +47,12 @@
         ORDER BY id DESC
     </select>
 
+    <!--특정 이벤트 조회-->
+    <select id="selectEventById" resultMap="EventResultMap" parameterType="java.lang.Long">
+        SELECT * FROM events_basic
+        WHERE id = #{id} AND is_deleted = false
+    </select>
+
     <!--특정 이벤트 조회 : 일반 정보와 상세 정보 JOIN-->
     <select id="selectEventWithDetailById" resultMap="EventResultMapWithDetail" parameterType="java.lang.Long">
         SELECT

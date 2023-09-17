@@ -45,7 +45,7 @@ public class TicketRepositoryTest {
     @DisplayName("티켓 삭제 테스트")
     public void deleteTicketTest() {
         // when
-        ticketRepository.deleteTicket(eventId);
+        ticketRepository.deleteTicketsByEventId(eventId);
         // then
         assertEquals(ticketRepository.selectTicketByEventId(eventId).size(), 0);
     }

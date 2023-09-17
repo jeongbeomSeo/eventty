@@ -45,6 +45,10 @@ public class EventService {
         return eventSubService.updateTicket(ticketId, ticketUpdateRequestDTO);
     }
 
+    public Long deleteTicket(Long ticketId){
+        return eventSubService.deleteTicket(ticketId);
+    }
+
     public List<EventBasicFindAllResponseDTO> findEventsByHostId(Long hostId){
         return Optional.ofNullable(eventBasicRepository.selectEventsByHostId(hostId))
                 .filter(events -> !events.isEmpty())

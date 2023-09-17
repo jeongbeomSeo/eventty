@@ -80,7 +80,7 @@ public class EventSubServiceTest {
         Long eventId = 1L;
         when(eventBasicRepository.deleteEvent(eventId)).thenReturn(1L);
         when(eventDetailRepository.deleteEventDetail(eventId)).thenReturn(1L);
-        when(ticketRepository.deleteTicket(eventId)).thenReturn(1L);
+        when(ticketRepository.deleteTicketsByEventId(eventId)).thenReturn(1L);
 
         // When
         eventSubService.deleteEvent(eventId);
