@@ -1,17 +1,14 @@
 package com.eventty.gateway.service;
 
 import com.eventty.gateway.api.ApiClient;
-import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
-import com.eventty.gateway.api.dto.NewTokensResponseDTO;
 import com.eventty.gateway.dto.TokenDetails;
 import com.eventty.gateway.global.dto.ResponseDTO;
 import com.eventty.gateway.global.dto.SuccessResponseDTO;
 import com.eventty.gateway.utils.CustomMappper;
 import com.eventty.gateway.utils.jwt.JwtUtils;
-import com.eventty.gateway.utils.jwt.TokenEnum;
+import com.eventty.gateway.utils.TokenEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.apache.el.parser.Token;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +21,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TokenAuthenticationServiceImplTest {

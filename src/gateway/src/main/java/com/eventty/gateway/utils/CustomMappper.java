@@ -1,10 +1,8 @@
 package com.eventty.gateway.utils;
 
 import com.eventty.gateway.api.dto.AuthenticateUserRequestDTO;
-import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
-import com.eventty.gateway.global.exception.token.NoAccessTokenException;
-import com.eventty.gateway.global.exception.token.NoCsrfTokenException;
-import com.eventty.gateway.utils.jwt.TokenEnum;
+import com.eventty.gateway.global.exception.auth.NoAccessTokenException;
+import com.eventty.gateway.global.exception.auth.NoCsrfTokenException;
 import org.springframework.http.HttpCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -16,20 +14,11 @@ import java.util.Map;
 public class CustomMappper {
     private final String HEADER_CSRF = "X-CSRF-Token";
 
-    // 삭제 예정
-    public GetNewTokensRequestDTO createGetNewTokensRequestDTO(String userId, String refreshToken) {
-        return GetNewTokensRequestDTO.builder()
-                .userId(Long.parseLong(userId))
-                .refreshToken(refreshToken)
-                .build();
-    }
-
     public AuthenticateUserRequestDTO authenticateUserRequestDTO(MultiValueMap<String, HttpCookie> cookies, Map<String, List<String>> headers) {
         return new AuthenticateUserRequestDTO(
                 getJwt(cookies),
                 getRefreshToken(cookies),
                 getCsrfToken(headers)
-
         );
     }
 

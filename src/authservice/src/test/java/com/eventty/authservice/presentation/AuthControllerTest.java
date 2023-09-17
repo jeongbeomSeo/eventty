@@ -12,7 +12,6 @@ import com.eventty.authservice.infrastructure.config.WebConfig;
 import com.eventty.authservice.infrastructure.interceptor.AuthenticationInterceptor;
 import com.eventty.authservice.infrastructure.resolver.AuthenticationResolver;
 import com.eventty.authservice.infrastructure.resolver.LoginUser;
-import com.eventty.authservice.infrastructure.utils.AuthenticationConverter;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;

@@ -41,39 +41,29 @@ spring:
             - RewritePath=/api/event/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
 
-        - id: auth-authorization
-          uri: http://${auth_server}:8002/
-          predicates:
-            - Path=/api/auth/secret/**
-          filters:
-            - JwtAuthenticationFilter
-            - RewritePath=/api/auth/secret/(?<segment>.*), /$\{segment}
-            - RemoveRequestHeader=Cookie
-
-        - id: auth-not-authorization
-          uri: http://${auth_server}:8002/
-          predicates:
-            - Path=/api/auth/**
-          filters:
-          - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
-          - RemoveRequestHeader=Cookie
-
         - id: apply-authorization
-          uri: http://${apply_server}:8002/
+          uri: http://${apply_server}:8003/
           predicates:
-            - Path=/api/auth/secret/**
+            - Path=/api/apply/secret/**
           filters:
             - JwtAuthenticationFilter
             - RewritePath=/api/apply/secret/(?<segment>.*), /$\{segment}
             - RemoveRequestHeader=Cookie
 
         - id: apply-not-authorization
+          uri: http://${apply_server}:8003/
+          predicates:
+            - Path=/api/apply/**
+          filters:
+            - RewritePath=/api/apply/(?<segment>.*), /$\{segment}
+            - RemoveRequestHeader=Cookie
+
+        - id: auth-server
           uri: http://${auth_server}:8002/
           predicates:
             - Path=/api/auth/**
           filters:
-            - RewritePath=/api/apply/(?<segment>.*), /$\{segment}
-            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/auth/(?<segment>.*), /$\{segment}
 
       globalcors:
         cors-configurations:

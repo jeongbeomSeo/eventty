@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService{
     // 비밀번호 매칭
     @Override
     public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
-        if (!passwordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
+        if (!passwordEncoder.match(userLoginRequestDTO.password(), authUserEntity.getPassword())) {
             throw new InvalidPasswordException(userLoginRequestDTO);
         }
 

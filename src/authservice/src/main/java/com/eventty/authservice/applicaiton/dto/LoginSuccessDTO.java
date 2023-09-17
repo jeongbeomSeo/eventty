@@ -5,6 +5,7 @@ import lombok.*;
 
 public record LoginSuccessDTO (
         TokensDTO tokensDTO,
-        LoginResponseDTO loginResponseDTO
+        LoginResponseDTO loginResponseDTO,
+        String csrfToken
 ){
 }

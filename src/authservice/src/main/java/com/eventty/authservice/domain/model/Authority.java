@@ -1,4 +1,4 @@
-package com.eventty.authservice.infrastructure.model;
+package com.eventty.authservice.domain.model;
 
 import lombok.*;
 

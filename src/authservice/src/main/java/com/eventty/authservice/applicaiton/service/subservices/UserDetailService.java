@@ -1,7 +1,9 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
+import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
+import com.eventty.authservice.presentation.dto.request.ChangePWRequestDTO;
 
 public interface UserDetailService {
 
@@ -14,4 +16,5 @@ public interface UserDetailService {
     AuthUserEntity findAuthUser(String email);
 
     AuthUserEntity findAuthUser(Long userId);
+    AuthUserEntity changePwAuthUser(ChangePWRequestDTO changePWRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder customPasswordEncoder);
 }

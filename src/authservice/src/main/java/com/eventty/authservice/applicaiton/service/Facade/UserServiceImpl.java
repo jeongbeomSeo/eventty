@@ -4,6 +4,7 @@ import com.eventty.authservice.applicaiton.dto.*;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
 import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
+import com.eventty.authservice.presentation.dto.request.ChangePWRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import jakarta.servlet.http.Cookie;
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
     public LoginSuccessDTO login(UserLoginRequestDTO userLoginRequestDTO) {
 
         // email을 이용해서 user 조회
-        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userLoginRequestDTO.getEmail());
+        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userLoginRequestDTO.email());
 
         // 유저 삭제되어 있는지 확인
         userDetailService.validationUser(authUserEntity);
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
                 authService.getUpdateCsrfToken(userId) : authService.getNewCsrfToken(userId);
 
         return customConverter
-                .convertLoginSuccessDTO(tokensDTO, csrfToken, authUserEntity);
+                .convertLoginSuccessDTO(tokensDTO, authUserEntity, csrfToken);
     }
 
     @Override
@@ -168,5 +169,28 @@ public class UserServiceImpl implements UserService {
 
         // 유저 아이디 반환
         return authUserEntity.getId();
+    }
+
+    @Override
+    public CsrfTokenDTO changePW(ChangePWRequestDTO changePWRequestDTO, Cookie[] cookies, String csrfToken) {
+
+        // 검증하기 전에 JWT, Refresh Token은 TokensDTO로 묶어주기
+        TokensDTO tokensDTO = customConverter.convertTokensDTO(cookies);
+
+        // 검증
+        AuthenticationResultDTO authenticationResultDTO = authService.authenticate(
+                tokensDTO, csrfToken, customConverter, userDetailService
+        );
+
+        // 가독성을 위해서 꺼내서 활용
+        AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();
+
+        // 비밀번호 변경
+        authUserEntity = userDetailService.changePwAuthUser(changePWRequestDTO, authUserEntity, customPasswordEncoder);
+
+        // CSRF Token Update
+        String newCsrfToken = authService.getUpdateCsrfToken(authUserEntity.getId());
+
+        return new CsrfTokenDTO(authUserEntity.getId(), newCsrfToken);
     }
 }

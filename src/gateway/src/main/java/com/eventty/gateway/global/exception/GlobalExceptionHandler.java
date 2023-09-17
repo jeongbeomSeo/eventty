@@ -1,12 +1,14 @@
 package com.eventty.gateway.global.exception;
 
+import com.eventty.gateway.api.exception.ApiException;
 import com.eventty.gateway.global.dto.ErrorResponseDTO;
 import com.eventty.gateway.global.dto.ResponseDTO;
-import com.eventty.gateway.global.exception.utils.DataErrorLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -23,9 +25,8 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Order(-1)
 @RequiredArgsConstructor
-public class JwtTokenExceptionHandler implements ErrorWebExceptionHandler {
+public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     private final ObjectMapper objectMapper;
-    private final DataErrorLogger dataErrorLogger;
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
 
@@ -33,22 +34,14 @@ public class JwtTokenExceptionHandler implements ErrorWebExceptionHandler {
 
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         ErrorResponseDTO errorResponseDTO;
-        if (ex instanceof JwtException) {
-            log.error("Error Message: {}", ((JwtException) ex).getErrorCode().getMessage());
-            dataErrorLogger.logging((JwtException) ex);
-
-            response.setStatusCode(HttpStatusCode.valueOf(((JwtException) ex).getErrorCode().getStatus()));
-
-            errorResponseDTO = ErrorResponseDTO.of(((JwtException) ex).getErrorCode());
-        }
-        else if (ex instanceof JsonProcessingException) {
+        if (ex instanceof ApiException) {
             log.error("Error Message: {}", ex.getMessage());
-            response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.BAD_CREDENTIALS.getStatus()));
 
-            errorResponseDTO = ErrorResponseDTO.of(ErrorCode.BAD_CREDENTIALS);
+            response.setStatusCode(((ApiException) ex).getHttpStatusCode());
+            errorResponseDTO = ErrorResponseDTO.of(ErrorCode.FAIL_AUTHENTICATION);
         }
         else if (ex instanceof IOException){
-            log.error("Error Message: {}", ErrorCode.INTERNAL_ERROR);
+            log.error("Error Message: {}", "I/O Exception occurred");
             response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.INTERNAL_ERROR.getStatus()));
 
             errorResponseDTO = ErrorResponseDTO.of(ErrorCode.INTERNAL_ERROR);

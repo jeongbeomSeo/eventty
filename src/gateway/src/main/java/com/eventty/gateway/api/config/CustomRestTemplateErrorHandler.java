@@ -1,12 +1,11 @@
 package com.eventty.gateway.api.config;
 
+import com.eventty.gateway.api.exception.ApiException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;
-
-import com.eventty.authservice.api.exception.ApiException;
 
 import java.io.IOException;
 import java.net.URI;

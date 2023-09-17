@@ -1,11 +1,8 @@
 package com.eventty.gateway.api;
 
-import com.eventty.gateway.api.dto.GetNewTokensRequestDTO;
-import com.eventty.gateway.api.dto.NewTokensResponseDTO;
 import com.eventty.gateway.api.utils.MakeUrlService;
 import com.eventty.gateway.global.dto.ResponseDTO;
 import com.eventty.gateway.global.dto.SuccessResponseDTO;
-import com.eventty.gateway.global.exception.token.FailGetNewTokensException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
