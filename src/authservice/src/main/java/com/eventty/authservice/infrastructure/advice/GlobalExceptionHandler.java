@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponseDTO> handleNotFoundExceptoin(NoHandlerFoundException e) {
         log.error("NoHandlerFoundException occurred: {}", e.getMessage());
 
-        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.NOT_FOUND);
+        final ErrorResponseDTO response = ErrorResponseDTO.of(ErrorCode.PAGE_NOT_FOUND);
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 

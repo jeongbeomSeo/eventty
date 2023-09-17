@@ -28,18 +28,23 @@ public class ApiClient {
 
     private final RestTemplate customRestTemplate;
 
-    public ResponseEntity<ResponseDTO<Void>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
+    public ResponseEntity<ResponseDTO<UserCreateRequestDTO>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
 
         HttpEntity<UserCreateRequestDTO> entity = createHttpPostEntity(userCreateRequestDTO);
 
         URI uri = makeUrlService.createUserUri();
 
         // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
-        log.info("API 호출 From: {} To: {} Purpose: {}", "Auth Server", "User Server", "Create User");
+        logApiCall("Auth Server", "User server", "Create User");
         return customRestTemplate.exchange(
-                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {
-        });
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<UserCreateRequestDTO>>() {}
+        );
     }
+
+    private void logApiCall(String from, String to, String purpose) {
+        log.info("API 호출 From: {} To: {} Purpose: {}", from, to, purpose);
+    }
+
     private <T> HttpEntity<T> createHttpPostEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

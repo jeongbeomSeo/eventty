@@ -1,4 +1,4 @@
-package com.eventty.authservice.api.exception;
+package com.eventty.gateway.api.exception;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;

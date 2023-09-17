@@ -1,6 +1,5 @@
 package com.eventty.gateway.utils;
 
-import com.eventty.gateway.utils.jwt.TokenEnum;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 

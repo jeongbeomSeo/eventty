@@ -23,11 +23,8 @@ public class AccessTokenProvider {
     public String generateToken(AuthUserEntity authUserEntity, Date now, Date expiry) {
 
         Claims claims = Jwts.claims().setSubject(authUserEntity.getEmail());
-        String USER_ID = "userId";
-        String AUTHORITIES = "authorities";
 
-        claims.put(USER_ID, authUserEntity.getId());
-        claims.put(AUTHORITIES, getAuthorities(authUserEntity));
+        claims.put(TokenEnum.USERID.getName(), authUserEntity.getId());
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -39,12 +36,5 @@ public class AccessTokenProvider {
                 .setSubject(authUserEntity.getEmail())
                 .signWith(SignatureAlgorithm.HS256, tokenProperties.getSecretKey())
                 .compact();
-    }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(AuthUserEntity authUserEntity) {
-        return authUserEntity.getAuthorities().stream()
-                .map(authorityEntity -> new SimpleGrantedAuthority(
-                        authorityEntity.getName()
-                )).collect(Collectors.toList());
     }
 }

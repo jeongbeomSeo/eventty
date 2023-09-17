@@ -1,13 +1,17 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
+import com.eventty.authservice.applicaiton.dto.AuthenticationResultDTO;
+import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
+import com.eventty.authservice.applicaiton.dto.TokenParsingDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
+import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.applicaiton.service.utils.token.TokenProvider;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
+import com.eventty.authservice.domain.exception.InvalidCsrfTokenException;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
-import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
+import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
-import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,26 +22,80 @@ public class AuthServiceImpl implements AuthService{
 
     private final TokenProvider tokenProvider;
 
+    // 전체 검증(JWT, CSRF)
+    @Override
+    public AuthenticationResultDTO authenticate(TokensDTO tokensDTO, String csrfToken, CustomConverter converter, UserDetailService userDetailService) {
+
+        // 1차 검증을 통해 userId와 Token Update 필요한지 정보 가져오기
+        TokenParsingDTO tokenParsingDTO = getTokenParsingDTO(tokensDTO);
+        Long userId= tokenParsingDTO.userId();
+
+        // 2차 검증 (삭제되어 있는 User인지 확인)
+        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
+
+        // 3차 검증 (CSRF 검증) => 성공시 재발급 및 저장
+        CsrfTokenDTO csrfTokenDTO = converter.convertCsrfTokenDTO(userId, csrfToken);
+        csrfTokenValidationCheck(csrfTokenDTO);
+
+        return new AuthenticationResultDTO(authUserEntity, tokenParsingDTO.needsUpdate());
+    }
+
+    // CSRF 유효한지 확인
+    @Override
+    public void csrfTokenValidationCheck(CsrfTokenDTO csrfTokenDTO) {
+        String existedCsrfToken = tokenProvider.getCsrfToken(csrfTokenDTO.userId());
+
+        if (!csrfTokenDTO.value().equals(existedCsrfToken))
+            throw new InvalidCsrfTokenException(csrfTokenDTO);
+    }
+
+    // 로그인과 검증 로직간에 차이가 있는데, 같은 함수를 사용하면 제한이 걸리는 상황이라서 저장과 업데이트 구분
+    @Override
+    public String getNewCsrfToken(Long userId) {
+        return tokenProvider.saveCsrfToken(userId);
+    }
+
+    @Override
+    public boolean checkCsrfToken(Long userId) {
+        return tokenProvider.checkCsrfTokenInDB(userId);
+    }
+
+    @Override
+    public String getUpdateCsrfToken(Long userId) {
+        return tokenProvider.updateCsrfToken(userId);
+    }
+
+    // 토큰 파싱하여 필요한 정보 DTO로 반환
+    @Override
+    public TokenParsingDTO getTokenParsingDTO(TokensDTO tokensDTO) {
+        return tokenProvider.parsingToken(tokensDTO);
+    }
+
+    // 비밀번호 매칭
     @Override
     public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
-        if (!passwordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
+        if (!passwordEncoder.match(userLoginRequestDTO.password(), authUserEntity.getPassword())) {
             throw new InvalidPasswordException(userLoginRequestDTO);
         }
 
         return true;
     }
 
+    // 검증 로직 X
     @Override
     public TokensDTO getToken(AuthUserEntity authUserEntity) {
         // 2시간 동안 유효한 액세스 토큰 생성 및 2일 동안 유효한 리프레시 토큰 생성 
         return tokenProvider.getAllToken(authUserEntity);
     }
 
+    // 모든 토큰 삭제 -> 만약 없다면 예외 발생시키지 말고 그냥 넘어가기
     @Override
-    public TokensDTO getNewTokens(AuthUserEntity authUserEntity, GetNewTokensRequestDTO getNewTokensRequestDTO) {
+    public void deleteAllToken(Long userId) {
 
-        tokenProvider.refreshTokenValidationCheck(getNewTokensRequestDTO);
+        // Refresh Token 삭제
+        tokenProvider.deleteRefreshToken(userId);
 
-        return getToken(authUserEntity);
+        // CSRF Token 삭제
+        tokenProvider.deleteCsrfToken(userId);
     }
 }

@@ -1,7 +1,9 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
+import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.exception.AccessDeletedUserException;
 import com.eventty.authservice.domain.exception.UserNotFoundException;
+import com.eventty.authservice.presentation.dto.request.ChangePWRequestDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
@@ -32,6 +34,9 @@ public class UserDetailServiceImpl implements UserDetailService {
         this.userRepository = userRepository;
         this.em = em;
     }
+
+    // Soft Delete
+    @Transactional
     @Override
     public Long delete(AuthUserEntity authUserEntity) {
         authUserEntity.setDelete(true);
@@ -41,15 +46,18 @@ public class UserDetailServiceImpl implements UserDetailService {
         return authUserEntity.getId();
     }
 
+    @Override
     public AuthUserEntity findAuthUser(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
+    @Override
     public AuthUserEntity findAuthUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Transactional
+    @Override
     public Long create(AuthUserEntity authUserEntity, UserRole userRole) {
         // 이메일 중복 검사
         validateEmail(authUserEntity.getEmail());
@@ -68,18 +76,31 @@ public class UserDetailServiceImpl implements UserDetailService {
         return authUserEntity.getId();
     }
 
+    // 삭제된 유저인지 확인
     @Override
     public void validationUser(AuthUserEntity authUserEntity) {
         if (authUserEntity.isDelete())
             throw new AccessDeletedUserException(authUserEntity);
     }
 
+    @Override
     public void validateEmail(String email) {
         Optional<AuthUserEntity> existingUser = userRepository.findByEmail(email);
 
         if (existingUser.isPresent()) {
             throw new DuplicateEmailException(email);
         }
+    }
+
+    @Transactional
+    @Override
+    public AuthUserEntity changePwAuthUser(ChangePWRequestDTO changePWRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder customPasswordEncoder) {
+
+        authUserEntity.setPassword(customPasswordEncoder.encode(changePWRequestDTO.password()));
+
+        em.persist(authUserEntity);
+
+        return authUserEntity;
     }
 }
 

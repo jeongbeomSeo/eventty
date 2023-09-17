@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -27,6 +28,15 @@ public class BasicSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        /*                    httpSecurityLogoutConfigurer
+         */
+        /*.logoutUrl("/logout")  // 로그아웃 URL 지정
+                            .invalidateHttpSession(true)  // 세션 무효화
+                            .clearAuthentication(true)  // 인증 정보 제거
+                            .deleteCookies(TokenEnum.ACCESS_TOKEN.getName(), TokenEnum.REFRESH_TOKEN.getName())  // 쿠키 삭제
+                            .logoutSuccessHandler((request, response, authentication) -> // 로그아웃 성공 핸들러
+                                    response.setStatus(HttpServletResponse.SC_OK));  // 응답 코드 200 설정*/
+        // CSRF 비활성화
         http
                 // 1. 권한 설정
                 .authorizeHttpRequests(authorizationConfig -> {
@@ -45,24 +55,14 @@ public class BasicSecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)  // 폼 기반 로그인을 비활성화합니다.
 
                 // 3. 로그아웃 설정
-                .logout(httpSecurityLogoutConfigurer -> {
-                    httpSecurityLogoutConfigurer
-                            .logoutUrl("/logout")  // 로그아웃 URL 지정
-                            .invalidateHttpSession(true)  // 세션 무효화
-                            .clearAuthentication(true)  // 인증 정보 제거
-                            .deleteCookies(TokenEnum.ACCESS_TOKEN.getName(), TokenEnum.REFRESH_TOKEN.getName())  // 쿠키 삭제
-                            .logoutSuccessHandler((request, response, authentication) -> // 로그아웃 성공 핸들러
-                                    response.setStatus(HttpServletResponse.SC_OK));  // 응답 코드 200 설정
-                })
+                .logout(AbstractHttpConfigurer::disable)
 
                 // 4. CSRF 설정
-                .csrf(csrfconfig -> {
-                    csrfconfig.disable();  // CSRF 비활성화
-                })
+                .csrf(AbstractHttpConfigurer::disable)
 
                 // 5. 헤더 설정
                 .headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions.disable()) // X-Frame-Options 헤더 비활성화
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // X-Frame-Options 헤더 비활성화
                 );
 
         return http.build();
