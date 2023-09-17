@@ -2,6 +2,7 @@ package com.eventty.userservice.presentation;
 
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.application.UserService;
+import com.eventty.userservice.application.dto.request.UserImageUpdateRequestDTO;
 import com.eventty.userservice.domain.code.ErrorCode;
 import com.eventty.userservice.infrastructure.BasicSecurityConfig;
 import com.eventty.userservice.infrastructure.WebConfig;
@@ -16,12 +17,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -47,8 +53,11 @@ public class UserEntityControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private String filePath;
+
     @BeforeEach
     public void setMockMvc() {
+        filePath = System.getProperty("user.dir") + "/src/test/java/com/eventty/userservice/testImage/choonsik.jpeg";
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
@@ -142,19 +151,18 @@ public class UserEntityControllerTest {
         // Given -- 전역변수로
         String name = "아항";
         String address = "인천 남동구 장아산로 64 1, 2층";
-
         String url = "/users/me";
 
-        UserCreateRequestDTO userCreateRequestDTO = UserCreateRequestDTO
-                .builder()
-                .name(name)
-                .address(address)
-                .build();
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("image", "choonsik.jpeg", "image/png", new FileInputStream(filePath));
 
-        final String requestBody =objectMapper.writeValueAsString(userCreateRequestDTO);
-
-        // When
-        final ResultActions response = mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(requestBody));
+        final ResultActions response = mockMvc.perform(MockMvcRequestBuilders
+                        .multipart(HttpMethod.PATCH, url)
+                        .file(mockMultipartFile)
+                        .param("name", name)
+                        .param("address", address)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
 
         // Then
         response.andExpect(status().isOk())

@@ -5,7 +5,8 @@ server:
 spring:
   # Secret
   profiles:
-    active: db
+    active: ncp, db
+
   # Mysql
   datasource:
     url: ${url}
@@ -29,7 +30,6 @@ spring:
   web:
     resources:
       add-mappings: false
-
 
 logging:
   level:

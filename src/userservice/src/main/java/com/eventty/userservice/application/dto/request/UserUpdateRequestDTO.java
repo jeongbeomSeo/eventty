@@ -9,5 +9,4 @@ public class UserUpdateRequestDTO {
     private String phone;
     private String birth;
     private String address;
-    private String image;
 }

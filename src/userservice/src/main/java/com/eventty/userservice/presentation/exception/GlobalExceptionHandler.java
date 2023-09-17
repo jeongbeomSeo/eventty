@@ -1,5 +1,7 @@
 package com.eventty.userservice.presentation.exception;
 
+import com.amazonaws.SdkClientException;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.eventty.userservice.domain.exception.UserException;
 import com.eventty.userservice.presentation.dto.ErrorResponseDTO;
 import com.eventty.userservice.presentation.exception.DataErrorLogger;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.io.IOException;
 
 import static com.eventty.userservice.domain.code.ErrorCode.*;
 
@@ -69,6 +73,22 @@ public class GlobalExceptionHandler {
     protected ErrorResponseDTO handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
         log.error("HttpMessageNotReadableException occurred: {}", e.getMessage());
         return ErrorResponseDTO.of(INVALID_JSON);
+    }
+
+    // NCP - ObjectStorage 예외처리
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ErrorResponseDTO handleAmazonS3Exception(AmazonS3Exception e){
+        log.error("AmazonS3Exception occured: {}", e.getMessage());
+        return ErrorResponseDTO.of(INTERNAL_ERROR);
+    }
+
+    // NCP - ObjectStorage 예외처리
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ErrorResponseDTO handleSdkClientException(SdkClientException e){
+        log.error("SdkClientException occured: {}", e.getMessage());
+        return ErrorResponseDTO.of(INTERNAL_ERROR);
     }
 
     // 유저 정보가 존재하지 않을 경우 예외처리
