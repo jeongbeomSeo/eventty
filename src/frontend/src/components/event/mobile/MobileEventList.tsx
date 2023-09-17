@@ -42,12 +42,12 @@ function MobileEventList() {
                             <Badge radius={"sm"} color={"lime"}>인기</Badge>
                             <Badge radius={"sm"} color={"indigo"}>신규</Badge>
                         </Group>
-                        <Text fz={"0.7rem"} fw={700} color={"var(--primary)"}>
+                        <Text fz={"0.8rem"} fw={700} color={"var(--primary)"}>
                             {`${startAt.getMonth()+1}월 ${startAt.getDate()}일`}
                             {!(startAt.getMonth() === endtAt.getMonth()) && (startAt.getDate() === endtAt.getDate()) &&
                                 ` ~ ${endtAt.getMonth()+1}월 ${endtAt.getDate()}일`}
                         </Text>
-                        <Title order={6}>{item.title}</Title>
+                        <Title order={4}>{item.title}</Title>
                         <Text fz={"xs"} c={"gray"}>{item.location}</Text>
                     </Stack>
                 </Group>

@@ -16,9 +16,9 @@ export interface ILogin {
 export interface IUser {
     userId: number;
     name: string;
-    address: string;
-    birth: Date;
-    image: string;
+    address?: string;
+    birth?: Date;
+    image?: string;
     phone: string;
 }
 

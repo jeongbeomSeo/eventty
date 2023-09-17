@@ -32,7 +32,7 @@ function MobileCategoryBtn() {
         <UnstyledButton component={Link}
                         to={item.link}
                         key={item.category}
-                        // className={classes["mobile-nav-link"]}
+                        className={classes["mobile-nav-link"]}
                         style={{textAlign: "center"}}>
             {item.icon}
             <Text fz={"xs"}>{item.category}</Text>

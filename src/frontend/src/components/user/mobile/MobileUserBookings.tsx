@@ -1,6 +1,6 @@
 import React from "react";
 
-function MobileReservation() {
+function MobileUserBookings() {
     return (
         <>
             
@@ -8,4 +8,4 @@ function MobileReservation() {
     );
 }
 
-export default MobileReservation;
+export default MobileUserBookings;

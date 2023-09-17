@@ -15,19 +15,21 @@ import {
 import customStyle from "../../../styles/customStyle";
 import BirthdayPicker from "../../common/BirthdayPicker";
 import PhoneNumberInput from "../../common/PhoneNumberInput";
-import {Link, useLoaderData} from "react-router-dom";
+import {isRouteErrorResponse, Link, useLoaderData, useRouteError} from "react-router-dom";
 import {IUser} from "../../../types/IUser";
 import {useFetch} from "../../../util/hook/useFetch";
 import {MessageAlert} from "../../../util/MessageAlert";
 import {useModal} from "../../../util/hook/useModal";
 import {Controller, useForm} from "react-hook-form";
+import {patchProfile} from "../../../service/user/fetchUser";
 
 function WebProfile() {
     const {classes} = customStyle();
     const DATA = useLoaderData() as IUser;
+    const routeError = useRouteError();
     const curEmail = sessionStorage.getItem("EMAIL")!;
 
-    const {deleteAccountFetch} = useFetch();
+    const {deleteAccountFetch, changeProfileFetch} = useFetch();
     const {changePWModal} = useModal();
 
     const {register, handleSubmit, control, formState: {errors}}
@@ -43,11 +45,11 @@ function WebProfile() {
     });
 
     const onSubmit = (data: IUser) => {
-        
+        changeProfileFetch(data);
     }
 
     useEffect(() => {
-        if (DATA.userId === undefined) {
+        if (isRouteErrorResponse(routeError)) {
             MessageAlert("error", "내 정보 조회 실패", null);
         }
     }, []);
@@ -70,10 +72,12 @@ function WebProfile() {
                             </Stack>
 
                             <Stack style={{width: "100%"}}>
+
                                 <TextInput label={"이메일"}
                                            disabled
                                            defaultValue={curEmail}
                                            className={classes["input"]}/>
+
                                 <TextInput {...register("name", {
                                     required: "이름을 입력해주세요",
                                     minLength: {value: 2, message: "2글자 이상 입력해주세요"},
@@ -94,6 +98,7 @@ function WebProfile() {
                                                                   error={errors.phone?.message}
                                                                   asterisk={true}/>
                                             )}/>
+
                                 <Controller control={control}
                                             name={"birth"}
                                             render={({field: {ref,...rest}}) => (
@@ -101,10 +106,12 @@ function WebProfile() {
                                                     inputRef={ref}
                                                     label={"생년월일"}/>
                                             )}/>
+
                                 <TextInput {...register("address")}
                                            label={"주소"}
                                            defaultValue={DATA.address}
                                            className={classes["input"]}/>
+
                                 <Group position={"right"}>
                                     <Button onClick={handleSubmit(onSubmit)}
                                             style={{width: "8rem"}}

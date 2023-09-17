@@ -186,7 +186,6 @@ const customStyle = createStyles((theme) => ({
         }
     },
     "mobile-nav-link": {
-        color: "#666666",
         textAlign: "center",
         ":active": {
             color: "var(--primary)",

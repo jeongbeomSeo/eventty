@@ -1,4 +1,4 @@
-import {deleteAccount, patchChangePassword, postLogin, postLogout} from "../../service/user/fetchUser";
+import {deleteAccount, patchChangePassword, patchProfile, postLogin, postLogout} from "../../service/user/fetchUser";
 import {MessageAlert} from "../MessageAlert";
 import {useRecoilState, useResetRecoilState, useSetRecoilState} from "recoil";
 import {loginState} from "../../states/loginState";
@@ -6,7 +6,7 @@ import {userState} from "../../states/userState";
 import {useNavigate} from "react-router-dom";
 import {loadingState} from "../../states/loadingState";
 import {deleteEvent} from "../../service/event/fetchEvent";
-import {IChangePW} from "../../types/IUser";
+import {IChangePW, IUser} from "../../types/IUser";
 import {modals} from "@mantine/modals";
 
 export function useFetch() {
@@ -43,6 +43,18 @@ export function useFetch() {
             });
         }
     }
+    
+    const changeProfileFetch = (data:IUser) => {
+        patchProfile(data)
+            .then(res => {
+                if (res === 200){
+                    window.location.reload();
+                    MessageAlert("success", "내 정보가 변경되었습니다", null);
+                }else{
+                    MessageAlert("error", "내 정보 변경 실패", null);
+                }
+            })
+    }
 
     const changePasswordFetch = (data:IChangePW) => {
         patchChangePassword(data)
@@ -73,5 +85,5 @@ export function useFetch() {
         }
     }
 
-    return {logoutFetch, deleteAccountFetch, deleteEventFetch, changePasswordFetch};
+    return {logoutFetch, deleteAccountFetch, deleteEventFetch, changePasswordFetch, changeProfileFetch};
 }

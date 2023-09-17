@@ -3,7 +3,7 @@ import {Divider, Stack, Title} from "@mantine/core";
 import WebEventsDetailBtn from "./WebEventsDetailBtn";
 import customStyle from "../../../styles/customStyle";
 
-function WebReservation() {
+function WebUserBookings() {
     const {classes} = customStyle();
 
     return (
@@ -20,4 +20,4 @@ function WebReservation() {
     );
 }
 
-export default WebReservation;
+export default WebUserBookings;

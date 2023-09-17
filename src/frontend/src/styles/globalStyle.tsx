@@ -17,7 +17,8 @@ const globalStyle = createGlobalStyle`
   }
 
   :root {
-    --primary: #7536DC;
+    //--primary: #7536DC;
+    --primary: #4E52DC;
   }
 
   .ql-editor{

@@ -1,6 +1,6 @@
 import React, {useMemo} from "react";
 import {Avatar, Container, Divider, Group, Image, Paper, Stack, Text, Title} from "@mantine/core";
-import {IEventDetail} from "../../../types/IEvent";
+import {IEvent, IEventDetail} from "../../../types/IEvent";
 import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
 import EventDetailNavBar from "../../display/mobile/navbar/EventDetailNavBar";
 import MobileTicketInfo from "./MobileTicketInfo";

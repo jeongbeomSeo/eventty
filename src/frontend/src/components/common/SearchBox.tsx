@@ -5,6 +5,8 @@ import {IconSearch} from "@tabler/icons-react";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {modals} from "@mantine/modals";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {searchDrawerState} from "../../states/searchDrawerState";
 
 interface ISearch {
     keyword: string;
@@ -12,6 +14,7 @@ interface ISearch {
 
 function SearchBox({onAddKeyword}: { onAddKeyword: (keyword: string) => void }) {
     const {classes} = customStyle();
+    const setSearchDrawerValue = useSetRecoilState(searchDrawerState);
     const navigate = useNavigate();
     const {register, handleSubmit, reset} = useForm<ISearch>();
 
@@ -19,6 +22,7 @@ function SearchBox({onAddKeyword}: { onAddKeyword: (keyword: string) => void }) 
         if (data.keyword !== "") {
             onAddKeyword(data.keyword);
             modals.closeAll();
+            setSearchDrawerValue(false);
             reset();
             navigate(`/events?search=${data.keyword}`);
         }

@@ -1,8 +1,15 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {Avatar, Button, Center, Flex, Group, Paper, Stack, Text, TextInput, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import {DatePickerInput} from "@mantine/dates";
 import BirthdayPicker from "../../common/BirthdayPicker";
+import {isRouteErrorResponse, useLoaderData, useRouteError} from "react-router-dom";
+import {IUser} from "../../../types/IUser";
+import {useFetch} from "../../../util/hook/useFetch";
+import {useModal} from "../../../util/hook/useModal";
+import {Controller, useForm} from "react-hook-form";
+import {MessageAlert} from "../../../util/MessageAlert";
+import PhoneNumberInput from "../../common/PhoneNumberInput";
 
 function PaperItem({children}: { children: React.ReactNode }) {
     return (
@@ -16,21 +23,34 @@ function PaperItem({children}: { children: React.ReactNode }) {
 
 function MobileProfile() {
     const {classes} = customStyle();
+    const DATA = useLoaderData() as IUser;
+    const routeError = useRouteError();
+    const curEmail = sessionStorage.getItem("EMAIL")!;
 
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [selectedDate, setSelectedDate] = useState<Date>();
-    const handlePhoneInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const {value} = e.target;
-        const formattedValue = value
-            .replace(/[^0-9]/g, '')
-            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
-            .replace(/(\-{1,2})$/g, "");
+    const {deleteAccountFetch, changeProfileFetch} = useFetch();
+    const {changePWModal} = useModal();
 
-        setPhoneNumber(formattedValue);
+    const {register, handleSubmit, control, formState: {errors}}
+        = useForm<IUser>({
+        defaultValues: {
+            image: DATA.image,
+            phone: DATA.phone,
+            birth: DATA.birth,
+            address: DATA.address,
+            name: DATA.name,
+            userId: DATA.userId,
+        }
+    });
+
+    const onSubmit = (data: IUser) => {
+        changeProfileFetch(data);
     }
-    const handleDateChange = (newDate: Date) => {
-        setSelectedDate(newDate);
-    }
+
+    useEffect(() => {
+        if (isRouteErrorResponse(routeError)) {
+            MessageAlert("error", "내 정보 조회 실패", null);
+        }
+    }, []);
 
     return (
         <Stack spacing={"2rem"}>
@@ -41,17 +61,50 @@ function MobileProfile() {
                         <Avatar size={"6rem"} radius={"6rem"}/>
                         <Button className={classes["btn-primary"]}>이미지 변경</Button>
                     </Stack>
-                    <TextInput label={"이메일"} disabled className={classes["input"]}/>
-                    <TextInput label={"이름"} className={classes["input"]}/>
-                    <TextInput label={"휴대폰 번호"}
-                               maxLength={13}
-                               value={phoneNumber}
-                               onInput={handlePhoneInputChange}
+
+                    <TextInput label={"이메일"}
+                               disabled
+                               defaultValue={curEmail}
                                className={classes["input"]}/>
-                    {/*<BirthdayPicker label={"생년월일"} value={selectedDate}
-                                    onChange={handleDateChange}/>*/}
-                    <TextInput label={"주소"} className={classes["input"]}/>
-                    <Button className={classes["btn-primary"]}>저장하기</Button>
+
+                    <TextInput {...register("name", {
+                        required: "이름을 입력해주세요",
+                        minLength: {value: 2, message: "2글자 이상 입력해주세요"},
+                    })}
+                               label={"이름"}
+                               withAsterisk
+                               error={errors.name?.message}
+                               className={classes["input"]}/>
+
+                    <Controller control={control}
+                                name={"phone"}
+                                rules={{
+                                    required: "휴대폰 번호를 입력해주세요",
+                                }}
+                                render={({field: {ref, ...rest}}) => (
+                                    <PhoneNumberInput {...rest}
+                                                      inputRef={ref}
+                                                      error={errors.phone?.message}
+                                                      asterisk={true}/>
+                                )}/>
+
+                    <Controller control={control}
+                                name={"birth"}
+                                render={({field: {ref, ...rest}}) => (
+                                    <BirthdayPicker {...rest}
+                                                    inputRef={ref}
+                                                    label={"생년월일"}/>
+                                )}/>
+
+                    <TextInput {...register("address")}
+                               label={"주소"}
+                               defaultValue={DATA.address}
+                               className={classes["input"]}/>
+
+                    <Button onClick={handleSubmit(onSubmit)}
+                            className={classes["btn-primary"]}>
+                        저장하기
+                    </Button>
                 </PaperItem>
             </div>
 
@@ -60,7 +113,11 @@ function MobileProfile() {
                 <PaperItem>
                     <Group position={"apart"}>
                         <Text>비밀번호</Text>
-                        <Button className={classes["btn-primary"]}>비밀번호 변경</Button>
+                        <Button onClick={() => changePWModal()}
+                                style={{width: "8rem"}}
+                                className={classes["btn-primary"]}>
+                            비밀번호 변경
+                        </Button>
                     </Group>
                 </PaperItem>
             </div>
@@ -70,7 +127,11 @@ function MobileProfile() {
                 <PaperItem>
                     <Group position={"apart"}>
                         <Text>회원탈퇴</Text>
-                        <Button color={"red"}>회원탈퇴</Button>
+                        <Button color={"red"}
+                                style={{width: "8rem"}}
+                                onClick={() => deleteAccountFetch()}>
+                            회원탈퇴
+                        </Button>
                     </Group>
                 </PaperItem>
             </div>

@@ -1,4 +1,4 @@
-import {IChangePW, ILogin, ISignup} from "../../types/IUser";
+import {IChangePW, ILogin, ISignup, IUser} from "../../types/IUser";
 
 export const postSignupEmailValid = async (data: string) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`,{
@@ -54,6 +54,15 @@ export const getProfile = async () => {
     })
         .then((res) => res.json())
         .then((res) => res.successResponseDTO.data);
+}
+
+export const patchProfile = async (data: IUser) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`,{
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.status);
 }
 
 export const patchChangePassword = async (data: IChangePW) => {

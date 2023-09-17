@@ -22,7 +22,8 @@ import {loader as eventLoader} from "./routes/event";
 import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
 import HostRoute from "./components/HostRoute";
-import Reservation from "./pages/user/Reservation";
+import Bookings from "./pages/user/Bookings";
+import Ticket from "./pages/Ticket";
 
 const Router = createBrowserRouter([
     {
@@ -45,9 +46,13 @@ const Router = createBrowserRouter([
                         loader: eventListLoader,
                     },
                     {
-                        path: "events/:eventId",
+                        path: "events/:eventId/",
                         element: <EventDetail/>,
                         loader: eventLoader,
+                    },
+                    {
+                        path: "events/ticket/:eventId",
+                        element: <Ticket/>,
                     },
                     {
                         element: <PrivateRoute/>,
@@ -70,14 +75,10 @@ const Router = createBrowserRouter([
                                         ]
                                     },
                                     {
-                                        path: "users/reservations",
-                                        element: <Reservation/>,
+                                        path: "users/bookings",
+                                        element: <Bookings/>,
                                     },
                                 ]
-                            },
-                            {
-                                path: "events/:eventId/ticket",
-                                element: <Test/>,
                             },
                         ]
                     },

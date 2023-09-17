@@ -38,7 +38,10 @@ function WebEventDetail() {
 
     const onClickTicket = useCallback(() => {
         if (isLoggedIn) {
-            navigate("ticket", {state: pathname});
+            navigate(`/events/ticket/${DATA.id}`, {state:{
+                title: DATA.title,
+                tickets: DATA.tickets,
+                }});
         } else {
             loginAlertModal();
         }
