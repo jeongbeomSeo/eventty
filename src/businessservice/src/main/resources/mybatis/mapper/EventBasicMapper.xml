@@ -96,7 +96,8 @@
         SET
             title = #{title},
             image = #{image},
-            category = #{category}
+            category = #{category},
+            participate_num = #{participateNum}
         WHERE id = #{id}
     </update>
 

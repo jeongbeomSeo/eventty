@@ -22,6 +22,9 @@ public class EventBasicEntity {
     private Boolean isActive;
     private Boolean isDeleted;
 
+    public void addParticipateNum(Long participateNumPerTicket){
+        this.participateNum += participateNumPerTicket;
+    }
     public void updateTitle(String title){
         this.title = title;
     }

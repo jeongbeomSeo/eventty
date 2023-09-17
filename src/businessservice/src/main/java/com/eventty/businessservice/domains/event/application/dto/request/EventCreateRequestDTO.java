@@ -35,7 +35,7 @@ public class EventCreateRequestDTO {
                 .image(image)
                 .eventStartAt(eventStartAt)
                 .eventEndAt(eventEndAt)
-                .participateNum(participateNum)
+                .participateNum(0L)
                 .location(location)
                 .category(category)
                 .isActive(true)

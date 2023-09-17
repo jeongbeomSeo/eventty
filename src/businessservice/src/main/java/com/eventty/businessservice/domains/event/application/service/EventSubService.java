@@ -79,16 +79,19 @@ public class EventSubService {
         // 이벤트 일반 정보 저장
         EventBasicEntity event = eventCreateRequestDTO.toEventEntity();
         eventBasicRepository.insertEvent(event);
-        Long id = event.getId();
 
         // 티켓 정보 저장
         eventCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
-            TicketEntity ticket = ticketCreateRequest.toEntity(id);
+            // 티켓 수량만큼 참여 인원 증가
+            event.addParticipateNum(ticketCreateRequest.getQuantity());
+            eventBasicRepository.updateEvent(event);
+            // 티켓 저장
+            TicketEntity ticket = ticketCreateRequest.toEntity(event.getId());
             ticketRepository.insertTicket(ticket);
         });
 
         // 이벤트 상세 정보 저장
-        EventDetailEntity eventDetail = eventCreateRequestDTO.toEventDetailEntity(id);
+        EventDetailEntity eventDetail = eventCreateRequestDTO.toEventDetailEntity(event.getId());
         return eventDetailRepository.insertEventDetail(eventDetail);
     }
 
@@ -96,6 +99,10 @@ public class EventSubService {
         // 티켓 존재하는지 확인
         TicketEntity ticket = ticketRepository.selectTicketById(ticketId);
         if(ticket == null) {
+            throw TicketNotFoundException.EXCEPTION;
+        }
+        // 남아 있는 티켓이 없을 경우 예외
+        if(ticket.getQuantity() == 0) {
             throw TicketNotFoundException.EXCEPTION;
         }
         ticket.updateName(ticketUpdateRequestDTO.getName());

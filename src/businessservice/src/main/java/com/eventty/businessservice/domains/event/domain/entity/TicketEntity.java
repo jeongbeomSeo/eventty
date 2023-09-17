@@ -9,7 +9,7 @@ public class TicketEntity {
     private Long id;
     private String name;
     private Long price;
-    private Long quantity;
+    private Long quantity; // 티켓 수량
     private Long eventId;
     private Boolean is_deleted;
 
