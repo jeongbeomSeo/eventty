@@ -16,7 +16,7 @@ public class UserUpdateDTO {
     private String phone;
     private LocalDate birth;
     private String address;
-    private String image;
+    private Long imageId;
 
     public UserUpdateDTO(UserEntity user){
 
@@ -25,10 +25,10 @@ public class UserUpdateDTO {
         this.phone = user.getPhone();
         this.birth = user.getBirth();
         this.address = user.getAddress();
-        this.image = user.getImage();
+        this.imageId = user.getImageId();
     }
 
-    public UserEntity toEntity(UserUpdateRequestDTO dto){
+    public UserEntity toEntity(UserUpdateRequestDTO dto, Long imageId){
         return UserEntity
                 .builder()
                 .userId(this.userId)
@@ -36,7 +36,7 @@ public class UserUpdateDTO {
                 .phone(dto.getPhone() != null ? dto.getPhone() : this.phone)
                 .birth(dto.getBirth() != null ? StringToLocalDate(dto.getBirth()) : this.birth)
                 .address(dto.getAddress() != null ? dto.getAddress() : this.address)
-                .image(dto.getImage() != null ? dto.getImage() : this.image)
+                .imageId(imageId == 0 ? null : imageId)
                 .build();
     }
 
