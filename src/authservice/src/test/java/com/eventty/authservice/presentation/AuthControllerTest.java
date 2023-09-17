@@ -13,13 +13,9 @@ import com.eventty.authservice.infrastructure.interceptor.AuthenticationIntercep
 import com.eventty.authservice.infrastructure.resolver.AuthenticationResolver;
 import com.eventty.authservice.infrastructure.resolver.LoginUser;
 import com.eventty.authservice.infrastructure.utils.AuthenticationConverter;
-import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,9 +24,6 @@ import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

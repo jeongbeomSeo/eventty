@@ -32,6 +32,8 @@ public class UserDetailServiceImpl implements UserDetailService {
         this.userRepository = userRepository;
         this.em = em;
     }
+
+    // Soft Delete
     @Override
     public Long delete(AuthUserEntity authUserEntity) {
         authUserEntity.setDelete(true);
@@ -68,6 +70,7 @@ public class UserDetailServiceImpl implements UserDetailService {
         return authUserEntity.getId();
     }
 
+    // 삭제된 유저인지 확인
     @Override
     public void validationUser(AuthUserEntity authUserEntity) {
         if (authUserEntity.isDelete())

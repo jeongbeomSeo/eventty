@@ -1,10 +1,6 @@
 package com.eventty.authservice.global.utils;
 
-import com.eventty.authservice.domain.entity.AuthUserEntity;
-import com.eventty.authservice.domain.exception.*;
 import com.eventty.authservice.global.exception.AuthException;
-import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
-import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import jakarta.validation.ConstraintViolation;
 
 import lombok.extern.slf4j.Slf4j;

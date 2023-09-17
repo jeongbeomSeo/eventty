@@ -4,22 +4,17 @@ import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
-import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
-import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
+import jakarta.servlet.http.Cookie;
 
 public interface UserService {
 
     Long createUser(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole userRole);
-
     void validateEmailNotDuplicated(String email);
-
     LoginSuccessDTO login(UserLoginRequestDTO userLoginRequestDTO);
-
-    NewTokensResponseDTO getNewTokens(GetNewTokensRequestDTO getNewTokensRequestDTO);
-
     AuthenticationDetailsResponseDTO authenticateUser(AuthenticationUserRequestDTO authenticationUserRequestDTO);
+    Long deleteUser(Cookie[] cookies, String csrfToken);
 
-    Long deleteUser(Long userId);
+    Long logout(Cookie[] cookies, String csrfToken);
 }

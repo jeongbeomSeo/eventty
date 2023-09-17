@@ -1,21 +1,30 @@
 package com.eventty.authservice.applicaiton.service.utils;
 
 import com.eventty.authservice.api.dto.UserCreateRequestDTO;
+import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.TokensDTO;
-import com.eventty.authservice.applicaiton.service.subservices.AuthService;
+import com.eventty.authservice.applicaiton.dto.ValidateRefreshTokenDTO;
+import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.entity.AuthorityEntity;
+import com.eventty.authservice.domain.exception.PermissionDeniedException;
+import com.eventty.authservice.infrastructure.model.Authority;
+import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
-import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.Token;
 import org.springframework.stereotype.Component;
 
+import java.net.HttpCookie;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -24,7 +33,28 @@ public class CustomConverter {
 
     private final ObjectMapper objectMapper;
 
-    public AuthUserEntity userDTOToAuthEntityConvert(FullUserCreateRequestDTO fullUserCreateRequestDTO, CustomPasswordEncoder customPasswordEncoder) {
+    // 유저 인증 요청할 때 필요한 데이터를 전부 모아둔 DTO 생성
+    public TokensDTO convertTokensDTO(Cookie[] cookies) {
+
+        String accessToken = getJwt(cookies);
+        String refreshToken = getRefreshToken(cookies);
+
+        return new TokensDTO(accessToken, refreshToken);
+
+    }
+
+    public TokensDTO convertTokensDTO(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+        return new TokensDTO(authenticationUserRequestDTO.accessToken(), authenticationUserRequestDTO.refreshToken());
+    }
+
+    public CsrfTokenDTO convertCsrfTokenDTO(Long userId, String csrfToken) {
+        return new CsrfTokenDTO(userId, csrfToken);
+    }
+
+    public ValidateRefreshTokenDTO convertToValidationRefreshTokenDTO(Long userId, TokensDTO TokensDTO) {
+        return new ValidateRefreshTokenDTO(userId, TokensDTO.refreshToken());
+}
+    public AuthUserEntity convertAuthEntityConvert(FullUserCreateRequestDTO fullUserCreateRequestDTO, CustomPasswordEncoder customPasswordEncoder) {
         return AuthUserEntity.builder()
                 .email(fullUserCreateRequestDTO.getEmail())
                 .password(customPasswordEncoder.encode(fullUserCreateRequestDTO.getPassword()))
@@ -32,7 +62,7 @@ public class CustomConverter {
     }
 
 
-    public UserCreateRequestDTO fullUserDTOToUserDTO(FullUserCreateRequestDTO fullUserCreateRequestDTO, Long userId) {
+    public UserCreateRequestDTO convertUserCreateRequestDTO(FullUserCreateRequestDTO fullUserCreateRequestDTO, Long userId) {
         return UserCreateRequestDTO.builder()
                 .userId(userId)
                 .name(fullUserCreateRequestDTO.getName())
@@ -42,31 +72,17 @@ public class CustomConverter {
                 .build();
     }
 
-    public LoginSuccessDTO authUserEntityTologinSuccessDTO(AuthService authService, AuthUserEntity authUserEntity) {
-        TokensDTO token = authService.getToken(authUserEntity);
+    public LoginSuccessDTO convertLoginSuccessDTO(TokensDTO tokensDTO, String csrfToekn, AuthUserEntity authUserEntity) {
         LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
                 .email(authUserEntity.getEmail())
-                // .authoritiesNameList(convertAuthorities(authUserEntity.getAuthorities()))
                 .role(getRole(authUserEntity.getAuthorities()))
-                // .csrfToken()
+                .csrfToken(csrfToekn)
                 .build();
 
-        return LoginSuccessDTO.builder()
-                .tokensDTO(token)
-                .loginResponseDTO(loginResponseDTO)
-                .build();
+        return new LoginSuccessDTO(tokensDTO, loginResponseDTO);
     }
-
-
-    public NewTokensResponseDTO tokensDTOToNewTokensResponseDTO(TokensDTO tokensDTO) {
-        return NewTokensResponseDTO.builder()
-                .accessToken(tokensDTO.getAccessToken())
-                .refreshToken(tokensDTO.getRefreshToken())
-                .build();
-    }
-
     public String convertAuthoritiesJson(AuthUserEntity authUserEntity) {
-        List<String> authorities = convertAuthorities(authUserEntity.getAuthorities());
+        List<Authority> authorities = convertAuthorities(authUserEntity.getAuthorities());
         try {
             return objectMapper.writeValueAsString(authorities);
         } catch (JsonProcessingException e) {
@@ -74,9 +90,27 @@ public class CustomConverter {
         }
     }
 
-    private List<String> convertAuthorities(List<AuthorityEntity> list) {
+    private String getJwt(Cookie[] cookies) {
+        Optional<Cookie> jwtCookie = Arrays.stream(cookies).filter(cookie ->
+                cookie.getName().equals(TokenEnum.ACCESS_TOKEN.getName())
+        )
+                .findFirst();
+        return jwtCookie.orElseThrow(PermissionDeniedException::new).getValue();
+    }
+
+    private String getRefreshToken(Cookie[] cookies) {
+        Optional<Cookie> refreshTokenCookie = Arrays.stream(cookies).filter(cookie ->
+                cookie.getName().equals(TokenEnum.REFRESH_TOKEN.getName()))
+                .findFirst();
+
+        return refreshTokenCookie.map(Cookie::getValue).orElse("");
+    }
+
+    private List<Authority> convertAuthorities(List<AuthorityEntity> list) {
         return list.stream()
-                .map(AuthorityEntity::getName)
+                .map(authorityEntity -> Authority.builder()
+                        .authority(authorityEntity.getName())
+                        .build())
                 .toList();
     }
 
@@ -86,7 +120,7 @@ public class CustomConverter {
                 .map(AuthorityEntity::getName)
                 .filter(name -> name.startsWith("ROLE_"))
                 .findFirst()
-                .orElseGet( () -> logging(list.get(0).getId()));
+                .orElseGet(() -> logging(list.get(0).getId()));
     }
     private String logging(Long userId) {
         log.error("Having id {} User Validation is OK. But, User Role is Not Found!! Critical Issue!", userId);

@@ -11,7 +11,6 @@ import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.entity.AuthorityEntity;
 import com.eventty.authservice.domain.entity.RefreshTokenEntity;
 import com.eventty.authservice.domain.exception.InValidRefreshTokenException;
-import com.eventty.authservice.presentation.dto.request.GetNewTokensRequestDTO;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

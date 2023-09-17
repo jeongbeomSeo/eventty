@@ -1,14 +1,13 @@
 package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
-import com.eventty.authservice.global.response.ResponseDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
-import com.eventty.authservice.infrastructure.resolver.LoginUser;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
 import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
-import com.eventty.authservice.presentation.dto.response.NewTokensResponseDTO;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -31,6 +30,8 @@ import com.eventty.authservice.global.Enum.SuccessCode;
 @Slf4j
 @Tag(name= "Auth", description = "Auth API")
 public class AuthController {
+
+    private final String HEADER_CSRF = "X-CSRF-TOKEN";
 
     private final UserService userService;
 
@@ -78,16 +79,16 @@ public class AuthController {
         LoginSuccessDTO loginSuccessDTO = userService.login(userLoginRequestDTO);
 
         ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(
-                loginSuccessDTO.getTokensDTO().getAccessToken());
+                loginSuccessDTO.tokensDTO().accessToken());
 
         ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(
-                loginSuccessDTO.getTokensDTO().getRefreshToken());
+                loginSuccessDTO.tokensDTO().refreshToken());
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(SuccessResponseDTO.of(loginSuccessDTO.getLoginResponseDTO()));
+                .body(SuccessResponseDTO.of(loginSuccessDTO.loginResponseDTO()));
     }
 
     /**
@@ -95,11 +96,12 @@ public class AuthController {
      */
     @DeleteMapping("/me")
     // @Permission(Roles = {UserRole.USER})
-    public ResponseEntity<Void> delete(LoginUser loginUser) {
+    public ResponseEntity<Void> delete(HttpServletRequest request) {
         log.debug("Current Position: Controller :: 회원 탈퇴");
 
-        Long userId = loginUser.getUserId();
-        userService.deleteUser(userId);
+        Cookie[] cookies = request.getCookies();
+        String csrfToken = request.getHeader(HEADER_CSRF);
+        userService.deleteUser(cookies, csrfToken);
 
         ResponseCookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
         ResponseCookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCookie();
@@ -116,6 +118,7 @@ public class AuthController {
      */
     @PostMapping("/api/authenticate/user")
     public ResponseEntity<SuccessResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+        log.debug("Current Position: Controller :: 회원 검증");
 
         AuthenticationDetailsResponseDTO authenticationDetailsResponseDTO = userService.authenticateUser(authenticationUserRequestDTO);
 
@@ -125,16 +128,24 @@ public class AuthController {
     }
 
     /**
-     * Refresh Token 검증 및 새로운 Tokens 발급
+     * 유저 로그아웃
      */
-    @PostMapping("/api/newtokens")
-    public ResponseEntity<SuccessResponseDTO<NewTokensResponseDTO>> getNewTokens(@RequestBody GetNewTokensRequestDTO getNewTokensRequestDTO) {
-        log.debug("Current Position: Controller :: 새로운 Token 발급");
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        log.debug("Current Position: Controller :: 회원 로그아웃");
 
-        NewTokensResponseDTO newTokensResponseDTO = userService.getNewTokens(getNewTokensRequestDTO);
+        Cookie[] cookies = request.getCookies();
+        String csrfToken = request.getHeader(HEADER_CSRF);
+
+        userService.logout(cookies, csrfToken);
+
+        ResponseCookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
+        ResponseCookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCookie();
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
-                .body(SuccessResponseDTO.of(newTokensResponseDTO));
+                .header(HttpHeaders.SET_COOKIE, deleteAccessToken.toString())
+                .header(HttpHeaders.SET_COOKIE, deleteRefreshToken.toString())
+                .body(null);
     }
 }

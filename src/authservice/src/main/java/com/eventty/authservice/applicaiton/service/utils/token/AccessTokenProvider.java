@@ -37,13 +37,4 @@ public class AccessTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, tokenProperties.getSecretKey())
                 .compact();
     }
-
-
-/*    private Collection<? extends GrantedAuthority> getAuthorities(AuthUserEntity authUserEntity) {
-        return authUserEntity.getAuthorities().stream()
-                .map(authorityEntity -> new SimpleGrantedAuthority(
-                        authorityEntity.getName()
-                )).collect(Collectors.toList());
-    }*/
-
 }
