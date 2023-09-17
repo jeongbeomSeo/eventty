@@ -102,6 +102,11 @@ public class EventSubService {
             throw TicketNotFoundException.EXCEPTION;
         }
 
+        // 티켓 가격 수정이 들어오지 않았을 경우 기존 가격 유지
+        if(ticketUpdateRequestDTO.getPrice() == null){
+            ticketUpdateRequestDTO.setPrice(ticket.getPrice());
+        }
+
         // 티켓 업데이트
         ticket.updateName(ticketUpdateRequestDTO.getName());
         ticket.updatePrice(ticketUpdateRequestDTO.getPrice());
