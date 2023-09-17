@@ -2,6 +2,10 @@ package com.eventty.businessservice.domains.event.application.dto.request;
 
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,25 +15,31 @@ import java.util.List;
 @Getter
 @Builder
 public class EventCreateRequestDTO {
-    //private Long id;
+    @NotNull
     private Long userId;
+    @NotBlank
     private String title;
     private String image;
+    @FutureOrPresent
     private LocalDateTime eventStartAt;
+    @FutureOrPresent
     private LocalDateTime eventEndAt;
     private Long participateNum;
+    @NotBlank
     private String location;
+    @Min(1)
     private Long category;
+    @NotBlank
     private String content;
+    @FutureOrPresent
     private LocalDateTime applyStartAt;
+    @FutureOrPresent
     private LocalDateTime applyEndAt;
-    //private Long views;
 
     private List<TicketCreateRequestDTO> tickets;
 
     public EventBasicEntity toEventEntity(){
         return EventBasicEntity.builder()
-                //.id(id)
                 .userId(userId)
                 .title(title)
                 .image(image)

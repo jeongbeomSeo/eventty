@@ -23,7 +23,7 @@ public class TicketRepositoryTest {
     @Autowired
     private TicketRepository ticketRepository;
 
-    private Long eventId = 1L;
+    private final Long eventId = 1L;
 
     @BeforeEach
     public void setUp(){

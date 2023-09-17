@@ -1,6 +1,6 @@
 package com.eventty.businessservice.domains.event.application.dto.request;
 
-import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,5 +8,7 @@ import lombok.Setter;
 @Setter
 public class TicketUpdateRequestDTO {
     private String name;
+
+    @PositiveOrZero
     private Long price;
 }

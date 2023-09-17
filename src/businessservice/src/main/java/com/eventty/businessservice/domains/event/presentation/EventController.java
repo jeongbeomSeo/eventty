@@ -13,6 +13,7 @@ import com.eventty.businessservice.domains.event.application.dto.response.EventB
 import com.eventty.businessservice.domains.event.application.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +64,7 @@ public class EventController {
     @Operation(summary = "(HOST) 이벤트의 정보를 등록하여, 새로운 이벤트를 생성합니다.")
     @ApiSuccessData()
     public ResponseEntity<Void> postEvent(
-            @RequestBody EventCreateRequestDTO eventCreateRequestDTO
+            @RequestBody @Valid EventCreateRequestDTO eventCreateRequestDTO
     ){
 
         Long newEventId = eventService.createEvent(eventCreateRequestDTO);
@@ -79,7 +80,7 @@ public class EventController {
     @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<Long>> updateTicket(
             @PathVariable Long ticketId,
-            @RequestBody TicketUpdateRequestDTO ticketUpdateRequestDTO
+            @RequestBody @Valid TicketUpdateRequestDTO ticketUpdateRequestDTO
     ){
         Long updatedTicketId = eventService.updateTicket(ticketId, ticketUpdateRequestDTO);
 
@@ -109,7 +110,7 @@ public class EventController {
     @ApiSuccessData(value = EventBasicFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     public ResponseEntity<SuccessResponseDTO<List<EventBasicFindAllResponseDTO>>> findEventsByHostId(
-            @PathVariable Long hostId
+            @PathVariable @Min(1) Long hostId
     ) {
         List<EventBasicFindAllResponseDTO> events = eventService.findEventsByHostId(hostId);
 
@@ -122,8 +123,8 @@ public class EventController {
     @Operation(summary = "(HOST) 이벤트의 정보를 수정합니다.")
     @ApiSuccessData()
     public ResponseEntity<SuccessResponseDTO<Long>> postEvent(
-            @PathVariable Long eventId,
-            @RequestBody EventUpdateRequestDTO eventUpdateRequestDTO
+            @PathVariable @Min(1) Long eventId,
+            @RequestBody @Valid EventUpdateRequestDTO eventUpdateRequestDTO
     ){
         Long updatedEventId = eventService.updateEvent(eventId, eventUpdateRequestDTO);
 
