@@ -8,6 +8,8 @@ import java.util.List;
 @Mapper
 public interface TicketRepository {
     List<TicketEntity> selectTicketByEventId(Long eventId);
+    TicketEntity selectTicketById(Long ticketId);
+    Long updateTicket(TicketEntity ticket);
     Long insertTicket(TicketEntity ticket);
     Long deleteTicket(Long eventId);
 }

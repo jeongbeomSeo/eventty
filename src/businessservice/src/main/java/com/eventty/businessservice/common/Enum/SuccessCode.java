@@ -13,6 +13,12 @@ public enum SuccessCode {
     UPDATE_EVENT_SUCCESS(200, "Event updated successfully"),
     DELETE_EVENT_SUCCESS(200, "Event deleted successfully"),
 
+    // TICKET
+    GET_TICKET_INFO_SUCCESS(200, "Ticket retrieved successfully"),
+    CREATE_TICKET_SUCCESS(201, "Ticket created successfully"),
+    UPDATE_TICKET_SUCCESS(200, "Ticket updated successfully"),
+    DELETE_TICKET_SUCCESS(200, "Ticket deleted successfully"),
+
     // APPLY
     // 수정 예정
     APPLY_SUCCESS(201, "Apply successful"),

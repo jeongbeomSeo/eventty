@@ -1,5 +1,6 @@
 package com.eventty.businessservice.domains.event.presentation;
 
+import com.eventty.businessservice.domains.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.domains.event.domain.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
@@ -33,7 +34,8 @@ public class EventController {
     @Operation(summary = "(ALL) 특정 이벤트의 상세 정보를 가져옵니다.")
     @ApiSuccessData(EventWithTicketsFindByIdResponseDTO.class)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    public ResponseEntity<SuccessResponseDTO<EventWithTicketsFindByIdResponseDTO>> findEventById(@PathVariable @Min(1) Long eventId
+    public ResponseEntity<SuccessResponseDTO<EventWithTicketsFindByIdResponseDTO>> findEventById(
+            @PathVariable @Min(1) Long eventId
     ){
         // 행사 기본 정보 + 상세 정보 + 티켓
         EventWithTicketsFindByIdResponseDTO data = eventService.findEventById(eventId);
@@ -60,7 +62,8 @@ public class EventController {
     @PostMapping("/events")
     @Operation(summary = "(HOST) 이벤트의 정보를 등록하여, 새로운 이벤트를 생성합니다.")
     @ApiSuccessData()
-    public ResponseEntity<Void> postEvent(@RequestBody EventCreateRequestDTO eventCreateRequestDTO
+    public ResponseEntity<Void> postEvent(
+            @RequestBody EventCreateRequestDTO eventCreateRequestDTO
     ){
 
         Long newEventId = eventService.createEvent(eventCreateRequestDTO);
@@ -69,6 +72,21 @@ public class EventController {
                 .status(CREATE_EVENT_SUCCESS.getStatus())
                 .body(null);
                 //.body(SuccessResponseDTO.of(newEventId));
+    }
+
+    @PutMapping(value = "/events/ticket/{ticketId}")
+    @Operation(summary = "(HOST) 티켓의 정보를 수정합니다.")
+    @ApiSuccessData()
+    public ResponseEntity<SuccessResponseDTO<Long>> updateTicket(
+            @PathVariable Long ticketId,
+            @RequestBody TicketUpdateRequestDTO ticketUpdateRequestDTO
+    ){
+        Long updatedTicketId = eventService.updateTicket(ticketId, ticketUpdateRequestDTO);
+
+        return ResponseEntity
+                .status(UPDATE_TICKET_SUCCESS.getStatus())
+                //.body(null);
+                .body(SuccessResponseDTO.of(updatedTicketId));
     }
 
     @GetMapping( "/events/host/{hostId}")
@@ -92,7 +110,6 @@ public class EventController {
             @PathVariable Long eventId,
             @RequestBody EventUpdateRequestDTO eventUpdateRequestDTO
     ){
-
         Long updatedEventId = eventService.updateEvent(eventId, eventUpdateRequestDTO);
 
         return ResponseEntity
@@ -104,7 +121,8 @@ public class EventController {
     @DeleteMapping("/events/{eventId}")
     @Operation(summary = "(HOST) 이벤트를 삭제합니다.")
     @ApiSuccessData()
-    public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(@PathVariable @Min(1) Long eventId
+    public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(
+            @PathVariable @Min(1) Long eventId
     ){
 
         Long deleteEventId = eventService.deleteEvent(eventId);

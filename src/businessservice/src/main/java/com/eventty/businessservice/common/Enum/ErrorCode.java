@@ -23,6 +23,7 @@ public enum ErrorCode {
 
     // Event
     EVENT_NOT_FOUND     (HttpStatus.NOT_FOUND.value(), "E001", "Event is not found"),
+    TICKET_NOT_FOUND    (HttpStatus.NOT_FOUND.value(), "E002", "Ticket is not found"),
     CATEGORY_NOT_FOUND  (HttpStatus.NOT_FOUND.value(), "E003", "Category is not found");
 
 

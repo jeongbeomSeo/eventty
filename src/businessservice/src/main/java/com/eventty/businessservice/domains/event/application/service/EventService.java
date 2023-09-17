@@ -1,5 +1,6 @@
 package com.eventty.businessservice.domains.event.application.service;
 
+import com.eventty.businessservice.domains.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.domains.event.domain.Enum.Category;
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
@@ -38,6 +39,10 @@ public class EventService {
 
     public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
         return eventSubService.createEvent(eventCreateRequestDTO);
+    }
+
+    public Long updateTicket(Long ticketId, TicketUpdateRequestDTO ticketUpdateRequestDTO){
+        return eventSubService.updateTicket(ticketId, ticketUpdateRequestDTO);
     }
 
     public List<EventBasicFindAllResponseDTO> findEventsByHostId(Long hostId){

@@ -2,11 +2,13 @@ package com.eventty.businessservice.domains.event.application.service;
 
 import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
+import com.eventty.businessservice.domains.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
 import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
+import com.eventty.businessservice.domains.event.domain.exception.TicketNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
 import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
@@ -88,6 +90,21 @@ public class EventSubService {
         // 이벤트 상세 정보 저장
         EventDetailEntity eventDetail = eventCreateRequestDTO.toEventDetailEntity(id);
         return eventDetailRepository.insertEventDetail(eventDetail);
+    }
+
+    public Long updateTicket(Long ticketId, TicketUpdateRequestDTO ticketUpdateRequestDTO) {
+        // 티켓 존재하는지 확인
+        TicketEntity ticket = ticketRepository.selectTicketById(ticketId);
+        if(ticket == null) {
+            throw TicketNotFoundException.EXCEPTION;
+        }
+        ticket.updateName(ticketUpdateRequestDTO.getName());
+        ticket.updatePrice(ticketUpdateRequestDTO.getPrice());
+        ticket.updateQuantity(ticketUpdateRequestDTO.getQuantity());
+
+        // 티켓 업데이트
+        ticketRepository.updateTicket(ticket);
+        return ticketId;
     }
 
 }
