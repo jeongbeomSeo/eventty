@@ -101,13 +101,9 @@ public class EventSubService {
         if(ticket == null) {
             throw TicketNotFoundException.EXCEPTION;
         }
-        // 남아 있는 티켓이 없을 경우 예외
-        if(ticket.getQuantity() == 0) {
-            throw TicketNotFoundException.EXCEPTION;
-        }
+
         ticket.updateName(ticketUpdateRequestDTO.getName());
         ticket.updatePrice(ticketUpdateRequestDTO.getPrice());
-        ticket.updateQuantity(ticketUpdateRequestDTO.getQuantity());
 
         // 티켓 업데이트
         ticketRepository.updateTicket(ticket);

@@ -21,11 +21,10 @@ public enum ErrorCode {
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),
     CONFLICT(409, "", "Conflict occurred"),
 
-    // Event
+    // Event & Ticket
     EVENT_NOT_FOUND     (HttpStatus.NOT_FOUND.value(), "E001", "Event is not found"),
     TICKET_NOT_FOUND    (HttpStatus.NOT_FOUND.value(), "E002", "Ticket is not found"),
     CATEGORY_NOT_FOUND  (HttpStatus.NOT_FOUND.value(), "E003", "Category is not found");
-
 
     private final int status;
     private final String code;

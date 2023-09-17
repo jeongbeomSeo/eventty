@@ -9,5 +9,4 @@ import lombok.Setter;
 public class TicketUpdateRequestDTO {
     private String name;
     private Long price;
-    private Long quantity;
 }
