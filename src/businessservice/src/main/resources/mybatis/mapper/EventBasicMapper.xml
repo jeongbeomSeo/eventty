@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository">
+<mapper namespace="com.eventty.businessservice.event.domain.repository.EventBasicRepository">
 
-    <resultMap id="EventResultMap" type="com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity">
+    <resultMap id="EventResultMap" type="com.eventty.businessservice.event.domain.entity.EventBasicEntity">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
@@ -18,7 +18,7 @@
         <result property="isDeleted" column="is_deleted"/>
     </resultMap>
 
-    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO">
+    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
@@ -82,7 +82,7 @@
     </select>
 
     <!-- 이벤트 생성 -->
-    <insert id="insertEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertEvent" parameterType="com.eventty.businessservice.event.domain.entity.EventBasicEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO events_basic (user_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
         VALUES (#{userId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
     </insert>
@@ -97,7 +97,7 @@
     </select>
 
     <!-- 이벤트 수정 -->
-    <update id="updateEvent" parameterType="com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity">
+    <update id="updateEvent" parameterType="com.eventty.businessservice.event.domain.entity.EventBasicEntity">
         UPDATE events_basic
         SET
             title = #{title},

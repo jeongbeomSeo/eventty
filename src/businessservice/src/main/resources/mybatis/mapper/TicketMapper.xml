@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domains.event.domain.repository.TicketRepository">
+<mapper namespace="com.eventty.businessservice.event.domain.repository.TicketRepository">
 
-    <resultMap id="TicketResultMap" type="com.eventty.businessservice.domains.event.domain.entity.TicketEntity">
+    <resultMap id="TicketResultMap" type="com.eventty.businessservice.event.domain.entity.TicketEntity">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="price" column="price"/>
@@ -26,7 +26,7 @@
     </select>
 
     <!-- 티켓 수정 -->
-    <update id="updateTicket" parameterType="com.eventty.businessservice.domains.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
+    <update id="updateTicket" parameterType="com.eventty.businessservice.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
         UPDATE tickets
         SET name = #{name}, price = #{price}
         WHERE id = #{id}
@@ -40,7 +40,7 @@
     </update>
 
     <!-- 이벤트 별 티켓 생성 -->
-    <insert id="insertTicket" parameterType="com.eventty.businessservice.domains.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
+    <insert id="insertTicket" parameterType="com.eventty.businessservice.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
         INSERT INTO tickets (name, price, quantity, event_id, is_deleted)
         VALUES (#{name}, #{price}, #{quantity}, #{eventId}, #{is_deleted});
     </insert>

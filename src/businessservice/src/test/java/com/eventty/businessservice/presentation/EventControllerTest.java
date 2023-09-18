@@ -1,11 +1,11 @@
 package com.eventty.businessservice.presentation;
 
-import com.eventty.businessservice.domains.event.domain.Enum.Category;
-import com.eventty.businessservice.domains.event.application.dto.request.EventCreateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventService;
-import com.eventty.businessservice.domains.event.presentation.EventController;
+import com.eventty.businessservice.event.domain.Enum.Category;
+import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.EventBasicFindAllResponseDTO;
+import com.eventty.businessservice.event.application.service.EventService;
+import com.eventty.businessservice.event.presentation.EventController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
