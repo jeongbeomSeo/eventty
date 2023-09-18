@@ -1,16 +1,16 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.domains.event.application.dto.request.EventUpdateRequestDTO;
-import com.eventty.businessservice.domains.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventSubService;
-import com.eventty.businessservice.domains.event.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
-import com.eventty.businessservice.domains.event.domain.entity.TicketEntity;
-import com.eventty.businessservice.domains.event.domain.repository.EventDetailRepository;
-import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
-import com.eventty.businessservice.domains.event.application.dto.response.EventFullFindByIdResponseDTO;
-import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
-import com.eventty.businessservice.domains.event.domain.repository.TicketRepository;
+import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
+import com.eventty.businessservice.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.service.EventSubService;
+import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
+import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
+import com.eventty.businessservice.event.domain.entity.TicketEntity;
+import com.eventty.businessservice.event.domain.repository.EventDetailRepository;
+import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
+import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
+import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.event.domain.repository.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,7 +80,7 @@ public class EventSubServiceTest {
         Long eventId = 1L;
         when(eventBasicRepository.deleteEvent(eventId)).thenReturn(1L);
         when(eventDetailRepository.deleteEventDetail(eventId)).thenReturn(1L);
-        when(ticketRepository.deleteTicket(eventId)).thenReturn(1L);
+        when(ticketRepository.deleteTicketsByEventId(eventId)).thenReturn(1L);
 
         // When
         eventSubService.deleteEvent(eventId);

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.eventty.businessservice.domains.event.domain.repository.TicketRepository">
+<mapper namespace="com.eventty.businessservice.event.domain.repository.TicketRepository">
 
-    <resultMap id="TicketResultMap" type="com.eventty.businessservice.domains.event.domain.entity.TicketEntity">
+    <resultMap id="TicketResultMap" type="com.eventty.businessservice.event.domain.entity.TicketEntity">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="price" column="price"/>
@@ -19,14 +19,34 @@
         WHERE event_id = #{event_id} AND is_deleted = false;
     </select>
 
+    <!-- 티켓 조회 -->
+    <select id="selectTicketById" resultMap="TicketResultMap" parameterType="java.lang.Long">
+        SELECT * FROM tickets
+        WHERE id = #{id} AND is_deleted = false;
+    </select>
+
+    <!-- 티켓 수정 -->
+    <update id="updateTicket" parameterType="com.eventty.businessservice.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
+        UPDATE tickets
+        SET name = #{name}, price = #{price}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 개별 티켓 삭제 -->
+    <update id="deleteTicketById" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
+        UPDATE tickets
+        SET is_deleted = true
+        WHERE id = #{id}
+    </update>
+
     <!-- 이벤트 별 티켓 생성 -->
-    <insert id="insertTicket" parameterType="com.eventty.businessservice.domains.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
+    <insert id="insertTicket" parameterType="com.eventty.businessservice.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
         INSERT INTO tickets (name, price, quantity, event_id, is_deleted)
         VALUES (#{name}, #{price}, #{quantity}, #{eventId}, #{is_deleted});
     </insert>
 
     <!--티켓 정보 삭제-->
-    <update id="deleteTicket" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
+    <update id="deleteTicketsByEventId" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
         UPDATE tickets
         SET is_deleted = true
         WHERE event_id = #{event_id}
