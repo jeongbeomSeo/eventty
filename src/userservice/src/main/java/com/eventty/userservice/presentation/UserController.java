@@ -9,19 +9,14 @@ import com.eventty.userservice.domain.annotation.ApiSuccessData;
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.domain.annotation.Permission;
 import com.eventty.userservice.domain.code.UserRole;
+import com.eventty.userservice.infrastructure.ContextHolder.UserContextHolder;
 import com.eventty.userservice.presentation.dto.SuccessResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 import static com.eventty.userservice.domain.code.ErrorCode.*;
 
@@ -57,7 +52,7 @@ public class UserController {
     @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO> getMe(){
 
-        Long userId = getUserIdBySecurityContextHolder();
+        Long userId = getUserIdByUserContextHolder();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -76,15 +71,14 @@ public class UserController {
     public ResponseEntity<SuccessResponseDTO> patchMe(@ModelAttribute UserUpdateRequestDTO userUpdateRequestDTO,
                                                       @ModelAttribute UserImageUpdateRequestDTO userImageUpdateRequestDTO){
 
-        Long userId = getUserIdBySecurityContextHolder();
+        Long userId = getUserIdByUserContextHolder();
 
         userService.updateUser(userId, userUpdateRequestDTO, userImageUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    private Long getUserIdBySecurityContextHolder(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return Long.parseLong(authentication.getPrincipal().toString());
+    private Long getUserIdByUserContextHolder(){
+        return Long.parseLong(UserContextHolder.getContext().getUserId());
     }
 
 }

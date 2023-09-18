@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: test
   cloud:
     gateway:
       routes:
@@ -93,4 +93,9 @@ server.base.url.user_server: ${user_server_url}
 server.base.url.auth_server: ${auth_server_url}
 server.base.url.event_server: ${event_server_url}
 
+## LOG
+logging:
+  level:
+    root: INFO
+    com.eventty.gateway: ${level}
 

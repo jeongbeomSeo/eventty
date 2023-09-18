@@ -96,7 +96,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     @Override
     public AuthUserEntity changePwAuthUser(ChangePWRequestDTO changePWRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder customPasswordEncoder) {
 
-        authUserEntity.setPassword(customPasswordEncoder.encode(changePWRequestDTO.password()));
+        authUserEntity.setPassword(customPasswordEncoder.encode(changePWRequestDTO.getPassword()));
 
         em.persist(authUserEntity);
 

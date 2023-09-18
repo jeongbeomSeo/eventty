@@ -10,7 +10,7 @@ import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.entity.AuthorityEntity;
 import com.eventty.authservice.domain.exception.PermissionDeniedException;
 import com.eventty.authservice.domain.model.Authority;
-import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
+import com.eventty.authservice.presentation.dto.request.AuthenticateUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,8 +41,8 @@ public class CustomConverter {
 
     }
 
-    public TokensDTO convertTokensDTO(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
-        return new TokensDTO(authenticationUserRequestDTO.accessToken(), authenticationUserRequestDTO.refreshToken());
+    public TokensDTO convertTokensDTO(AuthenticateUserRequestDTO authenticateUserRequestDTO) {
+        return new TokensDTO(authenticateUserRequestDTO.getAccessToken(), authenticateUserRequestDTO.getRefreshToken());
     }
 
     public CsrfTokenDTO convertCsrfTokenDTO(Long userId, String csrfToken) {
@@ -54,8 +54,8 @@ public class CustomConverter {
 }
     public AuthUserEntity convertAuthEntityConvert(FullUserCreateRequestDTO fullUserCreateRequestDTO, CustomPasswordEncoder customPasswordEncoder) {
         return AuthUserEntity.builder()
-                .email(fullUserCreateRequestDTO.email())
-                .password(customPasswordEncoder.encode(fullUserCreateRequestDTO.password()))
+                .email(fullUserCreateRequestDTO.getEmail())
+                .password(customPasswordEncoder.encode(fullUserCreateRequestDTO.getPassword()))
                 .build();
     }
 
@@ -63,15 +63,16 @@ public class CustomConverter {
     public UserCreateRequestDTO convertUserCreateRequestDTO(FullUserCreateRequestDTO fullUserCreateRequestDTO, Long userId) {
         return new UserCreateRequestDTO(
                 userId,     // User Id
-                fullUserCreateRequestDTO.name(),    // Name
-                fullUserCreateRequestDTO.address(), // Address
-                fullUserCreateRequestDTO.birth(),   // Birth
-                fullUserCreateRequestDTO.phone()   // Phone
+                fullUserCreateRequestDTO.getName(),    // Name
+                fullUserCreateRequestDTO.getAddress(), // Address
+                fullUserCreateRequestDTO.getBirth(),   // Birth
+                fullUserCreateRequestDTO.getPhone()   // Phone
         );
     }
 
     public LoginSuccessDTO convertLoginSuccessDTO(TokensDTO tokensDTO, AuthUserEntity authUserEntity, String csrfToken) {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
+                authUserEntity.getId(),
                 authUserEntity.getEmail(), // email
                 getRole(authUserEntity.getAuthorities())  // Role
         );
@@ -106,7 +107,7 @@ public class CustomConverter {
     private List<Authority> convertAuthorities(List<AuthorityEntity> list) {
         return list.stream()
                 .map(authorityEntity -> Authority.builder()
-                        .authority(authorityEntity.getName())
+                        .role(authorityEntity.getName())
                         .build())
                 .toList();
     }

@@ -3,7 +3,7 @@ package com.eventty.authservice.applicaiton.service.Facade;
 import com.eventty.authservice.applicaiton.dto.*;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
-import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
+import com.eventty.authservice.presentation.dto.request.AuthenticateUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.ChangePWRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     public LoginSuccessDTO login(UserLoginRequestDTO userLoginRequestDTO) {
 
         // email을 이용해서 user 조회
-        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userLoginRequestDTO.email());
+        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userLoginRequestDTO.getEmail());
 
         // 유저 삭제되어 있는지 확인
         userDetailService.validationUser(authUserEntity);
@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
         // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환 => 권한 X 역할만 담기
         TokensDTO tokensDTO = authService.getToken(authUserEntity);
+
         // 로그인을 했을 때 DB에 토큰이 있을 수 있고, 없을 수 있으니 구분져서 로직 구성
         String csrfToken = authService.checkCsrfToken(userId) ?
                 authService.getUpdateCsrfToken(userId) : authService.getNewCsrfToken(userId);
@@ -118,14 +119,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public AuthenticationDetailsResponseDTO authenticateUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+    public AuthenticationDetailsResponseDTO authenticateUser(AuthenticateUserRequestDTO authenticateUserRequestDTO) {
 
         // 검증하기 전에 JWT, Refresh Token은 TokensDTO로 묶어주기
-        TokensDTO tokensDTO = customConverter.convertTokensDTO(authenticationUserRequestDTO);
+        TokensDTO tokensDTO = customConverter.convertTokensDTO(authenticateUserRequestDTO);
 
         // 검증
         AuthenticationResultDTO authenticationResultDTO = authService.authenticate(
-                tokensDTO, authenticationUserRequestDTO.csrfToken(), customConverter, userDetailService);
+                tokensDTO, authenticateUserRequestDTO.getCsrfToken(), customConverter, userDetailService);
 
         // 가독성을 위해서 꺼내서 활용
         AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();

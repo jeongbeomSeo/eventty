@@ -28,7 +28,7 @@ public class ApiClient {
 
     private final RestTemplate customRestTemplate;
 
-    public ResponseEntity<ResponseDTO<UserCreateRequestDTO>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
+    public ResponseEntity<ResponseDTO<Void>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
 
         HttpEntity<UserCreateRequestDTO> entity = createHttpPostEntity(userCreateRequestDTO);
 
@@ -37,7 +37,7 @@ public class ApiClient {
         // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
         logApiCall("Auth Server", "User server", "Create User");
         return customRestTemplate.exchange(
-                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<UserCreateRequestDTO>>() {}
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {}
         );
     }
 
@@ -49,8 +49,16 @@ public class ApiClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        //headers.add("X-CSRF-TOKEN", "value");
 
         return new HttpEntity<>(dto, headers);
     }
+
+/*    private <T> HttpEntity<T> createAuthenticateHttpPostEnttiy(T dto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.add("X-Requires-Auth", "True");
+
+        return new HttpEntity<>(dto, headers);
+    }*/
 }

@@ -2,9 +2,14 @@ package com.eventty.authservice.presentation.dto.response;
 
 import lombok.*;
 
-import java.util.List;
-
-public record LoginResponseDTO (
-        String email,
-        String role
-){}
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class LoginResponseDTO {
+    private Long userId;
+    private String email;
+    private String role;
+}

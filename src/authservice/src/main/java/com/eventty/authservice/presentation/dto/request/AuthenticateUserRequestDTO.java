@@ -1,6 +1,5 @@
-package com.eventty.gateway.api.dto;
+package com.eventty.authservice.presentation.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
