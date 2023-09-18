@@ -37,7 +37,6 @@ function TopScrollBtn() {
                         width: `${mobile ? "13vw" : "50px"}`,
                         height: `${mobile ? "13vw" : "50px"}`,
                         opacity: "0.4",
-                        zIndex: "98",
                         background: "white",
                     }}>
                     <IconArrowBarToUp/>

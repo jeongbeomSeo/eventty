@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo} from "react";
-import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
+import {useLoaderData, useLocation, useNavigate, useRouteLoaderData} from "react-router-dom";
 import {
     Avatar,
     Button,
@@ -31,17 +31,14 @@ function WebEventDetail() {
     const isLoggedIn = CheckLogin();
     const {classes} = customStyle();
 
-    const DATA = useLoaderData() as IEventDetail;
+    const DATA = useRouteLoaderData("event") as IEventDetail;
 
     const eventStartAt = useMemo(() => new Date(DATA.eventStartAt), [DATA.eventStartAt]);
     const eventEndtAt = useMemo(() => new Date(DATA.eventEndAt), [DATA.eventEndAt]);
 
     const onClickTicket = useCallback(() => {
         if (isLoggedIn) {
-            navigate(`/events/ticket/${DATA.id}`, {state:{
-                title: DATA.title,
-                tickets: DATA.tickets,
-                }});
+            navigate(`/events/${DATA.id}/booking`);
         } else {
             loginAlertModal();
         }
@@ -107,7 +104,7 @@ function WebEventDetail() {
                             </Group>
                         </Paper>
 
-                        <WebTicketInfo tickets={DATA.tickets} onClick={onClickTicket}/>
+                        <WebTicketInfo tickets={DATA.tickets}/>
                     </Stack>
                 </Grid.Col>
             </Grid>

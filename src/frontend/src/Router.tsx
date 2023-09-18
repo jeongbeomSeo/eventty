@@ -23,7 +23,7 @@ import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
 import HostRoute from "./components/HostRoute";
 import Bookings from "./pages/user/Bookings";
-import Ticket from "./pages/Ticket";
+import EventBooking from "./pages/events/EventBooking";
 
 const Router = createBrowserRouter([
     {
@@ -46,13 +46,19 @@ const Router = createBrowserRouter([
                         loader: eventListLoader,
                     },
                     {
-                        path: "events/:eventId/",
-                        element: <EventDetail/>,
+                        path: "events/*",
+                        id: "event",
                         loader: eventLoader,
-                    },
-                    {
-                        path: "events/ticket/:eventId",
-                        element: <Ticket/>,
+                        children: [
+                            {
+                                path: ":eventId",
+                                element: <EventDetail/>,
+                            },
+                            {
+                                path: ":eventId/booking",
+                                element: <EventBooking/>,
+                            },
+                        ]
                     },
                     {
                         element: <PrivateRoute/>,
@@ -63,6 +69,7 @@ const Router = createBrowserRouter([
                                     {
                                         path: "users/profile",
                                         element: <Profile/>,
+                                        id: "profile",
                                         loader: profileLoader,
                                     },
                                     {

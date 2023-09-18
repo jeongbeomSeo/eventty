@@ -57,3 +57,7 @@ export interface IEventDetail {
     views: number;
     tickets: IEventTicketDetail[];
 }
+
+export interface IEventBooking {
+    userId: number;
+}

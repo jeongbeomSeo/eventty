@@ -61,16 +61,16 @@ function Write() {
 
     const currentDate = new Date();
     const CATEGORY_LIST = [
-        {label: "콘서트", value: "0", icon: <IconHandRock/>},
-        {label: "클래식", value: "1", icon: <IconPiano/>},
-        {label: "전시", value: "2", icon: <IconPalette/>},
-        {label: "스포츠", value: "3", icon: <IconBallBaseball/>},
-        {label: "캠핑", value: "4", icon: <IconTent/>},
-        {label: "아동", value: "5", icon: <IconHorseToy/>},
-        {label: "영화", value: "6", icon: <IconMovie/>},
-        {label: "IT", value: "7", icon: <IconCode/>},
-        {label: "교양", value: "8", icon: <IconBook/>},
-        {label: "TOPIC", value: "9", icon: <IconPresentation/>},
+        {label: "콘서트", value: "콘서트"},
+        {label: "클래식", value: "클래식"},
+        {label: "전시", value: "전시"},
+        {label: "스포츠", value: "스포츠"},
+        {label: "캠핑", value: "캠핑"},
+        {label: "아동", value: "아동"},
+        {label: "영화", value: "영화"},
+        {label: "IT", value: "IT"},
+        {label: "교양", value: "교양"},
+        {label: "TOPIC", value: "TOPIC"},
     ];
     const TICKET_LIMIT = 3;
     const [ticketEdit, setTicketEdit] = useState<IEventTicket | null>(null);

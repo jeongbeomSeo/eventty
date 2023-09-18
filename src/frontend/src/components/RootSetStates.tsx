@@ -1,8 +1,7 @@
 import React, {useEffect} from "react";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {searchDrawerState} from "../states/searchDrawerState";
-import {ScrollRestoration, useLocation, useNavigation} from "react-router-dom";
-import ScrollToTop from "./ScrollToTop";
+import {Outlet, ScrollRestoration, useLocation, useNavigation} from "react-router-dom";
 import {menuDrawerState} from "../states/menuDrawerState";
 import {Notifications} from "@mantine/notifications";
 import {useMediaQuery} from "react-responsive";
@@ -58,8 +57,8 @@ function RootSetStates() {
                     />
                 }
                 <Notifications position={mobile ? "top-center" : "bottom-right"}/>
-                <ScrollToTop/>
                 <ScrollRestoration/>
+                <Outlet/>
             </ModalsProvider>
         </>
     );

@@ -2,21 +2,22 @@ import React from "react";
 import {Badge, Divider, Group, Paper, Stack, Text, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import TicketBtn from "../TicketBtn";
-import {useLoaderData} from "react-router-dom";
+import {useLoaderData, useNavigate} from "react-router-dom";
 import {IEventDetail, IEventTicket, IEventTicketDetail} from "../../../types/IEvent";
 
 interface ITickets {
     tickets: IEventTicketDetail[];
-    onClick: () => void;
 }
 
-function WebTicketInfo({tickets, onClick}:ITickets) {
+function WebTicketInfo({tickets}:ITickets) {
+    const navigate = useNavigate();
+    
     const items = tickets.map((item) => (
         <TicketBtn key={item.id}
                    name={item.name}
                    price={item.price}
                    quantity={item.quantity}
-                   onClick={onClick}/>
+                   onClick={() => navigate(`booking?item=${item.id}`)}/>
     ));
 
     return (

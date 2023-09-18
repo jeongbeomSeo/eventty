@@ -7,7 +7,7 @@ function Footer() {
     const mobile = useMediaQuery({query: `(max-width:${useMantineTheme().breakpoints.xs})`});
 
     return (
-        <div style={{marginTop: "5rem", padding: `${mobile ? "2rem 0 6rem" : "2rem 0"}`, borderTop: "1px solid rgba(0, 0, 0, 0.1)"}}>
+        <div style={{background: "white", padding: `${mobile ? "2rem 0 6rem" : "2rem 0"}`, borderTop: "1px solid rgba(0, 0, 0, 0.1)"}}>
         <Container>
             <Logo fill={"var(--primary)"} height={"2rem"}/>
         </Container>
