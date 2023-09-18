@@ -11,7 +11,9 @@ import java.net.URI;
 public class MakeUrlService {
 
     private final String GET_NEW_TOKENS_URL = "/api/newtokens";
+    private final String AUTHENTICATE_URL = "/api/authenticate/user";
     private final UrlProperties urlProperties;
 
-    public URI getNewTokenUri() { return URI.create(urlProperties.getAuthServer() + GET_NEW_TOKENS_URL); }
+    public URI createNewTokenUri() { return URI.create(urlProperties.getAuthServer() + GET_NEW_TOKENS_URL); }
+    public URI authenticateUri() { return URI.create(urlProperties.getAuthServer() + AUTHENTICATE_URL); }
 }

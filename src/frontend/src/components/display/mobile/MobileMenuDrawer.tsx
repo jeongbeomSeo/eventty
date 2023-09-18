@@ -32,7 +32,7 @@ function MobileMenuDrawer() {
         {value: "주최하기", link: "/write", icon: <IconPlus/>},
         {value: "마이페이지", link: "/users/profile", icon: <IconUser/>},
         {value: "주최 내역", link: "/users/events", icon: <IconReceipt/>},
-        {value: "예약 내역", link: "/users/reservations", icon: <IconReceipt/>},
+        {value: "예약 내역", link: "/users/bookings", icon: <IconReceipt/>},
     ];
 
     const items = MENU_LIST.map(item => {

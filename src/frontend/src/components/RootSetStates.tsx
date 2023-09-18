@@ -37,10 +37,11 @@ function RootSetStates() {
     useEffect(() => {
         const email = sessionStorage.getItem("EMAIL");
         const authority = sessionStorage.getItem("AUTHORITY");
+        const userId = sessionStorage.getItem("USER_ID");
 
         if (email && authority && !loginStateValue) {
             setloginStateValue(true);
-            setUserState({email: email, isHost: authority === "HOST"});
+            setUserState({email: email, isHost: authority === "HOST", userId: userId!});
         }
     });
 

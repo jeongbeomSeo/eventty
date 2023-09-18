@@ -12,8 +12,8 @@ function MobileUserLayout() {
     const userStateValue = useRecoilValue(userState);
 
     const activeTab = pathname.split("/").pop();
-    const handleTabClick = (value:string) => {
-        navigate(`users/${value}`);
+    const handleTabClick = (path:string) => {
+        navigate(`${path}`);
     };
 
     return (
@@ -26,7 +26,7 @@ function MobileUserLayout() {
                         <Tabs.Tab value={"profile"} onClick={() => handleTabClick("profile")}>내 정보</Tabs.Tab>
                         {userStateValue.isHost ?
                             <Tabs.Tab value={"events"} onClick={() => handleTabClick("events")}>주최 내역</Tabs.Tab> :
-                            <Tabs.Tab value={"reservations"} onClick={() => handleTabClick("reservations")}>예약 내역</Tabs.Tab>
+                            <Tabs.Tab value={"bookings"} onClick={() => handleTabClick("bookings")}>예약 내역</Tabs.Tab>
                         }
                     </Tabs.List>
 
@@ -36,7 +36,7 @@ function MobileUserLayout() {
                     <Tabs.Panel value={"events"}>
                         <Outlet/>
                     </Tabs.Panel>
-                    <Tabs.Panel value={"reservations"}>
+                    <Tabs.Panel value={"bookings"}>
                         <Outlet/>
                     </Tabs.Panel>
                 </Stack>

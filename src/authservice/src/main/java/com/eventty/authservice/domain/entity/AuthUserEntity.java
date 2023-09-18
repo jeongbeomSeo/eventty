@@ -37,7 +37,6 @@ public class AuthUserEntity {
     private LocalDateTime deleteDate;
 
     // @JsonManagedReference
-    // FetchType.EAGER로 설정할 경우 AuthUserEntity를 불러오는 순간 곧바로 AuthorityEntity를 가져오기 때문에 현재 구조에서 무한 재귀 호출이 발생한다.
     @OneToMany(mappedBy = "authUserEntity", cascade = CascadeType.PERSIST)
     private List<AuthorityEntity> Authorities;
 }

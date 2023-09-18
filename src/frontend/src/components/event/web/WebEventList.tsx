@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Badge, Card, Group, Image, SimpleGrid, Stack, Text, Title,} from "@mantine/core";
 import {Link, useLoaderData} from "react-router-dom";
 import {IEvent} from "../../../types/IEvent";
+import {getCategoryEvents, getEvents} from "../../../service/event/fetchEvent";
 
 function WebEventList() {
     const EVENT_LIST = useLoaderData() as IEvent[];
@@ -12,7 +13,7 @@ function WebEventList() {
             const endtAt = new Date(item.eventEndAt);
 
             return (
-                <Link to={`${item.id}`} key={item.id}>
+                <Link to={`/event/${item.id}`} key={item.id}>
                     <Card padding={"0"}>
                         <Group style={{alignItems: "flex-start"}}>
                             <Image
@@ -47,6 +48,7 @@ function WebEventList() {
             cols={3}
             spacing={"md"}
             verticalSpacing={"3rem"}
+            style={{padding: "5vh 0"}}
         >
             {items}
         </SimpleGrid>

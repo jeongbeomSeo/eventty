@@ -35,13 +35,6 @@
         WHERE id = #{id}
     </update>
 
-    <!-- 조회 수 업데이트를 위한 SELECT 쿼리 (비관적 락 사용) -->
-    <select id="selectEventForUpdate" parameterType="java.lang.Long" resultType="java.lang.Long">
-        SELECT id
-        FROM event_details
-        WHERE id = #{id} FOR UPDATE
-    </select>
-
     <!-- 이벤트 조회수 증가 -->
     <update id="updateView" parameterType="java.lang.Long">
         UPDATE event_details

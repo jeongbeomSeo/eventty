@@ -21,9 +21,11 @@ import SignupUser from "./pages/signup/SignupUser";
 import {loader as eventLoader} from "./routes/event";
 import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
+import {loader as categoryLoader} from "./routes/category";
 import HostRoute from "./components/HostRoute";
 import Bookings from "./pages/user/Bookings";
 import EventBooking from "./pages/events/EventBooking";
+import EventsList from "./pages/events/EventsList";
 
 const Router = createBrowserRouter([
     {
@@ -41,12 +43,24 @@ const Router = createBrowserRouter([
                         element: <Main/>,
                     },
                     {
-                        path: "events",
+                        path: "events/*",
                         element: <Events/>,
-                        loader: eventListLoader,
+                        children: [
+                            {
+                                path: "",
+                                loader: eventListLoader,
+                                element: <EventsList/>,
+                            },
+                            {
+                                path: "category/:category",
+                                element: <EventsList/>,
+                                loader: categoryLoader,
+                                errorElement:<p>해당 결과가 없습니다</p>,
+                            }
+                        ]
                     },
                     {
-                        path: "events/*",
+                        path: "event/*",
                         id: "event",
                         loader: eventLoader,
                         children: [
@@ -55,8 +69,13 @@ const Router = createBrowserRouter([
                                 element: <EventDetail/>,
                             },
                             {
-                                path: ":eventId/booking",
-                                element: <EventBooking/>,
+                                element: <PrivateRoute/>,
+                                children: [
+                                    {
+                                        path: ":eventId/booking",
+                                        element: <EventBooking/>,
+                                    }
+                                ]
                             },
                         ]
                     },
@@ -64,10 +83,11 @@ const Router = createBrowserRouter([
                         element: <PrivateRoute/>,
                         children: [
                             {
+                                path: "users/*",
                                 element: <User/>,
                                 children: [
                                     {
-                                        path: "users/profile",
+                                        path: "profile",
                                         element: <Profile/>,
                                         id: "profile",
                                         loader: profileLoader,
@@ -76,13 +96,13 @@ const Router = createBrowserRouter([
                                         element: <HostRoute/>,
                                         children: [
                                             {
-                                                path: "users/events",
+                                                path: "events",
                                                 element: <EventsInfo/>,
                                             },
                                         ]
                                     },
                                     {
-                                        path: "users/bookings",
+                                        path: "bookings",
                                         element: <Bookings/>,
                                     },
                                 ]

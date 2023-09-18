@@ -10,17 +10,17 @@ const TABS = [
     {
         key: "profile",
         label: "내 정보",
-        path: "users/profile",
+        path: "profile",
     },
     {
         key: "events",
         label: "주최 내역",
-        path: "users/events",
+        path: "events",
     },
     {
-        key: "reservations",
+        key: "bookings",
         label: "예약 내역",
-        path: "users/reservations",
+        path: "bookings",
     },
 ];
 

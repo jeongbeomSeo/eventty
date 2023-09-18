@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum TokenEnum {
 
     ACCESS_TOKEN("accessToken"),
-    REFRESH_TOKEN("refreshToken");
+    REFRESH_TOKEN("refreshToken"),
+    USERID("userId");
 
     private final String name;
 }

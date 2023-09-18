@@ -19,7 +19,7 @@ function MobileBottomSection() {
                 boxShadow: "2px 0 6px rgba(0, 0, 0, 0.1)",
             }}>
             <Flex style={{height: "100%"}} align={"center"}>
-                {pathname.includes("/events/") ? <EventDetailNavBar/> : <MobileNavBar/>}
+                {pathname.includes("/event/") ? <EventDetailNavBar/> : <MobileNavBar/>}
             </Flex>
         </Box>
     );

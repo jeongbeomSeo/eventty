@@ -70,14 +70,15 @@ public class UserServiceImplTest {
                 .tokensDTO(new TokensDTO("", ""))
                 .build();
 
-        // When
         when(userDetailService.findAuthUser(userLoginRequestDTO.getEmail())).thenReturn(authUserEntity);
         doNothing().when(userDetailService).validationUser(authUserEntity);
         when(authService.credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder)).thenReturn(true);
         when(customConverter.authUserEntityTologinSuccessDTO(authService, authUserEntity)).thenReturn(loginSuccessDTO);
 
-        // Then
+        // When & Then
         assertEquals(userService.login(userLoginRequestDTO), loginSuccessDTO);
+
+        // Verify
         verify(userDetailService, times(1)).findAuthUser(userLoginRequestDTO.getEmail());
         verify(customConverter, times(1)).authUserEntityTologinSuccessDTO(authService, authUserEntity);
     }
@@ -93,12 +94,13 @@ public class UserServiceImplTest {
         UserLoginRequestDTO userLoginRequestDTO = createUserLoginRequestDTO(email, password, customPasswordEncoder);
         AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
 
-        // When
         when(userDetailService.findAuthUser(userLoginRequestDTO.getEmail())).thenReturn(authUserEntity);
         doThrow(new AccessDeletedUserException(authUserEntity)).when(userDetailService).validationUser(authUserEntity);
 
-        // Then
+        // When & Then
         assertThrows(AccessDeletedUserException.class, () -> userService.login(userLoginRequestDTO));
+
+        // Verify
         verify(authService, never()).credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
         verify(customConverter, never()).authUserEntityTologinSuccessDTO(authService, authUserEntity);
     }
@@ -114,13 +116,14 @@ public class UserServiceImplTest {
         UserLoginRequestDTO userLoginRequestDTO = createUserLoginRequestDTO(email, password, customPasswordEncoder);
         AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
 
-        // When
         when(userDetailService.findAuthUser(userLoginRequestDTO.getEmail())).thenReturn(authUserEntity);
         doNothing().when(userDetailService).validationUser(authUserEntity);
         doThrow(new InvalidPasswordException(userLoginRequestDTO)).when(authService).credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
 
-        // Then
+        // When & Then
         assertThrows(InvalidPasswordException.class, () -> userService.login(userLoginRequestDTO));
+
+        // Verify
         verify(customConverter, never()).authUserEntityTologinSuccessDTO(authService, authUserEntity);
     }
 
@@ -137,15 +140,15 @@ public class UserServiceImplTest {
         UserCreateRequestDTO userCreateRequestDTO = createUserCreateRequestDTO(fullUserCreateRequestDTO, userId);
         ResponseEntity<ResponseDTO<Void>> responseEntity = createResponseEntity();
 
-        // When
         when(customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder)).thenReturn(authUserEntity);
         when(userDetailService.create(authUserEntity, role)).thenReturn(userId);
         when(customConverter.fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId)).thenReturn(userCreateRequestDTO);
         when(apiClient.createUserApi(userCreateRequestDTO)).thenReturn(responseEntity);
 
-        // Then
+        // When & Then
         assertEquals(userService.createUser(fullUserCreateRequestDTO, role), userId);
 
+        // Verify
         verify(customConverter, times(1)).userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder);
         verify(userDetailService, times(1)).create(authUserEntity, role);
         verify(customConverter, times(1)).fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId);
@@ -162,13 +165,13 @@ public class UserServiceImplTest {
         UserRole role = UserRole.USER;
         AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
 
-        // when
         when(customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder)).thenReturn(authUserEntity);
         doThrow(DuplicateEmailException.class).when(userDetailService).create(authUserEntity, role);
 
-        // Then
+        // when & Then
         assertThrows(DuplicateEmailException.class, () -> userService.createUser(fullUserCreateRequestDTO, role));
 
+        // Verify
         verify(customConverter, times(0)).fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId);
     }
     @Test
@@ -182,13 +185,12 @@ public class UserServiceImplTest {
         AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
         UserCreateRequestDTO userCreateRequestDTO = createUserCreateRequestDTO(fullUserCreateRequestDTO, userId);
 
-        // when
         when(customConverter.userDTOToAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder)).thenReturn(authUserEntity);
         when(userDetailService.create(authUserEntity, role)).thenReturn(userId);
         when(customConverter.fullUserDTOToUserDTO(fullUserCreateRequestDTO, userId)).thenReturn(userCreateRequestDTO);
         doThrow(ApiException.class).when(apiClient).createUserApi(any(UserCreateRequestDTO.class));
 
-        // then
+        // When & then
         assertThrows(ApiException.class, () -> userService.createUser(fullUserCreateRequestDTO, role));
     }
 
@@ -202,12 +204,13 @@ public class UserServiceImplTest {
 
         AuthUserEntity authUserEntity = createAuthUserEntity(userId, email, role);
 
-        // When
         when(userDetailService.findAuthUser(userId)).thenReturn(authUserEntity);
         when(userDetailService.delete(authUserEntity)).thenReturn(1L);
 
-        // Then
+        // When & Then
         assertEquals(userService.deleteUser(userId), 1L);
+
+        // Verify
         verify(userDetailService, times(1)).findAuthUser(userId);
         verify(userDetailService, times(1)).delete(authUserEntity);
     }
@@ -218,11 +221,12 @@ public class UserServiceImplTest {
         // Given
         Long userId = 1L;
 
-        // When
         doThrow(new UserNotFoundException(userId)).when(userDetailService).findAuthUser(userId);
 
-        // Then
+        // When & Then
         assertThrows(UserNotFoundException.class, () -> userService.deleteUser(userId));
+
+        // Verify
         verify(userDetailService, never()).delete(any(AuthUserEntity.class));
     }
 

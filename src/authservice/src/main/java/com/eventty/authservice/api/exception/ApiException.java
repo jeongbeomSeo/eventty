@@ -13,8 +13,7 @@ public class ApiException extends RuntimeException {
     private String message;
     private HttpStatusCode HttpStatusCode;
     public ApiException(URI uri, HttpMethod httpMethod, HttpStatusCode HttpStatusCode) {
-        this.message = "원격 API 호출에 실패했습니다. \n" +
-                "원인 API URI:" + uri + ", Method: " + httpMethod;
+        this.message = "API 호출 실패 URI: " + uri + ", Method: " + httpMethod;
         this.HttpStatusCode = HttpStatusCode;
     }
 

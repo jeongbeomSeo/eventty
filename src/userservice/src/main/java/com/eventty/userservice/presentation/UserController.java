@@ -1,6 +1,7 @@
 package com.eventty.userservice.presentation;
 
 import com.eventty.userservice.application.UserService;
+import com.eventty.userservice.application.dto.request.UserImageUpdateRequestDTO;
 import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
 import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.domain.annotation.ApiErrorCode;
@@ -13,10 +14,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.eventty.userservice.domain.code.ErrorCode.*;
 
@@ -68,11 +73,12 @@ public class UserController {
     @ApiSuccessData()
     @ApiErrorCode({USER_INFO_NOT_FOUND, INVALID_JSON})
     @Permission(Roles = {UserRole.USER, UserRole.HOST})
-    public ResponseEntity<SuccessResponseDTO> patchMe(@RequestBody UserUpdateRequestDTO userUpdateRequestDTO){
+    public ResponseEntity<SuccessResponseDTO> patchMe(@ModelAttribute UserUpdateRequestDTO userUpdateRequestDTO,
+                                                      @ModelAttribute UserImageUpdateRequestDTO userImageUpdateRequestDTO){
 
         Long userId = getUserIdBySecurityContextHolder();
 
-        userService.updateUser(userId, userUpdateRequestDTO);
+        userService.updateUser(userId, userUpdateRequestDTO, userImageUpdateRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

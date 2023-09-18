@@ -35,16 +35,22 @@ function Login() {
             .then(res => {
                 if (res.success) {
                     const resEmail = res.successResponseDTO.data.email;
-                    const resIsHost = res.successResponseDTO.data.authoritiesNameList[0] === "ROLE_HOST";
+                    const resIsHost = res.successResponseDTO.data.role === "ROLE_HOST";
+                    const resUserId = res.successResponseDTO.data.userId;
 
                     setIsLoggedIn((prev) => !prev);
                     setUsersStateValue({
                         email: resEmail,
                         isHost: resIsHost,
+                        userId: resUserId,
                     });
+
+                    console.log(res.headers);
+                    console.log(res);
 
                     sessionStorage.setItem("EMAIL", resEmail);
                     sessionStorage.setItem("AUTHORITY", resIsHost ? "HOST" : "USER");
+                    sessionStorage.setItem("USER_ID", resUserId);
                 } else {
                     setError("root", {message: ERROR_MESSAGE["fail"]});
                 }

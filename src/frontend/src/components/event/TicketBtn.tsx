@@ -1,21 +1,27 @@
 import React from "react";
 import {Badge, Divider, Group, Paper, Stack, Text} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
+import {useNavigate} from "react-router-dom";
 
 interface ITicket {
+    id: number;
     name: string;
     price: number;
     quantity: number;
-    onClick: () => void;
 }
 
-function TicketBtn({name, price, quantity, onClick}: ITicket) {
+function TicketBtn({id, name, price, quantity}: ITicket) {
     const {classes} = customStyle();
+    const navigate = useNavigate();
+    
+    const handleOnClick = (id:number) => {
+        navigate(`booking?item=${id}`);
+    }
 
     return (
         <>
             <Paper p={"md"} withBorder
-                   onClick={onClick}
+                   onClick={() => handleOnClick(id)}
                    className={classes["ticket-select"]}>
                 <Stack>
                     <Group position={"apart"}>

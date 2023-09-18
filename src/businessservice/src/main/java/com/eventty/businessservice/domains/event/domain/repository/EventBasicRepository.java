@@ -12,7 +12,9 @@ public interface EventBasicRepository {
     EventFullFindByIdResponseDTO selectEventWithDetailById(Long id); // JOIN된 결과를 매핑할 메서드
     List<EventBasicEntity> selectAllEvents();
     Long insertEvent(EventBasicEntity request);
+    List<EventBasicEntity> selectEventsByHostId(Long hostId);
     Long updateEvent(EventBasicEntity request);
     Long deleteEvent(Long id);
     List<EventBasicEntity> selectEventsByCategory(Long categoryId);
+    List<EventBasicEntity> selectEventsBySearch(String keyword);
 }

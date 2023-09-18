@@ -25,20 +25,12 @@ function MobileTicketInfo({open, tickets}:ITickets) {
         setOpened(prev => !prev);
     }
 
-    const onClickTicket = () => {
-        if (isLoggedIn) {
-            navigate("/ticket", {state: pathname});
-        } else {
-            loginAlertModal();
-        }
-    }
-
     const items = tickets.map(item => (
         <TicketBtn key={item.id}
+                   id={item.id}
                    name={item.name}
                    price={item.price}
-                   quantity={item.quantity}
-                   onClick={onClickTicket}/>
+                   quantity={item.quantity}/>
     ));
 
     useEffect(() => {

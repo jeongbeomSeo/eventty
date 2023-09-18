@@ -27,7 +27,7 @@ function MobileEventList() {
 
         return (
             <Card padding={"0"} radius={"md"} key={item.id}
-                  onClick={() => navigate(`${item.id}`, {state: pathname})}>
+                  onClick={() => navigate(`/event/${item.id}`, {state: pathname})}>
                 <Group noWrap style={{alignItems: "flex-start"}}>
                     <Image
                         src={item.image}

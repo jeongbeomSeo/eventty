@@ -1,7 +1,7 @@
 import {IChangePW, ILogin, ISignup, IUser} from "../../types/IUser";
 
 export const postSignupEmailValid = async (data: string) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`,{
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
@@ -36,28 +36,32 @@ export const postLogin = async (data: ILogin) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
     })
-        .then((res) => res.json());
+        .then((res) => {
+            sessionStorage.setItem("X-Csrf-Token", res.headers.get("X-Csrf-Token")!);
+            return res.json();
+        })
 }
 
 export const postLogout = async () => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/logout`,{
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": sessionStorage.getItem("X-Csrf-Token")!},
     })
         .then(res => res.status);
 }
 
 export const getProfile = async () => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`,{
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`, {
         method: "GET",
     })
         .then((res) => res.json())
-        .then((res) => res.successResponseDTO.data);
+        .then((res) => res.successResponseDTO.data)
+        .catch(res => console.error(res));
 }
 
 export const patchProfile = async (data: IUser) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`,{
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`, {
         method: "PATCH",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
@@ -66,7 +70,7 @@ export const patchProfile = async (data: IUser) => {
 }
 
 export const patchChangePassword = async (data: IChangePW) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/secret/changePW`,{
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/secret/changePW`, {
         method: "PATCH",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
@@ -75,7 +79,7 @@ export const patchChangePassword = async (data: IChangePW) => {
 }
 
 export const deleteAccount = async () => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/secret/me`,{
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/secret/me`, {
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
     })

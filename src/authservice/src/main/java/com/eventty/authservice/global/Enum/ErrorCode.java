@@ -10,8 +10,8 @@ public enum ErrorCode {
     // Common
     // 나중에 필요 없는 것 주석 처리할 예정
     INTERNAL_ERROR(500, "", "Internal server error"),
-    NOT_FOUND(404, "", "Not Found"),
-    DATA_NOT_FOUND(404, "", "Data not found"),
+    PAGE_NOT_FOUND(404, "", "Not Found"),
+    DATA_NOT_FOUND(400, "", "Data not found"),
     METHOD_NOT_ALLOWED(405, "", "Method not allowed"),
     INVALID_INPUT_VALUE(400, "", "Invalid input type"),
     INVALID_TYPE_VALUE(400, "", "Invalid type value"),
@@ -24,12 +24,19 @@ public enum ErrorCode {
     PERMISSION_DENIED(403, "", "Permission Denided"),
 
     // Auth
-    DUPLICATE_EMAIL(409, "", "Duplicate Email"),
-    USER_NOT_FOUND(404, "", "User Not Found Exception"),
+    // G000 => 재로그인 요구
+    // 400: 잘못된 요청 401: 유효한 자격 증명 없음 403: 서버에 요청이 전달되었지만, 권한 떄문에 거절
+    USER_NOT_FOUND(400, "", "User Not Found Exception"),
     INVALID_PASSWORD(400, "", "Invalid Password Exception"),
-    INVALID_REFRESH_TOKEN(403, "", "Invalid Refresh Token Exception"),
-    REFRESH_TOKEN_NOT_FOUND(404, "", "Refresh Token Not Found Exception"),
-    ACCESS_DELETED_USER(400, "", "User has been deactivated.");
+    ACCESS_DELETED_USER(400, "", "User has been deactivated."),
+
+    USER_ROLE_NOT_FOUND(401, "", "User Role Not Found."),
+    INVALID_REFRESH_TOKEN(401, "G000", "Invalid Refresh Token Exception"),
+    REFRESH_TOKEN_NOT_FOUND(401, "G000", "Refresh Token Not Found Exception"),
+    CSRF_TOKEN_NOT_FOUND(401, "G000", "Csrf Token Not Found Exception"),
+    INVALID_CSRF_TOKEN(401, "G000", "Invalid CSRF Token Exception"),
+
+    DUPLICATE_EMAIL(409, "", "Duplicate Email");
 
     private final int status;
     private final String code;

@@ -1,36 +1,29 @@
 package com.eventty.authservice.applicaiton.service.utils.token;
 
+import com.eventty.authservice.applicaiton.dto.ValidateRefreshTokenDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
+import com.eventty.authservice.domain.entity.CsrfTokenEntity;
 import com.eventty.authservice.domain.entity.RefreshTokenEntity;
+import com.eventty.authservice.domain.exception.InValidRefreshTokenException;
 import com.eventty.authservice.domain.exception.RefreshTokenNotFoundException;
 import com.eventty.authservice.domain.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RefreshTokenProvider {
 
     private final TokenProperties tokenProperties;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    // 나중에 게이트웨이에서 JWT Parsing하고난 후 id랑 refresh Token 보내온 것을 토대로 꺼내와서 검사
-    public String findByRefreshToken(Long userId) {
-        Optional<RefreshTokenEntity> refreshTokenEntity = refreshTokenRepository.findByUserId(userId);
-
-        if (refreshTokenEntity.isEmpty())
-            throw new RefreshTokenNotFoundException(userId);
-
-        return refreshTokenEntity.get().getName();
-    }
-
-    public String generateToken(AuthUserEntity authUserEntity, Date now, Date expiry) {
+    public String generate(AuthUserEntity authUserEntity, Date now, Date expiry) {
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setHeaderParam("alg", "HS256")
@@ -43,7 +36,7 @@ public class RefreshTokenProvider {
                 .compact();
     }
 
-    public RefreshTokenEntity saveOrUpdateRefreshToken(String name, Long userId) {
+    public RefreshTokenEntity saveOrUpdate(String name, Long userId) {
         // 기존에 저장되어 있는 RefreshToken이 있는지 확인
         Optional<RefreshTokenEntity> existingTokenOpt = refreshTokenRepository.findByUserId(userId);
 
@@ -61,5 +54,30 @@ public class RefreshTokenProvider {
 
             return refreshTokenRepository.save(newRefreshToken);
         }
+    }
+
+    public void validationCheck(ValidateRefreshTokenDTO validateRefreshTokenDTO) {
+
+        // userId 이용해서 저장되어 있는 Enitty 가져오기
+        Optional<RefreshTokenEntity> existedRefreshToken = refreshTokenRepository.findByUserId(validateRefreshTokenDTO.userId());
+
+        // userId로 저장되어 있는 refreshToken이 없던가, Matching에 실패한 경우 예외 발생
+        if (existedRefreshToken.isEmpty())
+            throw new RefreshTokenNotFoundException(validateRefreshTokenDTO.userId());
+        if (!existedRefreshToken.get().getName().equals(validateRefreshTokenDTO.refreshToken()))
+            throw new InValidRefreshTokenException(validateRefreshTokenDTO);
+
+    }
+
+    public String delete(Long userId) {
+        Optional<RefreshTokenEntity> refreshTokenEntity = refreshTokenRepository.findByUserId(userId);
+
+        if (refreshTokenEntity.isEmpty())
+            return "";
+
+        String deletedRefreshToken = refreshTokenEntity.get().getName();
+        refreshTokenRepository.delete(refreshTokenEntity.get());
+        return deletedRefreshToken;
+
     }
 }

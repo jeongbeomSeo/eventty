@@ -38,7 +38,7 @@ function WebEventDetail() {
 
     const onClickTicket = useCallback(() => {
         if (isLoggedIn) {
-            navigate(`/events/${DATA.id}/booking`);
+            navigate(`/event/${DATA.id}/booking`);
         } else {
             loginAlertModal();
         }

@@ -41,7 +41,7 @@ function WebUserInfoBtn() {
                     <Menu.Item icon={<IconUser/>} component={Link} to={"/users/profile"}>마이페이지</Menu.Item>
                     <Menu.Item icon={<IconReceipt/>}
                                component={Link}
-                               to={userStateValue.isHost ? "/users/events" : "/users/reservations"}>
+                               to={userStateValue.isHost ? "/users/events" : "/users/bookings"}>
                         {userStateValue.isHost ? "주최 내역" : "예약 내역"}
                     </Menu.Item>
                     <Menu.Divider/>

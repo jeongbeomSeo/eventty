@@ -14,6 +14,13 @@ export const getEvents = async () => {
         .then((res) => res.successResponseDTO.data);
 }
 
+// 카테고리 별 행사 조회
+export const getCategoryEvents = async (data:string) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/events/category/${data}`)
+        .then(res => res.json())
+        .then(res => res.successResponseDTO.data)
+}
+
 // 행사 주최
 export const postEvent = async (data: IEventWrite) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/events`,{
@@ -22,13 +29,6 @@ export const postEvent = async (data: IEventWrite) => {
         body: JSON.stringify(data),
     })
         .then(res => res.json())
-}
-
-// 카테고리 별 행사 조회
-export const getCategoryEvents = async () => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/events/category/`)
-        .then(res => res.json())
-        .then(res => res.success)
 }
 
 export const deleteEvent = async (data: number) => {

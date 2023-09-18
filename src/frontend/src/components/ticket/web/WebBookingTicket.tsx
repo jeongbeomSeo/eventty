@@ -34,7 +34,7 @@ function WebBookingTicket() {
     const eventStartAt = new Date(EVENT_DATA.eventStartAt);
     const eventEndAt = new Date(EVENT_DATA.eventEndAt);
 
-    const {} = useForm<IEventBooking>();
+    const {register, handleSubmit} = useForm<IEventBooking>();
 
     const ticketItems = EVENT_DATA.tickets.map((item) => (
         <UnstyledButton key={item.id}>
@@ -64,7 +64,13 @@ function WebBookingTicket() {
         <Container>
             <Grid>
                 <Grid.Col span={8}>
-                    <Stack>
+                    <Stack style={{height:"100%"}}>
+                        <Paper p={"1rem"}>
+                            <Group noWrap>
+                                <Title order={4}>{EVENT_DATA.title}</Title>
+                            </Group>
+                        </Paper>
+
                         <Paper p={"1rem"}>
                             <Stack spacing={"2rem"}>
                                 <Group align={"flex-start"} noWrap>
@@ -91,7 +97,7 @@ function WebBookingTicket() {
                             </Stack>
                         </Paper>
 
-                        <Paper p={"1rem"}>
+                        <Paper p={"1rem"} style={{height: "100%"}}>
                             <Group align={"flex-start"} noWrap>
                                 <IconDeviceMobile color={"var(--primary)"}/>
                                 <Stack style={{width: "100%"}} align={"flex-start"}>

@@ -5,6 +5,7 @@ import MobileCategoryBtn from "../mobile/MobileCategoryBtn";
 import WebEventList from "./WebEventList";
 import customStyle from "../../../styles/customStyle";
 import WebCategoryBtn from "./WebCategoryBtn";
+import {Outlet} from "react-router-dom";
 
 function WebEvents() {
     const {classes} = customStyle();
@@ -20,7 +21,7 @@ function WebEvents() {
                     </Group>
                 </Box>
             </Stack>
-            <WebEventList/>
+            <Outlet/>
         </>
     );
 }
