@@ -1,5 +1,7 @@
 package com.eventty.businessservice.event.application.dto.response;
 
+import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
+import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
 import lombok.*;
 
@@ -16,13 +18,13 @@ public class EventWithTicketsFindByIdResponseDTO {
     private Long id;
     private Long userId;
     private String title;
-    private String image;
+    private Long imageId; // 이미지 ID
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
-    //private Long category;
-    private String categoryName;
+    private Long category;
+    //private String categoryName;
     private Boolean isActive;
     private Boolean isDeleted;
     private String content;
@@ -32,24 +34,34 @@ public class EventWithTicketsFindByIdResponseDTO {
 
     private List<TicketEntity> tickets;
 
-    public static EventWithTicketsFindByIdResponseDTO from(EventFullFindByIdResponseDTO event, List<TicketEntity> tickets) {
+    private String image; // 이미지 파일
+    private String originFileName; // 원본 파일명
+
+    public static EventWithTicketsFindByIdResponseDTO from(
+            EventBasicEntity eventBasic,
+            EventDetailEntity eventDetail,
+            List<TicketEntity> tickets,
+            String base64EncodedFile,
+            String originFileName) {
         return EventWithTicketsFindByIdResponseDTO.builder()
-            .id(event.getId())
-            .userId(event.getUserId())
-            .title(event.getTitle())
-            .image(event.getImage())
-            .eventStartAt(event.getEventStartAt())
-            .eventEndAt(event.getEventEndAt())
-            .participateNum(event.getParticipateNum())
-            .location(event.getLocation())
-            .categoryName(event.getCategoryName())
-            .isActive(event.getIsActive())
-            .isDeleted(event.getIsDeleted())
-            .content(event.getContent())
-            .applyStartAt(event.getApplyStartAt())
-            .applyEndAt(event.getApplyEndAt())
-            .views(event.getViews())
+            .id(eventBasic.getId())
+            .userId(eventBasic.getUserId())
+            .title(eventBasic.getTitle())
+            .imageId(eventBasic.getImageId())
+            .eventStartAt(eventBasic.getEventStartAt())
+            .eventEndAt(eventBasic.getEventEndAt())
+            .participateNum(eventBasic.getParticipateNum())
+            .location(eventBasic.getLocation())
+            .category(eventBasic.getCategory())
+            .isActive(eventBasic.getIsActive())
+            .isDeleted(eventBasic.getIsDeleted())
+            .content(eventDetail.getContent())
+            .applyStartAt(eventDetail.getApplyStartAt())
+            .applyEndAt(eventDetail.getApplyEndAt())
+            .views(eventDetail.getViews())
             .tickets(tickets)
+            .image(base64EncodedFile)
+            .originFileName(originFileName)
             .build();
     }
 
@@ -64,7 +76,7 @@ public class EventWithTicketsFindByIdResponseDTO {
         this.eventEndAt = LocalDateTime.now();
         this.participateNum = 1L;
         this.location = "String";
-        this.categoryName = "String";
+        this.category = 2L;
         this.isActive = true;
         this.isDeleted = false;
         this.content = "String";

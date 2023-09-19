@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +22,11 @@ public class EventCreateRequestDTO {
     private Long userId;
     @NotBlank
     private String title;
-    private String image;
+
+    // image
+    // private Long imageId;
+    // private MultipartFile image;
+
     @FutureOrPresent
     private LocalDateTime eventStartAt;
     @FutureOrPresent
@@ -44,7 +49,6 @@ public class EventCreateRequestDTO {
         return EventBasicEntity.builder()
                 .userId(userId)
                 .title(title)
-                .image(image)
                 .eventStartAt(eventStartAt)
                 .eventEndAt(eventEndAt)
                 .participateNum(0L)

@@ -11,7 +11,7 @@ public class EventFullFindByIdResponseDTO {
     private Long id;
     private Long userId;
     private String title;
-    private String image;
+    private String imageId;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
     private Long participateNum;

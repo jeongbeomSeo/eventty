@@ -14,7 +14,7 @@ public class EventBasicFindAllResponseDTO {
     private Long id;
     private Long userId;
     private String title;
-    private String image;
+    //private String image;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
     private Long participateNum;
@@ -28,7 +28,7 @@ public class EventBasicFindAllResponseDTO {
             .id(eventBasicEntity.getId())
             .userId(eventBasicEntity.getUserId())
             .title(eventBasicEntity.getTitle())
-            .image(eventBasicEntity.getImage())
+            //.image(eventBasicEntity.getImageId())
             .eventStartAt(eventBasicEntity.getEventStartAt())
             .eventEndAt(eventBasicEntity.getEventEndAt())
             .participateNum(eventBasicEntity.getParticipateNum())
@@ -44,7 +44,7 @@ public class EventBasicFindAllResponseDTO {
         this.id = 1L;
         this.userId = 1L;
         this.title = "String";
-        this.image = "String";
+        //this.image = "String";
         this.eventStartAt = LocalDateTime.now();
         this.eventEndAt = LocalDateTime.now();
         this.participateNum = 1L;
