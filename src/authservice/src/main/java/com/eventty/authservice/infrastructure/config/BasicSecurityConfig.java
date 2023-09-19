@@ -28,16 +28,7 @@ public class BasicSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        /*                    httpSecurityLogoutConfigurer
-         */
-        /*.logoutUrl("/logout")  // 로그아웃 URL 지정
-                            .invalidateHttpSession(true)  // 세션 무효화
-                            .clearAuthentication(true)  // 인증 정보 제거
-                            .deleteCookies(TokenEnum.ACCESS_TOKEN.getName(), TokenEnum.REFRESH_TOKEN.getName())  // 쿠키 삭제
-                            .logoutSuccessHandler((request, response, authentication) -> // 로그아웃 성공 핸들러
-                                    response.setStatus(HttpServletResponse.SC_OK));  // 응답 코드 200 설정*/
-        // CSRF 비활성화
-        http
+            http
                 // 1. 권한 설정
                 .authorizeHttpRequests(authorizationConfig -> {
                     // "test" 프로파일일 경우 H2 콘솔 접근을 허용합니다.

@@ -91,12 +91,12 @@ public class UserContextFilter extends OncePerRequestFilter {
         }
     }*/
 
-    /**
+/*    *//**
      * json에서 parsing한 값에서 authority만 가져와서 List로 반환
      *
      * @param authorities
      * @return List<GrantedAuthority>
-     */
+     *//*
     private List<Authority> generateGrantesAuthories(List<Map<String, String>> authorities){
         List<Authority> grantedAuthorities = new ArrayList<>();
 
@@ -108,6 +108,6 @@ public class UserContextFilter extends OncePerRequestFilter {
         }
 
         return grantedAuthorities;
-    }
+    }*/
 
 }

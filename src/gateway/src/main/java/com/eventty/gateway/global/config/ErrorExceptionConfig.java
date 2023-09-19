@@ -19,5 +19,4 @@ public class ErrorExceptionConfig {
     public ErrorWebExceptionHandler globalExceptionHandler() {
         return new GlobalExceptionHandler(objectMapper);
     }
-
 }
