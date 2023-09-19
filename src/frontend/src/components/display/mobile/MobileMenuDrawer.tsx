@@ -12,17 +12,21 @@ import {
     Title,
     UnstyledButton
 } from "@mantine/core";
-import {Link, Navigate, useLocation} from "react-router-dom";
+import {Link, Navigate, useLocation, useNavigate} from "react-router-dom";
 import {IconHome, IconLogout, IconMenu2, IconPlus, IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
 import customStyle from "../../../styles/customStyle";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {menuDrawerState} from "../../../states/menuDrawerState";
 import {CheckLogin} from "../../../util/CheckLogin";
 import {userState} from "../../../states/userState";
+import {postLogout} from "../../../service/user/fetchUser";
+import {useFetch} from "../../../util/hook/useFetch";
 
 function MobileMenuDrawer() {
     const {classes} = customStyle();
     const {pathname} = useLocation();
+    const navigate = useNavigate();
+    const {logoutFetch} = useFetch();
     const isLoggedIn = CheckLogin();
     const userStateValue = useRecoilValue(userState);
     const [opened, setOpened] = useRecoilState(menuDrawerState);
@@ -36,8 +40,8 @@ function MobileMenuDrawer() {
     ];
 
     const items = MENU_LIST.map(item => {
-        if (((item.value === "주최 내역" || item.value === "주최하기") && !userStateValue.isHost) ||
-            (item.value === "예약 내역" && userStateValue.isHost)) {
+        if (((item.value === "주최 내역" || item.value === "주최하기") && (!userStateValue.isHost || !isLoggedIn)) ||
+            (item.value === "예약 내역" && (userStateValue.isHost || !isLoggedIn))) {
             return;
         }
         return (
@@ -70,7 +74,6 @@ function MobileMenuDrawer() {
                 <Drawer.Content>
                     <Container>
                         <Drawer.Header>
-                            {/*<Drawer.CloseButton/>*/}
                         </Drawer.Header>
                         <Drawer.Body>
                             <Stack>
@@ -86,9 +89,8 @@ function MobileMenuDrawer() {
 
                                 {items}
 
-                                <Button component={Link}
-                                        to={isLoggedIn ? "/logout" : "/login"}
-                                        state={pathname}
+                                <Button onClick={() => isLoggedIn ?
+                                    logoutFetch() : navigate("/login", {state: pathname})}
                                         className={classes["btn-gray-outline"]}>
                                     {isLoggedIn ? "로그아웃" : "로그인"}
                                 </Button>

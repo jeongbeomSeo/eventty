@@ -59,7 +59,7 @@ function MobileEventsDetailBtn(props: IEventState) {
     return (
         <UnstyledButton
             component={Link}
-            to={`/events/${props.id}`}
+            to={`/event/${props.id}`}
             state={pathname}
             style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
             <Stack style={{opacity: props.state === 2 ? "0.3" : "",}}>

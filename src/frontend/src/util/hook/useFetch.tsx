@@ -1,16 +1,22 @@
-import {deleteAccount, patchChangePassword, patchProfile, postLogin, postLogout} from "../../service/user/fetchUser";
+import {
+    deleteAccount,
+    patchProfile,
+    postChangePassword,
+    postLogout
+} from "../../service/user/fetchUser";
 import {MessageAlert} from "../MessageAlert";
 import {useRecoilState, useResetRecoilState, useSetRecoilState} from "recoil";
 import {loginState} from "../../states/loginState";
 import {userState} from "../../states/userState";
 import {useNavigate} from "react-router-dom";
-import {loadingState} from "../../states/loadingState";
 import {deleteEvent} from "../../service/event/fetchEvent";
-import {IChangePW, IUser} from "../../types/IUser";
+import {IChangePW, IUpdateUser, IUser} from "../../types/IUser";
 import {modals} from "@mantine/modals";
+import {menuDrawerState} from "../../states/menuDrawerState";
 
 export function useFetch() {
     const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+    const setMenuDrawer = useSetRecoilState(menuDrawerState);
     const resetUserState = useResetRecoilState(userState);
     const navigate = useNavigate();
     
@@ -40,15 +46,15 @@ export function useFetch() {
                     }
                 }).finally(() => {
                 navigate("/");
+                setMenuDrawer(false);
             });
         }
     }
     
-    const changeProfileFetch = (data:IUser) => {
+    const changeProfileFetch = (data:FormData) => {
         patchProfile(data)
             .then(res => {
                 if (res === 200){
-                    window.location.reload();
                     MessageAlert("success", "내 정보가 변경되었습니다", null);
                 }else{
                     MessageAlert("error", "내 정보 변경 실패", null);
@@ -57,10 +63,9 @@ export function useFetch() {
     }
 
     const changePasswordFetch = (data:IChangePW) => {
-        patchChangePassword(data)
+        postChangePassword(data)
             .then(res => {
                 if (res === 200){
-                    window.location.reload();
                     MessageAlert("success", "비밀번호가 변경되었습니다", null);
                 }else {
                     MessageAlert("error", "비밀번호 변경 실패", null);

@@ -1,5 +1,5 @@
 import React from 'react'
-import {createBrowserRouter} from 'react-router-dom';
+import {createBrowserRouter, Navigate} from 'react-router-dom';
 import Login from './pages/Login';
 import Main from './pages/Main';
 import Signup from './pages/Signup';
@@ -89,8 +89,8 @@ const Router = createBrowserRouter([
                                     {
                                         path: "profile",
                                         element: <Profile/>,
-                                        id: "profile",
                                         loader: profileLoader,
+                                        errorElement: <Navigate to={"/login"}/>,
                                     },
                                     {
                                         element: <HostRoute/>,
@@ -108,10 +108,6 @@ const Router = createBrowserRouter([
                                 ]
                             },
                         ]
-                    },
-                    {
-                        path: "/test",
-                        element: <Test/>,
                     },
                 ],
             },

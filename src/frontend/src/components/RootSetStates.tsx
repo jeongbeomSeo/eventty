@@ -57,7 +57,7 @@ function RootSetStates() {
                                     zIndex={1002}
                     />
                 }
-                <Notifications position={mobile ? "top-center" : "bottom-right"}/>
+                <Notifications position={mobile ? "top-center" : "bottom-right"} zIndex={"1003"}/>
                 <ScrollRestoration/>
                 <Outlet/>
             </ModalsProvider>

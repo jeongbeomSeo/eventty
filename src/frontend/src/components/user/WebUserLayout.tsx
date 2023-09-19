@@ -60,7 +60,7 @@ function WebUserLayout() {
 
     const filteredTabs = useMemo(() => {
         return TABS.filter((item) => (
-            (isHost && item.key !== "reservations") ||
+            (isHost && item.key !== "bookings") ||
             (!isHost && item.key !== "events")
         ));
     }, [isHost]);
@@ -70,8 +70,8 @@ function WebUserLayout() {
     }, [curPath]);
 
     return (
-        <Container>
-            <Grid style={{padding: "1rem"}}>
+        <Container style={{paddingTop: "5vh", paddingBottom: "10vh"}}>
+            <Grid>
                 <Grid.Col span={3}>
                     <Stack>
                         <Title order={3}>마이페이지</Title>

@@ -17,7 +17,7 @@ function MobileUserLayout() {
     };
 
     return (
-        <Container>
+        <Container style={{paddingTop: "2vh", paddingBottom: "10vh"}}>
             <Tabs value={activeTab}
                   className={classes["tabs-primary"]}
                   style={{marginTop:"1vh"}}>

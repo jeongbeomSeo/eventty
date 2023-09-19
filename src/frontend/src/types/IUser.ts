@@ -19,11 +19,22 @@ export interface IUser {
     address?: string;
     birth?: Date;
     image?: string;
+    imageId?: number;
+    originFileName?: string;
     phone: string;
 }
 
+export interface IUpdateUser {
+    [key:string]: string|any;
+    image?: File | null;
+    imageId?: number;
+    name: string;
+    phone: string;
+    address?: string;
+    birth?: Date;
+}
+
 export interface IChangePW {
-    currentPassword: string;
-    newPassword: string;
-    newPasswordConfirm?: string;
+    password: string;
+    passwordConfirm?: string;
 }

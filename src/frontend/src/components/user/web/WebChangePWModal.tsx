@@ -13,7 +13,7 @@ function WebChangePwModal() {
     const {register, handleSubmit, getValues, formState: {errors}} = useForm<IChangePW>();
 
     const onSubmit = (data: IChangePW) => {
-        delete data.newPasswordConfirm;
+        delete data.passwordConfirm;
 
         changePasswordFetch(data);
     }
@@ -22,24 +22,9 @@ function WebChangePwModal() {
         <form>
             <Stack style={{padding: "1.5rem"}}>
                 <Title order={3}>비밀번호 변경</Title>
-                <TextInput {...register("currentPassword", {
-                    required: "현재 비밀번호를 입력해주세요",
-                })}
-                           label={"현재 비밀번호 입력"}
-                           type={"password"}
-                           maxLength={16}
-                           withAsterisk
-                           error={errors.currentPassword?.message}
-                           className={classes["input"]}/>
-                <TextInput {...register("newPassword", {
+
+                <TextInput {...register("password", {
                     required: "새 비밀번호를 입력해주세요",
-                    validate:{
-                        check: (value) => {
-                            if (getValues("currentPassword") === value) {
-                                return "현재 비밀번호와 동일합니다"
-                            }
-                        },
-                    },
                     minLength: {
                         value: 8,
                         message: "최소 8자 이상 비밀번호를 입력해주세요"
@@ -49,13 +34,14 @@ function WebChangePwModal() {
                            type={"password"}
                            maxLength={16}
                            withAsterisk
-                           error={errors.newPassword?.message}
+                           error={errors.password?.message}
                            className={classes["input"]}/>
-                <TextInput {...register("newPasswordConfirm", {
+
+                <TextInput {...register("passwordConfirm", {
                     required: "새 비밀번호를 다시 입력해주세요",
                     validate: {
                         check: (value) => {
-                            if (getValues("newPassword") !== value) {
+                            if (getValues("password") !== value) {
                                 return "비밀번호가 일치하지 않습니다"
                             }
                         }
@@ -65,8 +51,9 @@ function WebChangePwModal() {
                            type={"password"}
                            maxLength={16}
                            withAsterisk
-                           error={errors.newPasswordConfirm?.message}
+                           error={errors.passwordConfirm?.message}
                            className={classes["input"]}/>
+
                 <Group grow style={{paddingTop: "1rem"}}>
                     <Button onClick={() => modals.closeAll()}
                             className={classes["btn-gray-outline"]}>

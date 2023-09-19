@@ -34,6 +34,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
 
     const onSubmit = (data: ISignup) => {
         delete data.passwordConfirm;
+        data.birth?.setDate(data.birth?.getDate()+1);
 
         if (!isEmailValid) {
             messageModal("이메일 중복 확인 해주세요");

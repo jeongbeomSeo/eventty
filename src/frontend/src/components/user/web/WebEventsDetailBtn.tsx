@@ -55,7 +55,7 @@ function WebEventsDetailBtn(props: IEventState) {
 
     return (
         <UnstyledButton
-            onClick={() => navigate(`/events/${props.id}`)}
+            onClick={() => navigate(`/event/${props.id}`)}
             style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
             <Group noWrap position={"apart"} style={{opacity: props.state === "cancel" ? "0.3" : "",}}>
                 <Group>

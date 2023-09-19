@@ -1,7 +1,7 @@
 import {Stack, Button, TextInput, Flex, Divider, Text, Checkbox} from "@mantine/core";
 import CardForm from "../components/signup/CardForm";
 import {useForm} from "react-hook-form";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {Link, redirect, useLocation, useNavigate} from "react-router-dom";
 import GoogleBtn from "../components/signup/GoogleBtn";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
 import {cardTitleState} from '../states/cardTitleState';
@@ -21,6 +21,7 @@ enum ERROR_MESSAGE {
 function Login() {
     const setIsLoggedIn = useSetRecoilState(loginState);
     const setUsersStateValue = useSetRecoilState(userState);
+    const navigate = useNavigate();
 
     const {register, handleSubmit, setFocus, setError, formState: {errors}} = useForm<ILogin>();
     const onSubmit = (data: ILogin) => {
@@ -44,9 +45,6 @@ function Login() {
                         isHost: resIsHost,
                         userId: resUserId,
                     });
-
-                    console.log(res.headers);
-                    console.log(res);
 
                     sessionStorage.setItem("EMAIL", resEmail);
                     sessionStorage.setItem("AUTHORITY", resIsHost ? "HOST" : "USER");

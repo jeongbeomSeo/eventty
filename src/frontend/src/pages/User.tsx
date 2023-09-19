@@ -7,9 +7,9 @@ function User() {
     const isMobile = CheckXsSize();
 
     return (
-        <>
+        <div>
             {isMobile ? <MobileUserLayout/>: <WebUserLayout/>}
-        </>
+        </div>
     );
 }
 

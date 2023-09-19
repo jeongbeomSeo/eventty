@@ -1,4 +1,7 @@
-import {IChangePW, ILogin, ISignup, IUser} from "../../types/IUser";
+import {IChangePW, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser";
+import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
+import {redirect} from "react-router-dom";
+import {CheckLogin} from "../../util/CheckLogin";
 
 export const postSignupEmailValid = async (data: string) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`, {
@@ -37,45 +40,64 @@ export const postLogin = async (data: ILogin) => {
         body: JSON.stringify(data),
     })
         .then((res) => {
-            sessionStorage.setItem("X-Csrf-Token", res.headers.get("X-Csrf-Token")!);
+            SetCsrfToken(res);
             return res.json();
-        })
+        });
 }
 
 export const postLogout = async () => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
-        headers: {"Content-Type": "application/json", "X-Csrf-Token": sessionStorage.getItem("X-Csrf-Token")!},
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
     })
-        .then(res => res.status);
+        .then(res => res.status)
+        .catch(res => console.error(res));
 }
 
 export const getProfile = async () => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`, {
         method: "GET",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
     })
-        .then((res) => res.json())
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        })
         .then((res) => res.successResponseDTO.data)
-        .catch(res => console.error(res));
+        .catch(res => {
+            SetCsrfToken(res);
+            redirect("/login");
+        });
 }
 
-export const patchProfile = async (data: IUser) => {
+export const patchProfile = async (data: FormData) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data),
+        method: "POST",
+        credentials: "include",
+        headers: {"X-Csrf-Token": GetCsrfToken()!},
+        body: data,
     })
-        .then((res) => res.status);
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.status;
+        })
+        .catch(res => SetCsrfToken(res));
 }
 
-export const patchChangePassword = async (data: IChangePW) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/secret/changePW`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"},
+export const postChangePassword = async (data: IChangePW) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/changePW`, {
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
         body: JSON.stringify(data),
     })
-        .then((res) => res.status);
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.status;
+        })
+        .catch(res => SetCsrfToken(res));
 }
 
 export const deleteAccount = async () => {
