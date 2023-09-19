@@ -33,10 +33,10 @@
     </update>
 
     <!--이벤트 이미지 삭제-->
-    <update id="deleteEventImage" parameterType="java.lang.Long">
+    <update id="deleteEventImageByEventId" parameterType="java.lang.Long">
         UPDATE event_image
         SET is_deleted = true
-        WHERE id = #{id}
+        WHERE event_id = #{eventId}
     </update>
 
 </mapper>

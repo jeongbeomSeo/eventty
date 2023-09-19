@@ -1,14 +1,13 @@
 package com.eventty.businessservice.application;
 
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
-import com.eventty.businessservice.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
-import com.eventty.businessservice.event.application.service.EventSubService;
+import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.service.subservices.EventDetailService;
 import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
 import com.eventty.businessservice.event.domain.repository.EventDetailRepository;
 import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
-import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.event.domain.repository.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EventSubServiceTest {
+public class EventDetailServiceTest {
 
     @Mock
     private EventBasicRepository eventBasicRepository;
@@ -37,7 +36,7 @@ public class EventSubServiceTest {
     private TicketRepository ticketRepository;
 
     @InjectMocks
-    private EventSubService eventSubService;
+    private EventDetailService eventDetailService;
 
     @Test
     @DisplayName("존재하는 이벤트 조회 테스트")
@@ -51,7 +50,7 @@ public class EventSubServiceTest {
         when(ticketRepository.selectTicketByEventId(eventId)).thenReturn(mockTickets);
 
         // When
-        EventWithTicketsFindByIdResponseDTO responseDTO = eventSubService.findEventById(eventId);
+        EventFullFindByIdResponseDTO responseDTO = eventDetailService.findEventById(eventId);
 
         // Then
         assertEquals(mockEvent.getId(), responseDTO.getId());
@@ -69,7 +68,7 @@ public class EventSubServiceTest {
         when(eventBasicRepository.selectEventWithDetailById(eventId)).thenReturn(null);
 
         // When & Then
-        assertThrows(EventNotFoundException.class, () -> eventSubService.findEventById(eventId));
+        assertThrows(EventNotFoundException.class, () -> eventDetailService.findEventById(eventId));
         verify(eventBasicRepository, times(1)).selectEventWithDetailById(eventId);
     }
 
@@ -83,7 +82,7 @@ public class EventSubServiceTest {
         when(ticketRepository.deleteTicketsByEventId(eventId)).thenReturn(1L);
 
         // When
-        eventSubService.deleteEvent(eventId);
+        eventDetailService.deleteEvent(eventId);
 
         // Then
         assertNull(eventBasicRepository.selectEventById(eventId));
@@ -100,7 +99,7 @@ public class EventSubServiceTest {
 
         EventUpdateRequestDTO updateRequestDTO = EventUpdateRequestDTO.builder()
                 .title("Updated Title")
-                .image("updated_image.jpg")
+                .imageId(1L)
                 .content("Updated Content")
                 .build();
 
@@ -113,7 +112,7 @@ public class EventSubServiceTest {
         when(eventDetailRepository.selectEventDetailById(eventId)).thenReturn(existingEventDetail);
 
         // When
-        eventSubService.updateEvent(eventId, updateRequestDTO);
+        eventDetailService.updateEvent(eventId, updateRequestDTO);
 
         // Then
         verify(eventBasicRepository, times(1)).updateEvent(any(EventBasicEntity.class));

@@ -20,4 +20,13 @@ public enum Category {
     private final Long id;
     private final String name;
 
+    public static String getNamefromId(Long id) {
+        for (Category category : Category.values()) {
+            if (category.getId().equals(id)) {
+                return category.name;
+            }
+        }
+        return null;
+    }
+
 }

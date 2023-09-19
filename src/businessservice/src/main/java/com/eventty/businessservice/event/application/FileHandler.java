@@ -6,7 +6,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
-import com.eventty.businessservice.event.application.dto.request.EventImageDTO;
+import com.eventty.businessservice.event.application.dto.request.ImageUploadRequestDTO;
 import com.eventty.businessservice.event.domain.exception.UnsupportedContentTypeException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -38,7 +38,7 @@ public class FileHandler {
     private final String path = "image\\";
     private AmazonS3 s3;
 
-    public EventImageDTO uploadFile(Long id, MultipartFile multipartFile) throws IOException{
+    public ImageUploadRequestDTO uploadFile(Long id, MultipartFile multipartFile) throws IOException{
 
         // 파일이 빈 것이 들어오면 빈 것을 반환
         if (multipartFile == null || multipartFile.isEmpty()) {
@@ -46,7 +46,7 @@ public class FileHandler {
         }
 
         // 반환을 할 파일 리스트
-        EventImageDTO eventImageDTO = null;
+        ImageUploadRequestDTO imageUploadRequestDTO = null;
 
         // 폴더 생성을 위한 현재 날짜 Get -> EX) user/currentDate/XXXXXX.jpeg
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -82,7 +82,7 @@ public class FileHandler {
         // event/20230915/XXXXXXXX.jpg
         String storedFilePath = folderName + currentDate + "/" + newFileName;
 
-        eventImageDTO = EventImageDTO.builder()
+        imageUploadRequestDTO = ImageUploadRequestDTO.builder()
                 .eventId(id)
                 .originalFileName(multipartFile.getOriginalFilename())
                 .storedFilePath(storedFilePath)
@@ -104,7 +104,7 @@ public class FileHandler {
             if(folder.isDirectory()) folder.delete();
         }
 
-        return eventImageDTO;
+        return imageUploadRequestDTO;
     }
 
     public String getFileInfo(String filePath) throws IOException{

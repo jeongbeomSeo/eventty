@@ -3,9 +3,11 @@ package com.eventty.businessservice.event.application.dto.request;
 import com.eventty.businessservice.event.domain.entity.EventImageEntity;
 import lombok.*;
 
-@Getter @Setter @ToString @Builder
-@AllArgsConstructor @NoArgsConstructor
-public class EventImageDTO {
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+public class ImageUploadRequestDTO {
     private Long id;
     private Long eventId;
     private String originalFileName;

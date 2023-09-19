@@ -2,6 +2,7 @@ package com.eventty.businessservice.event.application.dto.request;
 
 import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
+import com.eventty.businessservice.event.domain.entity.TicketEntity;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,38 +21,45 @@ import java.util.List;
 public class EventCreateRequestDTO {
     @NotNull
     private Long userId;
+
     @NotBlank
     private String title;
 
-    // image
-    // private Long imageId;
-    // private MultipartFile image;
-
     @FutureOrPresent
     private LocalDateTime eventStartAt;
+
     @FutureOrPresent
     private LocalDateTime eventEndAt;
+
     private Long participateNum;
+
     @NotBlank
     private String location;
+
     @Min(1)
     private Long category;
+
+    private Boolean isActive;
+    private Boolean isDeleted;
+
     @NotBlank
     private String content;
+
     @FutureOrPresent
     private LocalDateTime applyStartAt;
+
     @FutureOrPresent
     private LocalDateTime applyEndAt;
 
     private List<TicketCreateRequestDTO> tickets;
 
-    public EventBasicEntity toEventEntity(){
+    public EventBasicEntity toEventBasicEntity() {
         return EventBasicEntity.builder()
                 .userId(userId)
                 .title(title)
                 .eventStartAt(eventStartAt)
                 .eventEndAt(eventEndAt)
-                .participateNum(0L)
+                .participateNum(participateNum)
                 .location(location)
                 .category(category)
                 .isActive(true)
@@ -59,16 +67,15 @@ public class EventCreateRequestDTO {
                 .build();
     }
 
-    public EventDetailEntity toEventDetailEntity(Long id) {
+    public EventDetailEntity toEventDetailEntity(Long eventId) {
         return EventDetailEntity.builder()
-                .id(id)
+                .id(eventId)
                 .content(content)
                 .applyStartAt(applyStartAt)
                 .applyEndAt(applyEndAt)
                 .createDate(LocalDateTime.now())
-                .updateDate(null)
-                .deleteDate(null)
                 .build();
     }
+
 
 }

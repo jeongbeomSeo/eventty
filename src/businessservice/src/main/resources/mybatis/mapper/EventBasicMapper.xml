@@ -8,7 +8,6 @@
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
-        <result property="image" column="image"/>
         <result property="eventStartAt" column="event_start_at"/>
         <result property="eventEndAt" column="event_end_at"/>
         <result property="participateNum" column="participate_num"/>
@@ -16,81 +15,31 @@
         <result property="category" column="category"/>
         <result property="isActive" column="is_active"/>
         <result property="isDeleted" column="is_deleted"/>
-    </resultMap>
-
-    <resultMap id="EventResultMapWithDetail" type="com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO">
-        <id property="id" column="id"/>
-        <result property="userId" column="user_id"/>
-        <result property="title" column="title"/>
-        <result property="image" column="image"/>
-        <result property="eventStartAt" column="event_start_at"/>
-        <result property="eventEndAt" column="event_end_at"/>
-        <result property="participateNum" column="participate_num"/>
-        <result property="location" column="location"/>
-        <result property="category" column="category"/>
-        <result property="isActive" column="is_active"/>
-        <result property="isDeleted" column="is_deleted"/>
-        <result property="content" column="content"/>
-        <result property="applyStartAt" column="apply_start_at"/>
-        <result property="applyEndAt" column="apply_end_at"/>
-        <result property="views" column="views"/>
-        <result property="delete_date" column="delete_date"/>
-        <result property="update_date" column="update_date"/>
-        <result property="create_date" column="create_date"/>
-        <result property="categoryName" column="category_name"/>
     </resultMap>
 
     <!--전체 이벤트 조회-->
     <select id="selectAllEvents" resultMap="EventResultMap" parameterType="java.lang.Long">
-        SELECT * FROM events_basic
+        SELECT * FROM event_basic
         WHERE is_deleted = false
         ORDER BY id DESC
     </select>
 
     <!--특정 이벤트 조회-->
     <select id="selectEventById" resultMap="EventResultMap" parameterType="java.lang.Long">
-        SELECT * FROM events_basic
+        SELECT * FROM event_basic
         WHERE id = #{id} AND is_deleted = false
-    </select>
-
-    <!--특정 이벤트 조회 : 일반 정보와 상세 정보 JOIN-->
-    <select id="selectEventWithDetailById" resultMap="EventResultMapWithDetail" parameterType="java.lang.Long">
-        SELECT
-            e.id,
-            e.user_id,
-            e.title,
-            e.image,
-            e.event_start_at,
-            e.event_end_at,
-            e.participate_num,
-            e.location,
-            e.category,
-            e.is_active,
-            e.is_deleted,
-            ed.content,
-            ed.apply_start_at,
-            ed.apply_end_at,
-            ed.views,
-            ed.delete_date,
-            ed.update_date,
-            ed.create_date,
-            c.name AS category_name
-        FROM events_basic e
-            INNER JOIN event_details ed ON e.id = ed.id
-            INNER JOIN categories c ON e.category = c.id
-        WHERE e.id = #{id} AND is_deleted = false
     </select>
 
     <!-- 이벤트 생성 -->
     <insert id="insertEvent" parameterType="com.eventty.businessservice.event.domain.entity.EventBasicEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO events_basic (user_id, title, image, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
-        VALUES (#{userId}, #{title}, #{image}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
+        INSERT INTO event_basic (user_id, title, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
+        VALUES (#{userId}, #{title}, #{eventStartAt}, #{eventEndAt}, #{participateNum}, #{location}, #{category}, #{isActive}, #{isDeleted})
     </insert>
 
     <!-- 호스트가 주최한 이벤트 조회 -->
     <select id="selectEventsByHostId" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT *
-        FROM events_basic
+        FROM event_basic
         WHERE user_id = #{hostId}
         AND is_deleted = false
         ORDER BY id DESC
@@ -98,18 +47,18 @@
 
     <!-- 이벤트 수정 -->
     <update id="updateEvent" parameterType="com.eventty.businessservice.event.domain.entity.EventBasicEntity">
-        UPDATE events_basic
+        UPDATE event_basic
         SET
             title = #{title},
-            image = #{image},
             category = #{category},
+            is_active = #{isActive},
             participate_num = #{participateNum}
         WHERE id = #{id}
     </update>
 
     <!--이벤트 정보 삭제-->
     <update id="deleteEvent" parameterType="java.lang.Long" useGeneratedKeys="true" keyColumn="id">
-        UPDATE events_basic
+        UPDATE event_basic
         SET is_deleted = true
         WHERE id = #{id}
     </update>
@@ -117,7 +66,7 @@
     <!--카테고리 별 이벤트 조회-->
     <select id="selectEventsByCategory" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT *
-        FROM events_basic e
+        FROM event_basic e
              INNER JOIN categories c ON e.category = c.id
         WHERE c.id = #{categoryId}
         AND is_deleted = false
@@ -126,7 +75,7 @@
     <!--이벤트 검색-->
     <select id="selectEventsBySearch" resultMap="EventResultMap" parameterType="java.lang.String">
         SELECT *
-        FROM events_basic
+        FROM event_basic
         WHERE title LIKE CONCAT('%', #{search}, '%')
         AND is_deleted = false
         ORDER BY event_start_at DESC

@@ -11,13 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class EventUpdateRequestDTO {
     // Event
     private String title;
-    private Long imageId;
-    private MultipartFile image;
 
     @Min(1)
     private Long category;
 
+    private Boolean isActive;
+
     // EventDetail
     private String content;
+
+    // image
+    private MultipartFile image;
 
 }
