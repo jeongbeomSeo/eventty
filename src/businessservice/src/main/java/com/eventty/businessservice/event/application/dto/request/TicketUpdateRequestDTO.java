@@ -11,6 +11,4 @@ public class TicketUpdateRequestDTO {
 
     @PositiveOrZero
     private Long price;
-
-    // 티켓 수량은 변경 불가능하도록 구현되어 있음
 }

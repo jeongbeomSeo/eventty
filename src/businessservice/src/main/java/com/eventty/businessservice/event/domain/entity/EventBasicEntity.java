@@ -13,7 +13,6 @@ public class EventBasicEntity {
     private Long id;
     private Long userId; // hostId
     private String title;
-    private String image;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
     private Long participateNum;
@@ -22,17 +21,12 @@ public class EventBasicEntity {
     private Boolean isActive;
     private Boolean isDeleted;
 
-    public void addParticipateNum(Long participateNumPerTicket){
-        this.participateNum += participateNumPerTicket;
-    }
     public void subtractParticipateNum(Long participateNumPerTicket){
         this.participateNum -= participateNumPerTicket;
     }
     public void updateTitle(String title){
         this.title = title;
     }
-    public void updateImage(String image){
-        this.image = image;
-    }
     public void updateCategory(Long category) { this.category = category; }
+    public void updateIsActive(Boolean isActive) { this.isActive = isActive; }
 }

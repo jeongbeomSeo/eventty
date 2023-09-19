@@ -1,5 +1,6 @@
 package com.eventty.businessservice.event.application.dto.response;
 
+import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
 import lombok.*;
 
@@ -10,46 +11,42 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @ToString
-public class EventBasicFindAllResponseDTO {
+public class EventBasicResponseDTO {
     private Long id;
     private Long userId;
     private String title;
-    private String image;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
-    private Long category;
+    private String categoryName;
     private Boolean isActive;
     private Boolean isDeleted;
 
-    public static EventBasicFindAllResponseDTO fromEntity(EventBasicEntity eventBasicEntity) {
-        return EventBasicFindAllResponseDTO.builder()
+    public static EventBasicResponseDTO fromEntity(EventBasicEntity eventBasicEntity) {
+        return EventBasicResponseDTO.builder()
             .id(eventBasicEntity.getId())
             .userId(eventBasicEntity.getUserId())
             .title(eventBasicEntity.getTitle())
-            .image(eventBasicEntity.getImage())
             .eventStartAt(eventBasicEntity.getEventStartAt())
             .eventEndAt(eventBasicEntity.getEventEndAt())
             .participateNum(eventBasicEntity.getParticipateNum())
             .location(eventBasicEntity.getLocation())
-            .category(eventBasicEntity.getCategory())
+            .categoryName(Category.getNamefromId(eventBasicEntity.getCategory()))
             .isActive(eventBasicEntity.getIsActive())
             .isDeleted(eventBasicEntity.getIsDeleted())
             .build();
     }
 
     // Swagger 을 위하여 기본 생성자로 기본값 설정
-    public EventBasicFindAllResponseDTO() {
+    public EventBasicResponseDTO() {
         this.id = 1L;
         this.userId = 1L;
         this.title = "String";
-        this.image = "String";
         this.eventStartAt = LocalDateTime.now();
         this.eventEndAt = LocalDateTime.now();
         this.participateNum = 1L;
         this.location = "String";
-        this.category = 1L;
         this.isActive = true;
         this.isDeleted = false;
     }

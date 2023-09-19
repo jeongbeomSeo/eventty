@@ -24,9 +24,10 @@ public enum ErrorCode {
     PERMISSION_DENIED(403, "", "Permission Denied"),
 
     // Event & Ticket
-    EVENT_NOT_FOUND     (HttpStatus.NOT_FOUND.value(), "E001", "Event is not found"),
-    TICKET_NOT_FOUND    (HttpStatus.NOT_FOUND.value(), "E002", "Ticket is not found"),
-    CATEGORY_NOT_FOUND  (HttpStatus.NOT_FOUND.value(), "E003", "Category is not found");
+    EVENT_NOT_FOUND     (404, "E001", "Event is not found"),
+    TICKET_NOT_FOUND    (404, "E002", "Ticket is not found"),
+    CATEGORY_NOT_FOUND  (404, "E003", "Category is not found"),
+    CONTENT_TYPE_ERROR   (400, "E004", "Content type is not supported");
 
     private final int status;
     private final String code;

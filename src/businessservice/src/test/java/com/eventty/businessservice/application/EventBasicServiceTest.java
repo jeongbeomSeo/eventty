@@ -1,8 +1,8 @@
 package com.eventty.businessservice.application;
 
+import com.eventty.businessservice.event.application.dto.response.EventBasicResponseDTO;
 import com.eventty.businessservice.event.domain.Enum.Category;
-import com.eventty.businessservice.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.event.application.service.EventService;
+import com.eventty.businessservice.event.application.service.subservices.EventBasicService;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
 import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EventServiceTest {
+public class EventBasicServiceTest {
 
     @Mock
     private EventBasicRepository eventBasicRepository;
 
     @InjectMocks
-    private EventService eventService;
+    private EventBasicService eventBasicService;
 
     @Test
     @DisplayName("전체 이벤트 조회 테스트")
@@ -37,7 +37,7 @@ public class EventServiceTest {
         when(eventBasicRepository.selectAllEvents()).thenReturn(mockEventEntities);
 
         // When
-        List<EventBasicFindAllResponseDTO> responseDTOs = eventService.findAllEvents();
+        List<EventBasicResponseDTO> responseDTOs = eventBasicService.findAllEvents();
 
         // Then
         assertEquals(mockEventEntities.size(), responseDTOs.size());
@@ -53,7 +53,7 @@ public class EventServiceTest {
         when(eventBasicRepository.selectEventsByHostId(hostId)).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventService.findEventsByHostId(hostId);
+        List<EventBasicResponseDTO> result = eventBasicService.findEventsByHostId(hostId);
 
         // then
         assertNotNull(result);
@@ -70,7 +70,7 @@ public class EventServiceTest {
         when(eventBasicRepository.selectEventsByCategory(category.getId())).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventService.findEventsByCategory(category);
+        List<EventBasicResponseDTO> result = eventBasicService.findEventsByCategory(category);
 
         // then
         assertNotNull(result);
@@ -87,7 +87,7 @@ public class EventServiceTest {
 
         // when & then
         assertThrows(EventNotFoundException.class, () -> {
-            eventService.findEventsByCategory(category);
+            eventBasicService.findEventsByCategory(category);
         });
     }
 
@@ -100,7 +100,7 @@ public class EventServiceTest {
         when(eventBasicRepository.selectEventsBySearch(keyword)).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventService.findEventsBySearch(keyword);
+        List<EventBasicResponseDTO> result = eventBasicService.findEventsBySearch(keyword);
 
         // then
         assertNotNull(result);

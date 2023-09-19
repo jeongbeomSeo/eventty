@@ -19,7 +19,4 @@ public class TicketEntity {
     public void updatePrice(Long price) {
         this.price = price;
     }
-    public void updateQuantity(Long quantity) {
-        this.quantity = quantity;
-    }
 }
