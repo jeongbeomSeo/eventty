@@ -1,8 +1,16 @@
-import React, {ChangeEvent, useState} from "react";
-import {Avatar, Button, Center, Flex, Group, Paper, Stack, Text, TextInput, Title} from "@mantine/core";
+import React, {ChangeEvent, useEffect, useState} from "react";
+import {Avatar, Button, Center, FileButton, Flex, Group, Paper, Stack, Text, TextInput, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import {DatePickerInput} from "@mantine/dates";
 import BirthdayPicker from "../../common/BirthdayPicker";
+import {isRouteErrorResponse, useLoaderData, useRouteError} from "react-router-dom";
+import {IUpdateUser, IUser} from "../../../types/IUser";
+import {useFetch} from "../../../util/hook/useFetch";
+import {useModal} from "../../../util/hook/useModal";
+import {Controller, useForm} from "react-hook-form";
+import {MessageAlert} from "../../../util/MessageAlert";
+import PhoneNumberInput from "../../common/PhoneNumberInput";
+import {Base64toFile} from "../../../util/ConvertFile";
 
 function PaperItem({children}: { children: React.ReactNode }) {
     return (
@@ -16,54 +24,143 @@ function PaperItem({children}: { children: React.ReactNode }) {
 
 function MobileProfile() {
     const {classes} = customStyle();
+    const DATA = useLoaderData() as IUser;
+    const routeError = useRouteError();
+    const curEmail = sessionStorage.getItem("EMAIL")!;
+    const nameRegEX = /^[가-힣]{2,}$/;
+    const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imgPreview, setImgPreview] = useState(`data:image/jpg;base64,${DATA.image}`);
 
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [selectedDate, setSelectedDate] = useState<Date>();
-    const handlePhoneInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const {value} = e.target;
-        const formattedValue = value
-            .replace(/[^0-9]/g, '')
-            .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
-            .replace(/(\-{1,2})$/g, "");
+    const {deleteAccountFetch, changeProfileFetch} = useFetch();
+    const {changePWModal} = useModal();
 
-        setPhoneNumber(formattedValue);
+    const {register, handleSubmit, setValue, control, formState: {errors}}
+        = useForm<IUpdateUser>({
+        defaultValues: {
+            image: DATA.image ? Base64toFile(DATA.image!, DATA.originFileName!, `image/${DATA.originFileName!.split(".").pop()}`) : null,
+            imageId: DATA.imageId,
+            phone: DATA.phone,
+            birth: new Date(DATA.birth!),
+            address: DATA.address,
+            name: DATA.name,
+        }
+    });
+
+    const onSubmit = (data: IUpdateUser) => {
+        data.birth?.setDate(data.birth?.getDate() + 1);
+
+        const formData = new FormData();
+        for (const e in data) {
+            if (e === "birth") {
+                formData.append(e, data[e]!.toJSON().replaceAll("\"", ""));
+            } else {
+                formData.append(e, data[e]);
+            }
+        }
+
+        changeProfileFetch(formData);
     }
-    const handleDateChange = (newDate: Date) => {
-        setSelectedDate(newDate);
-    }
+
+    useEffect(() => {
+        if (isRouteErrorResponse(routeError)) {
+            MessageAlert("error", "내 정보 조회 실패", null);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (imageFile !== null) {
+            setImgPreview(URL.createObjectURL(imageFile));
+            setValue("image", imageFile);
+        }
+    }, [imageFile]);
 
     return (
-        <Stack>
-            <Title order={3}>프로필</Title>
-            <PaperItem>
-                <Stack align={"center"}>
-                    <Avatar size={"6rem"} radius={"6rem"}/>
-                    <Button className={classes["btn-primary"]}>이미지 변경</Button>
-                </Stack>
-                <TextInput label={"이메일"} disabled className={classes["input"]}/>
-                <TextInput label={"이름"} className={classes["input"]}/>
-                <TextInput label={"휴대폰 번호"}
-                           maxLength={13}
-                           value={phoneNumber}
-                           onInput={handlePhoneInputChange}
-                           className={classes["input"]}/>
-                <BirthdayPicker label={"생년월일"} value={selectedDate}
-                                onChange={handleDateChange}/>
-                <Button className={classes["btn-primary"]}>저장하기</Button>
-            </PaperItem>
+        <Stack spacing={"2rem"}>
+            <div>
+                <Title order={3} style={{padding: "1rem 0"}}>프로필</Title>
+                <PaperItem>
+                    <Stack align={"center"}>
+                        <Avatar size={"8rem"} radius={"8rem"} src={imgPreview}/>
+                        <FileButton onChange={setImageFile} accept={"image/png, image/jpeg, image/webp"}>
+                            {(props) => <Button {...props} className={classes["btn-primary"]}>이미지 변경</Button>}
+                        </FileButton>
+                    </Stack>
 
-            <Title order={3}>보안</Title>
-            <PaperItem>
-                <Group position={"apart"}>
-                    <Text>비밀번호</Text>
-                    <Button className={classes["btn-primary"]}>비밀번호 변경</Button>
-                </Group>
-            </PaperItem>
+                    <Stack>
+                        <TextInput label={"이메일"}
+                                   disabled
+                                   defaultValue={curEmail}
+                                   className={classes["input"]}/>
 
-            <Title order={3}>주소</Title>
-            <PaperItem>
-                <TextInput label={"주소"} className={classes["input"]}/>
-            </PaperItem>
+                        <TextInput {...register("name", {
+                            required: "이름을 입력해주세요",
+                            pattern: {value: nameRegEX, message: "이름이 올바르지 않습니다"},
+                        })}
+                                   label={"이름"}
+                                   withAsterisk
+                                   error={errors.name?.message}
+                                   className={classes["input"]}/>
+
+                        <Controller control={control}
+                                    name={"phone"}
+                                    rules={{
+                                        required: "휴대폰 번호를 입력해주세요",
+                                        pattern: {value: phoneRegEX, message: "휴대폰 번호가 올바르지 않습니다"},
+                                    }}
+                                    render={({field: {ref, ...rest}}) => (
+                                        <PhoneNumberInput {...rest}
+                                                          inputRef={ref}
+                                                          error={errors.phone?.message}
+                                                          asterisk={true}/>
+                                    )}/>
+
+                        <Controller control={control}
+                                    name={"birth"}
+                                    render={({field: {ref, ...rest}}) => (
+                                        <BirthdayPicker {...rest}
+                                                        inputRef={ref}
+                                                        label={"생년월일"}/>
+                                    )}/>
+
+                        <TextInput {...register("address")}
+                                   label={"주소"}
+                                   defaultValue={DATA.address}
+                                   className={classes["input"]}/>
+
+                        <Button onClick={handleSubmit(onSubmit)}
+                                className={classes["btn-primary"]}>저장</Button>
+                    </Stack>
+                </PaperItem>
+            </div>
+
+            <div>
+                <Title order={3} style={{padding: "1rem 0"}}>보안</Title>
+                <PaperItem>
+                    <Group position={"apart"}>
+                        <Title order={5}>비밀번호</Title>
+                        <Button onClick={() => changePWModal()}
+                                style={{width: "8rem"}}
+                                className={classes["btn-primary"]}>
+                            비밀번호 변경
+                        </Button>
+                    </Group>
+                </PaperItem>
+            </div>
+
+            <div>
+                <Title order={3} color={"red"} style={{padding: "1rem 0"}}>회원 탈퇴</Title>
+                <PaperItem>
+                    <Group position={"apart"}>
+                        <Title order={5}>회원 탈퇴</Title>
+                        <Button color={"red"}
+                                style={{width: "8rem"}}
+                                onClick={() => deleteAccountFetch()}>
+                            회원탈퇴
+                        </Button>
+                    </Group>
+                </PaperItem>
+            </div>
         </Stack>
     );
 }

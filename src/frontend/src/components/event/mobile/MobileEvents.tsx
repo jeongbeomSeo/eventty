@@ -4,6 +4,7 @@ import SearchBox from "../../common/SearchBox";
 import MobileEventList from "./MobileEventList";
 import customStyle from "../../../styles/customStyle";
 import MobileCategoryBtn from "./MobileCategoryBtn";
+import {Outlet} from "react-router-dom";
 
 function MobileEvents() {
     const {classes} = customStyle();
@@ -17,7 +18,7 @@ function MobileEvents() {
                     </Flex>
                 </Box>
             </Stack>
-            <MobileEventList/>
+            <Outlet/>
         </>
     );
 }

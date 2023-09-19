@@ -13,7 +13,7 @@ function MobileTopSection() {
     return (
         <Header height={HEADER_HEIGHT} className={classes["header"]}>
             <Container style={{height: "100%", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                {pathname.includes("/events/") ? <EventDetailHeader/> : <MobileHeader/>}
+                {pathname.includes("/event/") ? <EventDetailHeader/> : <MobileHeader/>}
             </Container>
         </Header>
     );

@@ -1,7 +1,7 @@
 import {Stack, Button, TextInput, Flex, Divider, Text, Checkbox} from "@mantine/core";
 import CardForm from "../components/signup/CardForm";
 import {useForm} from "react-hook-form";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {Link, redirect, useLocation, useNavigate} from "react-router-dom";
 import GoogleBtn from "../components/signup/GoogleBtn";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
 import {cardTitleState} from '../states/cardTitleState';
@@ -20,8 +20,10 @@ enum ERROR_MESSAGE {
 
 function Login() {
     const setIsLoggedIn = useSetRecoilState(loginState);
+    const setUsersStateValue = useSetRecoilState(userState);
+    const navigate = useNavigate();
 
-    const {register, handleSubmit, setFocus, setError, formState:{errors}} = useForm<ILogin>();
+    const {register, handleSubmit, setFocus, setError, formState: {errors}} = useForm<ILogin>();
     const onSubmit = (data: ILogin) => {
         if (!data.email || !data.password) {
             const field = !data.email ? "email" : "password";
@@ -33,7 +35,20 @@ function Login() {
         postLogin(data)
             .then(res => {
                 if (res.success) {
+                    const resEmail = res.successResponseDTO.data.email;
+                    const resIsHost = res.successResponseDTO.data.role === "ROLE_HOST";
+                    const resUserId = res.successResponseDTO.data.userId;
+
                     setIsLoggedIn((prev) => !prev);
+                    setUsersStateValue({
+                        email: resEmail,
+                        isHost: resIsHost,
+                        userId: resUserId,
+                    });
+
+                    sessionStorage.setItem("EMAIL", resEmail);
+                    sessionStorage.setItem("AUTHORITY", resIsHost ? "HOST" : "USER");
+                    sessionStorage.setItem("USER_ID", resUserId);
                 } else {
                     setError("root", {message: ERROR_MESSAGE["fail"]});
                 }
@@ -68,7 +83,7 @@ function Login() {
                     {/* 에러 메세지 */}
                     <Text fz={"0.75rem"}
                           color={"#f44336"}
-                          style={{whiteSpace:"pre-wrap"}}>
+                          style={{whiteSpace: "pre-wrap"}}>
                         {errors.email?.message || errors.password?.message || errors.root?.message}
                     </Text>
 

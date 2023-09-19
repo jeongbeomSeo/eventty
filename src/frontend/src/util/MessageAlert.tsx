@@ -16,6 +16,6 @@ export const MessageAlert = (type:TAlert, title:string|null, message:string|null
         message: message,
         icon: TYPE_PROPERTY[type].icon,
         color: TYPE_PROPERTY[type].color,
-        autoClose: 2500,
+        autoClose: 3000,
     })
 }

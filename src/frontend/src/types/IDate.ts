@@ -1,4 +1,4 @@
-import {Ref} from "react";
+import React, {Ref} from "react";
 
 export interface IDatePicker {
     label?: string;
@@ -6,6 +6,8 @@ export interface IDatePicker {
     maxYear?: number;
     placeholder?: string;
     value: Date | undefined;
+    inputRef: React.Ref<any>;
+    defaultValue? : Date;
     onChange: (newValue: Date) => void;
     error?: string;
 }

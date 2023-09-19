@@ -13,31 +13,29 @@ export interface IEvent {
 }
 
 export interface IEventWrite {
-    id: number;
-    hostId: number;
+    userId: number;
     title: string;
-    ticket: IEventTicket[];
+    image: string;
     eventStartAt: Date;
     eventEndAt: Date;
-    applyStartAt: Date;
-    applyEndAt: Date;
     participateNum: number;
-    content: string;
     location: string;
     category: string;
-    isActive: boolean;
-    isDeleted: boolean;
+    content: string;
+    applyStartAt: Date;
+    applyEndAt: Date;
+    tickets: IEventTicket[];
 }
 
 export interface IEventTicket {
-    id: number;
     name: string;
     price: number;
     quantity: number;
-    eventId: number;
 }
 
 export interface IEventTicketDetail extends IEventTicket{
+    id: number;
+    eventId: number;
     is_deleted: boolean;
 }
 
@@ -58,4 +56,8 @@ export interface IEventDetail {
     applyEndAt: Date;
     views: number;
     tickets: IEventTicketDetail[];
+}
+
+export interface IEventBooking {
+    userId: number;
 }

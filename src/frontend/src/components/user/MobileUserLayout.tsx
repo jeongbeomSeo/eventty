@@ -1,10 +1,9 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React from "react";
 import {Container, Stack, Tabs} from "@mantine/core";
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
-import {tab} from "@testing-library/user-event/dist/tab";
-import customStyle from "../../../styles/customStyle";
+import customStyle from "../../styles/customStyle";
 import {useRecoilValue} from "recoil";
-import {userState} from "../../../states/userState";
+import {userState} from "../../states/userState";
 
 function MobileUserLayout() {
     const navigate = useNavigate();
@@ -13,12 +12,12 @@ function MobileUserLayout() {
     const userStateValue = useRecoilValue(userState);
 
     const activeTab = pathname.split("/").pop();
-    const handleTabClick = (value:string) => {
-        navigate(`users/${value}`);
+    const handleTabClick = (path:string) => {
+        navigate(`${path}`);
     };
 
     return (
-        <Container>
+        <Container style={{paddingTop: "2vh", paddingBottom: "10vh"}}>
             <Tabs value={activeTab}
                   className={classes["tabs-primary"]}
                   style={{marginTop:"1vh"}}>
@@ -27,7 +26,7 @@ function MobileUserLayout() {
                         <Tabs.Tab value={"profile"} onClick={() => handleTabClick("profile")}>내 정보</Tabs.Tab>
                         {userStateValue.isHost ?
                             <Tabs.Tab value={"events"} onClick={() => handleTabClick("events")}>주최 내역</Tabs.Tab> :
-                            <Tabs.Tab value={"reservations"} onClick={() => handleTabClick("reservations")}>예약 내역</Tabs.Tab>
+                            <Tabs.Tab value={"bookings"} onClick={() => handleTabClick("bookings")}>예약 내역</Tabs.Tab>
                         }
                     </Tabs.List>
 
@@ -37,7 +36,7 @@ function MobileUserLayout() {
                     <Tabs.Panel value={"events"}>
                         <Outlet/>
                     </Tabs.Panel>
-                    <Tabs.Panel value={"reservations"}>
+                    <Tabs.Panel value={"bookings"}>
                         <Outlet/>
                     </Tabs.Panel>
                 </Stack>

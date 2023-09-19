@@ -29,7 +29,7 @@ function MobileNavBar() {
                             to={item.link}
                             className={classes["mobile-nav-link"]}>
                 {item.icon}
-                <Text fz={"0.7rem"}>{item.value}</Text>
+                <Text fz={"0.8rem"}>{item.value}</Text>
             </UnstyledButton> :
             <UnstyledButton key={item.value}
                             className={classes["mobile-nav-link"]}
@@ -39,7 +39,7 @@ function MobileNavBar() {
                                     setSearchDrawerValue(true)
                             }}>
                 {item.icon}
-                <Text fz={"0.7rem"}>{item.value}</Text>
+                <Text fz={"0.8rem"}>{item.value}</Text>
             </UnstyledButton>
     ));
 

@@ -9,14 +9,15 @@ import MobileCategoryBtn from "../components/event/mobile/MobileCategoryBtn";
 import customStyle from "../styles/customStyle";
 import MobileEvents from "../components/event/mobile/MobileEvents";
 import WebEvents from "../components/event/web/WebEvents";
+import {CheckXsSize} from "../util/CheckMediaQuery";
 
 function Events() {
     const {classes} = customStyle();
-    const mobile = useMediaQuery({query: `(max-width:${useMantineTheme().breakpoints.xs})`});
+    const isXsSize = CheckXsSize();
 
     return (
         <Container>
-            {mobile ? <MobileEvents/> : <WebEvents/>}
+            {isXsSize ? <MobileEvents/> : <WebEvents/>}
         </Container>
     );
 }

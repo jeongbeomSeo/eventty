@@ -1,14 +1,13 @@
-import React, {useState} from "react";
-import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
+import React, {useCallback, useMemo} from "react";
+import {useLoaderData, useLocation, useNavigate, useRouteLoaderData} from "react-router-dom";
 import {
     Avatar,
-    Badge,
     Button,
     Container,
-    Divider, Flex,
+    Divider,
     Grid,
     Group,
-    Image, Modal,
+    Image,
     Paper,
     Stack,
     Text,
@@ -20,29 +19,30 @@ import {userState} from "../../../states/userState";
 import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
-import TicketBtn from "../TicketBtn";
 import {useModal} from "../../../util/hook/useModal";
+import {useFetch} from "../../../util/hook/useFetch";
 
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
     const {pathname} = useLocation();
     const {loginAlertModal} = useModal();
+    const {deleteEventFetch} = useFetch();
     const isLoggedIn = CheckLogin();
     const {classes} = customStyle();
 
-    const DATA = useLoaderData() as IEventDetail;
+    const DATA = useRouteLoaderData("event") as IEventDetail;
 
-    const eventStartAt = new Date(DATA.eventStartAt);
-    const eventEndtAt = new Date(DATA.eventEndAt);
+    const eventStartAt = useMemo(() => new Date(DATA.eventStartAt), [DATA.eventStartAt]);
+    const eventEndtAt = useMemo(() => new Date(DATA.eventEndAt), [DATA.eventEndAt]);
 
-    const onClickTicket = () => {
+    const onClickTicket = useCallback(() => {
         if (isLoggedIn) {
-            navigate("ticket", {state: pathname});
+            navigate(`/event/${DATA.id}/booking`);
         } else {
             loginAlertModal();
         }
-    }
+    }, [isLoggedIn]);
 
     return (
         <Container>
@@ -68,9 +68,11 @@ function WebEventDetail() {
                             <Text>{DATA.location}</Text>
                         </Stack>
                         {userStateValue.isHost ?
-                            <Button className={`${classes["btn-primary"]} disable`}
+                            <Button color={"red"}
+                                    variant={"outline"}
+                                    onClick={() => deleteEventFetch(DATA.id)}
                                     style={{height: "2.5rem"}}>
-                                예약 불가
+                                행사 취소
                             </Button> :
                             <Button className={classes["btn-primary"]}
                                     style={{height: "2.5rem"}}
@@ -102,7 +104,7 @@ function WebEventDetail() {
                             </Group>
                         </Paper>
 
-                        <WebTicketInfo tickets={DATA.tickets} onClick={onClickTicket}/>
+                        <WebTicketInfo tickets={DATA.tickets}/>
                     </Stack>
                 </Grid.Col>
             </Grid>
@@ -110,4 +112,4 @@ function WebEventDetail() {
     );
 }
 
-export default WebEventDetail;
+export default React.memo(WebEventDetail);

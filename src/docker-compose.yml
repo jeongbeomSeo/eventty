@@ -4,19 +4,20 @@ services:
     image: hyk0/eventty_front:1.3
     command: npm start
     container_name: Frontend
-    build: 
+    build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/src/front
+      - /app/front/node_modules
+      - ./frontend:/app/front
     networks:
       eventty:
         aliases:
           - "front server"
   businessservice:
-    image: serin0404/event:1.3
+    image: serin0404/event:1.4
     container_name: Event_Server
     build:
       context: ./businessservice
@@ -30,7 +31,7 @@ services:
         aliases:
           - "event server"
   userservice:
-    image: hyungyunk/eventty:1.3
+    image: hyungyunk/eventty:1.4
     container_name: User_Server
     build:
       context: ./userservice
@@ -44,7 +45,7 @@ services:
         aliases:
           - "user server"
   authservice:
-    image: auth:1.4
+    image: jeongbeom4693/auth:1.4
     container_name: Auth_Server
     build:
       context: ./authservice
@@ -58,7 +59,7 @@ services:
         aliases:
           - "auth server"
   gateway:
-    image: gateway:1.4
+    image: jeongbeom4693/gateway:1.4
     container_name: Gateway
     build:
       context: ./gateway

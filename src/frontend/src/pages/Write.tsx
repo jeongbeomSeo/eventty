@@ -1,9 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
-    Alert,
-    Button, Center,
-    Container, Flex,
-    Group, Image, Notification, NumberInput,
+    Button,
+    Container, FileButton,
+    Group, Image, NumberInput,
     Paper,
     Select, SimpleGrid,
     Stack, Text,
@@ -16,25 +15,26 @@ import {Controller, FormProvider, useFieldArray, useForm} from "react-hook-form"
 import {IEventTicket, IEventWrite} from "../types/IEvent";
 import WriteHeader from "../components/display/WriteHeader";
 import {
-    IconAlertCircle,
     IconBallBaseball, IconBook, IconCode,
     IconHandRock,
     IconHorseToy, IconMovie,
     IconPalette,
-    IconPiano, IconPlus, IconPresentation, IconSquareRoundedPlusFilled,
+    IconPiano, IconPlus, IconPresentation,
     IconTent, IconX
 } from "@tabler/icons-react";
 import EventDatePicker from "../components/write/EventDatePicker";
 import TicketSubmitModal from "../components/write/TicketSubmitModal";
 import TicketEditModal from "../components/write/TicketEditModal";
-import {CheckMobile} from "../util/CheckMobile";
-import {types} from "util";
-import {useModal} from "../util/hook/useModal";
+import {CheckXsSize} from "../util/CheckMediaQuery";
 import QuillEditor from "../components/common/QuillEditor";
+import {postEvent} from "../service/event/fetchEvent";
+import {MessageAlert} from "../util/MessageAlert";
+import {useNavigate} from "react-router-dom";
 
 function Write() {
     const {classes} = customStyle();
-    const isMobile = CheckMobile();
+    const navigate = useNavigate();
+    const isMobile = CheckXsSize();
     const [ticketModalOpened, setTicketModalOpened] = useState(false);
     const [ticketEditModalOpened, setTicketEditModalOpened] = useState(false);
 
@@ -46,12 +46,11 @@ function Write() {
         getValues,
         setError,
         clearErrors,
-        setFocus,
         formState: {errors}
     } = useForm<IEventWrite>();
     const {fields, append, remove, update} = useFieldArray({
         control,
-        name: "ticket",
+        name: "tickets",
         rules: {
             required: "티켓을 설정해주세요",
         }
@@ -62,16 +61,16 @@ function Write() {
 
     const currentDate = new Date();
     const CATEGORY_LIST = [
-        {label: "콘서트", value: "concert", icon: <IconHandRock/>},
-        {label: "클래식", value: "classic", icon: <IconPiano/>},
-        {label: "전시", value: "art", icon: <IconPalette/>},
-        {label: "스포츠", value: "sports", icon: <IconBallBaseball/>},
-        {label: "캠핑", value: "camping", icon: <IconTent/>},
-        {label: "아동", value: "kids", icon: <IconHorseToy/>},
-        {label: "영화", value: "movie", icon: <IconMovie/>},
-        {label: "IT", value: "it", icon: <IconCode/>},
-        {label: "교양", value: "elective", icon: <IconBook/>},
-        {label: "TOPIC", value: "topic", icon: <IconPresentation/>},
+        {label: "콘서트", value: "콘서트"},
+        {label: "클래식", value: "클래식"},
+        {label: "전시", value: "전시"},
+        {label: "스포츠", value: "스포츠"},
+        {label: "캠핑", value: "캠핑"},
+        {label: "아동", value: "아동"},
+        {label: "영화", value: "영화"},
+        {label: "IT", value: "IT"},
+        {label: "교양", value: "교양"},
+        {label: "TOPIC", value: "TOPIC"},
     ];
     const TICKET_LIMIT = 3;
     const [ticketEdit, setTicketEdit] = useState<IEventTicket | null>(null);
@@ -81,12 +80,19 @@ function Write() {
 
     const onSubmit = (data: IEventWrite) => {
         if (leftTicket !== 0) {
-            setError("ticket", {types: {validate: "총 인원수를 확인해주세요"}},);
+            setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}},);
             return;
         }
-        console.log("error submit 확인");
 
-        // data.content = editorRef.current?.getInstance().getMarkdown()!;
+        postEvent(data)
+            .then(res => {
+                if (res.success) {
+                    MessageAlert("success", "작성 성공", null);
+                    navigate("/");
+                } else {
+                    MessageAlert("error", "작성 실패", "다시 시도해주세요");
+                }
+            })
     }
 
     const onTicketCreate = (data: IEventTicket) => {
@@ -101,7 +107,7 @@ function Write() {
         if (getValues("participateNum") > 0) {
             setTicketModalOpened(prev => !prev);
         } else {
-            setError("ticket", {types: {validate: "우선 인원수를 설정해주세요"}});
+            setError("tickets", {types: {validate: "우선 인원수를 설정해주세요"}});
         }
     }
 
@@ -135,9 +141,9 @@ function Write() {
 
     useEffect(() => {
         if (leftTicket !== 0 && ticketItems.length !== 0) {
-            setError("ticket", {types: {validate: "총 인원수를 확인해주세요"}});
+            setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}});
         } else {
-            clearErrors("ticket");
+            clearErrors("tickets");
         }
     }, [leftTicket]);
 
@@ -231,9 +237,9 @@ function Write() {
                                     </Paper>
                                 </UnstyledButton>
                             </SimpleGrid>
-                            <Text fz={"12px"} color={"#f44336"}>
-                                {errors.ticket?.root?.message}
-                                {errors.ticket?.types?.validate}
+                            <Text fz={"13px"} color={"#f44336"}>
+                                {errors.tickets?.root?.message}
+                                {errors.tickets?.types?.validate}
                             </Text>
                         </Stack>
 
@@ -312,9 +318,23 @@ function Write() {
                                 <Image width={"280px"} height={"210px"} withPlaceholder/>
                                 <div>
                                     <Text>50MB이하의 jpg, png파일 업로드 가능합니다</Text>
-                                    <Button className={classes["btn-primary"]}>이미지 선택</Button>
+                                    <Controller control={control}
+                                                name={"image"}
+                                                rules={{
+                                                    required: "이미지를 설정해주세요",
+                                                }}
+                                                render={({field}) => (
+                                                    <FileButton {...field}
+                                                                accept={"image/png, image/jpeg, image/webp"}>
+                                                        {(props) =>
+                                                            <Button {...props} className={classes["btn-primary"]}>
+                                                                이미지 선택
+                                                            </Button>}
+                                                    </FileButton>
+                                                )}/>
                                 </div>
                             </Group>
+                            <Text fz={"13px"} color={"red"}>{errors.image?.message}</Text>
                         </Stack>
 
                         <Stack>
@@ -326,7 +346,7 @@ function Write() {
                                         render={({field: {ref, ...rest}}) => (
                                             <>
                                                 <QuillEditor {...rest} inputRef={ref}/>
-                                                <Text className={"mantine-mve552"}>{errors.content?.message}</Text>
+                                                <Text fz={"13px"} color={"red"}>{errors.content?.message}</Text>
                                             </>
                                         )}/>
                         </Stack>

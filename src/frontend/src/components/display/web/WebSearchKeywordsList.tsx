@@ -19,10 +19,10 @@ function WebSearchKeywordsList() {
     }, [keywords]);
 
     return (
-        <Stack style={{width: "80vw", minHeight: "50vh"}}>
+        <Stack style={{width: "80vw", paddingBottom: "5vh"}}>
             <SearchBox onAddKeyword={handleAddKeyword}/>
             <Title order={6}>최근 검색어</Title>
-            <Stack>
+            <Stack spacing={"0.5rem"}>
                 {items}
             </Stack>
         </Stack>

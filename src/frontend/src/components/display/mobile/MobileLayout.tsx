@@ -15,8 +15,9 @@ function MobileLayout() {
             <MobileTopSection/>
             <div style={{
                 position: "fixed",
-                bottom: "8vh",
+                bottom: "10vh",
                 right: "4vw",
+                zIndex: "999",
             }}>
                 <TopScrollBtn/>
             </div>

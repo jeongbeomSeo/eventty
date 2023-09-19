@@ -34,7 +34,9 @@ function MobileSearchDrawer() {
                      onClose={handleOpened}
                      position={"top"}
                      size={"100%"}
-                     transitionProps={{duration: 400}}>
+                     transitionProps={{duration: 400}}
+                     zIndex={1001}
+        >
             <Drawer.Overlay/>
             <Drawer.Content>
                 <Drawer.Header>

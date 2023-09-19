@@ -5,20 +5,21 @@ import {userState} from "../../../../states/userState";
 import {IconBell, IconHome, IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import customStyles from "../../../../styles/customStyle";
+import {useFetch} from "../../../../util/hook/useFetch";
 
 function WebUserInfoBtn() {
     const navigate = useNavigate();
     const {pathname} = useLocation();
-    const userInfo = useRecoilValue(userState);
     const userStateValue = useRecoilValue(userState);
+    const {logoutFetch} = useFetch();
 
     const {classes} = customStyles();
 
     return (
-        <Group>
+        <>
             {userStateValue.isHost &&
                 <Button component={Link}
-                        to={"/write/event"}
+                        to={"/write"}
                         className={classes["btn-primary-outline"]}
                         style={{padding: "0 2rem", marginRight: "1rem"}}>
                     주최하기
@@ -26,31 +27,29 @@ function WebUserInfoBtn() {
             }
             <Menu width={"12rem"} shadow={"sm"} position={"top-end"}>
                 <Menu.Target>
-                    <Indicator color={"red"} offset={5} inline withBorder disabled={false}>
-                        <Avatar src={""} radius={"xl"} style={{cursor:"pointer"}}/>
-                    </Indicator>
+                    <Avatar src={""} radius={"xl"} style={{cursor: "pointer"}}/>
                 </Menu.Target>
                 <Menu.Dropdown>
                     <Menu.Item style={{pointerEvents: "none"}}>
                         <Group>
                             <Avatar src={""} radius={"xl"}/>
-                            {/*{userInfo.name}*/}
+                            {userStateValue.email}
                         </Group>
                     </Menu.Item>
                     <Divider/>
 
-                    <Menu.Item icon={<IconHome/>} component={Link} to={"/"}>홈</Menu.Item>
-                    <Menu.Item icon={<IconBell/>}>알림</Menu.Item>
                     <Menu.Item icon={<IconUser/>} component={Link} to={"/users/profile"}>마이페이지</Menu.Item>
-                    <Menu.Item icon={<IconReceipt/>}>예약 내역</Menu.Item>
-                    <Menu.Item icon={<IconSettings/>}>설정</Menu.Item>
-
+                    <Menu.Item icon={<IconReceipt/>}
+                               component={Link}
+                               to={userStateValue.isHost ? "/users/events" : "/users/bookings"}>
+                        {userStateValue.isHost ? "주최 내역" : "예약 내역"}
+                    </Menu.Item>
                     <Menu.Divider/>
 
-                    <Menu.Item onClick={() => navigate("/logout", {state: pathname})}>로그아웃</Menu.Item>
+                    <Menu.Item onClick={() => logoutFetch()}>로그아웃</Menu.Item>
                 </Menu.Dropdown>
             </Menu>
-        </Group>
+        </>
     );
 }
 

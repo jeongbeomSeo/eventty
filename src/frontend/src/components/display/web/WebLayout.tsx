@@ -5,6 +5,7 @@ import Footer from "../Footer";
 import WebHeader from "./header/WebHeader";
 
 function WebLayout() {
+
     return (
         <>
             <WebHeader/>
@@ -12,6 +13,7 @@ function WebLayout() {
                 position: "fixed",
                 bottom: "2vh",
                 right: "2vw",
+                zIndex: "999",
             }}>
                 <TopScrollBtn/>
             </div>

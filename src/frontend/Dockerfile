@@ -1,7 +1,7 @@
-FROM node:12-slim
+FROM node:18-alpine
 WORKDIR /app/front
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm install
 COPY . ./
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]

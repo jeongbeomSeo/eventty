@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Avatar, Container, Divider, Group, Image, Paper, Stack, Text, Title} from "@mantine/core";
-import {IEventDetail} from "../../../types/IEvent";
-import {useLoaderData, useLocation, useNavigate} from "react-router-dom";
+import {IEvent, IEventDetail} from "../../../types/IEvent";
+import {useLoaderData, useLocation, useNavigate, useRouteLoaderData} from "react-router-dom";
 import EventDetailNavBar from "../../display/mobile/navbar/EventDetailNavBar";
 import MobileTicketInfo from "./MobileTicketInfo";
 import {useRecoilValue} from "recoil";
@@ -27,10 +27,10 @@ function HostInfo({hostId}: {hostId: number}) {
 
 function MobileEventDetail() {
     const eventTicketDrawerValue = useRecoilValue(eventTicketDrawerState);
-    const DATA = useLoaderData() as IEventDetail;
+    const DATA = useRouteLoaderData("event") as IEventDetail;
 
-    const eventStartAt = new Date(DATA.eventStartAt);
-    const eventEndtAt = new Date(DATA.eventEndAt);
+    const eventStartAt = useMemo(() => new Date(DATA.eventStartAt), [DATA.eventStartAt]);
+    const eventEndtAt = useMemo(() => new Date(DATA.eventEndAt), [DATA.eventEndAt]);
 
     return (
         <>
@@ -55,4 +55,4 @@ function MobileEventDetail() {
     );
 }
 
-export default MobileEventDetail;
+export default React.memo(MobileEventDetail);

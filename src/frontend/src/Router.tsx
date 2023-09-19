@@ -1,11 +1,10 @@
 import React from 'react'
-import {createBrowserRouter} from 'react-router-dom';
+import {createBrowserRouter, Navigate} from 'react-router-dom';
 import Login from './pages/Login';
 import Main from './pages/Main';
 import Signup from './pages/Signup';
 import SignupMain from './pages/signup/SignupMain';
 import SignupHost from './pages/signup/SignupHost';
-import Logout from './pages/Logout';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import Error from './pages/Error';
@@ -19,10 +18,14 @@ import Profile from "./pages/user/Profile";
 import EventsInfo from "./pages/user/EventsInfo";
 import Write from "./pages/Write";
 import SignupUser from "./pages/signup/SignupUser";
-import DeleteAccount from "./pages/DeleteAccount";
 import {loader as eventLoader} from "./routes/event";
 import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
+import {loader as categoryLoader} from "./routes/category";
+import HostRoute from "./components/HostRoute";
+import Bookings from "./pages/user/Bookings";
+import EventBooking from "./pages/events/EventBooking";
+import EventsList from "./pages/events/EventsList";
 
 const Router = createBrowserRouter([
     {
@@ -40,38 +43,69 @@ const Router = createBrowserRouter([
                         element: <Main/>,
                     },
                     {
-                        path: "events",
+                        path: "events/*",
                         element: <Events/>,
-                        loader: eventListLoader,
+                        children: [
+                            {
+                                path: "",
+                                loader: eventListLoader,
+                                element: <EventsList/>,
+                            },
+                            {
+                                path: "category/:category",
+                                element: <EventsList/>,
+                                loader: categoryLoader,
+                                errorElement:<p>해당 결과가 없습니다</p>,
+                            }
+                        ]
                     },
                     {
-                        path: "events/:eventId",
-                        element: <EventDetail/>,
+                        path: "event/*",
+                        id: "event",
                         loader: eventLoader,
+                        children: [
+                            {
+                                path: ":eventId",
+                                element: <EventDetail/>,
+                            },
+                            {
+                                element: <PrivateRoute/>,
+                                children: [
+                                    {
+                                        path: ":eventId/booking",
+                                        element: <EventBooking/>,
+                                    }
+                                ]
+                            },
+                        ]
                     },
                     {
                         element: <PrivateRoute/>,
                         children: [
                             {
-                                element:<User/>,
-                                children:[
+                                path: "users/*",
+                                element: <User/>,
+                                children: [
                                     {
-                                        path: "users/profile",
+                                        path: "profile",
                                         element: <Profile/>,
                                         loader: profileLoader,
+                                        errorElement: <Navigate to={"/login"}/>,
                                     },
                                     {
-                                        path: "users/events",
-                                        element: <EventsInfo/>,
+                                        element: <HostRoute/>,
+                                        children: [
+                                            {
+                                                path: "events",
+                                                element: <EventsInfo/>,
+                                            },
+                                        ]
                                     },
                                     {
-                                        path: "users/reservations",
+                                        path: "bookings",
+                                        element: <Bookings/>,
                                     },
                                 ]
-                            },
-                            {
-                                path: "events/:eventId/ticket",
-                                element: <Test/>,
                             },
                         ]
                     },
@@ -106,24 +140,17 @@ const Router = createBrowserRouter([
             },
             {
                 element: <PrivateRoute/>,
-                children:[
+                children: [
                     {
-                        path: "/logout",
-                        element: <Logout/>,
-                    },
-                    {
-                        path: "/delete-account",
-                        element: <DeleteAccount/>,
+                        element: <HostRoute/>,
+                        children: [
+                            {
+                                path: "write",
+                                element: <Write/>,
+                            },
+                        ]
                     },
                 ]
-            },
-            {
-                path: "write/event",
-                element: <Write/>,
-            },
-            {
-                path: "/test",
-                element: <Test/>
             },
         ],
     },

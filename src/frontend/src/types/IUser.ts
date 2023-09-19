@@ -16,18 +16,25 @@ export interface ILogin {
 export interface IUser {
     userId: number;
     name: string;
-    address: string;
-    birth: Date;
+    address?: string;
+    birth?: Date;
+    image?: string;
+    imageId?: number;
+    originFileName?: string;
     phone: string;
 }
 
-export interface IMyInfo {
+export interface IUpdateUser {
+    [key:string]: string|any;
+    image?: File | null;
+    imageId?: number;
     name: string;
     phone: string;
-    address: string;
+    address?: string;
+    birth?: Date;
 }
 
 export interface IChangePW {
-    currentPassword: string;
-    newPassword: string;
+    password: string;
+    passwordConfirm?: string;
 }
