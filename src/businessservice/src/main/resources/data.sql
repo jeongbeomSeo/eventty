@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS event_basic (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT,
   title VARCHAR(100),
-  image_id BIGINT,
   event_start_at DATETIME NULL,
   event_end_at DATETIME NULL,
   participate_num BIGINT NULL,
@@ -47,6 +46,17 @@ CREATE TABLE categories (
     id BIGINT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
+
+INSERT INTO categories (id, name) VALUES (1, '콘서트');
+INSERT INTO categories (id, name) VALUES (2, '클래식');
+INSERT INTO categories (id, name) VALUES (3, '전시');
+INSERT INTO categories (id, name) VALUES (4, '스포츠');
+INSERT INTO categories (id, name) VALUES (5, '캠핑');
+INSERT INTO categories (id, name) VALUES (6, '아동');
+INSERT INTO categories (id, name) VALUES (7, '영화');
+INSERT INTO categories (id, name) VALUES (8, 'IT');
+INSERT INTO categories (id, name) VALUES (9, '교양');
+INSERT INTO categories (id, name) VALUES (10, 'TOPIC');
 
 -- -- events 테이블 더미 데이터 삽입
 -- INSERT INTO events (id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category)
