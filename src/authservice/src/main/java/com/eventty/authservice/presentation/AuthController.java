@@ -6,6 +6,7 @@ import com.eventty.authservice.applicaiton.service.Facade.UserService;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.global.Enum.SuccessCode;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
+import com.eventty.authservice.infrastructure.annotation.ApiSuccessData;
 import com.eventty.authservice.infrastructure.utils.CookieCreator;
 import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,7 @@ import java.util.Map;
 @Tag(name= "Auth", description = "Auth API")
 public class AuthController {
 
-    private final String HEADER_CSRF = "X-CSRF-TOKEN";
+    private final String HEADER_CSRF = "X-Csrf-Token";
 
     private final UserService userService;
 
@@ -59,7 +61,7 @@ public class AuthController {
         log.debug("Current Position: Controller :: 이메일 검증");
 
         // 이메일 검증
-        userService.validateEmailNotDuplicated(isUserDuplicateRequestDTO.email());
+        userService.validateEmailNotDuplicated(isUserDuplicateRequestDTO.getEmail());
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
@@ -73,6 +75,7 @@ public class AuthController {
      * ResponseEntity만 사용하여 응답의 명시성을 높이는 방향으로 진행했습니다.
      */
     @PostMapping("/login")
+    @ApiSuccessData(LoginResponseDTO.class)
     public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         log.debug("Current Position: Controller :: 로그인");
 
@@ -127,11 +130,11 @@ public class AuthController {
      * 유저에 대한 검증
      */
     @PostMapping("/api/authenticate/user")
-    public ResponseEntity<SuccessResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(AuthenticationUserRequestDTO authenticationUserRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(@RequestBody AuthenticateUserRequestDTO AuthenticateUserRequestDTO) {
         log.debug("Current Position: Controller :: 회원 검증");
 
         // 회원 검증
-        AuthenticationDetailsResponseDTO authenticationDetailsResponseDTO = userService.authenticateUser(authenticationUserRequestDTO);
+        AuthenticationDetailsResponseDTO authenticationDetailsResponseDTO = userService.authenticateUser(AuthenticateUserRequestDTO);
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())

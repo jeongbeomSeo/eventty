@@ -4,10 +4,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-public record UserLoginRequestDTO (
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class UserLoginRequestDTO {
         @NotNull @Email
-        String email,
+        String email;
 
         @NotNull
-        String password
-){ }
+        String password;
+}

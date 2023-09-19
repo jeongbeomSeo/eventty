@@ -21,9 +21,10 @@ public enum ErrorCode {
     REFERENCE_INTEGRITY_VIOLATION(400, "" , "Reference integrity violation"),
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),
     CONFLICT(409, "", "Conflict occurred"),
-    PERMISSION_DENIED(403, "", "Permission Denided"),
+    PERMISSION_DENIED(403, "", "Permission Denied"),
 
     // 400: 잘못된 요청 401: 유효한 자격 증명 없음 403: 서버에 요청이 전달되었지만, 권한 떄문에 거절
+    // 404: 리소스 없는 경우 405: 요청에 지정된 방법 사용 X, 409: 서버의 현재 상태와 요청이 충돌
     AUTH_SERVER_RESPONSE_ERROR(500, "", "Auth server response error"),
 
     // Authenticaiton

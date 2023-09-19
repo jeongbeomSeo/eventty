@@ -1,8 +1,15 @@
 package com.eventty.authservice.presentation.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-public record ChangePWRequestDTO (
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class ChangePWRequestDTO {
         @NotNull
-        String password
-) {}
+        private String password;
+}

@@ -8,5 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Authority {
-    private String authority;
+    private String role;
+    // private String permission;
 }

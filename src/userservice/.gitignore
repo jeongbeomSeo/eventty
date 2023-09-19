@@ -39,6 +39,8 @@ out/
 ### Properties ###
 application-db.yml
 application-ncp.yml
+application-dev.yml
+application-test.yml
 
 ### Docker ###
 Dockerfile

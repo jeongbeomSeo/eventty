@@ -1,13 +1,22 @@
-package com.eventty.authservice.infrastructure.config;
+package com.eventty.userservice.infrastructure;
 
-import com.eventty.authservice.infrastructure.Filter.LoggerFilter;
-import com.eventty.authservice.infrastructure.Filter.UserContextFilter;
+import com.eventty.userservice.infrastructure.filter.LoggerFilter;
+import com.eventty.userservice.infrastructure.filter.UserContextFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class FilterConifg {
+public class FilterConfig {
+
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public FilterConfig (ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Bean
     public FilterRegistrationBean<LoggerFilter> loggingFilter() {
@@ -24,7 +33,7 @@ public class FilterConifg {
     public FilterRegistrationBean<UserContextFilter> userContextFilter() {
         FilterRegistrationBean<UserContextFilter> registrationBean = new FilterRegistrationBean<>();
 
-        registrationBean.setFilter(new UserContextFilter());
+        registrationBean.setFilter(new UserContextFilter(objectMapper));
         registrationBean.addUrlPatterns("/*");
         registrationBean.setOrder(2);
 

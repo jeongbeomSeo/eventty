@@ -7,7 +7,6 @@ import com.eventty.authservice.applicaiton.dto.TokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
-import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 
 public interface AuthService {

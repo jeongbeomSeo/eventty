@@ -21,7 +21,7 @@ public enum ErrorCode {
     REFERENCE_INTEGRITY_VIOLATION(400, "" , "Reference integrity violation"),
     DATA_SIZE_VIOLATION(400, "", "Data size exceeds limit"),
     CONFLICT(409, "", "Conflict occurred"),
-    PERMISSION_DENIED(403, "", "Permission Denided"),
+    PERMISSION_DENIED(403, "", "Permission Denied"),
 
     // Auth
     // G000 => 재로그인 요구

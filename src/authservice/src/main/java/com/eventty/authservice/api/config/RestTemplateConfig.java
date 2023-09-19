@@ -1,5 +1,6 @@
 package com.eventty.authservice.api.config;
 
+import com.eventty.authservice.api.interceptor.UserContextInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,7 @@ public class RestTemplateConfig {
     public RestTemplate customRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(customRestTemplateErrorHandler);
+        restTemplate.getInterceptors().add(new UserContextInterceptor());
         return restTemplate;
     }
 }

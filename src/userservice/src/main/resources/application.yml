@@ -5,7 +5,7 @@ server:
 spring:
   # Secret
   profiles:
-    active: ncp, db
+    active: ncp, db, test
 
   # Mysql
   datasource:
@@ -39,3 +39,6 @@ logging:
         orm:
           jdbc:
             bind: trace       # Parameters show
+    root: INFO
+    com.eventty.userservice: ${level}
+
