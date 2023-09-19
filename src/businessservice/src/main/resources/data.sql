@@ -1,10 +1,10 @@
 -- 테이블 생성
 
-CREATE TABLE IF NOT EXISTS events_basic (
+CREATE TABLE IF NOT EXISTS event_basic (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT,
   title VARCHAR(100),
-  image VARCHAR(1000),
+  image_id BIGINT,
   event_start_at DATETIME NULL,
   event_end_at DATETIME NULL,
   participate_num BIGINT NULL,
@@ -23,6 +23,15 @@ CREATE TABLE IF NOT EXISTS event_details (
     delete_date DATETIME NULL,
     update_date DATETIME NULL,
     create_date DATETIME NULL
+);
+
+CREATE TABLE IF NOT EXISTS event_image (
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   event_id BIGINT,
+   original_file_name VARCHAR(100),
+   stored_file_path VARCHAR(100),
+   file_size BIGINT,
+   is_deleted BOOLEAN DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS tickets (
