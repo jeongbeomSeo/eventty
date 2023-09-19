@@ -10,7 +10,6 @@ import com.eventty.authservice.applicaiton.service.utils.token.TokenProvider;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.InvalidCsrfTokenException;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
-import com.eventty.authservice.presentation.dto.request.AuthenticationUserRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -74,7 +73,7 @@ public class AuthServiceImpl implements AuthService{
     // 비밀번호 매칭
     @Override
     public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
-        if (!passwordEncoder.match(userLoginRequestDTO.password(), authUserEntity.getPassword())) {
+        if (!passwordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
             throw new InvalidPasswordException(userLoginRequestDTO);
         }
 

@@ -28,10 +28,6 @@ import java.util.Map;
 @Slf4j
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
-    private final String HEADER_USER_ID = "X-User-Id";
-    private final String HEADER_AUTHORITIES = "X-User-Authorities";
-    private final String HEADER_CSRF = "X-CSRF-Token";
-
     // 의존성 제거
     private final ApiClient apiClient;
     private final CustomMappper customMappper;
@@ -74,11 +70,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             // Authentication 객체를 직렬화해서 보낼 수 있지만, 데이터의 크기와 복잡성 때문에 각 서비스에서 만드는 것이 효율적
             ServerHttpRequest requestWithHeader = exchange.getRequest().
                     mutate()
-                    .header(HEADER_USER_ID, authenticationDetailsResponseDTO.userId().toString())
-                    .header(HEADER_AUTHORITIES, authenticationDetailsResponseDTO.authoritiesJSON())
+                    .header(FilterUtils.USER_ID, authenticationDetailsResponseDTO.getUserId().toString())
+                    .header(FilterUtils.AUTHORITIES, authenticationDetailsResponseDTO.getAuthoritiesJSON())
                     .build();
 
-            log.debug("User: {}, Path: {}", authenticationDetailsResponseDTO.userId(), exchange.getRequest().getPath());
+            log.debug("User: {}, Path: {}", authenticationDetailsResponseDTO.getUserId(), exchange.getRequest().getPath());
 
             return chain.filter(exchange.mutate().request(requestWithHeader).build())
                     .then(Mono.fromRunnable(() -> {
@@ -86,16 +82,16 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                         ServerHttpResponse serverHttpResponse = exchange.getResponse();
 
                         // JWT와 Refresh Token의 업데이트가 필요한 경우
-                        if (authenticationDetailsResponseDTO.needsUpdate()) {
+                        if (authenticationDetailsResponseDTO.isNeedsUpdate()) {
                             log.debug("Updating JWT and Refresh Token in filter");
-                            ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(authenticationDetailsResponseDTO.accessToken());
-                            ResponseCookie responseCookie = CookieCreator.createRefreshTokenCookie(authenticationDetailsResponseDTO.refreshToken());
+                            ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(authenticationDetailsResponseDTO.getAccessToken());
+                            ResponseCookie responseCookie = CookieCreator.createRefreshTokenCookie(authenticationDetailsResponseDTO.getRefreshToken());
 
                             serverHttpResponse.addCookie(jwtCookie);
                             serverHttpResponse.addCookie(responseCookie);
                         }
                         // CSRF Token은 항상 업데이트
-                        serverHttpResponse.getHeaders().set(HEADER_CSRF, authenticationDetailsResponseDTO.csrfToken());
+                        serverHttpResponse.getHeaders().set(FilterUtils.CSRF_TOKEN, authenticationDetailsResponseDTO.getCsrfToken());
             }));
         });
     }

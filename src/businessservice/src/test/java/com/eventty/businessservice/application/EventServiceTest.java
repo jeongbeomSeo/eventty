@@ -1,12 +1,11 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.domains.event.domain.Enum.Category;
-import com.eventty.businessservice.domains.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.domains.event.application.service.EventService;
-import com.eventty.businessservice.domains.event.domain.entity.EventBasicEntity;
-import com.eventty.businessservice.domains.event.domain.exception.CategoryNotFoundException;
-import com.eventty.businessservice.domains.event.domain.repository.EventBasicRepository;
-import com.eventty.businessservice.domains.event.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.event.domain.Enum.Category;
+import com.eventty.businessservice.event.application.dto.response.EventBasicFindAllResponseDTO;
+import com.eventty.businessservice.event.application.service.EventService;
+import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
+import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
+import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

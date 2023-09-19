@@ -33,6 +33,9 @@ dependencies {
     // Object Mapper
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+    // Netty Resolver for MAC OS
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

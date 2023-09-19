@@ -7,10 +7,17 @@ import java.time.LocalDate;
 /*
  User Server로 보낼 DTO
  */
-public record UserCreateRequestDTO (
-        Long userId,
-        String name,
-        String address,
-        LocalDate birth,
-        String phone
-) { }
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class UserCreateRequestDTO {
+    private Long userId;
+    private String name;
+    private String address;
+    private LocalDate birth;
+    private String phone;
+}

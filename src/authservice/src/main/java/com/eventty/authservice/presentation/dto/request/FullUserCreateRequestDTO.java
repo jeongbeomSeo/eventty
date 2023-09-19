@@ -3,18 +3,25 @@ package com.eventty.authservice.presentation.dto.request;
 import jakarta.validation.constraints.Email;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.time.LocalDate;
 
-public record FullUserCreateRequestDTO (
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class FullUserCreateRequestDTO{
         @NotNull @Email
-        String email,
+        private String email;
         @NotNull
-        String password,
+        private String password;
         @NotNull
-        String name,
+        private String name;
         @NotNull
-        String phone,
-        LocalDate birth,
-        String address
-){ }
+        private String phone;
+        private LocalDate birth;
+        private String address;
+}
