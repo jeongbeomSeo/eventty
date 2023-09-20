@@ -22,22 +22,22 @@ export function useFetch() {
     const createEventFetch = (data: FormData) => {
         postEvent(data)
             .then(res => {
-                if (res.success){
+                if (res.success) {
                     MessageAlert("success", "작성 성공", null);
                     navigate("/");
-                }else {
+                } else {
                     MessageAlert("error", "작성 실패", null);
                 }
             })
     }
-    
+
     const deleteEventFetch = (data: number) => {
         deleteEvent(data)
             .then(res => {
-                if (res === 200){
+                if (res === 200) {
                     MessageAlert("success", "행사 취소", null);
                     navigate("/events");
-                }else {
+                } else {
                     MessageAlert("error", "행사 취소 실패", null);
                 }
             })
@@ -61,24 +61,24 @@ export function useFetch() {
             });
         }
     }
-    
-    const changeProfileFetch = (data:FormData) => {
+
+    const changeProfileFetch = (data: FormData) => {
         postProfile(data)
             .then(res => {
-                if (res === 200){
+                if (res === 200) {
                     MessageAlert("success", "내 정보가 변경되었습니다", null);
-                }else{
+                } else {
                     MessageAlert("error", "내 정보 변경 실패", null);
                 }
             })
     }
 
-    const changePasswordFetch = (data:IChangePW) => {
+    const changePasswordFetch = (data: IChangePW) => {
         postChangePassword(data)
             .then(res => {
-                if (res === 200){
+                if (res === 200) {
                     MessageAlert("success", "비밀번호가 변경되었습니다", null);
-                }else {
+                } else {
                     MessageAlert("error", "비밀번호 변경 실패", null);
                 }
             }).finally(() => modals.closeAll());

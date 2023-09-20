@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   frontend:
-    image: hyk0/eventty_front:1.3
+    image: front:1.5
     command: npm start
     container_name: Frontend
     build:
@@ -17,7 +17,7 @@ services:
         aliases:
           - "front server"
   businessservice:
-    image: serin0404/event:1.4
+    image: serin0404/event:1.5
     container_name: Event_Server
     build:
       context: ./businessservice

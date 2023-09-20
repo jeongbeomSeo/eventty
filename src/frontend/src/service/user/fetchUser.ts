@@ -2,6 +2,7 @@ import {IChangePW, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser"
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {redirect} from "react-router-dom";
 import {CheckLogin} from "../../util/CheckLogin";
+import {googleLogout} from "@react-oauth/google";
 
 export const postSignupEmailValid = async (data: string) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`, {

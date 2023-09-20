@@ -27,6 +27,7 @@ import Bookings from "./pages/user/Bookings";
 import EventBooking from "./pages/events/EventBooking";
 import EventsList from "./pages/events/EventsList";
 import EventsError from "./exception/EventsError";
+import Test from "./pages/Test";
 
 const Router = createBrowserRouter([
     {

@@ -1,9 +1,9 @@
 import {Stack, Button, TextInput, Flex, Divider, Text, Checkbox} from "@mantine/core";
 import CardForm from "../components/signup/CardForm";
 import {useForm} from "react-hook-form";
-import {Link, redirect, useLocation, useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import GoogleBtn from "../components/signup/GoogleBtn";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
+import {useSetRecoilState} from 'recoil';
 import {cardTitleState} from '../states/cardTitleState';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {userState} from '../states/userState';
@@ -11,6 +11,7 @@ import {loginState} from '../states/loginState';
 import customStyle from "../styles/customStyle";
 import {ILogin} from "../types/IUser";
 import {postLogin} from "../service/user/fetchUser";
+import GoogleLoginButton from "../components/common/GoogleLoginButton";
 
 enum ERROR_MESSAGE {
     email = "이메일을 입력해주세요",
@@ -76,9 +77,11 @@ function Login() {
                                placeholder="비밀번호"
                                className={classes["input"]}
                     />
-                    <Checkbox label={"자동 로그인"}
+
+                    {/* 자동 로그인 */}
+                    {/*<Checkbox label={"자동 로그인"}
                               style={{marginBottom: "0.5rem"}}
-                              className={`${classes["input-checkbox"]} login`}/>
+                              className={`${classes["input-checkbox"]} login`}/>*/}
 
                     {/* 에러 메세지 */}
                     <Text fz={"0.75rem"}
@@ -99,7 +102,8 @@ function Login() {
                     </Flex>
                     <Divider my={"xs"} labelPosition={"center"} label={"SNS 로그인"}
                              className={classes["signup-divider"]}/>
-                    <GoogleBtn>Google 계정 로그인</GoogleBtn>
+                    {/*<GoogleBtn>Google 계정 로그인</GoogleBtn>*/}
+                    <GoogleLoginButton/>
                 </Stack>
             </form>
         </CardForm>

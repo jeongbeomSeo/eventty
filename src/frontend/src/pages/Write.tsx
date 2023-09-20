@@ -45,7 +45,6 @@ function Write() {
         control,
         watch,
         getValues,
-        setValue,
         setError,
         clearErrors,
         formState: {errors}
@@ -88,6 +87,12 @@ function Write() {
             setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}},);
             return;
         }
+        if (imgFile === null){
+            setError("image", {types: {validate: "이미지를 업로드해주세요"}})
+            return;
+        }
+
+        delete data.image;
 
         data.eventStartAt?.setDate(data.applyStartAt?.getDate() + 1);
         data.eventEndAt?.setDate(data.eventEndAt?.getDate() + 1);
@@ -95,14 +100,8 @@ function Write() {
         data.applyEndAt?.setDate(data.applyEndAt?.getDate() + 1);
 
         const formData = new FormData();
-
-        for (const e in data) {
-            if (["eventStartAt", "eventEndAt", "applyStartAt", "applyEndAt"].includes(e)) {
-                formData.append(e, data[e]!.toJSON().replaceAll("\"", ""));
-            } else {
-                formData.append(e, data[e]);
-            }
-        }
+        formData.append("image", imgFile!);
+        formData.append("eventInfo", new Blob([JSON.stringify(data)], {type: "application/json"}));
 
         createEventFetch(formData);
     }
@@ -162,7 +161,7 @@ function Write() {
     useEffect(() => {
         if (imgFile !== null) {
             setImgPreview(URL.createObjectURL(imgFile));
-            setValue("image", imgFile);
+            clearErrors("image");
         }
     }, [imgFile]);
 
@@ -346,7 +345,7 @@ function Write() {
                                     </FileButton>
                                 </div>
                             </Group>
-                            <Text fz={"13px"} color={"red"}>{errors.image?.message}</Text>
+                            <Text fz={"13px"} color={"red"}>{errors.image?.types?.validate}</Text>
                         </Stack>
 
                         <Stack>

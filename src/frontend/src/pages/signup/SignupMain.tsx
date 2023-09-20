@@ -26,8 +26,6 @@ function SignupMain() {
 
             <Divider my={"xs"} labelPosition={"center"} label={`또는 \n SNS 가입하기`}
                      className={classes["signup-divider"]}/>
-
-            <GoogleBtn>Google 계정 가입</GoogleBtn>
         </Stack>
     )
 }

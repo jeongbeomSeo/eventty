@@ -15,7 +15,7 @@ root.render(
         <RecoilRoot>
             <NormalizeCSS/>
             <GlobalStyle/>
-                <RouterProvider router={Router}/>
+            <RouterProvider router={Router}/>
         </RecoilRoot>
     </React.StrictMode>
 );

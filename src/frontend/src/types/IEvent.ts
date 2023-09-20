@@ -17,7 +17,7 @@ export interface IEventWrite {
     [key:string]: string|any;
     userId: number;
     title: string;
-    image: File;
+    image?: File;
     eventStartAt: Date;
     eventEndAt: Date;
     participateNum: number;

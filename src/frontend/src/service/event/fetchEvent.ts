@@ -31,7 +31,7 @@ export const getKeywordEvents = async (data: string) => {
 
 // 행사 주최
 export const postEvent = async (data: FormData) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events`, {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/events`, {
         method: "POST",
         credentials: "include",
         headers: {"X-Csrf-Token": GetCsrfToken()!},
