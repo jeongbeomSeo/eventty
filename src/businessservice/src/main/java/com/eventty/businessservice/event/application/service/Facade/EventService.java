@@ -1,5 +1,7 @@
 package com.eventty.businessservice.event.application.service.Facade;
 
+import com.eventty.businessservice.event.api.ApiClient;
+import com.eventty.businessservice.event.api.dto.response.UserFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
@@ -9,8 +11,10 @@ import com.eventty.businessservice.event.application.service.subservices.EventDe
 import com.eventty.businessservice.event.application.service.subservices.ImageService;
 import com.eventty.businessservice.event.application.service.subservices.TicketService;
 import com.eventty.businessservice.event.domain.Enum.Category;
+import com.eventty.businessservice.event.presentation.response.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +32,7 @@ public class EventService {
     private final EventDetailService eventDetailService;
     private final TicketService ticketService;
     private final ImageService imageService;
+    private final ApiClient apiClient;
 
     @Transactional(readOnly = true)
     public List<EventFullFindAllResponseDTO> findAllEvents() {
@@ -51,8 +56,16 @@ public class EventService {
         EventDetailResponseDTO eventDetail = eventDetailService.findEventById(eventId);
         eventDetailService.increaseView(eventId); // 조회수 증가 (비동기)
 
+        // 유저 상세 정보 가져오기 (API 호출) (비동기 함수 아래 배치) ( !!! 호스트 아이디는 requestParam에 담아서 보내야 됩니다.)
+        Long hostId = eventBasic.getUserId();
+        ResponseEntity<ResponseDTO<UserFindByIdResponseDTO>> response = apiClient.queryUserInfoApi(hostId);
+
+        System.out.println(response);
+
         // 티켓 정보
         List<TicketResponseDTO> tickets = ticketService.findTicketsByEventId(eventId);
+
+        // 남은 티켓 수 가져오기 (API 호출)
 
         // 이벤트 이미지
         ImageResponseDTO imageInfo = imageService.findImageByEventId(eventId);

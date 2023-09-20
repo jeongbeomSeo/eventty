@@ -40,7 +40,7 @@ public class CustomMappper {
         return cookie.get(0).toString().replace(TokenEnum.REFRESH_TOKEN.getName()+ "=", "");
     }
     private String getCsrfToken(Map<String, List<String>> headers) {
-        if (headers == null)
+        if (headers.get(HEADER_CSRF) == null)
             throw new NoCsrfTokenException();
 
         for (String headerName: headers.keySet()) {

@@ -1,6 +1,6 @@
-package com.eventty.authservice.infrastructure.ContextHolder;
+package com.eventty.authservice.infrastructure.contextholder;
 
-import com.eventty.authservice.infrastructure.Context.UserContext;
+import com.eventty.authservice.infrastructure.context.UserContext;
 
 public class UserContextHolder {
 
