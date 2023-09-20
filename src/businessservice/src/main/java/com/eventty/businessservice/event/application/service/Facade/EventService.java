@@ -1,7 +1,7 @@
 package com.eventty.businessservice.event.application.service.Facade;
 
 import com.eventty.businessservice.event.api.ApiClient;
-import com.eventty.businessservice.event.api.dto.response.UserFindByIdResponseDTO;
+import com.eventty.businessservice.event.api.dto.response.HostFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +27,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Slf4j
 public class EventService {
+
     private final EventBasicService eventBasicService;
     private final EventDetailService eventDetailService;
     private final TicketService ticketService;
@@ -56,11 +56,10 @@ public class EventService {
         EventDetailResponseDTO eventDetail = eventDetailService.findEventById(eventId);
         eventDetailService.increaseView(eventId); // 조회수 증가 (비동기)
 
+        // API 호출은 호출하는 서버에 구현만 되면 바로 사용 가능
         // 유저 상세 정보 가져오기 (API 호출) (비동기 함수 아래 배치) ( !!! 호스트 아이디는 requestParam에 담아서 보내야 됩니다.)
         Long hostId = eventBasic.getUserId();
-        ResponseEntity<ResponseDTO<UserFindByIdResponseDTO>> response = apiClient.queryUserInfoApi(hostId);
-
-        System.out.println(response);
+        ResponseEntity<ResponseDTO<HostFindByIdResponseDTO>> response = apiClient.queryUserInfoApi(hostId);
 
         // 티켓 정보
         List<TicketResponseDTO> tickets = ticketService.findTicketsByEventId(eventId);

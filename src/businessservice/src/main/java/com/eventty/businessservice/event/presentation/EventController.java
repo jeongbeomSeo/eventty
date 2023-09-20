@@ -6,6 +6,7 @@ import com.eventty.businessservice.event.application.dto.request.TicketUpdateReq
 import com.eventty.businessservice.event.application.dto.response.EventBasicResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.EventFullFindAllResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.FindEventInfoResponseDTO;
 import com.eventty.businessservice.event.application.service.Facade.EventService;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.Enum.ErrorCode;
@@ -217,6 +218,27 @@ public class EventController {
             .status(DELETE_TICKET_SUCCESS.getStatus())
             .body(SuccessResponseDTO.of(deleteTicketId));
             //.body(null);
+    }
+
+
+    /*
+    API 요청
+     */
+    @GetMapping("/api/events")
+    @Operation(summary = "Apply 서버로부터의 요청 처리")
+    @ApiSuccessData()
+    @Permission(Roles = {/*UserRole.HOST,*/ UserRole.USER})
+    public ResponseEntity<SuccessResponseDTO<List<FindEventInfoResponseDTO>>> findEventInfoApi(
+            @RequestParam List<String> eventId,
+            @RequestParam List<String> ticketId
+    ) {
+
+        List<FindEventInfoResponseDTO> result = null; // eventService.findEventInfoApi(); // 네이밍이 좀 별로인데, 이게 정확히 어디에 쓰이는지 몰라서 이름을 재대로 못 붙이겠다
+
+
+        return ResponseEntity
+                .status(FIND_EVENT_INFO_API.getStatus())
+                .body(SuccessResponseDTO.of(result));
     }
 
 }

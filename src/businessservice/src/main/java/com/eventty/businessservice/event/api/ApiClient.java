@@ -2,7 +2,7 @@ package com.eventty.businessservice.event.api;
 
 import com.eventty.businessservice.event.api.dto.request.QueryAppliesCountRequestDTO;
 import com.eventty.businessservice.event.api.dto.response.QueryAppliesCountResponseDTO;
-import com.eventty.businessservice.event.api.dto.response.UserFindByIdResponseDTO;
+import com.eventty.businessservice.event.api.dto.response.HostFindByIdResponseDTO;
 import com.eventty.businessservice.event.api.utils.MakeUrlService;
 import com.eventty.businessservice.event.presentation.response.ResponseDTO;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -28,21 +29,21 @@ public class ApiClient {
 
     private final RestTemplate customRestTemplate;
 
-    public ResponseEntity<ResponseDTO<UserFindByIdResponseDTO>> queryUserInfoApi(Long hostId) {
+    public ResponseEntity<ResponseDTO<HostFindByIdResponseDTO>> queryUserInfoApi(Long hostId) {
 
         HttpEntity<Void> entity = createAuthenticateHttpPostEnttiy(null);
 
-        // !!! zhostId request Parameter로 담아주는 작업 추가
-        URI uri = makeUrlService.queryUserInfo();
+        // !!! hostId request Parameter로 담아주는 작업 추가
+        URI uri = makeUrlService.queryHostInfo(hostId);
 
         // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
         logApiCall("Event server", "User server", "Query user info");
         return customRestTemplate.exchange(
-                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<UserFindByIdResponseDTO>>() {}
+                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<HostFindByIdResponseDTO>>() {}
         );
     }
 
-    public ResponseEntity<ResponseDTO<QueryAppliesCountResponseDTO>> queryAppliesCountApi(
+    public ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> queryAppliesCountApi(
             QueryAppliesCountRequestDTO queryAppliesCountRequestDTO
     ) {
 
@@ -53,7 +54,7 @@ public class ApiClient {
         logApiCall("Event server", "User server", "Query applies Count");
 
         return customRestTemplate.exchange(
-                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<QueryAppliesCountResponseDTO>>() {}
+                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<List<QueryAppliesCountResponseDTO>>>() {}
         );
     }
 
@@ -61,6 +62,7 @@ public class ApiClient {
         log.info("API 호출 From: {} To: {} Purpose: {}", from, to, purpose);
     }
 
+    // 요청 보낼 때 자신의 id가 필요하지 않는 경우
     private <T> HttpEntity<T> createHttpPostEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -69,6 +71,7 @@ public class ApiClient {
         return new HttpEntity<>(dto, headers);
     }
 
+    // 요청 보내는 본인의 id가 필요한 요청인 경우 => UserContextInterceptor가 작업 수행
     private <T> HttpEntity<T> createAuthenticateHttpPostEnttiy(T dto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
