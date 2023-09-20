@@ -21,6 +21,7 @@ public class EventFullFindAllResponseDTO {
     private Boolean isActive;
     private Boolean isDeleted;
 
+    private Long imageId;
     private String image; // 이미지 파일
     private String originFileName; // 원본 파일명
 
@@ -38,6 +39,7 @@ public class EventFullFindAllResponseDTO {
                 .categoryName(eventBasic.getCategoryName())
                 .isActive(eventBasic.getIsActive())
                 .isDeleted(eventBasic.getIsDeleted())
+                .imageId(imageInfo.getImageId())
                 .image(imageInfo.getImageResourceFromStorage())
                 .originFileName(imageInfo.getImageOriginalFileName())
                 .build();

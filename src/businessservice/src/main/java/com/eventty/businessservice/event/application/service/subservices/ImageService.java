@@ -22,9 +22,10 @@ public class ImageService {
     public ImageResponseDTO findImageByEventId(Long eventId){
         EventImageEntity eventImageEntity = eventImageRepository.selectEventImageByEventId(eventId);
         //String imageResourceFromStorage = getFileInfo(eventImageEntity.getStoredFilePath());
+        Long imageId = eventImageEntity.getId();
         String imagePathFromStorage = eventImageEntity.getStoredFilePath();
         String imageOriginalFileName = eventImageEntity.getOriginalFileName();
-        return new ImageResponseDTO(imagePathFromStorage, imageOriginalFileName);
+        return new ImageResponseDTO(imageId, imagePathFromStorage, imageOriginalFileName);
     }
 
     public Long createEventImage(Long eventId, MultipartFile image){
