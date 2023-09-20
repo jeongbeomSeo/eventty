@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,21 @@ public class EventDetailService {
     @Async("asyncExecutor")
     public void increaseView(Long eventId){
         eventDetailRepository.updateView(eventId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> findTop10EventsIdByViews() {
+        return eventDetailRepository.selectTop10EventsIdByViews();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> findTop10EventsIdByCreatedAt() {
+        return eventDetailRepository.selectTop10EventsIdByCreateDate();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> findTop10EventsIdByApplyEndAt() {
+        return eventDetailRepository.selectTop10EventsIdByApplyEndAt();
     }
 
     public Long createEventDetail(Long eventId, EventCreateRequestDTO eventCreateRequestDTO){

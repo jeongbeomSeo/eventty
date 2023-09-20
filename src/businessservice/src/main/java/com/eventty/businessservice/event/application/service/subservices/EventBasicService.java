@@ -41,6 +41,17 @@ public class EventBasicService {
     }
 
     @Transactional(readOnly = true)
+    public List<EventBasicResponseDTO> findEventsByIdList(List<Long> eventIdList){
+        return Optional.ofNullable(eventBasicRepository.selectEventsByIdList(eventIdList))
+                .filter(events -> !events.isEmpty())
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION)
+                .stream()
+                .map(EventBasicResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional(readOnly = true)
     public List<EventBasicResponseDTO> findEventsByHostId(Long hostId){
         return Optional.ofNullable(eventBasicRepository.selectEventsByHostId(hostId))
                 .filter(events -> !events.isEmpty())

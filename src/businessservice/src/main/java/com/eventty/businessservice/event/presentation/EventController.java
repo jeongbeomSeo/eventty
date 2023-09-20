@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.eventty.businessservice.event.domain.Enum.SuccessCode.*;
 
@@ -60,7 +61,7 @@ public class EventController {
     @Operation(summary = "(ALL) 전체 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = EventFullFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
+    //@Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<EventFullFindAllResponseDTO>>> findAllEvents()
     {
 
@@ -70,6 +71,22 @@ public class EventController {
                 .status(GET_EVENT_INFO_SUCCESS.getStatus())
                 .body(SuccessResponseDTO.of(events));
     }
+
+    // 조회수, 최신순, 이벤트 마감일 가까운 순으로 이벤트 리스트 가져오기 (각 10개)
+    @GetMapping("/events/special")
+    @Operation(summary = "(ALL) 이벤트를 조회수, 최신순, 이벤트 마감일 가까운 순으로 가져옵니다.")
+    @ApiSuccessData(value = EventFullFindAllResponseDTO.class, array = true)
+    @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
+//@Permission(Roles = {UserRole.USER, UserRole.HOST})
+    public ResponseEntity<SuccessResponseDTO<Map<String, List<EventFullFindAllResponseDTO>>>> findEventsBySpecial() {
+
+        Map<String, List<EventFullFindAllResponseDTO>> events = eventService.findTop10Events();
+
+        return ResponseEntity
+                .status(GET_EVENT_INFO_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(events));
+    }
+
 
     @GetMapping( "/events/category/{category}")
     @Operation(summary = "(ALL) 이벤트를 카테고리별로 조회합니다.")

@@ -11,6 +11,7 @@ import com.eventty.businessservice.event.application.service.subservices.EventDe
 import com.eventty.businessservice.event.application.service.subservices.ImageService;
 import com.eventty.businessservice.event.application.service.subservices.TicketService;
 import com.eventty.businessservice.event.domain.Enum.Category;
+import com.eventty.businessservice.event.domain.entity.TicketEntity;
 import com.eventty.businessservice.event.presentation.response.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,12 +44,23 @@ public class EventService {
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findAllEvents();
 
         // 이벤트 이미지
-        return eventBasicList.stream()
-                .map(eventBasic -> {
-                    ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return EventFullFindAllResponseDTO.from(eventBasic, imageInfo);
-                })
-                .collect(Collectors.toList());
+        return mapEventBasicListToFullResponseDTO(eventBasicList);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, List<EventFullFindAllResponseDTO>> findTop10Events() {
+        Map<String, List<EventFullFindAllResponseDTO>> result = new HashMap<>();
+
+        List<String> criteriaList = Arrays.asList("Views", "CreatedAt", "ApplyEndAt");
+
+        for (String criteria : criteriaList) {
+            String key = "Top10" + criteria;
+            List<Long> eventIds = getEventIdsByCriteria(criteria);
+            List<EventFullFindAllResponseDTO> eventFullList = mapIdListToEventFullFindAllResponseDTO(eventIds);
+            result.put(key, eventFullList);
+        }
+
+        return result;
     }
 
     public EventFullFindByIdResponseDTO findEventById(Long eventId) {
@@ -78,12 +93,7 @@ public class EventService {
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByHostId(hostId);
 
         // 이벤트 이미지
-        return eventBasicList.stream()
-                .map(eventBasic -> {
-                    ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return EventFullFindAllResponseDTO.from(eventBasic, imageInfo);
-                })
-                .collect(Collectors.toList());
+        return mapEventBasicListToFullResponseDTO(eventBasicList);
     }
 
     @Transactional(readOnly = true)
@@ -92,12 +102,7 @@ public class EventService {
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByCategory(category);
 
         // 이벤트 이미지
-        return eventBasicList.stream()
-                .map(eventBasic -> {
-                    ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return EventFullFindAllResponseDTO.from(eventBasic, imageInfo);
-                })
-                .collect(Collectors.toList());
+        return mapEventBasicListToFullResponseDTO(eventBasicList);
     }
 
     @Transactional(readOnly = true)
@@ -106,12 +111,7 @@ public class EventService {
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsBySearch(keyword);
 
         // 이벤트 이미지
-        return eventBasicList.stream()
-                .map(eventBasic -> {
-                    ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return EventFullFindAllResponseDTO.from(eventBasic, imageInfo);
-                })
-                .collect(Collectors.toList());
+        return mapEventBasicListToFullResponseDTO(eventBasicList);
     }
 
     public Long createEvent(Long userId, EventCreateRequestDTO eventCreateRequestDTO, MultipartFile image) {
@@ -171,7 +171,42 @@ public class EventService {
 
     public Long deleteTicket(Long ticketId) {
         // 티켓 정보
-        return ticketService.deleteTicket(ticketId);
+        TicketEntity ticket = ticketService.deleteTicket(ticketId);
+
+        // 티켓 삭제된 만큼 행사 인원 수 감소
+        eventBasicService.subtractParticipateNum(ticket.getEventId(), ticket.getQuantity());
+
+        return ticketId;
     }
+
+
+    private List<Long> getEventIdsByCriteria(String criteria) {
+        return switch (criteria) {
+            case "Views" -> eventDetailService.findTop10EventsIdByViews();
+            case "CreatedAt" -> eventDetailService.findTop10EventsIdByCreatedAt();
+            case "ApplyEndAt" -> eventDetailService.findTop10EventsIdByApplyEndAt();
+            default -> throw new IllegalArgumentException("Invalid criteria: " + criteria);
+        };
+    }
+
+    private List<EventFullFindAllResponseDTO> mapIdListToEventFullFindAllResponseDTO(List<Long> eventIds) {
+        List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByIdList(eventIds);
+        return eventBasicList.stream()
+                .map(eventBasic -> {
+                    ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
+                    return EventFullFindAllResponseDTO.from(eventBasic, imageInfo);
+                })
+                .toList();
+    }
+
+    private List<EventFullFindAllResponseDTO> mapEventBasicListToFullResponseDTO(List<EventBasicResponseDTO> eventBasicList) {
+        return eventBasicList.stream()
+                .map(eventBasic -> {
+                    ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
+                    return EventFullFindAllResponseDTO.from(eventBasic, imageInfo);
+                })
+                .collect(Collectors.toList());
+    }
+
 
 }

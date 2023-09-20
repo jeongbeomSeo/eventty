@@ -20,7 +20,7 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class ApiClient {
-    private static final String CSRF_HEADER = "X-Requires-Auth";
+    private static final String AUTH_HEADER = "X-Requires-Auth";
 
     // @Bean에 이름을 지정하지 않아서 생성자 이름을 따라감
     private final MakeUrlService makeUrlService;
@@ -76,8 +76,23 @@ public class ApiClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add(CSRF_HEADER, "True");
+        headers.add(AUTH_HEADER, "True");
 
+        return new HttpEntity<>(dto, headers);
+    }
+
+    private <T> HttpEntity<T> createHttpEntity(T dto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return new HttpEntity<>(dto, headers);
+    }
+
+    private <T> HttpEntity<T> createAuthenticateHttpEntity(T dto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.add("X-Requires-Auth", "True");
         return new HttpEntity<>(dto, headers);
     }
 }

@@ -19,8 +19,8 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class TicketService {
+
     private final TicketRepository ticketRepository;
-    private final EventBasicService eventBasicService;
 
     public List<TicketResponseDTO> findTicketsByEventId(Long eventId){
         return Optional.ofNullable(ticketRepository.selectTicketByEventId(eventId))
@@ -70,18 +70,15 @@ public class TicketService {
         return ticketId;
     }
 
-    public Long deleteTicket(Long ticketId) {
+    public TicketEntity deleteTicket(Long ticketId) {
         // 삭제 전, 데이터 존재 확인
         TicketEntity ticket = ticketRepository.selectTicketById(ticketId);
         if(ticket == null) {
             throw TicketNotFoundException.EXCEPTION;
         }
 
-        // 삭제된 티켓 수 만큼 행사 인원 수 감소
-        eventBasicService.subtractParticipateNum(ticket.getEventId(), ticket.getQuantity());
-
         // 티켓 삭제
         ticketRepository.deleteTicketById(ticketId);
-        return ticketId;
+        return ticket;
     }
 }

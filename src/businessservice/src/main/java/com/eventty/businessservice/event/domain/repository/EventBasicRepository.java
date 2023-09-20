@@ -8,6 +8,7 @@ import java.util.List;
 @Mapper
 public interface EventBasicRepository {
     EventBasicEntity selectEventById(Long id);
+    List<EventBasicEntity> selectEventsByIdList(List<Long> idList);
     List<EventBasicEntity> selectAllEvents();
     Long insertEvent(EventBasicEntity request);
     List<EventBasicEntity> selectEventsByHostId(Long hostId);

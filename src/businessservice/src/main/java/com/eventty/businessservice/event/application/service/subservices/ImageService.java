@@ -16,6 +16,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class ImageService {
+
     private final EventImageRepository eventImageRepository;
     private final FileHandler fileHandler;
 
