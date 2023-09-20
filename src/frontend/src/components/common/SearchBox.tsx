@@ -3,7 +3,7 @@ import {Button, TextInput} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {IconSearch} from "@tabler/icons-react";
 import {useForm} from "react-hook-form";
-import {useNavigate} from "react-router-dom";
+import {createSearchParams, useNavigate} from "react-router-dom";
 import {modals} from "@mantine/modals";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {searchDrawerState} from "../../states/searchDrawerState";
@@ -24,7 +24,10 @@ function SearchBox({onAddKeyword}: { onAddKeyword: (keyword: string) => void }) 
             modals.closeAll();
             setSearchDrawerValue(false);
             reset();
-            navigate(`/events?search=${data.keyword}`);
+            navigate({
+                pathname: "/events/search",
+                search : `?${createSearchParams({keyword: data.keyword})}`,
+            });
         }
     }
 

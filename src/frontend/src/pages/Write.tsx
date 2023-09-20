@@ -30,10 +30,11 @@ import QuillEditor from "../components/common/QuillEditor";
 import {postEvent} from "../service/event/fetchEvent";
 import {MessageAlert} from "../util/MessageAlert";
 import {useNavigate} from "react-router-dom";
+import {useFetch} from "../util/hook/useFetch";
 
 function Write() {
     const {classes} = customStyle();
-    const navigate = useNavigate();
+    const {createEventFetch} = useFetch();
     const isMobile = CheckXsSize();
     const [ticketModalOpened, setTicketModalOpened] = useState(false);
     const [ticketEditModalOpened, setTicketEditModalOpened] = useState(false);
@@ -44,6 +45,7 @@ function Write() {
         control,
         watch,
         getValues,
+        setValue,
         setError,
         clearErrors,
         formState: {errors}
@@ -78,21 +80,31 @@ function Write() {
     const disabledTitle = fields.map((ticket) => ticket.name);
     const leftTicket = watch("participateNum") - fields.reduce((acc, cur) => acc + cur.quantity, 0);
 
+    const [imgFile, setImgFile] = useState<File | null>(null);
+    const [imgPreview, setImgPreview] = useState("");
+
     const onSubmit = (data: IEventWrite) => {
         if (leftTicket !== 0) {
             setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}},);
             return;
         }
 
-        postEvent(data)
-            .then(res => {
-                if (res.success) {
-                    MessageAlert("success", "작성 성공", null);
-                    navigate("/");
-                } else {
-                    MessageAlert("error", "작성 실패", "다시 시도해주세요");
-                }
-            })
+        data.eventStartAt?.setDate(data.applyStartAt?.getDate() + 1);
+        data.eventEndAt?.setDate(data.eventEndAt?.getDate() + 1);
+        data.applyStartAt?.setDate(data.applyStartAt?.getDate() + 1);
+        data.applyEndAt?.setDate(data.applyEndAt?.getDate() + 1);
+
+        const formData = new FormData();
+
+        for (const e in data) {
+            if (["eventStartAt", "eventEndAt", "applyStartAt", "applyEndAt"].includes(e)) {
+                formData.append(e, data[e]!.toJSON().replaceAll("\"", ""));
+            } else {
+                formData.append(e, data[e]);
+            }
+        }
+
+        createEventFetch(formData);
     }
 
     const onTicketCreate = (data: IEventTicket) => {
@@ -146,6 +158,13 @@ function Write() {
             clearErrors("tickets");
         }
     }, [leftTicket]);
+
+    useEffect(() => {
+        if (imgFile !== null) {
+            setImgPreview(URL.createObjectURL(imgFile));
+            setValue("image", imgFile);
+        }
+    }, [imgFile]);
 
     return (
         <>
@@ -315,23 +334,16 @@ function Write() {
                         <Stack>
                             <Title order={3}>커버 이미지</Title>
                             <Group align={"flex-start"}>
-                                <Image width={"280px"} height={"210px"} withPlaceholder/>
+                                <Image width={"280px"} height={"210px"} withPlaceholder
+                                       src={imgPreview}/>
                                 <div>
-                                    <Text>50MB이하의 jpg, png파일 업로드 가능합니다</Text>
-                                    <Controller control={control}
-                                                name={"image"}
-                                                rules={{
-                                                    required: "이미지를 설정해주세요",
-                                                }}
-                                                render={({field}) => (
-                                                    <FileButton {...field}
-                                                                accept={"image/png, image/jpeg, image/webp"}>
-                                                        {(props) =>
-                                                            <Button {...props} className={classes["btn-primary"]}>
-                                                                이미지 선택
-                                                            </Button>}
-                                                    </FileButton>
-                                                )}/>
+                                    <Text>jpg, png 파일만 업로드 가능합니다</Text>
+                                    <FileButton onChange={setImgFile} accept={"image/png, image/jpeg, image/webp"}>
+                                        {(props) =>
+                                            <Button {...props} className={classes["btn-primary"]}>
+                                                이미지 선택
+                                            </Button>}
+                                    </FileButton>
                                 </div>
                             </Group>
                             <Text fz={"13px"} color={"red"}>{errors.image?.message}</Text>

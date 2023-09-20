@@ -1,8 +1,10 @@
 import React from "react";
 import {Grid, Text, UnstyledButton} from "@mantine/core";
 import {IconClock, IconX} from "@tabler/icons-react";
-import {useNavigate} from "react-router-dom";
+import {createSearchParams, useNavigate} from "react-router-dom";
 import {modals} from "@mantine/modals";
+import {useSetRecoilState} from "recoil";
+import {searchDrawerState} from "../../states/searchDrawerState";
 
 interface IKeywords {
     item: string;
@@ -12,11 +14,16 @@ interface IKeywords {
 
 function SearchKeywordsItem({item, onClick, onDelete}: IKeywords) {
     const navigate = useNavigate();
+    const setSearchDrawer = useSetRecoilState(searchDrawerState);
     return (
         <UnstyledButton onClick={() => {
             onClick(item);
-            navigate(`/events?search=${item}`);
+            navigate({
+                pathname: "/events/search",
+                search: `?${createSearchParams({keyword: item})}`,
+            });
             modals.closeAll();
+            setSearchDrawer(false);
         }}
                         style={{width: "100%", height: "2.5rem", borderRadius: "0.5rem"}}
                         sx={{

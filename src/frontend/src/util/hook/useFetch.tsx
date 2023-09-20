@@ -1,16 +1,15 @@
 import {
     deleteAccount,
-    patchProfile,
     postChangePassword,
-    postLogout
+    postLogout, postProfile
 } from "../../service/user/fetchUser";
 import {MessageAlert} from "../MessageAlert";
 import {useRecoilState, useResetRecoilState, useSetRecoilState} from "recoil";
 import {loginState} from "../../states/loginState";
 import {userState} from "../../states/userState";
 import {useNavigate} from "react-router-dom";
-import {deleteEvent} from "../../service/event/fetchEvent";
-import {IChangePW, IUpdateUser, IUser} from "../../types/IUser";
+import {deleteEvent, postEvent} from "../../service/event/fetchEvent";
+import {IChangePW} from "../../types/IUser";
 import {modals} from "@mantine/modals";
 import {menuDrawerState} from "../../states/menuDrawerState";
 
@@ -19,6 +18,18 @@ export function useFetch() {
     const setMenuDrawer = useSetRecoilState(menuDrawerState);
     const resetUserState = useResetRecoilState(userState);
     const navigate = useNavigate();
+
+    const createEventFetch = (data: FormData) => {
+        postEvent(data)
+            .then(res => {
+                if (res.success){
+                    MessageAlert("success", "작성 성공", null);
+                    navigate("/");
+                }else {
+                    MessageAlert("error", "작성 실패", null);
+                }
+            })
+    }
     
     const deleteEventFetch = (data: number) => {
         deleteEvent(data)
@@ -52,7 +63,7 @@ export function useFetch() {
     }
     
     const changeProfileFetch = (data:FormData) => {
-        patchProfile(data)
+        postProfile(data)
             .then(res => {
                 if (res === 200){
                     MessageAlert("success", "내 정보가 변경되었습니다", null);
@@ -90,5 +101,5 @@ export function useFetch() {
         }
     }
 
-    return {logoutFetch, deleteAccountFetch, deleteEventFetch, changePasswordFetch, changeProfileFetch};
+    return {logoutFetch, deleteAccountFetch, deleteEventFetch, changePasswordFetch, changeProfileFetch, createEventFetch};
 }

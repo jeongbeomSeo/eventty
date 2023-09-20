@@ -1,21 +1,23 @@
 export interface IEvent {
     id: number;
-    hostId: number;
+    userId: number;
     title: string;
-    image: string;
     eventStartAt: Date;
     eventEndAt: Date;
     participateNum: number;
     location: string;
-    category: string;
+    categoryName: string;
     isActive: boolean;
     isDeleted: boolean;
+    image: string;
+    originFileName: string;
 }
 
 export interface IEventWrite {
+    [key:string]: string|any;
     userId: number;
     title: string;
-    image: string;
+    image: File;
     eventStartAt: Date;
     eventEndAt: Date;
     participateNum: number;
@@ -43,7 +45,6 @@ export interface IEventDetail {
     id: number;
     userId: number;
     title: string;
-    image: string;
     eventStartAt: Date;
     eventEndAt: Date;
     participateNum: number;
@@ -56,6 +57,8 @@ export interface IEventDetail {
     applyEndAt: Date;
     views: number;
     tickets: IEventTicketDetail[];
+    image: string;
+    originFileName: string;
 }
 
 export interface IEventBooking {

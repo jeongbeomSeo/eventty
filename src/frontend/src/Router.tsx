@@ -11,7 +11,6 @@ import Error from './pages/Error';
 import Events from "./pages/Events";
 import Layout from "./components/display/Layout";
 import RootSetStates from "./components/RootSetStates";
-import Test from "./pages/Test";
 import User from "./pages/User";
 import EventDetail from "./pages/events/EventDetail";
 import Profile from "./pages/user/Profile";
@@ -22,10 +21,12 @@ import {loader as eventLoader} from "./routes/event";
 import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
 import {loader as categoryLoader} from "./routes/category";
+import {loader as searchLoader} from "./routes/search";
 import HostRoute from "./components/HostRoute";
 import Bookings from "./pages/user/Bookings";
 import EventBooking from "./pages/events/EventBooking";
 import EventsList from "./pages/events/EventsList";
+import EventsError from "./exception/EventsError";
 
 const Router = createBrowserRouter([
     {
@@ -48,14 +49,21 @@ const Router = createBrowserRouter([
                         children: [
                             {
                                 path: "",
-                                loader: eventListLoader,
                                 element: <EventsList/>,
+                                loader: eventListLoader,
                             },
                             {
                                 path: "category/:category",
                                 element: <EventsList/>,
                                 loader: categoryLoader,
-                                errorElement:<p>해당 결과가 없습니다</p>,
+                                errorElement: <EventsError/>,
+                            },
+                            {
+                                path: "search",
+                                id: "search",
+                                element: <EventsList/>,
+                                loader: searchLoader,
+                                errorElement: <EventsError/>,
                             }
                         ]
                     },

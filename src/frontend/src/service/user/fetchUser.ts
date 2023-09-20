@@ -72,7 +72,7 @@ export const getProfile = async () => {
         });
 }
 
-export const patchProfile = async (data: FormData) => {
+export const postProfile = async (data: FormData) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`, {
         method: "POST",
         credentials: "include",
