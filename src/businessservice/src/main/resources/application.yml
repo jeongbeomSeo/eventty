@@ -32,3 +32,7 @@ springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 
+
+#### SERVER BASE URL
+server.base.url.user_server: ${user-server-url}
+server.base.url.apply-server: ${apply-server-url}

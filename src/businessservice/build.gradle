@@ -25,6 +25,7 @@ dependencies {
 	// web, validation
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 	// dev tools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -46,6 +47,11 @@ dependencies {
 	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// JACKSON
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation("jakarta.json:jakarta.json-api:2.0.1")
+
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2")

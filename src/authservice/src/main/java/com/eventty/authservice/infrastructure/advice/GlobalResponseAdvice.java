@@ -1,6 +1,5 @@
 package com.eventty.authservice.infrastructure.advice;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
@@ -37,3 +36,4 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
         return ResponseDTO.of(true);
     }
 }
+

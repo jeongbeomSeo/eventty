@@ -9,8 +9,11 @@ import com.eventty.businessservice.event.application.dto.response.EventFullFindB
 import com.eventty.businessservice.event.application.service.Facade.EventService;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.Enum.ErrorCode;
+import com.eventty.businessservice.event.domain.Enum.UserRole;
 import com.eventty.businessservice.event.domain.annotation.ApiErrorCode;
 import com.eventty.businessservice.event.domain.annotation.ApiSuccessData;
+import com.eventty.businessservice.event.domain.annotation.Permission;
+import com.eventty.businessservice.event.infrastructure.contextholder.UserContextHolder;
 import com.eventty.businessservice.event.presentation.response.SuccessResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +43,7 @@ public class EventController {
     @Operation(summary = "(ALL) 특정 이벤트의 상세 정보를 가져옵니다.")
     @ApiSuccessData(EventFullFindByIdResponseDTO.class)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<EventFullFindByIdResponseDTO>> findEventById(
             @PathVariable @Min(1) Long eventId
     ){
@@ -55,8 +59,10 @@ public class EventController {
     @Operation(summary = "(ALL) 전체 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = EventFullFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<EventFullFindAllResponseDTO>>> findAllEvents()
     {
+
         List<EventFullFindAllResponseDTO> events = eventService.findAllEvents();
 
         return ResponseEntity
@@ -68,6 +74,7 @@ public class EventController {
     @Operation(summary = "(ALL) 이벤트를 카테고리별로 조회합니다.")
     @ApiSuccessData(value = EventFullFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.CATEGORY_NOT_FOUND)
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<EventFullFindAllResponseDTO>>> findEventsByCategory(
             @PathVariable Category category
     ) {
@@ -82,6 +89,7 @@ public class EventController {
     @Operation(summary = "(ALL) 이벤트를 키워드로 검색하여, 최신순으로 가져옵니다.")
     @ApiSuccessData(value = EventFullFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<EventFullFindAllResponseDTO>>> findEventsBySearch(
             @RequestParam String keyword
     ) {
@@ -96,9 +104,11 @@ public class EventController {
     @Operation(summary = "(ALL) 특정 호스트가 등록한 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = EventFullFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    public ResponseEntity<SuccessResponseDTO<List<EventFullFindAllResponseDTO>>> findEventsByHostId(
-            @PathVariable @Min(1) Long hostId
-    ) {
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
+    public ResponseEntity<SuccessResponseDTO<List<EventFullFindAllResponseDTO>>> findEventsByHostId() {
+
+        Long hostId = UserContextHolder.getContext().userIdTypeLong();
+
         List<EventFullFindAllResponseDTO> events = eventService.findEventsByHostId(hostId);
 
         return ResponseEntity
@@ -109,13 +119,14 @@ public class EventController {
     @PostMapping("/events")
     @Operation(summary = "(HOST) 이벤트의 정보를 등록하여, 새로운 이벤트를 생성합니다.")
     @ApiSuccessData()
+    @Permission(Roles = {UserRole.HOST})
     public ResponseEntity<Void> createNewEvent(
             @RequestPart(value = "eventInfo") EventCreateRequestDTO eventCreateRequestDTO,
             @RequestPart(value = "image", required = false) MultipartFile image
     ){
         // [수정 필요]
         // 추후 userId 는 Token 정보에서 가져오도록 변경
-        Long userId = 10L;
+        Long userId = UserContextHolder.getContext().userIdTypeLong();
 
         Long newEventId = eventService.createEvent(userId, eventCreateRequestDTO, image);
         log.info("[createNewEvent] newEventId : {}", newEventId);
@@ -129,6 +140,7 @@ public class EventController {
     @PatchMapping(value = "/events/{eventId}")
     @Operation(summary = "(HOST) 호스트가 본인이 주최한 이벤트의 정보를 수정합니다. - 제목, 내용, 카테고리 변경 가능")
     @ApiSuccessData()
+    @Permission(Roles = {UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<Long>> postEvent(
             @PathVariable @Min(1) Long eventId,
             @RequestBody @Valid EventUpdateRequestDTO eventUpdateRequestDTO
@@ -148,6 +160,7 @@ public class EventController {
     @DeleteMapping("/events/{eventId}")
     @Operation(summary = "(HOST) 호스트가 본인이 주최한 이벤트를 삭제합니다.")
     @ApiSuccessData()
+    @Permission(Roles = {UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<?>> deleteEvent(
             @PathVariable @Min(1) Long eventId
     ){
@@ -170,6 +183,7 @@ public class EventController {
     @PatchMapping(value = "/events/ticket/{ticketId}")
     @Operation(summary = "(HOST) 호스트가 본인이 주최한 이벤트의 티켓 정보를 수정합니다. - 티켓 내용, 가격, 카테고리 수정 가능")
     @ApiSuccessData()
+    @Permission(Roles = {UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<Long>> updateTicket(
             @PathVariable Long ticketId,
             @RequestBody @Valid TicketUpdateRequestDTO ticketUpdateRequestDTO
@@ -189,6 +203,7 @@ public class EventController {
     @DeleteMapping("/events/ticket/{ticketId}")
     @Operation(summary = "(HOST) 호스트가 본인이 주최한 이벤트의 티켓을 삭제합니다.")
     @ApiSuccessData()
+    @Permission(Roles = {UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<?>> deleteTicket(
             @PathVariable @Min(1) Long ticketId
     ){

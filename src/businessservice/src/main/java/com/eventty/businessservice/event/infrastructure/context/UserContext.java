@@ -1,6 +1,6 @@
-package com.eventty.authservice.infrastructure.Context;
+package com.eventty.businessservice.event.infrastructure.context;
 
-import com.eventty.authservice.domain.model.Authority;
+import com.eventty.businessservice.event.domain.model.Authority;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -19,4 +19,7 @@ public class UserContext {
     private String correlationId = new String();
     private String userId = new String();
     private List<Authority> authorities = new ArrayList<>();
+
+    public Long userIdTypeLong() { return Long.parseLong(userId); }
 }
+
