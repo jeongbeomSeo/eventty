@@ -3,49 +3,64 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.eventty.applyservice.domain.ApplyReposiroty">
-    <!--  이미 신청한 user 인지 check  -->
-    <select id="checkAlreadyApplyUser"
-            parameterType="com.eventty.applyservice.application.dto.CheckAlreadyApplyUserDTO"
-            resultType="Long">
-        <!-- Already Apply User -->
-        SELECT COUNT(*)
-          FROM APPLY
-         WHERE 1=1
-           AND USER_ID = #{userId}
-           AND EVENT_ID = #{eventId}
-           AND DELETE_DATE IS NULL
-    </select>
-
     <!--  현재 신청 인원수 체크  -->
-    <select id="checkApplyNum" parameterType="Long" resultType="Long">
+    <select id="getApplyNum" parameterType="Long" resultType="Long">
         <!-- Current Apply Num -->
-        SELECT COUNT(*)
-          FROM APPLY
+        SELECT SUM(applicant_num)
+          FROM apply
          WHERE 1=1
-           AND EVENT_ID = #{eventId}
-           AND DELETE_DATE IS NULL
+           AND event_id = #{eventId}
+           AND delete_date IS NULL;
     </select>
 
     <!--  행사 신청  -->
     <insert id="insertApply" parameterType="com.eventty.applyservice.application.dto.CreateApplyDTO">
         INSERT INTO
-            APPLY(USER_ID, EVENT_ID, TICKET_ID)
-        VALUES(#{userId}, #{eventId}, #{ticketId})
+            apply(user_id, event_id, ticket_id, applicant_num, phone)
+        VALUES(#{userId}, #{eventId}, #{ticketId}, #{applicantNum}, #{phone})
     </insert>
 
     <update id="deleteApply" parameterType="Long">
-        UPDATE APPLY
+        UPDATE apply
            SET DELETE_DATE = NOW()
-         WHERE ID = #{applyId}
+         WHERE id = #{applyId}
     </update>
 
     <select id="deleteCheck" parameterType="Long" resultType="Boolean">
         SELECT
             CASE
-                WHEN DELETE_DATE IS NULL THEN TRUE
+                WHEN delete_date IS NULL THEN TRUE
                 ELSE FALSE
             END AS result
-          FROM APPLY
-         WHERE ID = #{applyId}
+          FROM apply
+         WHERE id = #{applyId}
+    </select>
+
+    <select id="findByUserId" parameterType="Long" resultType="com.eventty.applyservice.application.dto.FindByUserIdDTO">
+        SELECT
+            A.event_id AS eventId,
+            A.ticket_id AS ticketId,
+            A.applicant_num AS applicantNum,
+            A.phone,
+            A.apply_date AS applyDate,
+            A.delete_date AS deleteDate,
+            A.id AS applyId
+          FROM apply AS A
+         INNER JOIN (SELECT MAX(id) AS id
+                       FROM apply AS apply
+                      WHERE user_id = #{userId}
+                      GROUP BY event_id) AS AG
+            ON A.id = AG.id;
+    </select>
+
+    <select id="findByEventIdGroupByTicket" parameterType="Long" resultType="com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO">
+        SELECT
+            ticket_id AS ticketId,
+            SUM(applicant_num) as usingCount
+          FROM apply
+         WHERE 1=1
+           AND event_id = #{eventId}
+           AND delete_date IS NULL
+         GROUP BY ticket_id;
     </select>
 </mapper>

@@ -40,6 +40,8 @@ out/
 application-db.yml
 data.sql
 log4jdbc.log4j2.yml
+application-secret.yml
+application-logging.yml
 
 ### Docker ###
 Dockerfile
