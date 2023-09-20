@@ -3,7 +3,7 @@ package com.eventty.userservice.domain;
 import com.eventty.userservice.domain.annotation.Permission;
 import com.eventty.userservice.domain.exception.PermissionDeniedException;
 import com.eventty.userservice.domain.code.UserRole;
-import com.eventty.userservice.infrastructure.ContextHolder.UserContextHolder;
+import com.eventty.userservice.infrastructure.context.UserContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;

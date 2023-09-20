@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserImageUpdateRequestDTO {
-    private Long imageId;
+    private String imageId;
     private MultipartFile image;
+    private String isUpdate;
 }
