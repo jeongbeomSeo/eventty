@@ -77,7 +77,7 @@ public class FileHandler {
         }
 
         // 파일에 새롭게 저장될 이름 -> 각 이름은 겹치면 안되므로 나노 초까지 동원하여 지정
-        String newFileName = Long.toString(System.nanoTime()) + originalFileExtension;
+        String newFileName = System.nanoTime() + originalFileExtension;
 
         // event/20230915/XXXXXXXX.jpg
         String storedFilePath = folderName + currentDate + "/" + newFileName;
@@ -120,7 +120,8 @@ public class FileHandler {
         }
 
         // base64 인코딩
-        String result = new String(Base64.encodeBase64(outputStream.toByteArray()));
+        // String result = new String(Base64.encodeBase64(outputStream.toByteArray()));
+        String result = outputStream.toString();
 
         // stream 종료
         outputStream.close();
