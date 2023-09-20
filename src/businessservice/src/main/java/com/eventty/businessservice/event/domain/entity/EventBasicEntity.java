@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @Builder
-public class EventBasicEntity {
+public class
+EventBasicEntity {
     private Long id;
     private Long userId; // hostId
     private String title;

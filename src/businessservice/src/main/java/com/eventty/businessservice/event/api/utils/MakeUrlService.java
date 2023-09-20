@@ -11,9 +11,13 @@ import java.net.URI;
 public class MakeUrlService {
 
     private final UrlProperties urlProperties;
-    public URI queryUserInfo() {
-        String QUERY_USER_INFO_API_PATH = "/users/me";
+    public URI queryHostInfo(Long hostId) {
+        String QUERY_USER_INFO_API_PATH = "/users/me?host=" + hostId;
         return URI.create(urlProperties.getUserServer() + QUERY_USER_INFO_API_PATH);
+        /*
+            String QUERY_USER_INFO_API_PATH = "/users/me?host=%d";
+            return URI.create(String.format(urlProperties.getUserServer() + QUERY_USER_INFO_API_PATH, hostId));
+         */
     }
 
     public URI queryTicketCount() {

@@ -1,5 +1,6 @@
 package com.eventty.businessservice.event.presentation;
 
+import com.eventty.businessservice.event.api.exception.ApiException;
 import com.eventty.businessservice.event.domain.exception.BusinessException;
 import com.eventty.businessservice.event.presentation.response.ErrorResponseDTO;
 import com.eventty.businessservice.event.domain.Enum.ErrorCode;
@@ -102,6 +103,16 @@ public class GlobalExceptionHandler {
 //        final ErrorResponseDTO response = ErrorResponseDTO.of(errorCode);
 //        return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
 //    }
+
+    // 서버간의 API 통신에서 발생한 예외 처리 (분기점 X => 상태 코드만 그대로 전달)
+    @ExceptionHandler
+    protected  ResponseEntity<ErrorResponseDTO> handleApiException(ApiException e) {
+        log.error(e.getMessage());
+
+        final ErrorResponseDTO response = ErrorResponseDTO.of("");
+        return new ResponseEntity<>(response, e.getHttpStatusCode());
+    }
+
 
     // 비즈니스 요구사항에 따른 예외처리
     @ExceptionHandler
