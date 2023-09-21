@@ -3,6 +3,8 @@ import {GoogleLogin, googleLogout, GoogleOAuthProvider, useGoogleLogin} from "@r
 import {useSetRecoilState} from "recoil";
 import {loginState} from "../../states/loginState";
 import {Button} from "@mantine/core";
+import {postGoogleLogin} from "../../service/user/fetchUser";
+import {IGoogleLogin} from "../../types/IUser";
 
 function GoogleLoginButton() {
     const setLogin = useSetRecoilState(loginState);
@@ -13,9 +15,11 @@ function GoogleLoginButton() {
                 <GoogleLogin
                     onSuccess={credentialResponse => {
                         console.log(credentialResponse);
+                        const accessToken:IGoogleLogin = {OAuth_AccessToken:credentialResponse.credential!};
+                        postGoogleLogin(accessToken);
                     }}
                     onError={() => {
-                        console.log('Login Failed');
+                        console.log("Login Failed");
                     }}
                 />
             </GoogleOAuthProvider>

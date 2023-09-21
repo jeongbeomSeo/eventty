@@ -29,7 +29,7 @@ function WebProfile() {
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
     const [imgFile, setImgFile] = useState<File | null>(null);
-    const [imgPreview, setImgPreview] = useState(`data:image/jpg;base64,${DATA.image}`);
+    const [imgPreview, setImgPreview] = useState(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
 
     const {deleteAccountFetch, changeProfileFetch} = useFetch();
     const {changePWModal} = useModal();
@@ -37,12 +37,13 @@ function WebProfile() {
     const {register, handleSubmit, setValue, control, formState: {errors}}
         = useForm<IUpdateUser>({
         defaultValues: {
-            image: DATA.image ? Base64toFile(DATA.image!, DATA.originFileName!, `image/${DATA.originFileName!.split(".").pop()}`) : null,
+            image: DATA.imagePath ? Base64toFile(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`!, DATA.originFileName!, `image/${DATA.originFileName!.split(".").pop()}`) : null,
             imageId: DATA.imageId,
             phone: DATA.phone,
             birth: new Date(DATA.birth!),
             address: DATA.address,
             name: DATA.name,
+            isUpdate: false,
         }
     });
 
@@ -71,6 +72,7 @@ function WebProfile() {
         if (imgFile !== null) {
             setImgPreview(URL.createObjectURL(imgFile));
             setValue("image", imgFile);
+            setValue("isUpdate", true);
         }
     }, [imgFile]);
 

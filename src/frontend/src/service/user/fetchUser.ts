@@ -1,4 +1,4 @@
-import {IChangePW, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser";
+import {IChangePW, IGoogleLogin, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser";
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {redirect} from "react-router-dom";
 import {CheckLogin} from "../../util/CheckLogin";
@@ -35,6 +35,20 @@ export const postSignupHost = async (data: ISignup) => {
 
 export const postLogin = async (data: ILogin) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        });
+}
+
+// Google 로그인
+export const postGoogleLogin = async (data: IGoogleLogin) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json"},

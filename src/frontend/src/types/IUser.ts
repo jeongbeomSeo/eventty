@@ -13,25 +13,31 @@ export interface ILogin {
     password: string;
 }
 
+export interface IGoogleLogin {
+    OAuth_AccessToken: string;
+}
+
 export interface IUser {
     userId: number;
     name: string;
     address?: string;
     birth?: Date;
-    image?: string;
+    imagePath?: string;
     imageId?: number;
     originFileName?: string;
     phone: string;
 }
 
 export interface IUpdateUser {
-    [key:string]: string|any;
+    [key: string]: string | any;
+
     image?: File | null;
     imageId?: number;
     name: string;
     phone: string;
     address?: string;
     birth?: Date;
+    isUpdate: boolean;
 }
 
 export interface IChangePW {
