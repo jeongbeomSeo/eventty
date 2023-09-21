@@ -11,7 +11,7 @@ public interface EventBasicRepository {
     List<EventBasicEntity> selectEventsByIdList(List<Long> idList);
     List<EventBasicEntity> selectAllEvents();
     Long insertEvent(EventBasicEntity request);
-    List<EventBasicEntity> selectEventsByHostId(Long hostId);
+    List<EventBasicEntity> selectEventsByHostId(Long userId);
     Long updateEvent(EventBasicEntity request);
     Long deleteEvent(Long id);
     List<EventBasicEntity> selectEventsByCategory(Long categoryId);

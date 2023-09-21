@@ -33,7 +33,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findAllEvents() {
         // 이벤트 기본 정보
-        List<EventBasicResponseDTO> eventBasicList = eventBasicService.findAllEvents();
+        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findAllEvents();
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -58,7 +58,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findEventsByHostId(Long hostId) {
         // 이벤트 기본 정보
-        List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByHostId(hostId);
+        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsByHostId(hostId);
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -67,7 +67,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findEventsByCategory(Category category) {
         // 이벤트 기본 정보
-        List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByCategory(category);
+        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsByCategory(category);
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -76,7 +76,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findEventsBySearch(String keyword) {
         // 이벤트 기본 정보
-        List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsBySearch(keyword);
+        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsBySearch(keyword);
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -84,10 +84,10 @@ public class EventService {
 
     public FullEventFindByIdResponseDTO findEventById(Long eventId) {
         // 이벤트 기본 정보
-        EventBasicResponseDTO eventBasic = eventBasicService.findEventById(eventId);
+        EventBasicFindByIdResponseDTO eventBasic = eventBasicService.findEventById(eventId);
 
         // 이벤트 상세 정보
-        EventDetailResponseDTO eventDetail = eventDetailService.findEventById(eventId);
+        EventDetailFindByIdResponseDTO eventDetail = eventDetailService.findEventById(eventId);
         eventDetailService.increaseView(eventId); // 조회수 증가 (비동기)
 
         // 티켓 정보
@@ -152,12 +152,12 @@ public class EventService {
         return eventId;
     }
 
-    public Long updateTicket(Long hostId, Long eventId, TicketUpdateRequestDTO ticketUpdateRequestDTO) {
+    public Long updateTicket(Long hostId, Long ticketId, TicketUpdateRequestDTO ticketUpdateRequestDTO) {
         // 호스트가 주최한 이벤트인지 확인
-        eventBasicService.checkHostId(hostId, eventId);
+        checkTicketHostId(hostId, ticketId);
 
         // 티켓 정보
-        return ticketService.updateTicket(eventId, ticketUpdateRequestDTO);
+        return ticketService.updateTicket(ticketId, ticketUpdateRequestDTO);
     }
 
     public Long deleteTicket(Long hostId, Long ticketId) {
@@ -179,9 +179,9 @@ public class EventService {
 
         return ticketList.stream()
                 .map(ticket -> {
-                    EventBasicResponseDTO eventBasic = eventBasicService.findEventById(ticket.getEventId());
+                    EventBasicFindByIdResponseDTO eventBasic = eventBasicService.findEventById(ticket.getEventId());
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(ticket.getEventId());
-                    return EventInfoApiResponseDTO.of(imageInfo, eventBasic, ticket);
+                    return EventInfoApiResponseDTO.from(imageInfo, eventBasic, ticket);
                 })
                 .toList();
     }
@@ -196,7 +196,7 @@ public class EventService {
     }
 
     private List<FullEventFindAllResponseDTO> mapEventIdListToEventFullFindAllResponseDTO(List<Long> eventIds) {
-        List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByIdList(eventIds);
+        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsByIdList(eventIds);
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
@@ -205,7 +205,7 @@ public class EventService {
                 .toList();
     }
 
-    private List<FullEventFindAllResponseDTO> mapEventBasicListToFullResponseDTO(List<EventBasicResponseDTO> eventBasicList) {
+    private List<FullEventFindAllResponseDTO> mapEventBasicListToFullResponseDTO(List<EventBasicFindAllResponseDTO> eventBasicList) {
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());

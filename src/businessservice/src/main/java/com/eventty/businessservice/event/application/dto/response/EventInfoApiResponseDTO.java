@@ -17,8 +17,8 @@ public class EventInfoApiResponseDTO {
     private LocalDateTime eventEndAt;   // 행사 종료 일자 - Event_Basic Table
     private Long eventId;               // Event_Basic 고유 ID
 
-    public static EventInfoApiResponseDTO of(
-            ImageResponseDTO image, EventBasicResponseDTO eventBasic, TicketResponseDTO ticket
+    public static EventInfoApiResponseDTO from(
+            ImageResponseDTO image, EventBasicFindByIdResponseDTO eventBasic, TicketResponseDTO ticket
     ) {
         return EventInfoApiResponseDTO.builder()
                 .image(image.getImagePathFromStorage())

@@ -39,8 +39,8 @@ public class FullEventFindByIdResponseDTO {
 
 
     public static FullEventFindByIdResponseDTO of(
-            EventBasicResponseDTO eventBasic,
-            EventDetailResponseDTO eventDetail,
+            EventBasicFindByIdResponseDTO eventBasic,
+            EventDetailFindByIdResponseDTO eventDetail,
             List<TicketResponseDTO> tickets,
             ImageResponseDTO imageInfo) {
         return FullEventFindByIdResponseDTO.builder()

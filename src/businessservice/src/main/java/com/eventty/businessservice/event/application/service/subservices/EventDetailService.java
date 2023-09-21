@@ -2,8 +2,7 @@ package com.eventty.businessservice.event.application.service.subservices;
 
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
-import com.eventty.businessservice.event.application.dto.response.EventDetailResponseDTO;
-import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
+import com.eventty.businessservice.event.application.dto.response.EventDetailFindByIdResponseDTO;
 import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.event.domain.repository.EventDetailRepository;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +21,9 @@ public class EventDetailService {
 
     private final EventDetailRepository eventDetailRepository;
 
-    public EventDetailResponseDTO findEventById(Long eventId) {
+    public EventDetailFindByIdResponseDTO findEventById(Long eventId) {
         return Optional.ofNullable(eventDetailRepository.selectEventDetailById(eventId))
-                .map(EventDetailResponseDTO::fromEntity)
+                .map(EventDetailFindByIdResponseDTO::fromEntity)
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION);
     }
 

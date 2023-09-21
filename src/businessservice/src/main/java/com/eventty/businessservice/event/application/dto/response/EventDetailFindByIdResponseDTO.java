@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @ToString
-public class EventDetailResponseDTO {
+public class EventDetailFindByIdResponseDTO {
     private Long id;
     private String content;
     private LocalDateTime applyStartAt;
@@ -20,8 +20,8 @@ public class EventDetailResponseDTO {
     private LocalDateTime updateDate;
     private LocalDateTime createDate;
 
-    public static EventDetailResponseDTO fromEntity(EventDetailEntity eventDetailEntity){
-        return EventDetailResponseDTO.builder()
+    public static EventDetailFindByIdResponseDTO fromEntity(EventDetailEntity eventDetailEntity){
+        return EventDetailFindByIdResponseDTO.builder()
                 .id(eventDetailEntity.getId())
                 .content(eventDetailEntity.getContent())
                 .applyStartAt(eventDetailEntity.getApplyStartAt())

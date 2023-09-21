@@ -40,21 +40,9 @@ public class EventController {
 
     private final EventService eventService;
 
-    @GetMapping( "/events/{eventId}")
-    @Operation(summary = "(ALL) 특정 이벤트의 상세 정보를 가져옵니다.")
-    @ApiSuccessData(FullEventFindByIdResponseDTO.class)
-    @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
-    public ResponseEntity<SuccessResponseDTO<FullEventFindByIdResponseDTO>> findEventById(
-            @PathVariable @Min(1) Long eventId
-    ){
-        FullEventFindByIdResponseDTO event = eventService.findEventById(eventId);
-
-        return ResponseEntity
-                .status(GET_EVENT_INFO_SUCCESS.getStatus())
-                .body(SuccessResponseDTO.of(event));
-    }
-
+    /*
+    USER 권한 API
+     */
 
     @GetMapping( "/events")
     @Operation(summary = "(ALL) 전체 이벤트 리스트를 가져옵니다.")
@@ -119,15 +107,53 @@ public class EventController {
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     @Permission(Roles = {UserRole.USER, UserRole.HOST})
-    public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findEventsByHostId() {
+    public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findEventsByHostId(
+            @PathVariable @Min(1) Long hostId
+    ) {
 
-        Long hostId = getUserIdBySecurityContextHolder();
         List<FullEventFindAllResponseDTO> events = eventService.findEventsByHostId(hostId);
 
         return ResponseEntity
             .status(GET_EVENT_INFO_SUCCESS.getStatus())
             .body(SuccessResponseDTO.of(events));
     }
+
+    @GetMapping( "/events/{eventId}")
+    @Operation(summary = "(ALL) 특정 이벤트의 상세 정보를 가져옵니다.")
+    @ApiSuccessData(FullEventFindByIdResponseDTO.class)
+    @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
+    public ResponseEntity<SuccessResponseDTO<FullEventFindByIdResponseDTO>> findEventById(
+            @PathVariable @Min(1) Long eventId
+    ){
+        // 상세 페이지에서 Host 정보를 위해 User Server API 호출
+        FullEventFindByIdResponseDTO event = eventService.findEventById(eventId);
+
+        return ResponseEntity
+                .status(GET_EVENT_INFO_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(event));
+    }
+
+
+    /*
+    HOST 권한 API
+     */
+
+    @GetMapping( "/events/registered")
+    @Operation(summary = "(HOST) 호스트 본인이 주최한 이벤트 리스트를 가져옵니다.")
+    @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
+    @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
+    public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findMyEvents() {
+
+        Long hostId = getUserIdBySecurityContextHolder();
+        List<FullEventFindAllResponseDTO> events = eventService.findEventsByHostId(hostId);
+
+        return ResponseEntity
+                .status(GET_EVENT_INFO_SUCCESS.getStatus())
+                .body(SuccessResponseDTO.of(events));
+    }
+
 
     @PostMapping("/events")
     @Operation(summary = "(HOST) 이벤트의 정보를 등록하여, 새로운 이벤트를 생성합니다.")
@@ -143,7 +169,6 @@ public class EventController {
         return ResponseEntity
             .status(CREATE_EVENT_SUCCESS.getStatus())
             .body(SuccessResponseDTO.of(newEventId));
-            //.body(null);
     }
 
     @PatchMapping(value = "/events/{eventId}")
@@ -160,7 +185,6 @@ public class EventController {
         return ResponseEntity
             .status(UPDATE_EVENT_SUCCESS.getStatus())
             .body(SuccessResponseDTO.of(updatedEventId));
-            //.body(null);
     }
 
     @DeleteMapping("/events/{eventId}")
@@ -176,7 +200,6 @@ public class EventController {
         return ResponseEntity
             .status(DELETE_EVENT_SUCCESS.getStatus())
             .body(SuccessResponseDTO.of(deleteEventId));
-            //.body(null);
     }
 
     /*
@@ -197,7 +220,6 @@ public class EventController {
         return ResponseEntity
             .status(UPDATE_TICKET_SUCCESS.getStatus())
             .body(SuccessResponseDTO.of(updatedTicketId));
-            //.body(null);
     }
 
     @DeleteMapping("/events/ticket/{ticketId}")
@@ -213,7 +235,6 @@ public class EventController {
         return ResponseEntity
             .status(DELETE_TICKET_SUCCESS.getStatus())
             .body(SuccessResponseDTO.of(deleteTicketId));
-            //.body(null);
     }
 
     /*
@@ -222,7 +243,7 @@ public class EventController {
     @GetMapping("/api/events")
     @Operation(summary = "Apply 서버로부터의 요청 처리 - 사용자가 신청(Apply)한 티켓에 대한 정보와 이벤트 정보를 조회하기 위한 용도.")
     @ApiSuccessData()
-    @Permission(Roles = {/*UserRole.HOST,*/ UserRole.USER})
+    @Permission(Roles = {UserRole.USER})
     public ResponseEntity<SuccessResponseDTO<List<EventInfoApiResponseDTO>>> findEventInfoApi(
             @RequestParam List<Long> ticketIds
     ) {

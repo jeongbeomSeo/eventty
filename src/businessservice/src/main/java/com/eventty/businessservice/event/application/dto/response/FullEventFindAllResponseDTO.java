@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 public class FullEventFindAllResponseDTO {
     private Long id;
     private Long hostId;
-    private String hostName; // from User Server
-    private String hostPhone; // from User Server
     private String title;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
@@ -22,18 +20,15 @@ public class FullEventFindAllResponseDTO {
     private String categoryName;
     private Boolean isActive;
 
-    private Long imageId;
     private String image; // 이미지 파일
     private String originFileName; // 원본 파일명
 
     public static FullEventFindAllResponseDTO of(
-            EventBasicResponseDTO eventBasic,
+            EventBasicFindAllResponseDTO eventBasic,
             ImageResponseDTO imageInfo) {
         return FullEventFindAllResponseDTO.builder()
                 .id(eventBasic.getId())
                 .hostId(eventBasic.getHostId())
-                .hostName(eventBasic.getHostName())
-                .hostPhone(eventBasic.getHostPhone())
                 .title(eventBasic.getTitle())
                 .eventStartAt(eventBasic.getEventStartAt())
                 .eventEndAt(eventBasic.getEventEndAt())
@@ -41,7 +36,6 @@ public class FullEventFindAllResponseDTO {
                 .location(eventBasic.getLocation())
                 .categoryName(eventBasic.getCategoryName())
                 .isActive(eventBasic.getIsActive())
-                .imageId(imageInfo.getImageId())
                 .image(imageInfo.getImagePathFromStorage())
                 .originFileName(imageInfo.getImageOriginalFileName())
                 .build();

@@ -147,6 +147,11 @@ public class FileHandler {
 
         s3.putObject(bucketName, filePath, new File(path));
         System.out.format("Object %s has been created.\n", filePath);
+
+        // 권한 부여
+        AccessControlList accessControlList = s3.getObjectAcl(bucketName, filePath);
+        accessControlList.grantPermission(GroupGrantee.AllUsers, Permission.Read);
+        s3.setObjectAcl(bucketName, filePath, accessControlList);
     }
 
     private S3ObjectInputStream getNCPStorage(String filePath){

@@ -58,7 +58,7 @@ public class TicketService {
 
     public Long findEventIdByTicketId(Long ticketId){
         TicketEntity ticket = getTicketIfExists(ticketId);
-        return ticketId;
+        return ticket.getEventId();
     }
 
     public Long createTickets(Long eventId, EventCreateRequestDTO eventCreateRequest){

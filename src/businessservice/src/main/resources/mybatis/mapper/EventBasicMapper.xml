@@ -50,9 +50,8 @@
     <select id="selectEventsByHostId" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT *
         FROM event_basic
-        WHERE user_id = #{hostId}
+        WHERE user_id = #{userId}
         AND is_deleted = false
-        ORDER BY id DESC
     </select>
 
     <!-- 이벤트 수정 -->
