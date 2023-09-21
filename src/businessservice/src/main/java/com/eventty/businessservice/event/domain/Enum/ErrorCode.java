@@ -27,7 +27,10 @@ public enum ErrorCode {
     EVENT_NOT_FOUND(404, "E001", "Event is not found"),
     TICKET_NOT_FOUND(404, "E002", "Ticket is not found"),
     CONTENT_TYPE_ERROR(400, "E003", "Content type is not supported"),
-    ACCESS_DENIED(403, "E004", "Access denied since you are not the host of this event");
+
+    // Host
+    ACCESS_DENIED(403, "U001", "Access denied since you are not the host of this event"),
+    HOST_INFO_NOT_FOUND(404, "U002", "Host information is not found");
 
     private final int status;
     private final String code;

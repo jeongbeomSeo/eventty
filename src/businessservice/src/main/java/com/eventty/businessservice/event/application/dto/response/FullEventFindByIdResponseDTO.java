@@ -12,8 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class FullEventFindByIdResponseDTO {
+    // eventBasic
     private Long id;
-    private Long userId;
+    private String hostName; // from User Server
+    private String hostPhone; // from User Server
     private String title;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
@@ -21,15 +23,20 @@ public class FullEventFindByIdResponseDTO {
     private String location;
     private String categoryName;
     private Boolean isActive;
+
+    // eventDetail
     private String content;
     private LocalDateTime applyStartAt;
     private LocalDateTime applyEndAt;
     private Long views;
 
+    // tickets
     private List<TicketResponseDTO> tickets;
 
+    // imageInfo
     private String image; // 이미지 파일
     private String originFileName; // 원본 파일명
+
 
     public static FullEventFindByIdResponseDTO of(
             EventBasicResponseDTO eventBasic,
@@ -38,7 +45,8 @@ public class FullEventFindByIdResponseDTO {
             ImageResponseDTO imageInfo) {
         return FullEventFindByIdResponseDTO.builder()
                 .id(eventBasic.getId())
-                .userId(eventBasic.getUserId())
+                .hostName(eventBasic.getHostName())
+                .hostPhone(eventBasic.getHostPhone())
                 .title(eventBasic.getTitle())
                 .eventStartAt(eventBasic.getEventStartAt())
                 .eventEndAt(eventBasic.getEventEndAt())
@@ -60,7 +68,6 @@ public class FullEventFindByIdResponseDTO {
     // Swagger 을 위하여 기본 생성자로 기본값 설정
     public FullEventFindByIdResponseDTO() {
         this.id = 1L;
-        this.userId = 1L;
         this.title = "String";
         this.image = "String";
         this.eventStartAt = LocalDateTime.now();

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @ToString
-public class EventInfoResponseDTO {
+public class EventInfoApiResponseDTO {
     private String image;               // Image(Image Path)
     private String title;               // 제목 - Event_Basic Table
     private String ticketName;          // 티켓 명(VVIP, VIP...) - Tickets Table
@@ -17,10 +17,10 @@ public class EventInfoResponseDTO {
     private LocalDateTime eventEndAt;   // 행사 종료 일자 - Event_Basic Table
     private Long eventId;               // Event_Basic 고유 ID
 
-    public static EventInfoResponseDTO of(
+    public static EventInfoApiResponseDTO of(
             ImageResponseDTO image, EventBasicResponseDTO eventBasic, TicketResponseDTO ticket
     ) {
-        return EventInfoResponseDTO.builder()
+        return EventInfoApiResponseDTO.builder()
                 .image(image.getImagePathFromStorage())
                 .title(eventBasic.getTitle())
                 .ticketName(ticket.getName())

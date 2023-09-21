@@ -1,20 +1,25 @@
 package com.eventty.businessservice.event.application.service.subservices;
 
+import com.eventty.businessservice.event.api.ApiClient;
+import com.eventty.businessservice.event.api.dto.response.HostFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.EventBasicResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.HostInfoNotFoundException;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.event.domain.exception.AccessDeniedException;
 import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
+import com.eventty.businessservice.event.presentation.response.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,19 +29,15 @@ import java.util.stream.Collectors;
 public class EventBasicService {
 
     private final EventBasicRepository eventBasicRepository;
+    private final ApiClient apiClient;
 
     public List<EventBasicResponseDTO> findAllEvents(){
+        // 메인 화면에서는 호스트 정보 노출 안함
         return Optional.ofNullable(eventBasicRepository.selectAllEvents())
                 .map(events -> events.stream()
                         .map(EventBasicResponseDTO::fromEntity)
                         .collect(Collectors.toList()))
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
-    }
-
-    public EventBasicResponseDTO findEventById(Long eventId){
-        return Optional.ofNullable(eventBasicRepository.selectEventById(eventId))
-                .map(EventBasicResponseDTO::fromEntity)
-                .orElseThrow(() -> EventNotFoundException.EXCEPTION);
     }
 
     public List<EventBasicResponseDTO> findEventsByIdList(List<Long> eventIdList){
@@ -74,6 +75,16 @@ public class EventBasicService {
                 .map(EventBasicResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    public EventBasicResponseDTO findEventById(Long eventId) {
+        EventBasicEntity eventBasic = getEventIfExists(eventId);
+
+        // User Server API 호출하여 Host 정보 가져오기
+        HostFindByIdResponseDTO hostInfo = getUserInfoForEventHost(eventBasic.getUserId());
+
+        return EventBasicResponseDTO.from(eventBasic, hostInfo);
+    }
+
 
     public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO) {
         // 참가 인원수 계산
@@ -140,5 +151,17 @@ public class EventBasicService {
         return tickets.stream()
                 .mapToLong(TicketCreateRequestDTO::getQuantity)
                 .sum();
+    }
+
+    // User Info API 호출하여 Host 정보 가져오기
+    private HostFindByIdResponseDTO getUserInfoForEventHost(Long hostId) {
+        ResponseEntity<ResponseDTO<HostFindByIdResponseDTO>> hostInfoResponse = apiClient.queryUserInfoApi(hostId);
+        ResponseDTO<HostFindByIdResponseDTO> responseBody = hostInfoResponse.getBody();
+
+        if (responseBody == null || !responseBody.isSuccess()) {
+            throw HostInfoNotFoundException.EXCEPTION;
+        }
+
+        return responseBody.getSuccessResponseDTO().getData();
     }
 }

@@ -33,7 +33,7 @@ public class ApiClient {
 
         HttpEntity<Void> entity = createAuthenticateHttpPostEnttiy(null);
 
-        // !!! hostId request Parameter로 담아주는 작업 추가
+        // hostId request Parameter로 담아주는 작업 추가
         URI uri = makeUrlService.queryHostInfo(hostId);
 
         // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
@@ -51,7 +51,7 @@ public class ApiClient {
 
         URI uri = makeUrlService.queryTicketCount();
 
-        logApiCall("Event server", "User server", "Query applies Count");
+        logApiCall("Event server", "Apply server", "Query applies Count");
 
         return customRestTemplate.exchange(
                 uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<List<QueryAppliesCountResponseDTO>>>() {}

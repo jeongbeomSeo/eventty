@@ -1,5 +1,8 @@
 package com.eventty.businessservice.event.application.service.subservices;
 
+import com.eventty.businessservice.event.api.ApiClient;
+import com.eventty.businessservice.event.api.dto.request.QueryAppliesCountRequestDTO;
+import com.eventty.businessservice.event.api.dto.response.QueryAppliesCountResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.TicketResponseDTO;
@@ -8,13 +11,16 @@ import com.eventty.businessservice.event.domain.entity.TicketEntity;
 import com.eventty.businessservice.event.domain.exception.EventImageNotFoundException;
 import com.eventty.businessservice.event.domain.exception.TicketNotFoundException;
 import com.eventty.businessservice.event.domain.repository.TicketRepository;
+import com.eventty.businessservice.event.presentation.response.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -23,13 +29,24 @@ import java.util.Optional;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final ApiClient apiClient;
 
     public List<TicketResponseDTO> findTicketsByEventId(Long eventId){
-        return Optional.ofNullable(ticketRepository.selectTicketByEventId(eventId))
-                .map(tickets -> tickets.stream()
-                        .map(TicketResponseDTO::fromEntity)
-                        .toList())
-                .orElseThrow(()-> TicketNotFoundException.EXCEPTION);
+
+        // 해당 이벤트를 신청한 내역 리스트 가져오기 (Apply Server API 호출)
+        ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> appliesInfoResponse = apiClient.queryAppliesCountApi(
+                QueryAppliesCountRequestDTO.builder()
+                        .eventId(eventId)
+                        .build()
+        );
+        List<QueryAppliesCountResponseDTO> appliesInfo = Objects.requireNonNull(appliesInfoResponse.getBody()).getSuccessResponseDTO().getData();
+
+        // 티켓 정보 가져오기
+        List<TicketEntity> ticketList = getTicketListIfExists(eventId);
+        return ticketList.stream()
+                // 각 티켓 정보에 Apply Server 로부터 받아온 신청된 티켓 갯수 정보를 더하여 반환
+                .map(ticket -> TicketResponseDTO.from(ticket, getAppliesInfoByTicketId(appliesInfo, ticket.getId())))
+                .toList();
     }
 
     public List<TicketResponseDTO> findTicketsByTicketIdList(List<Long> ticketIds){
@@ -103,5 +120,12 @@ public class TicketService {
             ticketOptional.ifPresent(ticketList::add); // 데이터가 존재하면 리스트에 추가
         }
         return ticketList;
+    }
+
+    private QueryAppliesCountResponseDTO getAppliesInfoByTicketId(List<QueryAppliesCountResponseDTO> appliesInfo, Long ticketId){
+        return appliesInfo.stream()
+                .filter(appliesInfoDTO -> appliesInfoDTO.getTicketId().equals(ticketId))
+                .findFirst()
+                .orElseThrow(() -> TicketNotFoundException.EXCEPTION);
     }
 }

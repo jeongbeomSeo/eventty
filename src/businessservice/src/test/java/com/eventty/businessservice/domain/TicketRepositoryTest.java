@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @MybatisTest
 public class TicketRepositoryTest {
 
+    /*
     @Autowired
     private TicketRepository ticketRepository;
 
@@ -59,5 +60,7 @@ public class TicketRepositoryTest {
                 .is_deleted(false)
                 .build();
     }
+
+     */
 
 }

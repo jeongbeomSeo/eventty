@@ -5,7 +5,7 @@ import com.eventty.businessservice.event.application.dto.request.EventUpdateRequ
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.FullEventFindAllResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.FullEventFindByIdResponseDTO;
-import com.eventty.businessservice.event.application.dto.response.EventInfoResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.EventInfoApiResponseDTO;
 import com.eventty.businessservice.event.application.service.Facade.EventService;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.Enum.ErrorCode;
@@ -223,10 +223,10 @@ public class EventController {
     @Operation(summary = "Apply 서버로부터의 요청 처리 - 사용자가 신청(Apply)한 티켓에 대한 정보와 이벤트 정보를 조회하기 위한 용도.")
     @ApiSuccessData()
     @Permission(Roles = {/*UserRole.HOST,*/ UserRole.USER})
-    public ResponseEntity<SuccessResponseDTO<List<EventInfoResponseDTO>>> findEventInfoApi(
+    public ResponseEntity<SuccessResponseDTO<List<EventInfoApiResponseDTO>>> findEventInfoApi(
             @RequestParam List<Long> ticketIds
     ) {
-        List<EventInfoResponseDTO> result = eventService.findByTicketIds(ticketIds);
+        List<EventInfoApiResponseDTO> result = eventService.findByTicketIds(ticketIds);
 
         return ResponseEntity
                 .status(FIND_EVENT_INFO_API.getStatus())

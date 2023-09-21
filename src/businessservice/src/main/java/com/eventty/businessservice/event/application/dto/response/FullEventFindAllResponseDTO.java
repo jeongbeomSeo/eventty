@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @ToString
 public class FullEventFindAllResponseDTO {
     private Long id;
-    private Long userId;
+    private Long hostId;
+    private String hostName; // from User Server
+    private String hostPhone; // from User Server
     private String title;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
@@ -29,7 +31,9 @@ public class FullEventFindAllResponseDTO {
             ImageResponseDTO imageInfo) {
         return FullEventFindAllResponseDTO.builder()
                 .id(eventBasic.getId())
-                .userId(eventBasic.getUserId())
+                .hostId(eventBasic.getHostId())
+                .hostName(eventBasic.getHostName())
+                .hostPhone(eventBasic.getHostPhone())
                 .title(eventBasic.getTitle())
                 .eventStartAt(eventBasic.getEventStartAt())
                 .eventEndAt(eventBasic.getEventEndAt())
@@ -46,7 +50,7 @@ public class FullEventFindAllResponseDTO {
     // Swagger 을 위하여 기본 생성자로 기본값 설정
     public FullEventFindAllResponseDTO() {
         this.id = 1L;
-        this.userId = 1L;
+        this.hostId = 1L;
         this.title = "String";
         this.eventStartAt = LocalDateTime.now();
         this.eventEndAt = LocalDateTime.now();

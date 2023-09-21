@@ -1,7 +1,5 @@
 package com.eventty.businessservice.event.application.service.Facade;
 
-import com.eventty.businessservice.event.api.ApiClient;
-import com.eventty.businessservice.event.api.dto.response.HostFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
@@ -12,18 +10,13 @@ import com.eventty.businessservice.event.application.service.subservices.ImageSe
 import com.eventty.businessservice.event.application.service.subservices.TicketService;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
-import com.eventty.businessservice.event.presentation.response.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,14 +29,13 @@ public class EventService {
     private final EventDetailService eventDetailService;
     private final TicketService ticketService;
     private final ImageService imageService;
-    private final ApiClient apiClient;
 
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findAllEvents() {
         // 이벤트 기본 정보
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findAllEvents();
 
-        // 이벤트 이미지
+        // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
     }
 
@@ -63,36 +55,12 @@ public class EventService {
         return result;
     }
 
-    public FullEventFindByIdResponseDTO findEventById(Long eventId) {
-        // 이벤트 기본 정보
-        EventBasicResponseDTO eventBasic = eventBasicService.findEventById(eventId);
-
-        // 이벤트 상세 정보
-        EventDetailResponseDTO eventDetail = eventDetailService.findEventById(eventId);
-        eventDetailService.increaseView(eventId); // 조회수 증가 (비동기)
-
-        // API 호출은 호출하는 서버에 구현만 되면 바로 사용 가능
-        // 유저 상세 정보 가져오기 (API 호출) (비동기 함수 아래 배치) ( !!! 호스트 아이디는 requestParam에 담아서 보내야 됩니다.)
-        Long hostId = eventBasic.getUserId();
-        ResponseEntity<ResponseDTO<HostFindByIdResponseDTO>> response = apiClient.queryUserInfoApi(hostId);
-
-        // 티켓 정보
-        List<TicketResponseDTO> tickets = ticketService.findTicketsByEventId(eventId);
-
-        // 남은 티켓 수 가져오기 (API 호출)
-
-        // 이벤트 이미지
-        ImageResponseDTO imageInfo = imageService.findImageByEventId(eventId);
-
-        return FullEventFindByIdResponseDTO.of(eventBasic, eventDetail, tickets, imageInfo);
-    }
-
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findEventsByHostId(Long hostId) {
         // 이벤트 기본 정보
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByHostId(hostId);
 
-        // 이벤트 이미지
+        // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
     }
 
@@ -101,7 +69,7 @@ public class EventService {
         // 이벤트 기본 정보
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsByCategory(category);
 
-        // 이벤트 이미지
+        // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
     }
 
@@ -110,8 +78,25 @@ public class EventService {
         // 이벤트 기본 정보
         List<EventBasicResponseDTO> eventBasicList = eventBasicService.findEventsBySearch(keyword);
 
-        // 이벤트 이미지
+        // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
+    }
+
+    public FullEventFindByIdResponseDTO findEventById(Long eventId) {
+        // 이벤트 기본 정보
+        EventBasicResponseDTO eventBasic = eventBasicService.findEventById(eventId);
+
+        // 이벤트 상세 정보
+        EventDetailResponseDTO eventDetail = eventDetailService.findEventById(eventId);
+        eventDetailService.increaseView(eventId); // 조회수 증가 (비동기)
+
+        // 티켓 정보
+        List<TicketResponseDTO> tickets = ticketService.findTicketsByEventId(eventId);
+
+        // 이벤트 이미지
+        ImageResponseDTO imageInfo = imageService.findImageByEventId(eventId);
+
+        return FullEventFindByIdResponseDTO.of(eventBasic, eventDetail, tickets, imageInfo);
     }
 
     public Long createEvent(Long hostId, EventCreateRequestDTO eventCreateRequestDTO, MultipartFile image) {
@@ -182,13 +167,13 @@ public class EventService {
         // 티켓 정보
         TicketEntity ticket = ticketService.deleteTicket(ticketId);
 
-        // 티켓 삭제된 만큼 행사 인원 수 감소
+        // 티켓 삭제된 만큼 이벤트 인원 수 감소
         eventBasicService.subtractParticipateNum(ticket.getEventId(), ticket.getQuantity());
 
         return ticketId;
     }
 
-    public List<EventInfoResponseDTO> findByTicketIds(List<Long> ticketIds) {
+    public List<EventInfoApiResponseDTO> findByTicketIds(List<Long> ticketIds) {
 
         List<TicketResponseDTO> ticketList = ticketService.findTicketsByTicketIdList(ticketIds);
 
@@ -196,7 +181,7 @@ public class EventService {
                 .map(ticket -> {
                     EventBasicResponseDTO eventBasic = eventBasicService.findEventById(ticket.getEventId());
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(ticket.getEventId());
-                    return EventInfoResponseDTO.of(imageInfo, eventBasic, ticket);
+                    return EventInfoApiResponseDTO.of(imageInfo, eventBasic, ticket);
                 })
                 .toList();
     }
