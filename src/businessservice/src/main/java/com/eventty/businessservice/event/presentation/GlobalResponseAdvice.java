@@ -14,10 +14,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RestControllerAdvice(basePackages = "com.eventty")
 public class GlobalResponseAdvice implements ResponseBodyAdvice {
 
-    // 모든 Response에 적용
+    // ResponseDTO로 오는 경우 외에 전부 실행
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {
-        return true;
+        return !ResponseDTO.class.isAssignableFrom(returnType.getParameterType());
     }
 
     @Override
@@ -31,6 +31,10 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
         if (body instanceof ErrorResponseDTO) {
             ErrorResponseDTO errorResponseDTO = (ErrorResponseDTO) body;
             return ResponseDTO.of(errorResponseDTO);
+        }
+        if (body instanceof Boolean) {
+            Boolean isSuccess = (Boolean) body;
+            return ResponseDTO.of(isSuccess);
         }
 
         return ResponseDTO.of(true);

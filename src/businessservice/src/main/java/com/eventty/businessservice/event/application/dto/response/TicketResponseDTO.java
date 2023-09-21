@@ -1,5 +1,6 @@
 package com.eventty.businessservice.event.application.dto.response;
 
+import com.eventty.businessservice.event.api.dto.response.QueryAppliesCountResponseDTO;
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
 import lombok.*;
 
@@ -12,9 +13,10 @@ public class TicketResponseDTO {
     private Long id;
     private String name;
     private Long price;
-    private Long quantity; // 티켓 수량
+    private Long quantity; // 티켓 고정 수량
     private Long eventId;
-    private Boolean is_deleted;
+
+    private Long appliedTicketCount; // 해당 티켓을 신청한 수량 (from Apply Server)
 
     public static TicketResponseDTO fromEntity(TicketEntity ticketEntity){
         return TicketResponseDTO.builder()
@@ -23,7 +25,17 @@ public class TicketResponseDTO {
                 .price(ticketEntity.getPrice())
                 .quantity(ticketEntity.getQuantity())
                 .eventId(ticketEntity.getEventId())
-                .is_deleted(ticketEntity.getIs_deleted())
+                .build();
+    }
+
+    public static TicketResponseDTO from(TicketEntity ticketEntity, QueryAppliesCountResponseDTO appliesInfo){
+        return TicketResponseDTO.builder()
+                .id(ticketEntity.getId())
+                .name(ticketEntity.getName())
+                .price(ticketEntity.getPrice())
+                .quantity(ticketEntity.getQuantity())
+                .eventId(ticketEntity.getEventId())
+                .appliedTicketCount(appliesInfo.getAppliedTicketCount())
                 .build();
     }
 }

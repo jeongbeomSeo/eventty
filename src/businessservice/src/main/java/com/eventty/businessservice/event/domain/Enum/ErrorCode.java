@@ -24,10 +24,13 @@ public enum ErrorCode {
     PERMISSION_DENIED(403, "", "Permission Denied"),
 
     // Event & Ticket
-    EVENT_NOT_FOUND     (404, "E001", "Event is not found"),
-    TICKET_NOT_FOUND    (404, "E002", "Ticket is not found"),
-    CATEGORY_NOT_FOUND  (404, "E003", "Category is not found"),
-    CONTENT_TYPE_ERROR   (400, "E004", "Content type is not supported");
+    EVENT_NOT_FOUND(404, "E001", "Event is not found"),
+    TICKET_NOT_FOUND(404, "E002", "Ticket is not found"),
+    CONTENT_TYPE_ERROR(400, "E003", "Content type is not supported"),
+
+    // Host
+    ACCESS_DENIED(403, "U001", "Access denied since you are not the host of this event"),
+    HOST_INFO_NOT_FOUND(404, "U002", "Host information is not found");
 
     private final int status;
     private final String code;

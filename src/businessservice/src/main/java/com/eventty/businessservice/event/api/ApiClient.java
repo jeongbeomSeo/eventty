@@ -20,7 +20,7 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class ApiClient {
-    private static final String CSRF_HEADER = "X-Requires-Auth";
+    private static final String AUTH_HEADER = "X-Requires-Auth";
 
     // @Bean에 이름을 지정하지 않아서 생성자 이름을 따라감
     private final MakeUrlService makeUrlService;
@@ -33,7 +33,7 @@ public class ApiClient {
 
         HttpEntity<Void> entity = createAuthenticateHttpPostEnttiy(null);
 
-        // !!! hostId request Parameter로 담아주는 작업 추가
+        // hostId request Parameter로 담아주는 작업 추가
         URI uri = makeUrlService.queryHostInfo(hostId);
 
         // API 호출은 Loggin Level을 Info로 지정해서 로그 관리
@@ -51,7 +51,7 @@ public class ApiClient {
 
         URI uri = makeUrlService.queryTicketCount();
 
-        logApiCall("Event server", "User server", "Query applies Count");
+        logApiCall("Event server", "Apply server", "Query applies Count");
 
         return customRestTemplate.exchange(
                 uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<List<QueryAppliesCountResponseDTO>>>() {}
@@ -76,8 +76,23 @@ public class ApiClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add(CSRF_HEADER, "True");
+        headers.add(AUTH_HEADER, "True");
 
+        return new HttpEntity<>(dto, headers);
+    }
+
+    private <T> HttpEntity<T> createHttpEntity(T dto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return new HttpEntity<>(dto, headers);
+    }
+
+    private <T> HttpEntity<T> createAuthenticateHttpEntity(T dto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.add("X-Requires-Auth", "True");
         return new HttpEntity<>(dto, headers);
     }
 }

@@ -15,11 +15,38 @@
         <result property="createDate" column="create_date"/>
     </resultMap>
 
-    <!-- 이벤트 상세정보 조회 (테스트시 사용)-->
+    <!-- 이벤트 상세정보 조회 -->
     <select id="selectEventDetailById" resultMap="EventDetailResultMap" parameterType="java.lang.Long">
         SELECT *
         FROM event_details
         WHERE ID = #{id} AND DELETE_DATE IS NULL
+    </select>
+
+    <!-- 조회수 상위 10개 이벤트 조회 후 id 리스트 반환 -->
+    <select id="selectTop10EventsIdByViews" resultType="java.lang.Long">
+        SELECT id
+        FROM event_details
+        WHERE DELETE_DATE IS NULL
+        ORDER BY views DESC
+        LIMIT 10
+    </select>
+
+    <!-- 최신순 10개 이벤트 조회 후 id 리스트 반환 -->
+    <select id="selectTop10EventsIdByCreateDate" resultType="java.lang.Long">
+        SELECT id
+        FROM event_details
+        WHERE DELETE_DATE IS NULL
+        ORDER BY create_date DESC
+        LIMIT 10
+    </select>
+
+    <!-- 이벤트 마감일 순 10개 이벤트 조회 후 id 리스트 반환 -->
+    <select id="selectTop10EventsIdByApplyEndAt" resultType="java.lang.Long">
+        SELECT id
+        FROM event_details
+        WHERE DELETE_DATE IS NULL
+        ORDER BY apply_end_at DESC
+        LIMIT 10
     </select>
 
     <!-- 이벤트 상세정보 생성 -->

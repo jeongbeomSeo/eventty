@@ -47,15 +47,15 @@ CREATE TABLE categories (
     name VARCHAR(255) NOT NULL
 );
 
-INSERT INTO categories (id, name) VALUES (1, '콘서트');
-INSERT INTO categories (id, name) VALUES (2, '클래식');
-INSERT INTO categories (id, name) VALUES (3, '전시');
-INSERT INTO categories (id, name) VALUES (4, '스포츠');
-INSERT INTO categories (id, name) VALUES (5, '캠핑');
-INSERT INTO categories (id, name) VALUES (6, '아동');
-INSERT INTO categories (id, name) VALUES (7, '영화');
+INSERT INTO categories (id, name) VALUES (1, 'Concert');
+INSERT INTO categories (id, name) VALUES (2, 'Classical');
+INSERT INTO categories (id, name) VALUES (3, 'Exhibition');
+INSERT INTO categories (id, name) VALUES (4, 'Sports');
+INSERT INTO categories (id, name) VALUES (5, 'Camping');
+INSERT INTO categories (id, name) VALUES (6, 'Children');
+INSERT INTO categories (id, name) VALUES (7, 'Movie');
 INSERT INTO categories (id, name) VALUES (8, 'IT');
-INSERT INTO categories (id, name) VALUES (9, '교양');
+INSERT INTO categories (id, name) VALUES (9, 'Culture');
 INSERT INTO categories (id, name) VALUES (10, 'TOPIC');
 
 -- -- events 테이블 더미 데이터 삽입

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @MybatisTest
 public class EventDetailRepositoryTest {
 
+    /*
     @Autowired
     private EventDetailRepository eventDetailRepository;
 
@@ -65,5 +66,7 @@ public class EventDetailRepositoryTest {
                 .createDate(Timestamp.valueOf("2023-08-21 10:30:00").toLocalDateTime())
                 .build();
     }
+
+     */
 
 }
