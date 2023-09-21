@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class AuthenticateUserRequestDTO {
+public class UserAuthenticateRequestDTO {
     private String accessToken;
     private String refreshToken;
     private String csrfToken;

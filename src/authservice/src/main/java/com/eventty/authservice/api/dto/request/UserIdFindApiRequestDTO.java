@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class QueryCheckPhoneNumRequestDTO {
-    String phone;
+public class UserIdFindApiRequestDTO {
+    private String name;
+    private String phone;
 }

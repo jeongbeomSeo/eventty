@@ -10,9 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FindPWRequestDTO {
+public class PWFindRequestDTO {
     @Email
-    String email;
+    private String email;
     @NotNull
-    String password;
+    private String name;
+    @NotNull
+    private String phone;
 }

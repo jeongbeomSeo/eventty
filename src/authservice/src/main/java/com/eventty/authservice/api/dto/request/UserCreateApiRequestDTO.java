@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class UserCreateRequestDTO {
+public class UserCreateApiRequestDTO {
     private Long userId;
     private String name;
     private String address;

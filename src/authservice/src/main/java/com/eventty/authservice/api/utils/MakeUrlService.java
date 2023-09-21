@@ -21,8 +21,8 @@ public class MakeUrlService {
         return URI.create(urlProperties.getUserServer() + QUERY_IMAGE_API_PATH);
     }
 
-    public URI queryCheckPhoneNumUri() {
-        String QUERY_CHECK_PHONE_NUM_PATH = "/api/phoneNum";
+    public URI findUserIdUri() {
+        String QUERY_CHECK_PHONE_NUM_PATH = "/api/userId";
         return URI.create(urlProperties.getUserServer() + QUERY_CHECK_PHONE_NUM_PATH);
     }
 }

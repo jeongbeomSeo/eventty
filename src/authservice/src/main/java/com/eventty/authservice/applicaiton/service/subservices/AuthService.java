@@ -12,7 +12,7 @@ import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
 public interface AuthService {
 
     AuthenticationResultDTO authenticate(SessionTokensDTO sessionTokensDTO, String csrfToken, CustomConverter converter, UserDetailService userDetailService);
-    boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder);
+    boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity);
 
     SessionTokensDTO getToken(AuthUserEntity authUserEntity);
     TokenParsingDTO getTokenParsingDTO(SessionTokensDTO sessionTokensDTO);
@@ -21,4 +21,6 @@ public interface AuthService {
     String getNewCsrfToken(Long userId);
     boolean checkCsrfToken(Long userId);
     void deleteAllToken(Long userId);
+    boolean emailMatch (String email, AuthUserEntity authUserEntity);
+    String encryptePassword(String rawPassword);
 }

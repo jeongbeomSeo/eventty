@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class QueryImageResponseDTO {
-    String imageName;
-    String imagePath;
+public class ImageQueryApiResponseDTO {
+    private String originFileName;      // 이미지 원본 이름
+    private String imagePath;           // 이미지 경로 이름
 }

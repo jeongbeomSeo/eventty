@@ -6,12 +6,15 @@ import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.global.Enum.SuccessCode;
+import com.eventty.authservice.global.response.ResponseDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
 import com.eventty.authservice.infrastructure.annotation.ApiSuccessData;
 import com.eventty.authservice.infrastructure.utils.CookieUtils;
 import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
+import com.eventty.authservice.presentation.dto.response.EmailFindResponseDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
+import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -21,6 +24,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -126,11 +131,11 @@ public class AuthController {
      * 유저에 대한 검증
      */
     @PostMapping("/api/authenticate/user")
-    public ResponseEntity<SuccessResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(@RequestBody AuthenticateUserRequestDTO AuthenticateUserRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO<AuthenticationDetailsResponseDTO>> authenticataeUser(@RequestBody UserAuthenticateRequestDTO UserAuthenticateRequestDTO) {
         log.debug("Current Position: Controller :: 회원 검증");
 
         // 회원 검증
-        AuthenticationDetailsResponseDTO authenticationDetailsResponseDTO = userService.authenticateUser(AuthenticateUserRequestDTO);
+        AuthenticationDetailsResponseDTO authenticationDetailsResponseDTO = userService.authenticateUser(UserAuthenticateRequestDTO);
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
@@ -167,7 +172,7 @@ public class AuthController {
      * 비밀번호 변경
      */
     @PostMapping("/change/password")
-    public ResponseEntity<Void> changePW(@Valid @RequestBody ChangePWRequestDTO changePWRequestDTO, HttpServletRequest request) {
+    public ResponseEntity<Void> changePW(@Valid @RequestBody PWChangeRequestDTO changePWRequestDTO, HttpServletRequest request) {
         log.debug("Current Position: Controller:: 회원 비밀번호 변경");
 
         SessionTokensDTO sessionTokensDTO = cookieUtils.getSessionTokens(request);
@@ -185,27 +190,27 @@ public class AuthController {
      * 이메일 찾기
      */
     @PostMapping("/find/email")
-    public ResponseEntity<SuccessResponseDTO<String>> findEmail(@Valid @RequestBody FindEmailRequestDTO findEmailRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO<List<EmailFindResponseDTO>>> findEmail(@Valid @RequestBody EmailFindRequestDTO emailFindRequestDTO) {
         log.debug("Current Position: Controller:: 이메일 찾기");
 
-        String email =  userService.queryFindEmail(findEmailRequestDTO);
+        List<EmailFindResponseDTO> emailFindResponseDTOList =  userService.queryFindEmail(emailFindRequestDTO);
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
-                .body(SuccessResponseDTO.of(email));
+                .body(SuccessResponseDTO.of(emailFindResponseDTOList));
     }
 
     /**
-     * 패스워드 변경 (보류)
+     * 패스워드 변경 이전 검증 작업
      */
     @PostMapping("/find/password")
-    public ResponseEntity<Void> findPassword(@Valid @RequestBody FindPWRequestDTO findPWRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO<PWFindResponseDTO>> findPassword(@Valid @RequestBody PWFindRequestDTO findPWRequestDTO) {
         log.debug("Current Position: Controller:: 패스워드 찾기");
 
-        userService.queryFindPW(findPWRequestDTO);
+        PWFindResponseDTO pwFindResponseDTO = userService.queryFindPW(findPWRequestDTO);
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
-                .body(null);
+                .body(SuccessResponseDTO.of(pwFindResponseDTO));
     }
 }

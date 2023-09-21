@@ -1,17 +1,18 @@
 package com.eventty.authservice.applicaiton.service.Facade;
 
-import com.eventty.authservice.api.dto.request.QueryCheckPhoneNumRequestDTO;
-import com.eventty.authservice.api.dto.response.QueryCheckPhoneNumResponseDTO;
-import com.eventty.authservice.api.dto.response.QueryImageResponseDTO;
+import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
+import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
 import com.eventty.authservice.applicaiton.dto.*;
 import com.eventty.authservice.applicaiton.service.subservices.AuthService;
 import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
+import com.eventty.authservice.domain.exception.UserNotFoundException;
 import com.eventty.authservice.domain.model.Authority;
 import com.eventty.authservice.global.response.ResponseDTO;
 import com.eventty.authservice.infrastructure.contextholder.UserContextHolder;
 import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
-import jakarta.servlet.http.Cookie;
+import com.eventty.authservice.presentation.dto.response.EmailFindResponseDTO;
+import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
 import jakarta.transaction.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.eventty.authservice.api.ApiClient;
-import com.eventty.authservice.api.dto.request.UserCreateRequestDTO;
+import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
 import com.eventty.authservice.applicaiton.service.subservices.UserDetailService;
 import com.eventty.authservice.applicaiton.service.subservices.UserDetailServiceImpl;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
-import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 
 import java.util.List;
 
@@ -39,19 +39,16 @@ public class UserServiceImpl implements UserService {
     private final AuthService authService;
     private final ApiClient apiClient;
     private final CustomConverter customConverter;
-    private final CustomPasswordEncoder customPasswordEncoder;
 
     @Autowired
     public UserServiceImpl(UserDetailServiceImpl userServiceImpl,
                            AuthServiceImpl authServiceImpl,
                            @Lazy ApiClient apiClient,
-                           @Lazy CustomConverter converterService,
-                           @Lazy CustomPasswordEncoder customPasswordEncoder) {
+                           @Lazy CustomConverter converterService) {
         this.userDetailService = userServiceImpl;
         this.authService = authServiceImpl;
         this.apiClient = apiClient;
         this.customConverter = converterService;
-        this.customPasswordEncoder = customPasswordEncoder;
     }
 
     @Override
@@ -65,7 +62,7 @@ public class UserServiceImpl implements UserService {
         userDetailService.validationUser(authUserEntity);
 
         // 비밀번호 매칭
-        authService.credentialMatch(userLoginRequestDTO, authUserEntity, customPasswordEncoder);
+        authService.credentialMatch(userLoginRequestDTO, authUserEntity);
 
         Long userId = authUserEntity.getId();
 
@@ -75,10 +72,10 @@ public class UserServiceImpl implements UserService {
         UserContextHolder.getContext().setAuthorities(authorities);
 
         // 이미지 불러오기
-        ResponseEntity<ResponseDTO<QueryImageResponseDTO>> reponse =
+        ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> reponse =
                 apiClient.queryImageApi();
 
-        QueryImageResponseDTO queryImageResponseDTO = reponse.getBody().getSuccessResponseDTO().getData();
+        ImageQueryApiResponseDTO imageQueryApiResponseDTO= reponse.getBody().getSuccessResponseDTO().getData();
 
         // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환 => 권한 X 역할만 담기
         SessionTokensDTO sessionTokensDTO = authService.getToken(authUserEntity);
@@ -88,7 +85,7 @@ public class UserServiceImpl implements UserService {
                 authService.getUpdateCsrfToken(userId) : authService.getNewCsrfToken(userId);
 
         return customConverter
-                .convertLoginSuccessDTO(sessionTokensDTO, authUserEntity, csrfToken, queryImageResponseDTO);
+                .convertLoginSuccessDTO(sessionTokensDTO, authUserEntity, csrfToken, imageQueryApiResponseDTO);
     }
 
     @Override
@@ -96,14 +93,16 @@ public class UserServiceImpl implements UserService {
     public Long createUser(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole role) {
 
         // 전달 받은 DTO로 Entity로 변환
-        AuthUserEntity authUserEntity = customConverter.convertAuthEntityConvert(fullUserCreateRequestDTO, customPasswordEncoder);
+        String email = fullUserCreateRequestDTO.getEmail();
+        String encryptedPassword = authService.encryptePassword(fullUserCreateRequestDTO.getPassword());
+        AuthUserEntity authUserEntity = customConverter.convertAuthEntityConvert(email, encryptedPassword);
 
         // 유저 생성
         Long userId = userDetailService.create(authUserEntity, role);
 
         // API 요청 로직
-        UserCreateRequestDTO userCreateRequestDTO = customConverter.convertUserCreateRequestDTO(fullUserCreateRequestDTO, userId);
-        apiClient.createUserApi(userCreateRequestDTO);
+        UserCreateApiRequestDTO userCreateApiRequestDTO = customConverter.convertUserCreateRequestDTO(fullUserCreateRequestDTO, userId);
+        apiClient.createUserApi(userCreateApiRequestDTO);
 
         return userId;
     }
@@ -134,14 +133,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public AuthenticationDetailsResponseDTO authenticateUser(AuthenticateUserRequestDTO authenticateUserRequestDTO) {
+    public AuthenticationDetailsResponseDTO authenticateUser(UserAuthenticateRequestDTO userAuthenticateRequestDTO) {
 
         // 검증하기 전에 JWT, Refresh Token은 TokensDTO로 묶어주기
-        SessionTokensDTO sessionTokensDTO = customConverter.convertTokensDTO(authenticateUserRequestDTO);
+        SessionTokensDTO sessionTokensDTO = customConverter.convertTokensDTO(userAuthenticateRequestDTO);
 
         // 검증
         AuthenticationResultDTO authenticationResultDTO = authService.authenticate(
-                sessionTokensDTO, authenticateUserRequestDTO.getCsrfToken(), customConverter, userDetailService);
+                sessionTokensDTO, userAuthenticateRequestDTO.getCsrfToken(), customConverter, userDetailService);
 
         // 가독성을 위해서 꺼내서 활용
         AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();
@@ -186,7 +185,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CsrfTokenDTO changePW(ChangePWRequestDTO changePWRequestDTO, SessionTokensDTO sessionTokensDTO, String csrfToken) {
+    public CsrfTokenDTO changePW(PWChangeRequestDTO pwChangeRequestDTO, SessionTokensDTO sessionTokensDTO, String csrfToken) {
 
         // 검증
         AuthenticationResultDTO authenticationResultDTO = authService.authenticate(
@@ -197,7 +196,8 @@ public class UserServiceImpl implements UserService {
         AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();
 
         // 비밀번호 변경
-        authUserEntity = userDetailService.changePwAuthUser(changePWRequestDTO, authUserEntity, customPasswordEncoder);
+        String encryptedPassword = authService.encryptePassword(pwChangeRequestDTO.getPassword());
+        authUserEntity = userDetailService.changePwAuthUser(encryptedPassword, authUserEntity);
 
         // CSRF Token Update
         String newCsrfToken = authService.getUpdateCsrfToken(authUserEntity.getId());
@@ -206,27 +206,51 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String queryFindEmail(FindEmailRequestDTO findEmailRequestDTO) {
+    public List<EmailFindResponseDTO> queryFindEmail(EmailFindRequestDTO emailFindRequestDTO) {
 
-        // API 요청을 통해서 전화번호 비교
-        QueryCheckPhoneNumRequestDTO queryCheckPhoneNumRequestDTO
-                = customConverter.convertQueryCheckPhoneNumDTO(findEmailRequestDTO);
+        // API 요청을 통해서 User Id 가져오기
+        UserIdFindApiRequestDTO userIdFindApiRequestDTO
+                = customConverter.convertUserIdFindApiRequestDTO(emailFindRequestDTO);
 
-        // 전화번호를 이용해서 User Id 가져오기
-        ResponseEntity<ResponseDTO<QueryCheckPhoneNumResponseDTO>> response =
-                apiClient.queryPhoneNumberApi(queryCheckPhoneNumRequestDTO);
+        List<Long> userIdList = getUserIdList(userIdFindApiRequestDTO);
 
-        Long userId = response.getBody().getSuccessResponseDTO().getData().getUserId();
+        // 삭제되지 않은 유저 이메일 정보 모두 가져오기
+        List<AuthUserEntity> authUserEntities = userDetailService.findNotDeletedAuthUserList(userIdList);
 
-        // Auth User 있는지 검증차 다 가져오기
-        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
+        return authUserEntities.stream()
+                .map(customConverter::convertEmailFindResponseDTO)
+                .toList();
 
-        return authUserEntity.getEmail();
     }
 
     @Override
-    public String queryFindPW(FindPWRequestDTO findPWRequestDTO) {
+    public PWFindResponseDTO queryFindPW(PWFindRequestDTO pwFindRequestDTO) {
 
-        return null;
+        // API 요청을 통해서 유저 아이디 받아오기
+        UserIdFindApiRequestDTO userIdFindApiRequestDTO
+                = customConverter.convertUserIdFindApiRequestDTO(pwFindRequestDTO);
+
+        List<Long> userIdList = getUserIdList(userIdFindApiRequestDTO);
+
+        // 삭제되지 않은 유저 이메일 정보 모두 가져오기
+        List<AuthUserEntity> authUserEntities = userDetailService.findNotDeletedAuthUserList(userIdList);
+
+        // 이메일 검증
+        AuthUserEntity authUserEntity = authUserEntities.stream()
+                .filter(authuUserEntiy -> authService.emailMatch(pwFindRequestDTO.getEmail(), authuUserEntiy))
+                .findFirst()
+                .orElseThrow(() -> new UserNotFoundException(pwFindRequestDTO.getEmail(), "email"));
+
+        return customConverter.convertPWFindResponseDTO(authUserEntity);
+    }
+
+    private List<Long> getUserIdList(UserIdFindApiRequestDTO userIdFindApiRequestDTO) {
+        ResponseEntity<ResponseDTO<List<Long>>> response =
+                apiClient.findUserIdApi(userIdFindApiRequestDTO);
+
+        if (!response.getBody().isSuccess())
+            throw new UserNotFoundException(userIdFindApiRequestDTO.getName(), "name");
+
+        return response.getBody().getSuccessResponseDTO().getData();
     }
 }

@@ -6,16 +6,20 @@ import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
+import com.eventty.authservice.presentation.dto.response.EmailFindResponseDTO;
+import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
+
+import java.util.List;
 
 public interface UserService {
 
     Long createUser(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole userRole);
     void validateEmailNotDuplicated(String email);
     LoginSuccessDTO login(UserLoginRequestDTO userLoginRequestDTO);
-    AuthenticationDetailsResponseDTO authenticateUser(AuthenticateUserRequestDTO authenticateUserRequestDTO);
+    AuthenticationDetailsResponseDTO authenticateUser(UserAuthenticateRequestDTO userAuthenticateRequestDTO);
     Long deleteUser(SessionTokensDTO sessionTokensDTO, String csrfToken);
     Long logout(SessionTokensDTO sessionTokensDTO, String csrfToken);
-    CsrfTokenDTO changePW(ChangePWRequestDTO changePWRequestDTO, SessionTokensDTO sessionTokensDTO, String csrfToken);
-    String queryFindEmail(FindEmailRequestDTO findEmailRequestDTO);
-    String queryFindPW(FindPWRequestDTO findPWRequestDTO);
+    CsrfTokenDTO changePW(PWChangeRequestDTO pwChangeRequestDTO, SessionTokensDTO sessionTokensDTO, String csrfToken);
+    List<EmailFindResponseDTO> queryFindEmail(EmailFindRequestDTO emailFindRequestDTO);
+    PWFindResponseDTO queryFindPW(PWFindRequestDTO pwFindRequestDTO);
 }

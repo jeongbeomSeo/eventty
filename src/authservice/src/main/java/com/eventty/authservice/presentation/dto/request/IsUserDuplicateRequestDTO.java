@@ -11,5 +11,5 @@ import lombok.*;
 @ToString
 public class IsUserDuplicateRequestDTO {
     @Email
-    String email;
+    private String email;
 }

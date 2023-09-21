@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class FindEmailResponseDTO {
-    String email;
+public class EmailFindResponseDTO {
+    private String email;
 }

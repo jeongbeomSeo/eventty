@@ -1,9 +1,8 @@
 package com.eventty.authservice.api;
 
-import com.eventty.authservice.api.dto.request.QueryCheckPhoneNumRequestDTO;
-import com.eventty.authservice.api.dto.request.UserCreateRequestDTO;
-import com.eventty.authservice.api.dto.response.QueryCheckPhoneNumResponseDTO;
-import com.eventty.authservice.api.dto.response.QueryImageResponseDTO;
+import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
+import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
+import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -13,6 +12,7 @@ import org.springframework.http.*;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 
@@ -31,9 +31,9 @@ public class ApiClient {
 
     private final RestTemplate customRestTemplate;
 
-    public ResponseEntity<ResponseDTO<Void>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
+    public ResponseEntity<ResponseDTO<Void>> createUserApi(UserCreateApiRequestDTO userCreateApiRequestDTO) {
 
-        HttpEntity<UserCreateRequestDTO> entity = createHttpEntity(userCreateRequestDTO);
+        HttpEntity<UserCreateApiRequestDTO> entity = createHttpEntity(userCreateApiRequestDTO);
 
         URI uri = makeUrlService.createUserUri();
 
@@ -44,27 +44,27 @@ public class ApiClient {
         );
     }
 
-    public ResponseEntity<ResponseDTO<QueryImageResponseDTO>> queryImageApi() {
+    public ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> queryImageApi() {
 
         HttpEntity<Void> entity = createAuthenticateHttpEntity(null);
 
         URI uri = makeUrlService.queryImgaeUri();
 
-        logApiCall("Auth Server", "User Server", "Query Image");
+        logApiCall("Auth Server", "User Server", "Query Get Image");
         return customRestTemplate.exchange(
-                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<QueryImageResponseDTO>>() {}
+                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<ImageQueryApiResponseDTO>>() {}
         );
     }
 
-    public ResponseEntity<ResponseDTO<QueryCheckPhoneNumResponseDTO>> queryPhoneNumberApi(QueryCheckPhoneNumRequestDTO queryCheckPhoneNumRequestDTO) {
+    public ResponseEntity<ResponseDTO<List<Long>>> findUserIdApi(UserIdFindApiRequestDTO userIdFindApiRequestDTO) {
 
-        HttpEntity<QueryCheckPhoneNumRequestDTO> entity = createHttpEntity(queryCheckPhoneNumRequestDTO);
+        HttpEntity<UserIdFindApiRequestDTO> entity = createHttpEntity(userIdFindApiRequestDTO);
 
-        URI uri = makeUrlService.queryCheckPhoneNumUri();
+        URI uri = makeUrlService.findUserIdUri();
 
-        logApiCall("Auth Server", "User Server", "Query Phone Number");
+        logApiCall("Auth Server", "User Server", "Query User Id List");
         return customRestTemplate.exchange(
-                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<QueryCheckPhoneNumResponseDTO>>() {}
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<List<Long>>>() {}
         );
     }
 

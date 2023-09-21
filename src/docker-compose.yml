@@ -45,7 +45,7 @@ services:
         aliases:
           - "user server"
   authservice:
-    image: auth:1.4
+    image: auth:1.5
     container_name: Auth_Server
     build:
       context: ./authservice
@@ -73,7 +73,7 @@ services:
         aliases:
           - "apply server"
   gateway:
-    image: gateway:1.4
+    image: gateway:1.5
     container_name: Gateway
     build:
       context: ./gateway

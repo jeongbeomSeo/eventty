@@ -3,7 +3,7 @@ package com.eventty.authservice.applicaiton.service.subservices;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.exception.AccessDeletedUserException;
 import com.eventty.authservice.domain.exception.UserNotFoundException;
-import com.eventty.authservice.presentation.dto.request.ChangePWRequestDTO;
+import com.eventty.authservice.presentation.dto.request.PWChangeRequestDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import com.eventty.authservice.domain.Enum.UserRole;
@@ -48,7 +48,7 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Override
     public AuthUserEntity findAuthUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email, "Email"));
     }
 
     @Override
@@ -94,13 +94,21 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Transactional
     @Override
-    public AuthUserEntity changePwAuthUser(ChangePWRequestDTO changePWRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder customPasswordEncoder) {
+    public AuthUserEntity changePwAuthUser(String encryptedPassword, AuthUserEntity authUserEntity) {
 
-        authUserEntity.setPassword(customPasswordEncoder.encode(changePWRequestDTO.getPassword()));
+        authUserEntity.setPassword(encryptedPassword);
 
         em.persist(authUserEntity);
 
         return authUserEntity;
+    }
+
+    @Override
+    public List<AuthUserEntity> findNotDeletedAuthUserList(List<Long> userIds) {
+        return userIds.stream()
+                .map(this::findAuthUser)
+                .filter(user -> !user.isDelete())
+                .toList();
     }
 }
 

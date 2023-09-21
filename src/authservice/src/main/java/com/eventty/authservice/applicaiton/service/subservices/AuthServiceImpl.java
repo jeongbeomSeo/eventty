@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService{
 
     private final TokenProvider tokenProvider;
+    private final CustomPasswordEncoder customPasswordEncoder;
 
     // 전체 검증(JWT, CSRF)
     @Override
@@ -72,8 +73,8 @@ public class AuthServiceImpl implements AuthService{
 
     // 비밀번호 매칭
     @Override
-    public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
-        if (!passwordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
+    public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity) {
+        if (!customPasswordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
             throw new InvalidPasswordException(userLoginRequestDTO);
         }
 
@@ -96,5 +97,15 @@ public class AuthServiceImpl implements AuthService{
 
         // CSRF Token 삭제
         tokenProvider.deleteCsrfToken(userId);
+    }
+
+    @Override
+    public boolean emailMatch(String email, AuthUserEntity authUserEntity) {
+        return email.equals(authUserEntity.getEmail());
+    }
+
+    @Override
+    public String encryptePassword(String rawPassword) {
+        return customPasswordEncoder.encodePassword(rawPassword);
     }
 }
