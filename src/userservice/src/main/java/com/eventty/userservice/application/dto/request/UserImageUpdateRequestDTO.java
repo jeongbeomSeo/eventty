@@ -13,4 +13,10 @@ public class UserImageUpdateRequestDTO {
     private String imageId;
     private MultipartFile image;
     private String isUpdate;
+
+    public UserImageUpdateRequestDTO(UserImageUpdateRequestDTO userImage){
+        imageId = "null".equalsIgnoreCase(userImage.getImageId()) || null == userImage.getImageId() ? "" : userImage.getImageId();
+        isUpdate = "null".equalsIgnoreCase(userImage.getIsUpdate()) || null == userImage.getIsUpdate() ? "" : userImage.getIsUpdate();
+        image = userImage.image;
+    }
 }

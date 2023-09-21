@@ -15,7 +15,7 @@ public class UserImageFindByIdResponseDTO {
     }
 
     public UserImageFindByIdResponseDTO(UserImageEntity userImage){
-        imagePath = userImage.getStoredFilePath();
-        originFileName = userImage.getOriginalFileName();
+        imagePath = userImage == null ? null : userImage.getStoredFilePath();
+        originFileName = userImage == null ? null : userImage.getOriginalFileName();
     }
 }
