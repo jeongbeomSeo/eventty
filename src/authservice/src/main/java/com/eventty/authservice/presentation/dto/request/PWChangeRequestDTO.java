@@ -1,15 +1,14 @@
 package com.eventty.authservice.presentation.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class AuthenticateUserRequestDTO {
-    private String accessToken;
-    private String refreshToken;
-    private String csrfToken;
+public class PWChangeRequestDTO {
+        @NotNull
+        private String password;
 }

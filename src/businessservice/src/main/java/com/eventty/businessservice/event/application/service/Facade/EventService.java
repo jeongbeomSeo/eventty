@@ -64,7 +64,7 @@ public class EventService {
         // 티켓 정보
         List<TicketResponseDTO> tickets = ticketService.findTicketsByEventId(eventId);
 
-        // 남은 티켓 수 가져오기 (API 호출)
+        // 남은 티켓 수 가져오기 (API 호출)ㅋ
 
         // 이벤트 이미지
         ImageResponseDTO imageInfo = imageService.findImageByEventId(eventId);

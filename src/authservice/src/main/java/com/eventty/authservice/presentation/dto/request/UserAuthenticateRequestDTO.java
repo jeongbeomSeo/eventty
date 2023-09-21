@@ -1,6 +1,5 @@
 package com.eventty.authservice.presentation.dto.request;
 
-import jakarta.validation.constraints.Email;
 import lombok.*;
 
 @Getter
@@ -9,7 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class IsUserDuplicateRequestDTO {
-    @Email
-    private String email;
+public class UserAuthenticateRequestDTO {
+    private String accessToken;
+    private String refreshToken;
+    private String csrfToken;
 }

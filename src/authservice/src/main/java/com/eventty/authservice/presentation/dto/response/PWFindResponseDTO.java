@@ -8,10 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class LoginResponseDTO {
+public class PWFindResponseDTO {
     private Long userId;
     private String email;
-    private String role;
-    private String imageName;
-    private String imagePath;
 }
