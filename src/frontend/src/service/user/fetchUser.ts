@@ -1,7 +1,8 @@
-import {IChangePW, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser";
+import {IChangePW, IGoogleLogin, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser";
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {redirect} from "react-router-dom";
 import {CheckLogin} from "../../util/CheckLogin";
+import {googleLogout} from "@react-oauth/google";
 
 export const postSignupEmailValid = async (data: string) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`, {
@@ -45,6 +46,20 @@ export const postLogin = async (data: ILogin) => {
         });
 }
 
+// Google 로그인
+export const postGoogleLogin = async (data: IGoogleLogin) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        });
+}
+
 export const postLogout = async () => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/logout`, {
         method: "POST",
@@ -72,7 +87,7 @@ export const getProfile = async () => {
         });
 }
 
-export const patchProfile = async (data: FormData) => {
+export const postProfile = async (data: FormData) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/users/me`, {
         method: "POST",
         credentials: "include",

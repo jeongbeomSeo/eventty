@@ -9,7 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ChangePWRequestDTO {
-        @NotNull
-        private String password;
+public class EmailFindRequestDTO {
+    @NotNull
+    private String name;
+    @NotNull
+    private String phone;
 }

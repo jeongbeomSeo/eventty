@@ -3,7 +3,7 @@ package com.eventty.authservice.applicaiton.service.subservices;
 import com.eventty.authservice.applicaiton.dto.AuthenticationResultDTO;
 import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
 import com.eventty.authservice.applicaiton.dto.TokenParsingDTO;
-import com.eventty.authservice.applicaiton.dto.TokensDTO;
+import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.applicaiton.service.utils.token.TokenProvider;
@@ -20,13 +20,14 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService{
 
     private final TokenProvider tokenProvider;
+    private final CustomPasswordEncoder customPasswordEncoder;
 
     // 전체 검증(JWT, CSRF)
     @Override
-    public AuthenticationResultDTO authenticate(TokensDTO tokensDTO, String csrfToken, CustomConverter converter, UserDetailService userDetailService) {
+    public AuthenticationResultDTO authenticate(SessionTokensDTO sessionTokensDTO, String csrfToken, CustomConverter converter, UserDetailService userDetailService) {
 
         // 1차 검증을 통해 userId와 Token Update 필요한지 정보 가져오기
-        TokenParsingDTO tokenParsingDTO = getTokenParsingDTO(tokensDTO);
+        TokenParsingDTO tokenParsingDTO = getTokenParsingDTO(sessionTokensDTO);
         Long userId= tokenParsingDTO.userId();
 
         // 2차 검증 (삭제되어 있는 User인지 확인)
@@ -66,14 +67,14 @@ public class AuthServiceImpl implements AuthService{
 
     // 토큰 파싱하여 필요한 정보 DTO로 반환
     @Override
-    public TokenParsingDTO getTokenParsingDTO(TokensDTO tokensDTO) {
-        return tokenProvider.parsingToken(tokensDTO);
+    public TokenParsingDTO getTokenParsingDTO(SessionTokensDTO sessionTokensDTO) {
+        return tokenProvider.parsingToken(sessionTokensDTO);
     }
 
     // 비밀번호 매칭
     @Override
-    public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity, CustomPasswordEncoder passwordEncoder) {
-        if (!passwordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
+    public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity) {
+        if (!customPasswordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
             throw new InvalidPasswordException(userLoginRequestDTO);
         }
 
@@ -82,7 +83,7 @@ public class AuthServiceImpl implements AuthService{
 
     // 검증 로직 X
     @Override
-    public TokensDTO getToken(AuthUserEntity authUserEntity) {
+    public SessionTokensDTO getToken(AuthUserEntity authUserEntity) {
         // 2시간 동안 유효한 액세스 토큰 생성 및 2일 동안 유효한 리프레시 토큰 생성 
         return tokenProvider.getAllToken(authUserEntity);
     }
@@ -96,5 +97,15 @@ public class AuthServiceImpl implements AuthService{
 
         // CSRF Token 삭제
         tokenProvider.deleteCsrfToken(userId);
+    }
+
+    @Override
+    public boolean emailMatch(String email, AuthUserEntity authUserEntity) {
+        return email.equals(authUserEntity.getEmail());
+    }
+
+    @Override
+    public String encryptePassword(String rawPassword) {
+        return customPasswordEncoder.encodePassword(rawPassword);
     }
 }

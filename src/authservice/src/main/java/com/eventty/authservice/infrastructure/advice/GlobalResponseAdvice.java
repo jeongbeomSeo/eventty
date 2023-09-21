@@ -1,5 +1,7 @@
 package com.eventty.authservice.infrastructure.advice;
 
+import com.eventty.authservice.global.Enum.ErrorCode;
+import com.eventty.authservice.global.Enum.SuccessCode;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
@@ -31,6 +33,10 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
         if (body instanceof ErrorResponseDTO) {
             ErrorResponseDTO errorResponseDTO = (ErrorResponseDTO) body;
             return ResponseDTO.of(errorResponseDTO);
+        }
+        if (body instanceof Boolean) {
+            Boolean isSuccess = (Boolean) body;
+            return ResponseDTO.of(isSuccess);
         }
 
         return ResponseDTO.of(true);

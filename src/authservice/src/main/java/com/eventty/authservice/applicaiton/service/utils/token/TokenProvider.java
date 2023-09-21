@@ -1,7 +1,7 @@
 package com.eventty.authservice.applicaiton.service.utils.token;
 
 import com.eventty.authservice.applicaiton.dto.TokenParsingDTO;
-import com.eventty.authservice.applicaiton.dto.TokensDTO;
+import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.CsrfTokenNotFoundException;
@@ -30,7 +30,7 @@ public class TokenProvider {
 
 
     // 두개 이상 토큰 처리 메서드
-    public TokensDTO getAllToken(AuthUserEntity authUserEntity) {
+    public SessionTokensDTO getAllToken(AuthUserEntity authUserEntity) {
 
         Date now = new Date();
 
@@ -43,27 +43,27 @@ public class TokenProvider {
         // Refresh Token 저장 혹은 업데이트
         refreshTokenProvider.saveOrUpdate(refreshToken, authUserEntity.getId());
 
-        return new TokensDTO(accessToken, refreshToken);
+        return new SessionTokensDTO(accessToken, refreshToken);
     }
 
     // Token Parsing해서 User Id와 needsUpdate 반환 (1차 검증)
-    public TokenParsingDTO parsingToken(TokensDTO TokensDTO) {
+    public TokenParsingDTO parsingToken(SessionTokensDTO SessionTokensDTO) {
 
         // JWT를 이용해서 JWT Cliams 가져오기
-        Claims claims = getClaimsOrNullOnExpiration(TokensDTO.accessToken());
+        Claims claims = getClaimsOrNullOnExpiration(SessionTokensDTO.accessToken());
 
         // 만약 만료 기간이 지났다면,
         if (claims == null) {
 
             // Refresh Token 이용해서 Claims update
-            claims = getClaimsOrThrow(TokensDTO.refreshToken());
+            claims = getClaimsOrThrow(SessionTokensDTO.refreshToken());
 
             // User ID 가져오기
             Long userId = getUserId(claims);
 
             // Refresh Token Validation Check
             refreshTokenProvider.validationCheck(customConverter.convertToValidationRefreshTokenDTO(
-                    userId, TokensDTO
+                    userId, SessionTokensDTO
             ));
 
             // 새로 업데이트 된다는 정보 보내기

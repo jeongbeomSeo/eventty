@@ -1,28 +1,27 @@
 package com.eventty.authservice.applicaiton.service.utils;
 
-import com.eventty.authservice.api.dto.UserCreateRequestDTO;
-import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
-import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
-import com.eventty.authservice.applicaiton.dto.TokensDTO;
-import com.eventty.authservice.applicaiton.dto.ValidateRefreshTokenDTO;
-import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
+import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
+import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
+import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
+import com.eventty.authservice.applicaiton.dto.*;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.entity.AuthorityEntity;
-import com.eventty.authservice.domain.exception.PermissionDeniedException;
 import com.eventty.authservice.domain.model.Authority;
-import com.eventty.authservice.presentation.dto.request.AuthenticateUserRequestDTO;
+import com.eventty.authservice.presentation.dto.request.UserAuthenticateRequestDTO;
+import com.eventty.authservice.presentation.dto.request.EmailFindRequestDTO;
+import com.eventty.authservice.presentation.dto.request.PWFindRequestDTO;
 import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
+import com.eventty.authservice.presentation.dto.response.EmailFindResponseDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
+import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -31,37 +30,35 @@ public class CustomConverter {
 
     private final ObjectMapper objectMapper;
 
+    /*
+     * Tokens Converter
+     */
+
     // 유저 인증 요청할 때 필요한 데이터를 전부 모아둔 DTO 생성
-    public TokensDTO convertTokensDTO(Cookie[] cookies) {
-
-        String accessToken = getJwt(cookies);
-        String refreshToken = getRefreshToken(cookies);
-
-        return new TokensDTO(accessToken, refreshToken);
-
-    }
-
-    public TokensDTO convertTokensDTO(AuthenticateUserRequestDTO authenticateUserRequestDTO) {
-        return new TokensDTO(authenticateUserRequestDTO.getAccessToken(), authenticateUserRequestDTO.getRefreshToken());
+    public SessionTokensDTO convertTokensDTO(UserAuthenticateRequestDTO userAuthenticateRequestDTO) {
+        return new SessionTokensDTO(userAuthenticateRequestDTO.getAccessToken(), userAuthenticateRequestDTO.getRefreshToken());
     }
 
     public CsrfTokenDTO convertCsrfTokenDTO(Long userId, String csrfToken) {
         return new CsrfTokenDTO(userId, csrfToken);
     }
 
-    public ValidateRefreshTokenDTO convertToValidationRefreshTokenDTO(Long userId, TokensDTO TokensDTO) {
-        return new ValidateRefreshTokenDTO(userId, TokensDTO.refreshToken());
+    public ValidateRefreshTokenDTO convertToValidationRefreshTokenDTO(Long userId, SessionTokensDTO SessionTokensDTO) {
+        return new ValidateRefreshTokenDTO(userId, SessionTokensDTO.refreshToken());
 }
-    public AuthUserEntity convertAuthEntityConvert(FullUserCreateRequestDTO fullUserCreateRequestDTO, CustomPasswordEncoder customPasswordEncoder) {
+    public AuthUserEntity convertAuthEntityConvert(String email, String encryptedPassword) {
         return AuthUserEntity.builder()
-                .email(fullUserCreateRequestDTO.getEmail())
-                .password(customPasswordEncoder.encode(fullUserCreateRequestDTO.getPassword()))
+                .email(email)
+                .password(encryptedPassword)
                 .build();
     }
 
+    /*
+     * Request, Response Converter
+     */
 
-    public UserCreateRequestDTO convertUserCreateRequestDTO(FullUserCreateRequestDTO fullUserCreateRequestDTO, Long userId) {
-        return new UserCreateRequestDTO(
+    public UserCreateApiRequestDTO convertUserCreateRequestDTO(FullUserCreateRequestDTO fullUserCreateRequestDTO, Long userId) {
+        return new UserCreateApiRequestDTO(
                 userId,     // User Id
                 fullUserCreateRequestDTO.getName(),    // Name
                 fullUserCreateRequestDTO.getAddress(), // Address
@@ -70,15 +67,46 @@ public class CustomConverter {
         );
     }
 
-    public LoginSuccessDTO convertLoginSuccessDTO(TokensDTO tokensDTO, AuthUserEntity authUserEntity, String csrfToken) {
+    public LoginSuccessDTO convertLoginSuccessDTO(SessionTokensDTO sessionTokensDTO, AuthUserEntity authUserEntity, String csrfToken, ImageQueryApiResponseDTO imageQueryApiResponseDTO) {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
                 authUserEntity.getId(),
                 authUserEntity.getEmail(), // email
-                getRole(authUserEntity.getAuthorities())  // Role
+                getRole(authUserEntity.getAuthorities()),  // Role
+                imageQueryApiResponseDTO.getOriginFileName(),
+                imageQueryApiResponseDTO.getImagePath()
         );
 
-        return new LoginSuccessDTO(tokensDTO, loginResponseDTO, csrfToken);
+        return new LoginSuccessDTO(sessionTokensDTO, loginResponseDTO, csrfToken);
     }
+
+    public PWFindResponseDTO convertPWFindResponseDTO(AuthUserEntity authUserEntity) {
+        return new PWFindResponseDTO(authUserEntity.getId(), authUserEntity.getEmail());
+    }
+
+    public EmailFindResponseDTO convertEmailFindResponseDTO(AuthUserEntity authUserEntity) {
+        return new EmailFindResponseDTO(authUserEntity.getEmail());
+    }
+
+    // 현재 DTO로 건네주니깐 이러한 상황이 발생
+    public UserIdFindApiRequestDTO convertUserIdFindApiRequestDTO(PWFindRequestDTO pwFindRequestDTO) {
+        return new UserIdFindApiRequestDTO(pwFindRequestDTO.getName(), pwFindRequestDTO.getPhone());
+    }
+
+    public UserIdFindApiRequestDTO convertUserIdFindApiRequestDTO(EmailFindRequestDTO emailFindRequestDTO) {
+        return new UserIdFindApiRequestDTO(emailFindRequestDTO.getName(), emailFindRequestDTO.getPhone());
+    }
+
+    /*
+     * Authorites Converter => User
+     */
+
+    public List<Authority> convertAuthority(AuthUserEntity authUserEntity) {
+        return authUserEntity.getAuthorities()
+                .stream()
+                .map(authorityEntity -> Authority.builder().role(authorityEntity.getName()).build())
+                .collect(Collectors.toList());
+    }
+
     public String convertAuthoritiesJson(AuthUserEntity authUserEntity) {
         List<Authority> authorities = convertAuthorities(authUserEntity.getAuthorities());
         try {
@@ -88,21 +116,9 @@ public class CustomConverter {
         }
     }
 
-    private String getJwt(Cookie[] cookies) {
-        Optional<Cookie> jwtCookie = Arrays.stream(cookies).filter(cookie ->
-                cookie.getName().equals(TokenEnum.ACCESS_TOKEN.getName())
-        )
-                .findFirst();
-        return jwtCookie.orElseThrow(PermissionDeniedException::new).getValue();
-    }
-
-    private String getRefreshToken(Cookie[] cookies) {
-        Optional<Cookie> refreshTokenCookie = Arrays.stream(cookies).filter(cookie ->
-                cookie.getName().equals(TokenEnum.REFRESH_TOKEN.getName()))
-                .findFirst();
-
-        return refreshTokenCookie.map(Cookie::getValue).orElse("");
-    }
+    /*
+     * Authorities Method
+     */
 
     private List<Authority> convertAuthorities(List<AuthorityEntity> list) {
         return list.stream()
@@ -120,6 +136,10 @@ public class CustomConverter {
                 .findFirst()
                 .orElseGet(() -> logging(list.get(0).getId()));
     }
+
+    /*
+     * Logging
+     */
     private String logging(Long userId) {
         log.error("Having id {} User Validation is OK. But, User Role is Not Found!! Critical Issue!", userId);
         // 임시 방편으로 USER로 찍어서 보내주기

@@ -3,6 +3,7 @@ import WebCarousel from "./WebCarousel";
 import {Button, Container, Divider, Flex, Grid, Group, SimpleGrid, Stack, Text, Title} from "@mantine/core";
 import WebCategoryBtn from "../../event/web/WebCategoryBtn";
 import WebMainEventList from "./WebMainEventList";
+import {googleLogout} from "@react-oauth/google";
 
 function WebMain() {
 

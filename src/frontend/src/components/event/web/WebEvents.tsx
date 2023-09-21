@@ -1,28 +1,23 @@
-import React, {useState} from "react";
-import {Box, Button, Flex, Group, Modal, Stack, Text, Title} from "@mantine/core";
-import SearchBox from "../../common/SearchBox";
-import MobileCategoryBtn from "../mobile/MobileCategoryBtn";
-import WebEventList from "./WebEventList";
+import React from "react";
+import {Box, Divider, Group, Stack, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import WebCategoryBtn from "./WebCategoryBtn";
-import {Outlet, useParams} from "react-router-dom";
+import {Outlet, useParams, useSearchParams} from "react-router-dom";
+import EventsList from "../../../pages/events/EventsList";
+import SearchResult from "../SearchResult";
 
 function WebEvents() {
-    const {classes} = customStyle();
     const {category} = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     return (
         <>
-            {category && <Title>{category}</Title>}
-            <Stack align={"center"} style={{margin: "2rem 0 3vh"}}>
-                <Flex style={{width:"80%"}}>
-                </Flex>
-                <Box style={{width: "100%", height: "auto"}}>
-                    <Group position={"apart"}>
-                        <WebCategoryBtn/>
-                    </Group>
-                </Box>
-            </Stack>
+            {category &&
+                <>
+                    <Title>{category}</Title>
+                    <Divider my={"1rem"}/>
+                </>}
+            {searchParams.size > 0 && <SearchResult/>}
             <Outlet/>
         </>
     );

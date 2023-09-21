@@ -51,7 +51,6 @@ public class EventService {
             List<FullEventFindAllResponseDTO> eventFullList = mapEventIdListToEventFullFindAllResponseDTO(eventIds);
             result.put(key, eventFullList);
         }
-
         return result;
     }
 

@@ -1,9 +1,7 @@
-package com.eventty.userservice.infrastructure.filter;
+package com.eventty.userservice.infrastructure.context;
 
 import com.eventty.userservice.domain.Authority;
 import com.eventty.userservice.domain.exception.PermissionDeniedException;
-import com.eventty.userservice.infrastructure.ContextHolder.UserContextHolder;
-import com.eventty.userservice.infrastructure.context.UserContext;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -16,9 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 // 해당 클래스에서 @Component를 등록하게 되면 해당 클래스가 빈으로 등록되는데,
 // FilterConfig에서 선언해둔 userContextFilter랑 같은 이름이라 충돌이 일어납니다.

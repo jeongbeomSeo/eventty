@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   frontend:
-    image: hyk0/eventty_front:1.3
+    image: front:1.5
     command: npm start
     container_name: Frontend
     build:

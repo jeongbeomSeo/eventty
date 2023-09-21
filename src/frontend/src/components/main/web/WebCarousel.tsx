@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {Container, Title} from "@mantine/core";
+import {BackgroundImage, Container, Image, Title} from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import {Carousel} from "@mantine/carousel";
 
@@ -16,13 +16,13 @@ const CAROUSEL_ITEMS = [
 function WebCarousel() {
     const autoPlay = useRef(Autoplay({delay: CAROUSEL_DELAY}));
 
-    const items = CAROUSEL_ITEMS.map((item) => (
-        <Carousel.Slide key={item.value} style={{backgroundColor: item.color}}>
-            <Container style={{height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <Title>{item.value}</Title>
-            </Container>
+    const items = CAROUSEL_ITEMS.map((item, idx) => (
+        <Carousel.Slide key={idx} style={{height: "100%", background: "red"}}>
+            <Image height={"100%"}
+                src={`${process.env["REACT_APP_NCLOUD_ENDPOINT"]}/${process.env["REACT_APP_NCLOUD_BUCKET_NAME"]}/main/web/web_carousel_0${idx + 1}.webp`}/>
         </Carousel.Slide>
     ));
+
 
     return (
         <Carousel slideSize={"100%"}

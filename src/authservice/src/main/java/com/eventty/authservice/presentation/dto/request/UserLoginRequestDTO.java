@@ -12,8 +12,8 @@ import lombok.*;
 @ToString
 public class UserLoginRequestDTO {
         @NotNull @Email
-        String email;
+        private String email;
 
         @NotNull
-        String password;
+        private String password;
 }
