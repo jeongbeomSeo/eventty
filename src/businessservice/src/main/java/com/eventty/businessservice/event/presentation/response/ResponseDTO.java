@@ -13,7 +13,7 @@ import lombok.*;
 @ToString
 public class ResponseDTO<T> {
 
-    private boolean isSuccess;
+    private Boolean isSuccess;
     private ErrorResponseDTO errorResponseDTO;
     private SuccessResponseDTO<T> successResponseDTO;
 

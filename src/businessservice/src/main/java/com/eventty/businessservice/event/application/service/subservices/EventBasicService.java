@@ -158,7 +158,7 @@ public class EventBasicService {
         ResponseEntity<ResponseDTO<HostFindByIdResponseDTO>> hostInfoResponse = apiClient.queryUserInfoApi(hostId);
         ResponseDTO<HostFindByIdResponseDTO> responseBody = hostInfoResponse.getBody();
 
-        if (responseBody == null || !responseBody.isSuccess()) {
+        if (responseBody == null || !responseBody.getIsSuccess()) {
             throw HostInfoNotFoundException.EXCEPTION;
         }
 
