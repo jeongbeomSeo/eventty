@@ -2,29 +2,25 @@ package com.eventty.authservice.presentation;
 
 import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
+import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.global.Enum.SuccessCode;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
 import com.eventty.authservice.infrastructure.annotation.ApiSuccessData;
-import com.eventty.authservice.infrastructure.utils.CookieCreator;
+import com.eventty.authservice.infrastructure.utils.CookieUtils;
 import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,6 +32,7 @@ public class AuthController {
     private final String HEADER_CSRF = "X-Csrf-Token";
 
     private final UserService userService;
+    private final CookieUtils cookieUtils;
 
     /**
      * 회원가입
@@ -83,11 +80,11 @@ public class AuthController {
         LoginSuccessDTO loginSuccessDTO = userService.login(userLoginRequestDTO);
 
         // JWT & Refresh Token
-        ResponseCookie jwtCookie = CookieCreator.createAccessTokenCookie(
-                loginSuccessDTO.tokensDTO().accessToken());
+        ResponseCookie jwtCookie = cookieUtils.createAccessTokenCookie(
+                loginSuccessDTO.sessionTokensDTO().accessToken());
 
-        ResponseCookie refreshTokenCookie = CookieCreator.createRefreshTokenCookie(
-                loginSuccessDTO.tokensDTO().refreshToken());
+        ResponseCookie refreshTokenCookie = cookieUtils.createRefreshTokenCookie(
+                loginSuccessDTO.sessionTokensDTO().refreshToken());
 
         // Response
         LoginResponseDTO loginResponseDTO = loginSuccessDTO.loginResponseDTO();
@@ -108,16 +105,15 @@ public class AuthController {
     public ResponseEntity<Void> delete(HttpServletRequest request) {
         log.debug("Current Position: Controller :: 회원 탈퇴");
 
-        // Cookie에는 JWT, CSRF가 담겨오고, Header에는 CSRF가 담겨온다.
-        Cookie[] cookies = request.getCookies();
-        String csrfToken = request.getHeader(HEADER_CSRF);
+        SessionTokensDTO sessionTokensDTO = cookieUtils.getSessionTokens(request);
+        String csrfToken = cookieUtils.getCsrfToken(request);
 
         // 유저 삭제
-        userService.deleteUser(cookies, csrfToken);
+        userService.deleteUser(sessionTokensDTO, csrfToken);
 
         // 사용자의 브라우저에 저장되어 있는 토큰 삭제
-        ResponseCookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
-        ResponseCookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCookie();
+        ResponseCookie deleteAccessToken = cookieUtils.deleteAccessTokenCookie();
+        ResponseCookie deleteRefreshToken = cookieUtils.deleteRefreshTokenCookie();
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
@@ -152,13 +148,13 @@ public class AuthController {
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         log.debug("Current Position: Controller :: 회원 로그아웃");
 
-        Cookie[] cookies = request.getCookies();
-        String csrfToken = request.getHeader(HEADER_CSRF);
+        SessionTokensDTO sessionTokensDTO = cookieUtils.getSessionTokens(request);
+        String csrfToken = cookieUtils.getCsrfToken(request);
 
-        userService.logout(cookies, csrfToken);
+        userService.logout(sessionTokensDTO, csrfToken);
 
-        ResponseCookie deleteAccessToken = CookieCreator.deleteAccessTokenCookie();
-        ResponseCookie deleteRefreshToken = CookieCreator.deleteRefreshTokenCookie();
+        ResponseCookie deleteAccessToken = cookieUtils.deleteAccessTokenCookie();
+        ResponseCookie deleteRefreshToken = cookieUtils.deleteRefreshTokenCookie();
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
@@ -170,18 +166,46 @@ public class AuthController {
     /**
      * 비밀번호 변경
      */
-    @PostMapping("/changePW")
+    @PostMapping("/change/password")
     public ResponseEntity<Void> changePW(@Valid @RequestBody ChangePWRequestDTO changePWRequestDTO, HttpServletRequest request) {
         log.debug("Current Position: Controller:: 회원 비밀번호 변경");
 
-        Cookie[] cookies = request.getCookies();
-        String csrfToken = request.getHeader(HEADER_CSRF);
+        SessionTokensDTO sessionTokensDTO = cookieUtils.getSessionTokens(request);
+        String csrfToken = cookieUtils.getCsrfToken(request);
 
-        CsrfTokenDTO csrfTokenDTO = userService.changePW(changePWRequestDTO,cookies, csrfToken);
+        CsrfTokenDTO csrfTokenDTO = userService.changePW(changePWRequestDTO, sessionTokensDTO, csrfToken);
 
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
                 .header(HEADER_CSRF, csrfTokenDTO.value())
+                .body(null);
+    }
+
+    /**
+     * 이메일 찾기
+     */
+    @PostMapping("/find/email")
+    public ResponseEntity<SuccessResponseDTO<String>> findEmail(@Valid @RequestBody FindEmailRequestDTO findEmailRequestDTO) {
+        log.debug("Current Position: Controller:: 이메일 찾기");
+
+        String email =  userService.queryFindEmail(findEmailRequestDTO);
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
+                .body(SuccessResponseDTO.of(email));
+    }
+
+    /**
+     * 패스워드 변경 (보류)
+     */
+    @PostMapping("/find/password")
+    public ResponseEntity<Void> findPassword(@Valid @RequestBody FindPWRequestDTO findPWRequestDTO) {
+        log.debug("Current Position: Controller:: 패스워드 찾기");
+
+        userService.queryFindPW(findPWRequestDTO);
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
                 .body(null);
     }
 }

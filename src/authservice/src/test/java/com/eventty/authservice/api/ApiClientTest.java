@@ -18,7 +18,7 @@
 //import java.time.LocalDate;
 //import java.util.Collections;
 //
-//import com.eventty.authservice.api.dto.UserCreateRequestDTO;
+//import com.eventty.authservice.api.dto.request.UserCreateRequestDTO;
 //import com.eventty.authservice.api.exception.ApiException;
 //
 //import static org.mockito.Mockito.*;

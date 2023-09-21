@@ -1,5 +1,9 @@
 package com.eventty.authservice.api;
 
+import com.eventty.authservice.api.dto.request.QueryCheckPhoneNumRequestDTO;
+import com.eventty.authservice.api.dto.request.UserCreateRequestDTO;
+import com.eventty.authservice.api.dto.response.QueryCheckPhoneNumResponseDTO;
+import com.eventty.authservice.api.dto.response.QueryImageResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -12,7 +16,6 @@ import java.util.Collections;
 
 import lombok.AllArgsConstructor;
 
-import com.eventty.authservice.api.dto.UserCreateRequestDTO;
 import com.eventty.authservice.api.utils.MakeUrlService;
 import com.eventty.authservice.global.response.ResponseDTO;
 
@@ -30,7 +33,7 @@ public class ApiClient {
 
     public ResponseEntity<ResponseDTO<Void>> createUserApi(UserCreateRequestDTO userCreateRequestDTO) {
 
-        HttpEntity<UserCreateRequestDTO> entity = createHttpPostEntity(userCreateRequestDTO);
+        HttpEntity<UserCreateRequestDTO> entity = createHttpEntity(userCreateRequestDTO);
 
         URI uri = makeUrlService.createUserUri();
 
@@ -41,11 +44,35 @@ public class ApiClient {
         );
     }
 
+    public ResponseEntity<ResponseDTO<QueryImageResponseDTO>> queryImageApi() {
+
+        HttpEntity<Void> entity = createAuthenticateHttpEntity(null);
+
+        URI uri = makeUrlService.queryImgaeUri();
+
+        logApiCall("Auth Server", "User Server", "Query Image");
+        return customRestTemplate.exchange(
+                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<QueryImageResponseDTO>>() {}
+        );
+    }
+
+    public ResponseEntity<ResponseDTO<QueryCheckPhoneNumResponseDTO>> queryPhoneNumberApi(QueryCheckPhoneNumRequestDTO queryCheckPhoneNumRequestDTO) {
+
+        HttpEntity<QueryCheckPhoneNumRequestDTO> entity = createHttpEntity(queryCheckPhoneNumRequestDTO);
+
+        URI uri = makeUrlService.queryCheckPhoneNumUri();
+
+        logApiCall("Auth Server", "User Server", "Query Phone Number");
+        return customRestTemplate.exchange(
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<QueryCheckPhoneNumResponseDTO>>() {}
+        );
+    }
+
     private void logApiCall(String from, String to, String purpose) {
         log.info("API 호출 From: {} To: {} Purpose: {}", from, to, purpose);
     }
 
-    private <T> HttpEntity<T> createHttpPostEntity(T dto) {
+    private <T> HttpEntity<T> createHttpEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -53,12 +80,12 @@ public class ApiClient {
         return new HttpEntity<>(dto, headers);
     }
 
-/*    private <T> HttpEntity<T> createAuthenticateHttpPostEnttiy(T dto) {
+    private <T> HttpEntity<T> createAuthenticateHttpEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.add("X-Requires-Auth", "True");
 
         return new HttpEntity<>(dto, headers);
-    }*/
+    }
 }

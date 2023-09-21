@@ -1,4 +1,4 @@
-package com.eventty.authservice.api.dto;
+package com.eventty.authservice.api.dto.request;
 
 import lombok.*;
 
@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 /*
  User Server로 보낼 DTO
+ 회원 가입
  */
 
 @Getter

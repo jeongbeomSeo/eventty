@@ -15,4 +15,14 @@ public class MakeUrlService {
         String CREATE_USER_API_PATH = "/api/users/me";
         return URI.create(urlProperties.getUserServer() + CREATE_USER_API_PATH);
     }
+
+    public URI queryImgaeUri() {
+        String QUERY_IMAGE_API_PATH = "/api/image";
+        return URI.create(urlProperties.getUserServer() + QUERY_IMAGE_API_PATH);
+    }
+
+    public URI queryCheckPhoneNumUri() {
+        String QUERY_CHECK_PHONE_NUM_PATH = "/api/phoneNum";
+        return URI.create(urlProperties.getUserServer() + QUERY_CHECK_PHONE_NUM_PATH);
+    }
 }
