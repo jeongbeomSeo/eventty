@@ -38,7 +38,7 @@ public class EventControllerTest {
     @DisplayName("전체 행사 조회 테스트")
     public void findAllEventsTest() throws Exception {
         // Given
-        List<EventBasicFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
+        List<EventBasicWithoutHostInfoResponseDTO> mockEventList = createEventRespnseDTOList(3L);
         when(eventBasicService.findAllEvents()).thenReturn(mockEventList);
 
         // When & Then
@@ -74,7 +74,7 @@ public class EventControllerTest {
     public void findEventsByHostIdTest() throws Exception {
         // Given
         Long hostId = 1L;
-        List<EventBasicFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
+        List<EventBasicWithoutHostInfoResponseDTO> mockEventList = createEventRespnseDTOList(3L);
         when(eventBasicService.findEventsByHostId(hostId)).thenReturn(mockEventList);
 
         // When & Then
@@ -155,8 +155,8 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static EventBasicFindAllResponseDTO createEventResponseDTO(Long id){
-        return EventBasicFindAllResponseDTO.builder()
+    private static EventBasicWithoutHostInfoResponseDTO createEventResponseDTO(Long id){
+        return EventBasicWithoutHostInfoResponseDTO.builder()
             .id(id)
             .hostId(1L)
             .title("Sample Event")
@@ -191,11 +191,11 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static List<EventBasicFindAllResponseDTO> createEventRespnseDTOList(Long count) {
-        List<EventBasicFindAllResponseDTO> eventBasicFindAllResponseDTOList = new ArrayList<>();
+    private static List<EventBasicWithoutHostInfoResponseDTO> createEventRespnseDTOList(Long count) {
+        List<EventBasicWithoutHostInfoResponseDTO> eventBasicFindAllResponseDTOList = new ArrayList<>();
 
         for (Long i = 0L; i < count; i++) {
-            EventBasicFindAllResponseDTO eventBasicFindAllResponseDTO = createEventResponseDTO(i);
+            EventBasicWithoutHostInfoResponseDTO eventBasicFindAllResponseDTO = createEventResponseDTO(i);
             eventBasicFindAllResponseDTOList.add(eventBasicFindAllResponseDTO);
         }
 

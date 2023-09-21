@@ -24,7 +24,7 @@ public class FullEventFindAllResponseDTO {
     private String originFileName; // 원본 파일명
 
     public static FullEventFindAllResponseDTO of(
-            EventBasicFindAllResponseDTO eventBasic,
+            EventBasicWithoutHostInfoResponseDTO eventBasic,
             ImageResponseDTO imageInfo) {
         return FullEventFindAllResponseDTO.builder()
                 .id(eventBasic.getId())

@@ -18,7 +18,7 @@ public class EventInfoApiResponseDTO {
     private Long eventId;               // Event_Basic 고유 ID
 
     public static EventInfoApiResponseDTO from(
-            ImageResponseDTO image, EventBasicFindByIdResponseDTO eventBasic, TicketResponseDTO ticket
+            ImageResponseDTO image, EventBasicWithoutHostInfoResponseDTO eventBasic, TicketResponseDTO ticket
     ) {
         return EventInfoApiResponseDTO.builder()
                 .image(image.getImagePathFromStorage())

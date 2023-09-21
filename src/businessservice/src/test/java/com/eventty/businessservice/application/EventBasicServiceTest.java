@@ -21,7 +21,7 @@ public class EventBasicServiceTest {
         when(eventBasicRepository.selectAllEvents()).thenReturn(mockEventEntities);
 
         // When
-        List<EventBasicFindAllResponseDTO> responseDTOs = eventBasicService.findAllEvents();
+        List<EventBasicWithoutHostInfoResponseDTO> responseDTOs = eventBasicService.findAllEvents();
 
         // Then
         assertEquals(mockEventEntities.size(), responseDTOs.size());
@@ -37,7 +37,7 @@ public class EventBasicServiceTest {
         when(eventBasicRepository.selectEventsByHostId(hostId)).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventBasicService.findEventsByHostId(hostId);
+        List<EventBasicWithoutHostInfoResponseDTO> result = eventBasicService.findEventsByHostId(hostId);
 
         // then
         assertNotNull(result);
@@ -54,7 +54,7 @@ public class EventBasicServiceTest {
         when(eventBasicRepository.selectEventsByCategory(category.getId())).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventBasicService.findEventsByCategory(category);
+        List<EventBasicWithoutHostInfoResponseDTO> result = eventBasicService.findEventsByCategory(category);
 
         // then
         assertNotNull(result);
@@ -84,7 +84,7 @@ public class EventBasicServiceTest {
         when(eventBasicRepository.selectEventsBySearch(keyword)).thenReturn(mockEvents);
 
         // when
-        List<EventBasicFindAllResponseDTO> result = eventBasicService.findEventsBySearch(keyword);
+        List<EventBasicWithoutHostInfoResponseDTO> result = eventBasicService.findEventsBySearch(keyword);
 
         // then
         assertNotNull(result);

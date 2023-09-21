@@ -241,7 +241,7 @@ public class EventController {
     API 요청
      */
     @GetMapping("/api/events")
-    @Operation(summary = "Apply 서버로부터의 요청 처리 - 사용자가 신청(Apply)한 티켓에 대한 정보와 이벤트 정보를 조회하기 위한 용도.")
+    @Operation(summary = "Apply 서버로부터의 요청 처리 - 신청한 티켓 ID 리스트를 파라미터로 보내면, 해당 티켓과 이벤트의 정보를 조회하기 위한 용도.")
     @ApiSuccessData()
     @Permission(Roles = {UserRole.USER})
     public ResponseEntity<SuccessResponseDTO<List<EventInfoApiResponseDTO>>> findEventInfoApi(

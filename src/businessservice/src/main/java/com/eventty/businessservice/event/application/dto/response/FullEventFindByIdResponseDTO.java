@@ -39,7 +39,7 @@ public class FullEventFindByIdResponseDTO {
 
 
     public static FullEventFindByIdResponseDTO of(
-            EventBasicFindByIdResponseDTO eventBasic,
+            EventBasicWithHostInfoResponseDTO eventBasic,
             EventDetailFindByIdResponseDTO eventDetail,
             List<TicketResponseDTO> tickets,
             ImageResponseDTO imageInfo) {

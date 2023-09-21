@@ -33,7 +33,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findAllEvents() {
         // 이벤트 기본 정보
-        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findAllEvents();
+        List<EventBasicWithoutHostInfoResponseDTO> eventBasicList = eventBasicService.findAllEvents();
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -58,7 +58,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findEventsByHostId(Long hostId) {
         // 이벤트 기본 정보
-        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsByHostId(hostId);
+        List<EventBasicWithoutHostInfoResponseDTO> eventBasicList = eventBasicService.findEventsByHostId(hostId);
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -67,7 +67,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findEventsByCategory(Category category) {
         // 이벤트 기본 정보
-        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsByCategory(category);
+        List<EventBasicWithoutHostInfoResponseDTO> eventBasicList = eventBasicService.findEventsByCategory(category);
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -76,7 +76,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<FullEventFindAllResponseDTO> findEventsBySearch(String keyword) {
         // 이벤트 기본 정보
-        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsBySearch(keyword);
+        List<EventBasicWithoutHostInfoResponseDTO> eventBasicList = eventBasicService.findEventsBySearch(keyword);
 
         // 각 이벤트의 이미지와 함께 응답
         return mapEventBasicListToFullResponseDTO(eventBasicList);
@@ -84,7 +84,7 @@ public class EventService {
 
     public FullEventFindByIdResponseDTO findEventById(Long eventId) {
         // 이벤트 기본 정보
-        EventBasicFindByIdResponseDTO eventBasic = eventBasicService.findEventById(eventId);
+        EventBasicWithHostInfoResponseDTO eventBasic = eventBasicService.findEventByIdWithHostInfo(eventId);
 
         // 이벤트 상세 정보
         EventDetailFindByIdResponseDTO eventDetail = eventDetailService.findEventById(eventId);
@@ -179,7 +179,7 @@ public class EventService {
 
         return ticketList.stream()
                 .map(ticket -> {
-                    EventBasicFindByIdResponseDTO eventBasic = eventBasicService.findEventById(ticket.getEventId());
+                    EventBasicWithoutHostInfoResponseDTO eventBasic = eventBasicService.findEventByIdWithoutHostInfo(ticket.getEventId());
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(ticket.getEventId());
                     return EventInfoApiResponseDTO.from(imageInfo, eventBasic, ticket);
                 })
@@ -196,7 +196,7 @@ public class EventService {
     }
 
     private List<FullEventFindAllResponseDTO> mapEventIdListToEventFullFindAllResponseDTO(List<Long> eventIds) {
-        List<EventBasicFindAllResponseDTO> eventBasicList = eventBasicService.findEventsByIdList(eventIds);
+        List<EventBasicWithoutHostInfoResponseDTO> eventBasicList = eventBasicService.findEventsByIdList(eventIds);
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
@@ -205,7 +205,7 @@ public class EventService {
                 .toList();
     }
 
-    private List<FullEventFindAllResponseDTO> mapEventBasicListToFullResponseDTO(List<EventBasicFindAllResponseDTO> eventBasicList) {
+    private List<FullEventFindAllResponseDTO> mapEventBasicListToFullResponseDTO(List<EventBasicWithoutHostInfoResponseDTO> eventBasicList) {
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());

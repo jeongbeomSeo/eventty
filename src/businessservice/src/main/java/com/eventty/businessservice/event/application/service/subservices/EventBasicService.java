@@ -5,8 +5,8 @@ import com.eventty.businessservice.event.api.dto.response.HostFindByIdResponseDT
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketCreateRequestDTO;
-import com.eventty.businessservice.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.event.application.dto.response.EventBasicFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.EventBasicWithoutHostInfoResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.EventBasicWithHostInfoResponseDTO;
 import com.eventty.businessservice.event.domain.exception.HostInfoNotFoundException;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
@@ -31,58 +31,64 @@ public class EventBasicService {
     private final EventBasicRepository eventBasicRepository;
     private final ApiClient apiClient;
 
-    public List<EventBasicFindAllResponseDTO> findAllEvents(){
+    public List<EventBasicWithoutHostInfoResponseDTO> findAllEvents(){
         // 메인 화면에서는 호스트 정보 노출 안함
         return Optional.ofNullable(eventBasicRepository.selectAllEvents())
                 .map(events -> events.stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
                 .collect(Collectors.toList()))
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
-    public List<EventBasicFindAllResponseDTO> findEventsByIdList(List<Long> eventIdList){
+    public List<EventBasicWithoutHostInfoResponseDTO> findEventsByIdList(List<Long> eventIdList){
         return Optional.ofNullable(eventBasicRepository.selectEventsByIdList(eventIdList))
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<EventBasicFindAllResponseDTO> findEventsByHostId(Long hostId){
+    public List<EventBasicWithoutHostInfoResponseDTO> findEventsByHostId(Long hostId){
         return Optional.ofNullable(eventBasicRepository.selectEventsByHostId(hostId))
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<EventBasicFindAllResponseDTO> findEventsByCategory(Category category){
+    public List<EventBasicWithoutHostInfoResponseDTO> findEventsByCategory(Category category){
         return Optional.ofNullable(eventBasicRepository.selectEventsByCategory(category.getId()))
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<EventBasicFindAllResponseDTO> findEventsBySearch(String keyword){
+    public List<EventBasicWithoutHostInfoResponseDTO> findEventsBySearch(String keyword){
         return Optional.ofNullable(eventBasicRepository.selectEventsBySearch(keyword))
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicFindAllResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public EventBasicFindByIdResponseDTO findEventById(Long eventId) {
+    public EventBasicWithHostInfoResponseDTO findEventByIdWithHostInfo(Long eventId) {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
         // User Server API 호출하여 Host 정보 가져오기
         HostFindByIdResponseDTO hostInfo = getUserInfoForEventHost(eventBasic.getUserId());
 
-        return EventBasicFindByIdResponseDTO.from(eventBasic, hostInfo);
+        return EventBasicWithHostInfoResponseDTO.from(eventBasic, hostInfo);
+    }
+
+    public EventBasicWithoutHostInfoResponseDTO findEventByIdWithoutHostInfo(Long eventId) {
+        EventBasicEntity eventBasic = getEventIfExists(eventId);
+
+        return EventBasicWithoutHostInfoResponseDTO.fromEntity(eventBasic);
     }
 
 
