@@ -11,9 +11,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @ToString
-public class EventFullFindByIdResponseDTO {
+public class FullEventFindByIdResponseDTO {
+    // eventBasic
     private Long id;
-    private Long userId;
+    private String hostName; // from User Server
+    private String hostPhone; // from User Server
     private String title;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;
@@ -21,25 +23,30 @@ public class EventFullFindByIdResponseDTO {
     private String location;
     private String categoryName;
     private Boolean isActive;
-    private Boolean isDeleted;
+
+    // eventDetail
     private String content;
     private LocalDateTime applyStartAt;
     private LocalDateTime applyEndAt;
     private Long views;
 
+    // tickets
     private List<TicketResponseDTO> tickets;
 
+    // imageInfo
     private String image; // 이미지 파일
     private String originFileName; // 원본 파일명
 
-    public static EventFullFindByIdResponseDTO from(
-            EventBasicResponseDTO eventBasic,
-            EventDetailResponseDTO eventDetail,
+
+    public static FullEventFindByIdResponseDTO of(
+            EventBasicWithHostInfoResponseDTO eventBasic,
+            EventDetailFindByIdResponseDTO eventDetail,
             List<TicketResponseDTO> tickets,
             ImageResponseDTO imageInfo) {
-        return EventFullFindByIdResponseDTO.builder()
+        return FullEventFindByIdResponseDTO.builder()
                 .id(eventBasic.getId())
-                .userId(eventBasic.getUserId())
+                .hostName(eventBasic.getHostName())
+                .hostPhone(eventBasic.getHostPhone())
                 .title(eventBasic.getTitle())
                 .eventStartAt(eventBasic.getEventStartAt())
                 .eventEndAt(eventBasic.getEventEndAt())
@@ -47,22 +54,20 @@ public class EventFullFindByIdResponseDTO {
                 .location(eventBasic.getLocation())
                 .categoryName(eventBasic.getCategoryName())
                 .isActive(eventBasic.getIsActive())
-                .isDeleted(eventBasic.getIsDeleted())
                 .content(eventDetail.getContent())
                 .applyStartAt(eventDetail.getApplyStartAt())
                 .applyEndAt(eventDetail.getApplyEndAt())
                 .views(eventDetail.getViews())
                 .tickets(tickets)
-                .image(imageInfo.getImageResourceFromStorage())
+                .image(imageInfo.getImagePathFromStorage())
                 .originFileName(imageInfo.getImageOriginalFileName())
             .build();
     }
 
 
     // Swagger 을 위하여 기본 생성자로 기본값 설정
-    public EventFullFindByIdResponseDTO() {
+    public FullEventFindByIdResponseDTO() {
         this.id = 1L;
-        this.userId = 1L;
         this.title = "String";
         this.image = "String";
         this.eventStartAt = LocalDateTime.now();
@@ -70,7 +75,6 @@ public class EventFullFindByIdResponseDTO {
         this.participateNum = 1L;
         this.location = "String";
         this.isActive = true;
-        this.isDeleted = false;
         this.content = "String";
         this.applyStartAt = LocalDateTime.now();
         this.applyEndAt = LocalDateTime.now();

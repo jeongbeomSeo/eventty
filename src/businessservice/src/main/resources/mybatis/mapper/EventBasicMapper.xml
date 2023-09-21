@@ -30,6 +30,16 @@
         WHERE id = #{id} AND is_deleted = false
     </select>
 
+    <!--이벤트 ID List 에 따른 이벤트 조회-->
+    <select id="selectEventsByIdList" resultMap="EventResultMap" parameterType="java.util.List">
+        SELECT * FROM event_basic
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_deleted = false
+    </select>
+
     <!-- 이벤트 생성 -->
     <insert id="insertEvent" parameterType="com.eventty.businessservice.event.domain.entity.EventBasicEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO event_basic (user_id, title, event_start_at, event_end_at, participate_num, location, category, is_active, is_deleted)
@@ -40,9 +50,8 @@
     <select id="selectEventsByHostId" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT *
         FROM event_basic
-        WHERE user_id = #{hostId}
+        WHERE user_id = #{userId}
         AND is_deleted = false
-        ORDER BY id DESC
     </select>
 
     <!-- 이벤트 수정 -->

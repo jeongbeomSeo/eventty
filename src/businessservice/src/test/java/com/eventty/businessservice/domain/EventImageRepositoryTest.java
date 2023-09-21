@@ -14,11 +14,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/*
 @ExtendWith(SpringExtension.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // 테스트용 인메모리 DB
 @MybatisTest
 public class EventImageRepositoryTest {
+    /*
     @Autowired
     private EventImageRepository eventImageRepository;
 
@@ -51,7 +51,7 @@ public class EventImageRepositoryTest {
                 .build();
     }
 
+
+     */
 }
 
-
- */
