@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter @NoArgsConstructor
 public class ResponseDTO<T> {
 
-    private boolean isSuccess = true;
+    private boolean isSuccess;
     private ErrorResponseDTO errorResponseDTO;
     private SuccessResponseDTO<T> successResponseDTO;
 
@@ -27,11 +27,21 @@ public class ResponseDTO<T> {
         this.successResponseDTO = successResponseDTO;
     }
 
+    private ResponseDTO(boolean isSuccess) {
+        this.isSuccess = isSuccess;
+        this.errorResponseDTO = null;
+        this.successResponseDTO = null;
+    }
+
     public static ResponseDTO<Void> of(ErrorResponseDTO errorResponseDTO) {
         return new ResponseDTO<>(errorResponseDTO);
     }
 
     public static <T> ResponseDTO<T> of(SuccessResponseDTO<T> successResponseDTO) {
         return new ResponseDTO<T>(successResponseDTO);
+    }
+
+    public static ResponseDTO<Void> of(boolean isSuccess) {
+        return new ResponseDTO<>(isSuccess);
     }
 }

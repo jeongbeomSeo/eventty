@@ -98,28 +98,6 @@ public class FileHandler {
         }
     }
 
-//    public String getFileInfo(String filePath) throws IOException{
-//        // NCP ObjectStorage에서 갖고 오기
-//        S3ObjectInputStream inputStream = getNCPStorage(filePath);
-//
-//        // 파일 읽기
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        byte[] bytesArray = new byte[12288];
-//        int bytesRead = -1;
-//        while ((bytesRead = inputStream.read(bytesArray)) != -1) {
-//            outputStream.write(bytesArray, 0, bytesRead);
-//        }
-//
-//        // base64 인코딩
-//        String result = new String(Base64.encodeBase64(outputStream.toByteArray()));
-//
-//        // stream 종료
-//        outputStream.close();
-//        inputStream.close();
-//
-//        return result;
-//    }
-    //******************************************************************************************************************
     /**
      * NCP 관련 메서드
      */
@@ -137,6 +115,11 @@ public class FileHandler {
 
         s3.putObject(bucketName, filePath, new File(path));
         System.out.format("Object %s has been created.\n", filePath);
+
+        // 권한 부여
+        AccessControlList accessControlList = s3.getObjectAcl(bucketName, filePath);
+        accessControlList.grantPermission(GroupGrantee.AllUsers, Permission.Read);
+        s3.setObjectAcl(bucketName, filePath, accessControlList);
     }
 
     private S3ObjectInputStream getNCPStorage(String filePath){

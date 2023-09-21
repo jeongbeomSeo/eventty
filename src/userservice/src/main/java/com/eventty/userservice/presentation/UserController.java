@@ -13,6 +13,7 @@ import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.domain.annotation.Permission;
 import com.eventty.userservice.domain.code.UserRole;
 import com.eventty.userservice.infrastructure.context.UserContextHolder;
+import com.eventty.userservice.presentation.dto.ResponseDTO;
 import com.eventty.userservice.presentation.dto.SuccessResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -110,25 +111,25 @@ public class UserController {
     @Operation(summary = "(API) User Image 반환")
     @ApiSuccessData(UserImageFindByIdResponseDTO.class)
     @Permission(Roles = {UserRole.USER, UserRole.HOST})
-    public ResponseEntity<SuccessResponseDTO> apiGetUserImage(){
+    public ResponseEntity<?> apiGetUserImage(){
 
         Long userId = getUserIdByUserContextHolder();
 
         UserImageFindByIdResponseDTO response = userService.apiGetUserImage(userId);
-        return ResponseEntity.ok(response == null ? null : SuccessResponseDTO.of(response));
+        return ResponseEntity.ok(response == null ? false : SuccessResponseDTO.of(response));
     }
 
     /**
      * (API) 유저 정보 확인 (비밀번호 찾기)
      * @return
      */
-    @PostMapping("/api/password")
+    @PostMapping("/api/userId")
     @ApiSuccessData(value = Long.class, isArray = true)
     @ApiErrorCode(USER_INFO_NOT_FOUND)
     @Operation(summary = "(API) 유저 정보 확인 (비밀번호 찾기)")
-    public ResponseEntity<SuccessResponseDTO> apiCheckUserInfo(@RequestBody @Valid UserCheckRequestDTO userCheckRequestDTO){
+    public ResponseEntity<?> apiCheckUserInfo(@RequestBody @Valid UserCheckRequestDTO userCheckRequestDTO){
         List<Long> response = userService.apiCheckUserInfo(userCheckRequestDTO);
-        return ResponseEntity.ok(response == null ? null : SuccessResponseDTO.of(response));
+        return ResponseEntity.ok(response == null ? false : SuccessResponseDTO.of(response));
     }
 
     private Long getUserIdByUserContextHolder(){

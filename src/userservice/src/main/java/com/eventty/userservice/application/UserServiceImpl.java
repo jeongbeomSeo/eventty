@@ -116,10 +116,9 @@ public class UserServiceImpl implements UserService {
 
         // 파일이 비었을 경우 & update가 일어났을 경우
         // 사진은 있되 파일 업로드로 버튼을 잘못 누른경우
-        if((multipartFile == null || multipartFile.isEmpty()) &&
-            "true".equalsIgnoreCase(userImageUpdateRequestDTO.getIsUpdate()) &&
-                !"".equalsIgnoreCase(userImageUpdateRequestDTO.getImageId()))
+        if((multipartFile == null || multipartFile.isEmpty()) && !"".equalsIgnoreCase(userImageUpdateRequestDTO.getImageId())){
             return UserImageDTO.builder().id(Long.parseLong(userImageUpdateRequestDTO.getImageId())).build();
+        }
 
         // 파일이 비었을 경우
         if (multipartFile == null || multipartFile.isEmpty())
