@@ -3,13 +3,15 @@ package com.eventty.businessservice.event.application.dto.response;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @ToString
-public class EventFullFindAllResponseDTO {
+public class FullEventFindByIdResponseDTO {
     private Long id;
     private Long userId;
     private String title;
@@ -20,15 +22,22 @@ public class EventFullFindAllResponseDTO {
     private String categoryName;
     private Boolean isActive;
     private Boolean isDeleted;
+    private String content;
+    private LocalDateTime applyStartAt;
+    private LocalDateTime applyEndAt;
+    private Long views;
 
-    private Long imageId;
+    private List<TicketResponseDTO> tickets;
+
     private String image; // 이미지 파일
     private String originFileName; // 원본 파일명
 
-    public static EventFullFindAllResponseDTO from(
+    public static FullEventFindByIdResponseDTO of(
             EventBasicResponseDTO eventBasic,
+            EventDetailResponseDTO eventDetail,
+            List<TicketResponseDTO> tickets,
             ImageResponseDTO imageInfo) {
-        return EventFullFindAllResponseDTO.builder()
+        return FullEventFindByIdResponseDTO.builder()
                 .id(eventBasic.getId())
                 .userId(eventBasic.getUserId())
                 .title(eventBasic.getTitle())
@@ -39,23 +48,33 @@ public class EventFullFindAllResponseDTO {
                 .categoryName(eventBasic.getCategoryName())
                 .isActive(eventBasic.getIsActive())
                 .isDeleted(eventBasic.getIsDeleted())
-                .imageId(imageInfo.getImageId())
-                .image(imageInfo.getImageResourceFromStorage())
+                .content(eventDetail.getContent())
+                .applyStartAt(eventDetail.getApplyStartAt())
+                .applyEndAt(eventDetail.getApplyEndAt())
+                .views(eventDetail.getViews())
+                .tickets(tickets)
+                .image(imageInfo.getImagePathFromStorage())
                 .originFileName(imageInfo.getImageOriginalFileName())
-                .build();
+            .build();
     }
 
+
     // Swagger 을 위하여 기본 생성자로 기본값 설정
-    public EventFullFindAllResponseDTO() {
+    public FullEventFindByIdResponseDTO() {
         this.id = 1L;
         this.userId = 1L;
         this.title = "String";
+        this.image = "String";
         this.eventStartAt = LocalDateTime.now();
         this.eventEndAt = LocalDateTime.now();
         this.participateNum = 1L;
         this.location = "String";
         this.isActive = true;
         this.isDeleted = false;
+        this.content = "String";
+        this.applyStartAt = LocalDateTime.now();
+        this.applyEndAt = LocalDateTime.now();
+        this.views = 1L;
+        this.tickets = new ArrayList<>();
     }
-
 }

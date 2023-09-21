@@ -2,10 +2,12 @@ package com.eventty.businessservice.event.application.service.subservices;
 
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
+import com.eventty.businessservice.event.application.dto.request.TicketCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.EventBasicResponseDTO;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.event.domain.exception.AccessDeniedException;
 import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class EventBasicService {
 
     private final EventBasicRepository eventBasicRepository;
 
-    @Transactional(readOnly = true)
     public List<EventBasicResponseDTO> findAllEvents(){
         return Optional.ofNullable(eventBasicRepository.selectAllEvents())
                 .map(events -> events.stream()
@@ -33,14 +33,12 @@ public class EventBasicService {
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
-    @Transactional(readOnly = true)
     public EventBasicResponseDTO findEventById(Long eventId){
         return Optional.ofNullable(eventBasicRepository.selectEventById(eventId))
                 .map(EventBasicResponseDTO::fromEntity)
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION);
     }
 
-    @Transactional(readOnly = true)
     public List<EventBasicResponseDTO> findEventsByIdList(List<Long> eventIdList){
         return Optional.ofNullable(eventBasicRepository.selectEventsByIdList(eventIdList))
                 .filter(events -> !events.isEmpty())
@@ -50,8 +48,6 @@ public class EventBasicService {
                 .collect(Collectors.toList());
     }
 
-
-    @Transactional(readOnly = true)
     public List<EventBasicResponseDTO> findEventsByHostId(Long hostId){
         return Optional.ofNullable(eventBasicRepository.selectEventsByHostId(hostId))
                 .filter(events -> !events.isEmpty())
@@ -61,7 +57,6 @@ public class EventBasicService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public List<EventBasicResponseDTO> findEventsByCategory(Category category){
         return Optional.ofNullable(eventBasicRepository.selectEventsByCategory(category.getId()))
                 .filter(events -> !events.isEmpty())
@@ -71,7 +66,6 @@ public class EventBasicService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public List<EventBasicResponseDTO> findEventsBySearch(String keyword){
         return Optional.ofNullable(eventBasicRepository.selectEventsBySearch(keyword))
                 .filter(events -> !events.isEmpty())
@@ -81,13 +75,10 @@ public class EventBasicService {
                 .collect(Collectors.toList());
     }
 
-    public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO){
-        // 티켓 수량만큼 참여 인원 증가
-        eventCreateRequestDTO.setParticipateNum(0L); // 초기화
-        eventCreateRequestDTO.getTickets().forEach(ticketCreateRequest -> {
-            Long quantity = ticketCreateRequest.getQuantity();
-            eventCreateRequestDTO.setParticipateNum(eventCreateRequestDTO.getParticipateNum() + quantity);
-        });
+    public Long createEvent(EventCreateRequestDTO eventCreateRequestDTO) {
+        // 참가 인원수 계산
+        Long participateNum = calculateParticipateNum(eventCreateRequestDTO.getTickets());
+        eventCreateRequestDTO.setParticipateNum(participateNum);
 
         EventBasicEntity eventBasic = eventCreateRequestDTO.toEventBasicEntity();
         eventBasicRepository.insertEvent(eventBasic);
@@ -97,10 +88,7 @@ public class EventBasicService {
 
     public Long updateEvent(Long eventId, EventUpdateRequestDTO eventUpdateRequestDTO){
         // 업데이트 전, 해당 데이터 존재 여부 확인
-        EventBasicEntity eventBasic = eventBasicRepository.selectEventById(eventId);
-        if(eventBasic == null){
-            throw EventNotFoundException.EXCEPTION;
-        }
+        EventBasicEntity eventBasic = getEventIfExists(eventId);
 
         // 각 필드가 null 이 아닐때에만 업데이트
         if(eventUpdateRequestDTO.getTitle() != null){
@@ -120,10 +108,7 @@ public class EventBasicService {
 
     public Long deleteEvent(Long eventId){
         // 삭제 전, 해당 데이터 존재 여부 확인
-        EventBasicEntity eventBasic = eventBasicRepository.selectEventById(eventId);
-        if(eventBasic == null){
-            throw EventNotFoundException.EXCEPTION;
-        }
+        EventBasicEntity eventBasic = getEventIfExists(eventId);
 
         eventBasicRepository.deleteEvent(eventId);
 
@@ -131,8 +116,29 @@ public class EventBasicService {
     }
 
     public void subtractParticipateNum(Long eventId, Long quantity) {
-        EventBasicEntity eventBasic = eventBasicRepository.selectEventById(eventId);
+        // 인원수 감소 전, 해당 데이터 존재 여부 확인
+        EventBasicEntity eventBasic = getEventIfExists(eventId);
+
         eventBasic.subtractParticipateNum(quantity);
         eventBasicRepository.updateEvent(eventBasic);
+    }
+
+    public void checkHostId(Long hostId, Long eventId) {
+        EventBasicEntity eventBasic = getEventIfExists(eventId);
+
+        if(!eventBasic.getUserId().equals(hostId)){
+            throw AccessDeniedException.EXCEPTION;
+        }
+    }
+
+    private EventBasicEntity getEventIfExists(Long eventId) {
+        Optional<EventBasicEntity> eventOptional = Optional.ofNullable(eventBasicRepository.selectEventById(eventId));
+        return eventOptional.orElseThrow(() -> EventNotFoundException.EXCEPTION);
+    }
+
+    private Long calculateParticipateNum(List<TicketCreateRequestDTO> tickets) {
+        return tickets.stream()
+                .mapToLong(TicketCreateRequestDTO::getQuantity)
+                .sum();
     }
 }

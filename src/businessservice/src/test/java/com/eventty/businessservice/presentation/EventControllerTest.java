@@ -3,7 +3,7 @@ package com.eventty.businessservice.presentation;
 import com.eventty.businessservice.event.application.dto.response.EventBasicResponseDTO;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
-import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.FullEventFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.service.subservices.EventBasicService;
 import com.eventty.businessservice.event.presentation.EventController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ public class EventControllerTest {
     public void findEventByIdTest() throws Exception {
         // Given
         Long eventId = 1L;
-        EventFullFindByIdResponseDTO MockEvent = createEventWithDetailDTO(eventId);
+        FullEventFindByIdResponseDTO MockEvent = createEventWithDetailDTO(eventId);
         when(eventBasicService.findEventById(eventId)).thenReturn(MockEvent);
 
         // When & Then
@@ -191,8 +191,8 @@ public class EventControllerTest {
             .build();
     }
 
-    private static EventFullFindByIdResponseDTO createEventWithDetailDTO(Long id){
-        return EventFullFindByIdResponseDTO.builder()
+    private static FullEventFindByIdResponseDTO createEventWithDetailDTO(Long id){
+        return FullEventFindByIdResponseDTO.builder()
                 .id(id)
                 .userId(1L)
                 .title("Sample Event")

@@ -25,6 +25,12 @@
         WHERE id = #{id} AND is_deleted = false;
     </select>
 
+    <!-- 티켓 Id 로 이벤트 Id 조회 -->
+    <select id="selectEventIdByTicketId" parameterType="java.lang.Long">
+        SELECT event_id FROM tickets
+        WHERE id = #{id} AND is_deleted = false;
+    </select>
+
     <!-- 티켓 수정 -->
     <update id="updateTicket" parameterType="com.eventty.businessservice.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
         UPDATE tickets

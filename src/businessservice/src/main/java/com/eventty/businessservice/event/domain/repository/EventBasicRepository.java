@@ -12,7 +12,7 @@ public interface EventBasicRepository {
     List<EventBasicEntity> selectAllEvents();
     Long insertEvent(EventBasicEntity request);
     List<EventBasicEntity> selectEventsByHostId(Long hostId);
-    Long updateEvent(EventBasicEntity request); // 업데이트
+    Long updateEvent(EventBasicEntity request);
     Long deleteEvent(Long id);
     List<EventBasicEntity> selectEventsByCategory(Long categoryId);
     List<EventBasicEntity> selectEventsBySearch(String keyword);

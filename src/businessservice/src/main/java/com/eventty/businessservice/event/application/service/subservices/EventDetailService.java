@@ -3,6 +3,7 @@ package com.eventty.businessservice.event.application.service.subservices;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.EventDetailResponseDTO;
+import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
 import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
 import com.eventty.businessservice.event.domain.repository.EventDetailRepository;
@@ -17,13 +18,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class EventDetailService {
 
     private final EventDetailRepository eventDetailRepository;
 
-    @Transactional(readOnly = true)
     public EventDetailResponseDTO findEventById(Long eventId) {
         return Optional.ofNullable(eventDetailRepository.selectEventDetailById(eventId))
                 .map(EventDetailResponseDTO::fromEntity)
@@ -36,17 +35,14 @@ public class EventDetailService {
         eventDetailRepository.updateView(eventId);
     }
 
-    @Transactional(readOnly = true)
     public List<Long> findTop10EventsIdByViews() {
         return eventDetailRepository.selectTop10EventsIdByViews();
     }
 
-    @Transactional(readOnly = true)
     public List<Long> findTop10EventsIdByCreatedAt() {
         return eventDetailRepository.selectTop10EventsIdByCreateDate();
     }
 
-    @Transactional(readOnly = true)
     public List<Long> findTop10EventsIdByApplyEndAt() {
         return eventDetailRepository.selectTop10EventsIdByApplyEndAt();
     }
@@ -60,10 +56,7 @@ public class EventDetailService {
 
     public Long updateEventDetail(Long eventId, EventUpdateRequestDTO eventUpdateRequestDTO){
         // 업데이트 전, 해당 데이터 존재 여부 확인
-        EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(eventId);
-        if(eventDetail == null){
-            throw EventNotFoundException.EXCEPTION;
-        }
+        EventDetailEntity eventDetail = getEventDetailIfExists(eventId);
 
         eventDetail.updateContent(eventUpdateRequestDTO.getContent());
         eventDetailRepository.updateEventDetail(eventDetail);
@@ -73,12 +66,14 @@ public class EventDetailService {
 
     public Long deleteEventDetail(Long eventId) {
         // 삭제 전, 해당 데이터 존재 여부 확인
-        EventDetailEntity eventDetail = eventDetailRepository.selectEventDetailById(eventId);
-        if(eventDetail == null){
-            throw EventNotFoundException.EXCEPTION;
-        }
+        EventDetailEntity eventDetail = getEventDetailIfExists(eventId);
 
         eventDetailRepository.deleteEventDetail(eventId);
         return eventId;
+    }
+
+    private EventDetailEntity getEventDetailIfExists(Long eventId) {
+        Optional<EventDetailEntity> eventOptional = Optional.ofNullable(eventDetailRepository.selectEventDetailById(eventId));
+        return eventOptional.orElseThrow(() -> EventNotFoundException.EXCEPTION);
     }
 }

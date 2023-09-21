@@ -1,7 +1,7 @@
 package com.eventty.businessservice.application;
 
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
-import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.dto.response.FullEventFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.service.subservices.EventDetailService;
 import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
@@ -43,14 +43,14 @@ public class EventDetailServiceTest {
     public void findEventByIdTest_ExistingEvent() {
         // Given
         Long eventId = 1L;
-        EventFullFindByIdResponseDTO mockEvent = createEventWithDetailDAO(eventId);
+        FullEventFindByIdResponseDTO mockEvent = createEventWithDetailDAO(eventId);
         List<TicketEntity> mockTickets = createTickets();
 
         when(eventBasicRepository.selectEventWithDetailById(eventId)).thenReturn(mockEvent);
         when(ticketRepository.selectTicketByEventId(eventId)).thenReturn(mockTickets);
 
         // When
-        EventFullFindByIdResponseDTO responseDTO = eventDetailService.findEventById(eventId);
+        FullEventFindByIdResponseDTO responseDTO = eventDetailService.findEventById(eventId);
 
         // Then
         assertEquals(mockEvent.getId(), responseDTO.getId());
@@ -135,8 +135,8 @@ public class EventDetailServiceTest {
                 .build();
     }
 
-    private static EventFullFindByIdResponseDTO createEventWithDetailDAO(Long id){
-        return EventFullFindByIdResponseDTO.builder()
+    private static FullEventFindByIdResponseDTO createEventWithDetailDAO(Long id){
+        return FullEventFindByIdResponseDTO.builder()
                 .id(id)
                 .userId(1L)
                 .title("Sample Event")
