@@ -11,7 +11,7 @@ import {
     Paper,
     Stack,
     Text,
-    Title
+    Title, UnstyledButton
 } from "@mantine/core";
 import {useRecoilValue} from "recoil";
 import {IEventDetail} from "../../../types/IEvent";
@@ -21,11 +21,11 @@ import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
 import {useModal} from "../../../util/hook/useModal";
 import {useFetch} from "../../../util/hook/useFetch";
+import {Base64toSrc} from "../../../util/ConvertFile";
 
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
-    const {pathname} = useLocation();
     const {loginAlertModal} = useModal();
     const {deleteEventFetch} = useFetch();
     const isLoggedIn = CheckLogin();
@@ -45,10 +45,10 @@ function WebEventDetail() {
     }, [isLoggedIn]);
 
     return (
-        <Container>
-            <Grid style={{marginTop: "5vh"}} gutter={"xl"}>
+        <Container style={{paddingTop: "5vh", paddingBottom: "5vh"}}>
+            <Grid gutter={"xl"}>
                 <Grid.Col span={8}>
-                    <Image src={DATA.image}
+                    <Image src={Base64toSrc(DATA.image, DATA.originFileName)}
                            height={"400"}
                            withPlaceholder
                     />
@@ -56,7 +56,9 @@ function WebEventDetail() {
                 <Grid.Col span={"auto"}>
                     <Stack justify={"space-between"} style={{height: "100%"}}>
                         <Stack>
-                            <Text fz={"1rem"} color={"var(--primary)"}>{DATA.categoryName}</Text>
+                            <UnstyledButton onClick={() => navigate(`/events/category/${DATA.categoryName}`)}>
+                                <Title order={5} color={"var(--primary)"}>{DATA.categoryName}</Title>
+                            </UnstyledButton>
                             <Title order={2}>{DATA.title}</Title>
                             <Title order={4}>
                                 {`${eventStartAt.getMonth() + 1}월 ${eventStartAt.getDate()}일`}
@@ -67,18 +69,23 @@ function WebEventDetail() {
                             </Title>
                             <Text>{DATA.location}</Text>
                         </Stack>
-                        {userStateValue.isHost ?
+                        {userStateValue.isHost && (userStateValue.userId === DATA.userId) ?
                             <Button color={"red"}
                                     variant={"outline"}
                                     onClick={() => deleteEventFetch(DATA.id)}
                                     style={{height: "2.5rem"}}>
                                 행사 취소
                             </Button> :
-                            <Button className={classes["btn-primary"]}
-                                    style={{height: "2.5rem"}}
-                                    onClick={onClickTicket}>
-                                예약
-                            </Button>
+                            userStateValue.isHost ?
+                                <Button className={`${classes["btn-primary"]} disable`}
+                                        style={{height: "2.5rem"}}>
+                                    예약 불가
+                                </Button> :
+                                <Button className={classes["btn-primary"]}
+                                        style={{height: "2.5rem"}}
+                                        onClick={onClickTicket}>
+                                    예약
+                                </Button>
                         }
                     </Stack>
                 </Grid.Col>

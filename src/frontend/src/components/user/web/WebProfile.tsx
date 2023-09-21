@@ -1,27 +1,24 @@
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Avatar,
     Button,
     Divider,
     FileButton,
     Flex,
-    Group, Image,
-    Indicator,
-    Overlay,
-    Stack, Text,
+    Group,
+    Stack,
     TextInput,
     Title
 } from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import BirthdayPicker from "../../common/BirthdayPicker";
 import PhoneNumberInput from "../../common/PhoneNumberInput";
-import {isRouteErrorResponse, Link, useLoaderData, useRouteError} from "react-router-dom";
+import {isRouteErrorResponse, useLoaderData, useRouteError} from "react-router-dom";
 import {IUpdateUser, IUser} from "../../../types/IUser";
 import {useFetch} from "../../../util/hook/useFetch";
 import {MessageAlert} from "../../../util/MessageAlert";
 import {useModal} from "../../../util/hook/useModal";
 import {Controller, useForm} from "react-hook-form";
-import {patchProfile} from "../../../service/user/fetchUser";
 import {Base64toFile} from "../../../util/ConvertFile";
 
 function WebProfile() {
@@ -31,8 +28,8 @@ function WebProfile() {
     const curEmail = sessionStorage.getItem("EMAIL")!;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imgPreview, setImgPreview] = useState(`data:image/jpg;base64,${DATA.image}`);
+    const [imgFile, setImgFile] = useState<File | null>(null);
+    const [imgPreview, setImgPreview] = useState(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
 
     const {deleteAccountFetch, changeProfileFetch} = useFetch();
     const {changePWModal} = useModal();
@@ -40,12 +37,13 @@ function WebProfile() {
     const {register, handleSubmit, setValue, control, formState: {errors}}
         = useForm<IUpdateUser>({
         defaultValues: {
-            image: DATA.image ? Base64toFile(DATA.image!, DATA.originFileName!, `image/${DATA.originFileName!.split(".").pop()}`) : null,
+            image: DATA.imagePath ? Base64toFile(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`!, DATA.originFileName!, `image/${DATA.originFileName!.split(".").pop()}`) : null,
             imageId: DATA.imageId,
             phone: DATA.phone,
             birth: new Date(DATA.birth!),
             address: DATA.address,
             name: DATA.name,
+            isUpdate: false,
         }
     });
 
@@ -71,11 +69,12 @@ function WebProfile() {
     }, []);
 
     useEffect(() => {
-        if (imageFile !== null) {
-            setImgPreview(URL.createObjectURL(imageFile));
-            setValue("image", imageFile);
+        if (imgFile !== null) {
+            setImgPreview(URL.createObjectURL(imgFile));
+            setValue("image", imgFile);
+            setValue("isUpdate", true);
         }
-    }, [imageFile]);
+    }, [imgFile]);
 
     return (
         <>
@@ -86,7 +85,7 @@ function WebProfile() {
                     <Flex gap={"2rem"}>
                         <Stack align={"center"}>
                             <Avatar size={"8rem"} radius={"8rem"} src={imgPreview}/>
-                            <FileButton onChange={setImageFile} accept={"image/png, image/jpeg, image/webp"}>
+                            <FileButton onChange={setImgFile} accept={"image/png, image/jpeg, image/webp"}>
                                 {(props) => <Button {...props} className={classes["btn-primary"]}>이미지 변경</Button>}
                             </FileButton>
                         </Stack>

@@ -18,3 +18,7 @@ export const Base64toFile = (base64: string, filename: string, mimeType: string)
         return null;
     }
 };
+
+export const Base64toSrc = (base64: string, filename: string) => {
+    return `data:image/${filename.split(".").pop()};base64,${base64}`;
+}

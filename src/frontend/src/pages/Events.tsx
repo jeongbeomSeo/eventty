@@ -16,7 +16,7 @@ function Events() {
     const isXsSize = CheckXsSize();
 
     return (
-        <Container>
+        <Container style={{margin: "5vh auto"}}>
             {isXsSize ? <MobileEvents/> : <WebEvents/>}
         </Container>
     );

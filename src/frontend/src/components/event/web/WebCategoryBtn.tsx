@@ -14,15 +14,15 @@ import {
 const ICON_SIZE = "40px"
 
 const CATEGORY_LIST = [
-    {category: "콘서트", link: "/events/category/콘서트", icon: <IconHandRock size={ICON_SIZE}/>},
-    {category: "클래식", link: "/events/category/클래식", icon: <IconPiano size={ICON_SIZE}/>},
-    {category: "전시", link: "/events/category/전시", icon: <IconPalette size={ICON_SIZE}/>},
-    {category: "스포츠", link: "/events/category/스포츠", icon: <IconBallBaseball size={ICON_SIZE}/>},
-    {category: "캠핑", link: "/events/category/캠핑", icon: <IconTent size={ICON_SIZE}/>},
-    {category: "아동", link: "/events/category/아동", icon: <IconHorseToy size={ICON_SIZE}/>},
-    {category: "영화", link: "/events/category/영화", icon: <IconMovie size={ICON_SIZE}/>},
+    {category: "콘서트", link: "/events/category/concert", icon: <IconHandRock size={ICON_SIZE}/>},
+    {category: "클래식", link: "/events/category/classical", icon: <IconPiano size={ICON_SIZE}/>},
+    {category: "전시", link: "/events/category/exhibition", icon: <IconPalette size={ICON_SIZE}/>},
+    {category: "스포츠", link: "/events/category/sports", icon: <IconBallBaseball size={ICON_SIZE}/>},
+    {category: "캠핑", link: "/events/category/camping", icon: <IconTent size={ICON_SIZE}/>},
+    {category: "아동", link: "/events/category/children", icon: <IconHorseToy size={ICON_SIZE}/>},
+    {category: "영화", link: "/events/category/movie", icon: <IconMovie size={ICON_SIZE}/>},
     {category: "IT", link: "/events/category/IT", icon: <IconCode size={ICON_SIZE}/>},
-    {category: "교양", link: "/events/category/교양", icon: <IconBook size={ICON_SIZE}/>},
+    {category: "교양", link: "/events/category/culture", icon: <IconBook size={ICON_SIZE}/>},
     {category: "TOPIC", link: "/events/category/TOPIC", icon: <IconPresentation size={ICON_SIZE}/>},
 ]
 
