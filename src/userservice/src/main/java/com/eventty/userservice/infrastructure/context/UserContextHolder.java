@@ -1,4 +1,4 @@
-package com.eventty.userservice.infrastructure.ContextHolder;
+package com.eventty.userservice.infrastructure.context;
 
 import com.eventty.userservice.infrastructure.context.UserContext;
 import org.springframework.util.Assert;

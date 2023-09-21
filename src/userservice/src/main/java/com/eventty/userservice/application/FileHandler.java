@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.eventty.userservice.application.dto.UserImageDTO;
 import com.eventty.userservice.domain.exception.UnsupportedContentTypeException;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,24 +37,10 @@ public class FileHandler {
     private final String path = "image\\";
     private AmazonS3 s3;
 
-    public UserImageDTO parseFileInfo(Long userId, MultipartFile multipartFile) throws IOException{
-
-        // 파일이 빈 것이 들어오면 빈 것을 반환
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            return null;
-        }
-
-        // 반환을 할 파일 리스트
-        UserImageDTO userImageDTO = null;
-
+    public UserImageDTO parseFileInfo(Long userId, MultipartFile multipartFile){
         // 폴더 생성을 위한 현재 날짜 Get -> EX) user/currentDate/XXXXXX.jpeg
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         String currentDate = simpleDateFormat.format(new Date());
-
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
 
         String contentType = multipartFile.getContentType(); // jpeg, png, gif
         String originalFileExtension;
@@ -80,20 +65,30 @@ public class FileHandler {
         // user/20230915/XXXXXXXX.jpg
         String storedFilePath = folderName + currentDate + "/" + newFileName;
 
-        userImageDTO = UserImageDTO.builder()
+        UserImageDTO userImageDTO = UserImageDTO.builder()
                 .userId(userId)
                 .originalFileName(multipartFile.getOriginalFilename())
                 .storedFilePath(storedFilePath)
                 .fileSize(multipartFile.getSize())
                 .build();
 
-        // 파일 Local에 저장 -/ userservice/image/XXXXXX.jpg
-        String localPath = absolutePath + path + newFileName;
-        file = new File(localPath);
+        return userImageDTO;
+    }
+
+    public void saveFileInfo(UserImageDTO userImage, MultipartFile multipartFile) throws IOException{
+        // Local에 File 저장
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        String localFilePath = absolutePath + path + userImage.getOriginalFileName();
+
+        file = new File(localFilePath);
         multipartFile.transferTo(file);
 
         // NCP Object Storage에 저장(로컬에 저장되어 있는 파일 -> NC Cloud에 저장하는 형식)
-        uploadNCPStorage(storedFilePath, localPath);
+        uploadNCPStorage(userImage.getStoredFilePath(), localFilePath);
 
         // Local에 저장되어 있는 파일 삭제
         File folder = new File(absolutePath + path);
@@ -101,32 +96,8 @@ public class FileHandler {
             FileUtils.cleanDirectory(folder);
             if(folder.isDirectory()) folder.delete();
         }
-
-        return userImageDTO;
     }
 
-    public String getFileInfo(String filePath) throws IOException{
-        // NCP ObjectStorage에서 갖고 오기
-        S3ObjectInputStream inputStream = getNCPStorage(filePath);
-
-        // 파일 읽기
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] bytesArray = new byte[12288];
-        int bytesRead = -1;
-        while ((bytesRead = inputStream.read(bytesArray)) != -1) {
-            outputStream.write(bytesArray, 0, bytesRead);
-        }
-
-        // base64 인코딩
-        String result = new String(Base64.encodeBase64(outputStream.toByteArray()));
-
-        // stream 종료
-        outputStream.close();
-        inputStream.close();
-
-        return result;
-    }
-    //******************************************************************************************************************
     /**
      * NCP 관련 메서드
      */
@@ -144,6 +115,11 @@ public class FileHandler {
 
         s3.putObject(bucketName, filePath, new File(path));
         System.out.format("Object %s has been created.\n", filePath);
+
+        // 권한 부여
+        AccessControlList accessControlList = s3.getObjectAcl(bucketName, filePath);
+        accessControlList.grantPermission(GroupGrantee.AllUsers, Permission.Read);
+        s3.setObjectAcl(bucketName, filePath, accessControlList);
     }
 
     private S3ObjectInputStream getNCPStorage(String filePath){
