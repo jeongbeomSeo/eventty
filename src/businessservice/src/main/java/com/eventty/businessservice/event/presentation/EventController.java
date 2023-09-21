@@ -48,7 +48,6 @@ public class EventController {
     @Operation(summary = "(ALL) 전체 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findAllEvents()
     {
         List<FullEventFindAllResponseDTO> events = eventService.findAllEvents();
@@ -62,7 +61,6 @@ public class EventController {
     @Operation(summary = "(ALL) 이벤트를 조회수, 최신순, 이벤트 마감일 가까운 순으로 각 10개 씩 가져옵니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<Map<String, List<FullEventFindAllResponseDTO>>>> findEventsBySpecial() {
 
         Map<String, List<FullEventFindAllResponseDTO>> events = eventService.findTop10Events();
@@ -76,7 +74,6 @@ public class EventController {
     @Operation(summary = "(ALL) 이벤트를 카테고리별로 조회합니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findEventsByCategory(
             @PathVariable Category category
     ) {
@@ -91,7 +88,6 @@ public class EventController {
     @Operation(summary = "(ALL) 이벤트를 키워드로 검색하여, 최신순으로 가져옵니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findEventsBySearch(
             @RequestParam String keyword
     ) {
@@ -106,7 +102,6 @@ public class EventController {
     @Operation(summary = "(ALL) 특정 호스트가 등록한 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findEventsByHostId(
             @PathVariable @Min(1) Long hostId
     ) {
@@ -122,7 +117,6 @@ public class EventController {
     @Operation(summary = "(ALL) 특정 이벤트의 상세 정보를 가져옵니다.")
     @ApiSuccessData(FullEventFindByIdResponseDTO.class)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<FullEventFindByIdResponseDTO>> findEventById(
             @PathVariable @Min(1) Long eventId
     ){
@@ -143,7 +137,7 @@ public class EventController {
     @Operation(summary = "(HOST) 호스트 본인이 주최한 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
+    @Permission(Roles = {UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<FullEventFindAllResponseDTO>>> findMyEvents() {
 
         Long hostId = getUserIdBySecurityContextHolder();

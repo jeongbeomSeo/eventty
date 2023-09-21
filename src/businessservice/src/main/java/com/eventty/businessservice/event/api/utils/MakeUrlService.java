@@ -12,7 +12,7 @@ public class MakeUrlService {
 
     private final UrlProperties urlProperties;
     public URI queryHostInfo(Long hostId) {
-        String QUERY_USER_INFO_API_PATH = "/users/me?host=" + hostId;
+        String QUERY_USER_INFO_API_PATH = "/users/me?hostId=" + hostId;
         return URI.create(urlProperties.getUserServer() + QUERY_USER_INFO_API_PATH);
         /*
             String QUERY_USER_INFO_API_PATH = "/users/me?host=%d";

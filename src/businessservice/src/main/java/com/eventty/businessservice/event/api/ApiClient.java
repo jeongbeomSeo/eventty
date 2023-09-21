@@ -31,7 +31,7 @@ public class ApiClient {
 
     public ResponseEntity<ResponseDTO<HostFindByIdResponseDTO>> queryUserInfoApi(Long hostId) {
 
-        HttpEntity<Void> entity = createAuthenticateHttpPostEnttiy(null);
+        HttpEntity<Void> entity = createHttpEntity(null);
 
         // hostId request Parameter로 담아주는 작업 추가
         URI uri = makeUrlService.queryHostInfo(hostId);
@@ -47,14 +47,14 @@ public class ApiClient {
             QueryAppliesCountRequestDTO queryAppliesCountRequestDTO
     ) {
 
-        HttpEntity<QueryAppliesCountRequestDTO> entity = createHttpPostEntity(queryAppliesCountRequestDTO);
+        HttpEntity<QueryAppliesCountRequestDTO> entity = createHttpEntity(queryAppliesCountRequestDTO);
 
         URI uri = makeUrlService.queryTicketCount();
 
         logApiCall("Event server", "Apply server", "Query applies Count");
 
         return customRestTemplate.exchange(
-                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<List<QueryAppliesCountResponseDTO>>>() {}
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<List<QueryAppliesCountResponseDTO>>>() {}
         );
     }
 
@@ -62,25 +62,7 @@ public class ApiClient {
         log.info("API 호출 From: {} To: {} Purpose: {}", from, to, purpose);
     }
 
-    // 요청 보낼 때 자신의 id가 필요하지 않는 경우
-    private <T> HttpEntity<T> createHttpPostEntity(T dto) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-        return new HttpEntity<>(dto, headers);
-    }
-
-    // 요청 보내는 본인의 id가 필요한 요청인 경우 => UserContextInterceptor가 작업 수행
-    private <T> HttpEntity<T> createAuthenticateHttpPostEnttiy(T dto) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add(AUTH_HEADER, "True");
-
-        return new HttpEntity<>(dto, headers);
-    }
-
+    // 요청 보낼 때 자신의 id가 필요하지 않는 경우 (로그인이 필요하지 않는 경우)
     private <T> HttpEntity<T> createHttpEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -88,11 +70,12 @@ public class ApiClient {
         return new HttpEntity<>(dto, headers);
     }
 
+    // 요청 보내는 본인의 id가 필요한 요청인 경우 (로그인이 필요한 경우)=> UserContextInterceptor가 작업 수행
     private <T> HttpEntity<T> createAuthenticateHttpEntity(T dto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add("X-Requires-Auth", "True");
+        headers.add(AUTH_HEADER, "True");
         return new HttpEntity<>(dto, headers);
     }
 }
