@@ -3,7 +3,6 @@ package com.eventty.businessservice.event.presentation;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
-import com.eventty.businessservice.event.application.dto.response.EventBasicResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.EventFullFindAllResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.FindEventInfoResponseDTO;
