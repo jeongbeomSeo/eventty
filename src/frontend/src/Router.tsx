@@ -145,6 +145,10 @@ const Router = createBrowserRouter([
                             },
                         ]
                     },
+                    {
+                        path: "/find",
+
+                    }
                 ]
             },
             {

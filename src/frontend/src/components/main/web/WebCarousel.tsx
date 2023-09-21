@@ -1,38 +1,59 @@
 import React, {useRef} from "react";
-import {BackgroundImage, Container, Image, Title} from "@mantine/core";
+import {BackgroundImage, Box, Button, Container, Flex, Image, Paper, Text, Title, UnstyledButton} from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import {Carousel} from "@mantine/carousel";
+import {Link, useNavigate} from "react-router-dom";
 
-const CAROUSEL_HEIGHT = "45vh";
+const CAROUSEL_HEIGHT = "30vw";
+const CAROUSEL_MIN_HEIGHT = "200px";
+const CAROUSEL_MAX_HEIGHT = "400px";
 const CAROUSEL_DELAY = 4000;
 const CAROUSEL_ITEMS = [
-    {color: "var(--primary)", value: "Primary"},
-    {color: "#bb2649", value: "Viva Magenta"},
-    {color: "#6667AB", value: "Very Peri"},
-    {color: "#f5df4d", value: "Illumination"},
-    {color: "#939597", value: "Ultimate Gray"}
+    {color: "#F5F5F5", bgImage: "web_carousel_01.webp", eventId: 1},
+    {color: "#03A9C3", bgImage: "web_carousel_02.webp", eventId: 2},
+    {color: "#0C90D8", bgImage: "web_carousel_03.webp", eventId: 3},
+    {color: "#1B1E46", bgImage: "web_carousel_04.webp", eventId: 4},
+    {color: "#09090D", bgImage: "web_carousel_05.webp", eventId: 5},
 ];
 
 function WebCarousel() {
+    const navigate = useNavigate();
     const autoPlay = useRef(Autoplay({delay: CAROUSEL_DELAY}));
 
     const items = CAROUSEL_ITEMS.map((item, idx) => (
-        <Carousel.Slide key={idx} style={{height: "100%", background: "red"}}>
-            <Image height={"100%"}
-                src={`${process.env["REACT_APP_NCLOUD_ENDPOINT"]}/${process.env["REACT_APP_NCLOUD_BUCKET_NAME"]}/main/web/web_carousel_0${idx + 1}.webp`}/>
+        <Carousel.Slide key={idx}
+                        style={{
+                            height: CAROUSEL_HEIGHT,
+                            minHeight: CAROUSEL_MIN_HEIGHT,
+                            maxHeight: CAROUSEL_MAX_HEIGHT,
+                            backgroundColor: item.color,
+                        }}>
+            <UnstyledButton style={{
+                backgroundImage: `url("${process.env["REACT_APP_NCLOUD_ENDPOINT"]}/${process.env["REACT_APP_NCLOUD_BUCKET_NAME"]}/main/web/${item.bgImage}")`,
+                backgroundSize: "auto 100%",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                width: "100%",
+                height: "100%",
+            }}
+                            onClick={() => navigate(`/event/${item.eventId}`)}
+            />
         </Carousel.Slide>
     ));
-
 
     return (
         <Carousel slideSize={"100%"}
                   height={CAROUSEL_HEIGHT}
+                  mih={CAROUSEL_MIN_HEIGHT}
+                  mah={CAROUSEL_MAX_HEIGHT}
                   sx={{flex: 1}}
                   draggable
                   withControls
                   withIndicators
                   loop
                   plugins={[autoPlay.current]}
+                  onMouseEnter={autoPlay.current.stop}
+                  onMouseLeave={autoPlay.current.reset}
                   styles={{
                       indicator: {
                           width: "0.5rem",
