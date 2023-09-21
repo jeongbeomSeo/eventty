@@ -19,11 +19,11 @@ import {useFetch} from "../../../util/hook/useFetch";
 import {MessageAlert} from "../../../util/MessageAlert";
 import {useModal} from "../../../util/hook/useModal";
 import {Controller, useForm} from "react-hook-form";
+import {getProfile} from "../../../service/user/fetchUser";
 
 function WebProfile() {
     const {classes} = customStyle();
     const DATA = useLoaderData() as IUser;
-    const routeError = useRouteError();
     const curEmail = sessionStorage.getItem("EMAIL")!;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
@@ -73,12 +73,6 @@ function WebProfile() {
 
         changeProfileFetch(formData);
     }
-
-    useEffect(() => {
-        if (isRouteErrorResponse(routeError)) {
-            MessageAlert("error", "내 정보 조회 실패", null);
-        }
-    }, []);
 
     useEffect(() => {
         if (getValues("image") !== null) {

@@ -32,20 +32,24 @@ public class UserUpdateDTO {
         return UserEntity
                 .builder()
                 .userId(this.userId)
-                .name(dto.getName() != null ? dto.getName() : this.name)
-                .phone(dto.getPhone() != null ? dto.getPhone() : this.phone)
+                .name(dto.getName() != null ? checkNull(dto.getName()) : this.name)
+                .phone(dto.getPhone() != null ? checkNull(dto.getPhone()) : this.phone)
                 .birth(dto.getBirth() != null ? StringToLocalDate(dto.getBirth()) : this.birth)
-                .address(dto.getAddress() != null ? dto.getAddress() : this.address)
+                .address(dto.getAddress() != null? checkNull(dto.getAddress()) : this.address)
                 .imageId(imageId == 0 ? null : imageId)
                 .build();
     }
 
+    private String checkNull(String value){
+        if("null".equalsIgnoreCase(value)) return "";
+        return value;
+    }
+
     private LocalDate StringToLocalDate(String birth){
-        if("".equals(birth)){
+        if("".equals(birth) || "null".equalsIgnoreCase(birth)){
             return null;
         }
 
-        StringTokenizer st = new StringTokenizer(birth,"-");
-        return LocalDate.of(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+        return LocalDate.parse(birth.substring(0,10));
     }
 }

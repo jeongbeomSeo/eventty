@@ -5,7 +5,7 @@ server:
 spring:
   # Secret
   profiles:
-    active: ncp, db, test
+    active: ncp, db, logger
 
   # Mysql
   datasource:

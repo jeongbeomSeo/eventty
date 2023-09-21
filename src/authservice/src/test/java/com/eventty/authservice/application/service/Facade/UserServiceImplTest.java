@@ -24,7 +24,7 @@
 //import java.util.ArrayList;
 //import java.util.List;
 //
-//import com.eventty.authservice.api.dto.UserCreateRequestDTO;
+//import com.eventty.authservice.api.dto.request.UserCreateRequestDTO;
 //import com.eventty.authservice.applicaiton.service.Facade.UserServiceImpl;
 //import com.eventty.authservice.domain.Enum.UserRole;
 //import com.eventty.authservice.domain.entity.AuthUserEntity;

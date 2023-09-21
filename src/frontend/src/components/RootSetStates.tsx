@@ -38,10 +38,16 @@ function RootSetStates() {
         const email = sessionStorage.getItem("EMAIL");
         const authority = sessionStorage.getItem("AUTHORITY");
         const userId = Number(sessionStorage.getItem("USER_ID"));
+        const imgPath = sessionStorage.getItem("IMG_PATH");
 
         if (email && authority && !loginStateValue) {
             setloginStateValue(true);
-            setUserState({email: email, isHost: authority === "HOST", userId: userId});
+            setUserState({
+                email: email,
+                isHost: authority === "ROLE_HOST",
+                userId: userId,
+                imagePath: imgPath !== null ? imgPath : "",
+            });
         }
     });
 
@@ -49,7 +55,7 @@ function RootSetStates() {
         <>
             <ModalsProvider>
                 {/* Router Loader 로딩 오버레이 */}
-                {(state === "loading" || loadingValue) &&
+                {(state === "loading") &&
                     <LoadingOverlay visible
                                     loaderProps={{size: "md", color: "var(--primary)", variant: "dots"}}
                                     overlayBlur={2}

@@ -33,6 +33,19 @@ spring:
     console:
       enabled: ${h2}
 
+  ## Spring Security
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${google-client-id}
+            client-secret: ${google-client-secret}
+            scope:
+              - ${google-client-scope1}
+              - ${google-client-scope2}
+
+
 # LOGGING
 logging:
   level:

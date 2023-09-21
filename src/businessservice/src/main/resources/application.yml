@@ -3,19 +3,14 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dev, ncp
 
-  #### datasource
+  #### Mysql
   datasource:
     driver-class-name: ${driver-class-name}
     url: ${url}
-    username: ${username}
+    username: ${adminname}
     password: ${password}
-
-  #### h2
-  h2:
-    console:
-      enabled: ${h2}
 
 #### mybatis
 mybatis:
@@ -24,6 +19,8 @@ mybatis:
 #### logging
 logging:
   level:
+    root: INFO
+    com.eventty.com.eventty.businessservice: ${level}
     org:
       hibernate:
         type:
@@ -35,3 +32,7 @@ springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 
+
+#### SERVER BASE URL
+server.base.url.user_server: ${user-server-url}
+server.base.url.apply-server: ${apply-server-url}

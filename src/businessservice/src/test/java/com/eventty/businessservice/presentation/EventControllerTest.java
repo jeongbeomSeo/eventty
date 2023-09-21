@@ -1,10 +1,10 @@
 package com.eventty.businessservice.presentation;
 
+import com.eventty.businessservice.event.application.dto.response.EventBasicResponseDTO;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
-import com.eventty.businessservice.event.application.dto.response.EventWithTicketsFindByIdResponseDTO;
-import com.eventty.businessservice.event.application.dto.response.EventBasicFindAllResponseDTO;
-import com.eventty.businessservice.event.application.service.EventService;
+import com.eventty.businessservice.event.application.dto.response.EventFullFindByIdResponseDTO;
+import com.eventty.businessservice.event.application.service.subservices.EventBasicService;
 import com.eventty.businessservice.event.presentation.EventController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -33,15 +33,15 @@ public class EventControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private EventService eventService;
+    private EventBasicService eventBasicService;
 
     @Test
     @DisplayName("특정 행사 조회 테스트")
     public void findEventByIdTest() throws Exception {
         // Given
         Long eventId = 1L;
-        EventWithTicketsFindByIdResponseDTO MockEvent = createEventWithDetailDTO(eventId);
-        when(eventService.findEventById(eventId)).thenReturn(MockEvent);
+        EventFullFindByIdResponseDTO MockEvent = createEventWithDetailDTO(eventId);
+        when(eventBasicService.findEventById(eventId)).thenReturn(MockEvent);
 
         // When & Then
         mockMvc.perform(get("/events/{eventId}", eventId))
@@ -51,15 +51,15 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.successResponseDTO.data.id", equalTo(eventId.intValue())))
                 .andExpect(jsonPath("$.successResponseDTO.data.title", equalTo("Sample Event")));
 
-        verify(eventService, times(1)).findEventById(eventId);
+        verify(eventBasicService, times(1)).findEventById(eventId);
     }
 
     @Test
     @DisplayName("전체 행사 조회 테스트")
     public void findAllEventsTest() throws Exception {
         // Given
-        List<EventBasicFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
-        when(eventService.findAllEvents()).thenReturn(mockEventList);
+        List<EventBasicResponseDTO> mockEventList = createEventRespnseDTOList(3L);
+        when(eventBasicService.findAllEvents()).thenReturn(mockEventList);
 
         // When & Then
         mockMvc.perform(get("/events"))
@@ -69,7 +69,7 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.successResponseDTO.data").isArray())
                 .andExpect(jsonPath("$.successResponseDTO.data.length()").value(mockEventList.size()));
 
-        verify(eventService, times(1)).findAllEvents();
+        verify(eventBasicService, times(1)).findAllEvents();
     }
 
     @Test
@@ -78,7 +78,7 @@ public class EventControllerTest {
         // Given
         Long newEventId = 10L;
         EventCreateRequestDTO eventCreateRequestDTO = createEventFullCreateRequestDTO();
-        when(eventService.createEvent(eventCreateRequestDTO)).thenReturn(newEventId);
+        when(eventBasicService.createEvent(eventCreateRequestDTO)).thenReturn(newEventId);
 
         // When & Then
         mockMvc.perform(post("/events")
@@ -94,8 +94,8 @@ public class EventControllerTest {
     public void findEventsByHostIdTest() throws Exception {
         // Given
         Long hostId = 1L;
-        List<EventBasicFindAllResponseDTO> mockEventList = createEventRespnseDTOList(3L);
-        when(eventService.findEventsByHostId(hostId)).thenReturn(mockEventList);
+        List<EventBasicResponseDTO> mockEventList = createEventRespnseDTOList(3L);
+        when(eventBasicService.findEventsByHostId(hostId)).thenReturn(mockEventList);
 
         // When & Then
         mockMvc.perform(get("/events/host/{hostId}", hostId))
@@ -105,7 +105,7 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.successResponseDTO.data").isArray())
                 .andExpect(jsonPath("$.successResponseDTO.data.length()").value(mockEventList.size()));
 
-        verify(eventService, times(1)).findEventsByHostId(hostId);
+        verify(eventBasicService, times(1)).findEventsByHostId(hostId);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class EventControllerTest {
     public void deleteEventTest() throws Exception {
         // Given
         Long eventId = 1L;
-        when(eventService.deleteEvent(eventId)).thenReturn(eventId);
+        when(eventBasicService.deleteEvent(eventId)).thenReturn(eventId);
 
         // When & Then
         mockMvc.perform(delete("/events/{eventId}", eventId))
@@ -121,7 +121,7 @@ public class EventControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(eventService, times(1)).deleteEvent(eventId);
+        verify(eventBasicService, times(1)).deleteEvent(eventId);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class EventControllerTest {
     public void findEventsByCategoryTest() throws Exception {
         // Given
         Category category = Category.콘서트;
-        when(eventService.findEventsByCategory(category)).thenReturn(createEventRespnseDTOList(5L));
+        when(eventBasicService.findEventsByCategory(category)).thenReturn(createEventRespnseDTOList(5L));
 
         // When & Then
         mockMvc.perform(get("/events/category/{category}", category))
@@ -137,7 +137,7 @@ public class EventControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(eventService, times(1)).findEventsByCategory(category);
+        verify(eventBasicService, times(1)).findEventsByCategory(category);
     }
 
     @Test
@@ -145,7 +145,7 @@ public class EventControllerTest {
     public void searchEventsTest() throws Exception {
         // Given
         String keyword = "Sample";
-        when(eventService.findEventsBySearch(keyword)).thenReturn(createEventRespnseDTOList(5L));
+        when(eventBasicService.findEventsBySearch(keyword)).thenReturn(createEventRespnseDTOList(5L));
 
         // When & Then
         mockMvc.perform(get("/events/search")
@@ -154,7 +154,7 @@ public class EventControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(eventService, times(1)).findEventsBySearch(keyword);
+        verify(eventBasicService, times(1)).findEventsBySearch(keyword);
     }
 
     private static EventCreateRequestDTO createEventFullCreateRequestDTO() {
@@ -175,8 +175,8 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static EventBasicFindAllResponseDTO createEventResponseDTO(Long id){
-        return EventBasicFindAllResponseDTO.builder()
+    private static EventBasicResponseDTO createEventResponseDTO(Long id){
+        return EventBasicResponseDTO.builder()
             .id(id)
             .userId(1L)
             .title("Sample Event")
@@ -191,8 +191,8 @@ public class EventControllerTest {
             .build();
     }
 
-    private static EventWithTicketsFindByIdResponseDTO createEventWithDetailDTO(Long id){
-        return EventWithTicketsFindByIdResponseDTO.builder()
+    private static EventFullFindByIdResponseDTO createEventWithDetailDTO(Long id){
+        return EventFullFindByIdResponseDTO.builder()
                 .id(id)
                 .userId(1L)
                 .title("Sample Event")
@@ -211,11 +211,11 @@ public class EventControllerTest {
                 .build();
     }
 
-    private static List<EventBasicFindAllResponseDTO> createEventRespnseDTOList(Long count) {
-        List<EventBasicFindAllResponseDTO> eventBasicFindAllResponseDTOList = new ArrayList<>();
+    private static List<EventBasicResponseDTO> createEventRespnseDTOList(Long count) {
+        List<EventBasicResponseDTO> eventBasicFindAllResponseDTOList = new ArrayList<>();
 
         for (Long i = 0L; i < count; i++) {
-            EventBasicFindAllResponseDTO eventBasicFindAllResponseDTO = createEventResponseDTO(i);
+            EventBasicResponseDTO eventBasicFindAllResponseDTO = createEventResponseDTO(i);
             eventBasicFindAllResponseDTOList.add(eventBasicFindAllResponseDTO);
         }
 

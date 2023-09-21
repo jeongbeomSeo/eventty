@@ -25,20 +25,19 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
 
         if (body instanceof SuccessResponseDTO<?>) {
             SuccessResponseDTO successResponseDTO = (SuccessResponseDTO) body;
-            ResponseDTO responseDTO = ResponseDTO.of(successResponseDTO);
-            return responseDTO;
-        }
-
-        if (body == null){
-            return new ResponseDTO();
+            return ResponseDTO.of(successResponseDTO);
         }
 
         if (body instanceof ErrorResponseDTO) {
             ErrorResponseDTO errorResponseDTO = (ErrorResponseDTO) body;
-            ResponseDTO responseDTO = ResponseDTO.of(errorResponseDTO);
-            return responseDTO;
+            return ResponseDTO.of(errorResponseDTO);
+        }
+        if (body instanceof Boolean) {
+            Boolean isSuccess = (Boolean) body;
+            return ResponseDTO.of(isSuccess);
         }
 
-        return null;
+        return ResponseDTO.of(true);
+
     }
 }

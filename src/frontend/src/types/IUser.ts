@@ -44,3 +44,14 @@ export interface IChangePW {
     password: string;
     passwordConfirm?: string;
 }
+
+export interface IFindEmail {
+    name: string;
+    phone: string;
+}
+
+export interface IFindPassword {
+    email: string;
+    name: string;
+    phone: string;
+}

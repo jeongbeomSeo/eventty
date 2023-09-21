@@ -1,7 +1,7 @@
 package com.eventty.authservice.infrastructure.Filter;
 
-import com.eventty.authservice.infrastructure.Context.UserContext;
-import com.eventty.authservice.infrastructure.ContextHolder.UserContextHolder;
+import com.eventty.authservice.infrastructure.context.UserContext;
+import com.eventty.authservice.infrastructure.contextholder.UserContextHolder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

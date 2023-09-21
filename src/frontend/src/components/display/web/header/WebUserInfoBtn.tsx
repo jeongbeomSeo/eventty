@@ -8,8 +8,6 @@ import customStyles from "../../../../styles/customStyle";
 import {useFetch} from "../../../../util/hook/useFetch";
 
 function WebUserInfoBtn() {
-    const navigate = useNavigate();
-    const {pathname} = useLocation();
     const userStateValue = useRecoilValue(userState);
     const {logoutFetch} = useFetch();
 
@@ -27,12 +25,12 @@ function WebUserInfoBtn() {
             }
             <Menu width={"12rem"} shadow={"sm"} position={"top-end"}>
                 <Menu.Target>
-                    <Avatar src={""} radius={"xl"} style={{cursor: "pointer"}}/>
+                    <Avatar src={`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${userStateValue.imagePath}`} radius={"xl"} style={{cursor: "pointer"}}/>
                 </Menu.Target>
                 <Menu.Dropdown>
                     <Menu.Item style={{pointerEvents: "none"}}>
                         <Group>
-                            <Avatar src={""} radius={"xl"}/>
+                            <Avatar src={`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${userStateValue.imagePath}`} radius={"xl"}/>
                             {userStateValue.email}
                         </Group>
                     </Menu.Item>

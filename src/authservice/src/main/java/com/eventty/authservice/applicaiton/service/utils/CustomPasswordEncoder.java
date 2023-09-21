@@ -11,13 +11,14 @@ public class CustomPasswordEncoder {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    CustomPasswordEncoder(@Lazy BCryptPasswordEncoder bCryptPasswordEncoder) {
+    CustomPasswordEncoder(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-
-    public String encode(String password) {
-        return bCryptPasswordEncoder.encode(password);
+    public boolean match(String rawPassword, String encodedPassword) {
+        return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
 
-    public boolean match(String rawPassword, String encodedPassword) { return bCryptPasswordEncoder.matches(rawPassword, encodedPassword); }
+    public String encodePassword(String rawPassword) {
+        return bCryptPasswordEncoder.encode(rawPassword);
+    }
 }

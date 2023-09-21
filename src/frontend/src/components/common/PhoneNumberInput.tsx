@@ -9,9 +9,10 @@ interface IPhoneNumber {
     inputRef: React.Ref<any>;
     asterisk?: boolean;
     error?: string;
+    label?: boolean;
 }
 
-function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk}: IPhoneNumber) {
+function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk, label}: IPhoneNumber) {
     const {classes} = customStyle();
 
     const [phoneValue, setPhoneValue] = useState(value || "");
@@ -26,7 +27,7 @@ function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk}: 
 
     return (
         <TextInput placeholder={"휴대폰 번호"}
-                   label={"휴대폰 번호"}
+                   label={label && "휴대폰 번호"}
                    withAsterisk={asterisk}
                    maxLength={13}
                    value={phoneValue}

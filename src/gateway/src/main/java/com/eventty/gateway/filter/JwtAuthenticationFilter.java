@@ -54,9 +54,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
             Map<String, List<String>> headers = exchange.getRequest().getHeaders();
+
+            // Access Token 검증
             boolean hasAccessToken = cookies.get(TokenEnum.ACCESS_TOKEN.getName()) != null;
             if (!hasAccessToken)
                 throw new NoAccessTokenException();
+
+
 
             // 이 부분이 API 요청 보내는 로직으로 변경되어야 함
             ResponseEntity<ResponseDTO<AuthenticationDetailsResponseDTO>> response = apiClient.authenticateUser(customMappper.authenticateUserRequestDTO(cookies, headers));

@@ -40,6 +40,12 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             response.setStatusCode(((ApiException) ex).getHttpStatusCode());
             errorResponseDTO = ErrorResponseDTO.of(ErrorCode.FAIL_AUTHENTICATION);
         }
+        else if (ex instanceof GatewayException) {
+            log.error("Error Message: {}", ((GatewayException) ex).getErrorCode().getMessage());
+
+            response.setStatusCode(HttpStatusCode.valueOf(((GatewayException) ex).getErrorCode().getStatus()));
+            errorResponseDTO = ErrorResponseDTO.of(((GatewayException) ex).getErrorCode());
+        }
         else if (ex instanceof IOException){
             log.error("Error Message: {}", "I/O Exception occurred");
             response.setStatusCode(HttpStatusCode.valueOf(ErrorCode.INTERNAL_ERROR.getStatus()));
