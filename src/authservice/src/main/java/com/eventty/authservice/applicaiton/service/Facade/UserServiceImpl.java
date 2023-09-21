@@ -30,6 +30,7 @@ import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -75,7 +76,11 @@ public class UserServiceImpl implements UserService {
         ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> reponse =
                 apiClient.queryImageApi();
 
-        ImageQueryApiResponseDTO imageQueryApiResponseDTO= reponse.getBody().getSuccessResponseDTO().getData();
+        ImageQueryApiResponseDTO imageQueryApiResponseDTO;
+        if (reponse.hasBody() && Objects.requireNonNull(reponse.getBody()).isSuccess())
+            imageQueryApiResponseDTO = reponse.getBody().getSuccessResponseDTO().getData();
+        else
+            imageQueryApiResponseDTO = new ImageQueryApiResponseDTO();
 
         // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환 => 권한 X 역할만 담기
         SessionTokensDTO sessionTokensDTO = authService.getToken(authUserEntity);
