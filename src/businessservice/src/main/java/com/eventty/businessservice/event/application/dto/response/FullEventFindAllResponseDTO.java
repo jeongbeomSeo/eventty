@@ -19,7 +19,6 @@ public class FullEventFindAllResponseDTO {
     private String location;
     private String categoryName;
     private Boolean isActive;
-    private Boolean isDeleted;
 
     private Long imageId;
     private String image; // 이미지 파일
@@ -38,7 +37,6 @@ public class FullEventFindAllResponseDTO {
                 .location(eventBasic.getLocation())
                 .categoryName(eventBasic.getCategoryName())
                 .isActive(eventBasic.getIsActive())
-                .isDeleted(eventBasic.getIsDeleted())
                 .imageId(imageInfo.getImageId())
                 .image(imageInfo.getImagePathFromStorage())
                 .originFileName(imageInfo.getImageOriginalFileName())
@@ -55,7 +53,6 @@ public class FullEventFindAllResponseDTO {
         this.participateNum = 1L;
         this.location = "String";
         this.isActive = true;
-        this.isDeleted = false;
     }
 
 }

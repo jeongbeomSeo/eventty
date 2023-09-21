@@ -21,7 +21,6 @@ public class FullEventFindByIdResponseDTO {
     private String location;
     private String categoryName;
     private Boolean isActive;
-    private Boolean isDeleted;
     private String content;
     private LocalDateTime applyStartAt;
     private LocalDateTime applyEndAt;
@@ -47,7 +46,6 @@ public class FullEventFindByIdResponseDTO {
                 .location(eventBasic.getLocation())
                 .categoryName(eventBasic.getCategoryName())
                 .isActive(eventBasic.getIsActive())
-                .isDeleted(eventBasic.getIsDeleted())
                 .content(eventDetail.getContent())
                 .applyStartAt(eventDetail.getApplyStartAt())
                 .applyEndAt(eventDetail.getApplyEndAt())
@@ -70,7 +68,6 @@ public class FullEventFindByIdResponseDTO {
         this.participateNum = 1L;
         this.location = "String";
         this.isActive = true;
-        this.isDeleted = false;
         this.content = "String";
         this.applyStartAt = LocalDateTime.now();
         this.applyEndAt = LocalDateTime.now();
