@@ -3,36 +3,17 @@ package com.eventty.businessservice.event.presentation.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+// Json으로 Response를 보낼 때, 필드가 null 값일 경우 그 필드 제외하고 보냄.
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ToString @Setter
-@Getter @NoArgsConstructor
+@ToString
 public class ResponseDTO<T> {
 
-    /**
-     * 실패 응답
-     *
-     * {
-     *     "errorResponseDTO": {
-     *         "code": ""
-     *     },
-     *     "success": false
-     * }
-     *
-     * 성공 응답
-     *
-     *  * {
-     *  *     "successResponseDTO": {
-     *  *         "data": "{
-     *              "Field_1" : "Value_1"
-     *              ...
-     *  *     },
-     *  *     "success": true
-     *  * }
-     *
-     *  혹은 비어있는 형태
-     */
-
-    private boolean isSuccess = true;
+    private Boolean isSuccess;
     private ErrorResponseDTO errorResponseDTO;
     private SuccessResponseDTO<T> successResponseDTO;
 
@@ -65,4 +46,5 @@ public class ResponseDTO<T> {
     public static ResponseDTO<Void> of(boolean isSuccess) {
         return new ResponseDTO<>(isSuccess);
     }
+
 }

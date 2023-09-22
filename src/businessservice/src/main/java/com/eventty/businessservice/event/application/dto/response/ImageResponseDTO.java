@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class ImageResponseDTO {
-    private String imageResourceFromStorage;
+    private Long imageId;
+    private String imagePathFromStorage;
     private String imageOriginalFileName;
 }
