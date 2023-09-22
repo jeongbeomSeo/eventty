@@ -96,7 +96,6 @@ public class UserController {
     @GetMapping("/api/host")
     @Operation(summary = "(API) 호스트 정보 반환")
     @ApiSuccessData(HostFindByIdResposneDTO.class)
-    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO> apiGetHostInfo(@RequestParam Long hostId){
 
         HostFindByIdResposneDTO response =  userService.apiGetHostInfo(hostId);
