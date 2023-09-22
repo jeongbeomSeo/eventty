@@ -37,11 +37,10 @@ out/
 .vscode/
 
 ### db ###
-application-db.yml
 data.sql
 log4jdbc.log4j2.yml
-application-secret.yml
-application-logging.yml
+application-dev.yml
+application-test.yml
 
 ### Docker ###
 Dockerfile

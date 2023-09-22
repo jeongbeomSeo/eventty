@@ -1,5 +1,6 @@
 package com.eventty.applyservice.infrastructure;
 
+import com.eventty.applyservice.infrastructure.logger.LoggerFilter;
 import com.eventty.applyservice.infrastructure.userContext.UserContextFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

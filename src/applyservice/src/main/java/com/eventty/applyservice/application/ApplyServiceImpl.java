@@ -7,14 +7,13 @@ import com.eventty.applyservice.application.dto.response.FindAppicaionListRespon
 import com.eventty.applyservice.application.dto.response.FindEventInfoResponseDTO;
 import com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO;
 import com.eventty.applyservice.domain.ApplyReposiroty;
+import com.eventty.applyservice.domain.code.ServerUri;
 import com.eventty.applyservice.domain.exception.AlreadyCancelApplyException;
 import com.eventty.applyservice.domain.exception.ExceedApplicantsException;
 import com.eventty.applyservice.domain.exception.NonExistentIdException;
 import com.eventty.applyservice.presentation.dto.ResponseDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -33,12 +32,8 @@ import java.util.*;
 public class ApplyServiceImpl implements ApplyService{
 
     private final ApplyReposiroty applyReposiroty;
-//    private final RestTemplate customRestTemplate;
-    private final RestTemplate basicRestTemplate;
-    private final ObjectMapper objectMapper;
-
-    @Value("${server.base.url.eventServer}")
-    private String uri = "/api/events";
+    private final RestTemplate customRestTemplate;
+    private final ServerUri serverUri;
 
     @Override
     public Long createApply(Long userId, CreateApplyRequestDTO createApplyRequestDTO) {
@@ -67,59 +62,60 @@ public class ApplyServiceImpl implements ApplyService{
     @Override
     public List<FindAppicaionListResponseDTO> findApplicationList(Long userId) {
 
-        List<FindByUserIdDTO> findByUserIdDTOList = applyReposiroty.findByUserId(userId);
-        if(findByUserIdDTOList.size() == 0 || findByUserIdDTOList == null)
+        List<FindByUserIdDTO> applies = applyReposiroty.findByUserId(userId);
+        if(applies.size() == 0 || applies == null)
             return null;
 
-        Map<String, FindByUserIdDTO> map = new HashMap<>();
-        for(FindByUserIdDTO findByUserIdDTO : findByUserIdDTOList){
-            map.put(findByUserIdDTO.getEventId().toString(), findByUserIdDTO);
+        // Event Server로 보내기위한 TicketIds 중복 제거(Parameter 생성)
+        Set<String> ticketIds = new HashSet<>();
+        for(FindByUserIdDTO apply : applies){
+            ticketIds.add(apply.getTicketId().toString());
+        }
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.put("ticketIds", new ArrayList<>(ticketIds));
+
+
+        // api request----------------------------------------------------
+        List<FindEventInfoResponseDTO> eventInfos = apiRequest(params);
+
+
+        // service logic--------------------------------------------------
+        Map<Long, FindEventInfoResponseDTO> eventInfoMap = new HashMap<>();
+        for(FindEventInfoResponseDTO eventResponse : eventInfos){
+            eventInfoMap.put(eventResponse.getTicketId(), eventResponse);
         }
 
-        // uri && paramer create
-        MultiValueMap<String, String> params = makeFindEventsListQueryParam(findByUserIdDTOList);
-        URI findEventInfoListUri = makeFindEventsListUri(params);
-
-        // api request
-        List<FindEventInfoResponseDTO> eventResponses = apiExchange(findEventInfoListUri);
-
-        // service logic
         List<FindAppicaionListResponseDTO> responses = new ArrayList<>();
-        for(int i = 0; i<findByUserIdDTOList.size(); i++){
-            FindEventInfoResponseDTO eventResponse = eventResponses.get(i);
-            
-            // 정합성 불일치
-            FindByUserIdDTO findByUserIdDTO = map.get(eventResponse.getEventId().toString());
-            if(findByUserIdDTO == null) {
-                // 추가 로직 필요
-            }
+        for(FindByUserIdDTO apply : applies){
+            FindEventInfoResponseDTO eventResponse = eventInfoMap.get(apply.getTicketId());
 
-            String status = "";
+            // 예약 상태(status) & 예약or취소 날짜(date) 설정
+            String status;
             LocalDateTime date = null;
-            if(findByUserIdDTO.getDeleteDate() != null) {
+            if(apply.getDeleteDate() != null) {
                 status = "예약 취소";
-                date = findByUserIdDTO.getDeleteDate();
+                date = apply.getDeleteDate();
             }else if(eventResponse.getEventEndAt().isBefore(LocalDateTime.now())) {
                 status = "행사 종료";
-                date = findByUserIdDTO.getApplyDate();
+                date = apply.getApplyDate();
             }else {
                 status = "예약 완료";
-                date = findByUserIdDTO.getApplyDate();
+                date = apply.getApplyDate();
             }
 
-            FindAppicaionListResponseDTO findAppicaionListResponseDTO =
-                    FindAppicaionListResponseDTO
-                            .builder()
-                            .title(eventResponse.getTitle())
-                            .ticketName(eventResponse.getTicketName())
-                            .ticketPrice(eventResponse.getTicketPrice())
-                            .image(eventResponse.getImage())
-                            .status(status)
-                            .date(date)
-                            .applyId(findByUserIdDTO.getApplyId())
-                            .build();
-            responses.add(findAppicaionListResponseDTO);
+            // return값 세팅
+            responses.add(FindAppicaionListResponseDTO
+                                .builder()
+                                .ticketName(eventResponse.getTicketName())
+                                .title(eventResponse.getTitle())
+                                .image(eventResponse.getImage())
+                                .ticketPrice(eventResponse.getTicketPrice())
+                                .status(status)
+                                .date(date)
+                                .applyId(apply.getApplyId())
+                                .build());
         }
+        
         return responses;
     }
 
@@ -128,52 +124,48 @@ public class ApplyServiceImpl implements ApplyService{
         return applyReposiroty.findByEventIdGroupByTicket(eventId);
     }
 
+    //------------------------------------------ ApiClient -----------------------------------------------//
+    public List<FindEventInfoResponseDTO> apiRequest(MultiValueMap<String, String> params){
+        URI uri = makeUri(params,  serverUri.getEventServer() + serverUri.getGET_EVENT_TICKET_INFO());
 
-    public MultiValueMap<String, String> makeFindEventsListQueryParam(List<FindByUserIdDTO> findByUserIdDTOList){
-        List<String> eventId = new ArrayList<>();
-        List<String> ticketId = new ArrayList<>();
-
-        for(int i=0; i<findByUserIdDTOList.size(); i++){
-            FindByUserIdDTO findByUserIdDTO =  findByUserIdDTOList.get(i);
-
-            eventId.add(findByUserIdDTO.getEventId().toString());
-            ticketId.add(findByUserIdDTO.getTicketId().toString());
-        }
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.put("eventId", eventId);
-        params.put("ticketId", ticketId);
-
-        return params;
-    }
-
-    public URI makeFindEventsListUri(MultiValueMap<String, String> params){
-        return UriComponentsBuilder
-                .fromHttpUrl(uri + "/api/events")
-                .queryParams(params)
-                .build()
-                .encode()
-                .toUri();
-    }
-
-    public List<FindEventInfoResponseDTO> apiExchange(URI uri){
         log.info("API 호출 From: {} To: {} Purpose: {}", "Apply Server", "Event Server", "Find Events List");
         ResponseEntity<ResponseDTO<List<FindEventInfoResponseDTO>>> response = null;
         try{
-            response =  basicRestTemplate.exchange(
+            response =  customRestTemplate.exchange(
                     uri,
                     HttpMethod.GET,
                     createHttpPostEntity(null),
                     new ParameterizedTypeReference<ResponseDTO<List<FindEventInfoResponseDTO>>>() {}
             );
         }catch(Exception e){
-            e.printStackTrace();
-//            log.error(e.getMessage());
+            log.error(e.getMessage());
+        }
+
+        if(response.getBody() == null || response.getBody().getErrorResponseDTO() != null){
+            log.error("ApplyServer - response is null or getErrorResponse : {}", response);
+            return null;
         }
 
         return response.getBody().getSuccessResponseDTO().getData();
     }
 
+    public URI makeUri(MultiValueMap<String, String> params, String path){
+        return UriComponentsBuilder
+                .fromHttpUrl(path)
+                .queryParams(params)
+                .build()
+                .encode()
+                .toUri();
+    }
+
+    private <T> HttpEntity<T> createHttpPostEntity(T dto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.add("X-Requires-Auth", "True");
+
+        return new HttpEntity<>(dto, headers);
+    }
 
     //------------------------------------------ validation -----------------------------------------------//
 
@@ -190,13 +182,5 @@ public class ApplyServiceImpl implements ApplyService{
         if(result == null)  throw new NonExistentIdException();
         // 이미 신청 취소한 applyId
         else if(!result)    throw new AlreadyCancelApplyException();
-    }
-
-    private <T> HttpEntity<T> createHttpPostEntity(T dto) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-        return new HttpEntity<>(dto, headers);
     }
 }

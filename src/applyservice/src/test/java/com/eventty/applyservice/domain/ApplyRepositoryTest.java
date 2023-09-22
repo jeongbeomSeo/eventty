@@ -115,4 +115,10 @@
 //        assertEquals(phone, response.get(0).getPhone());
 //        assertNull(response.get(0).getDeleteDate());
 //    }
+//
+//    @Test
+//    public void findByEventIdGroupByTicketTest(){
+//        applyReposiroty.findByEventIdGroupByTicket(1L);
+//    }
+//
 //}

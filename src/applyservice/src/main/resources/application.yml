@@ -5,7 +5,7 @@ server:
 spring:
   # Secret
   profiles:
-    active: db, secret, logging
+    active: dev
   # Mysql
   datasource:
     url: ${url}

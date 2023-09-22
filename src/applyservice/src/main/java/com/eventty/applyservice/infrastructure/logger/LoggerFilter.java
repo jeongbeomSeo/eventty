@@ -1,4 +1,4 @@
-package com.eventty.applyservice.infrastructure;
+package com.eventty.applyservice.infrastructure.logger;
 
 import com.eventty.applyservice.infrastructure.userContext.UserContext;
 import jakarta.servlet.FilterChain;

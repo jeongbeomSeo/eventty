@@ -1,4 +1,4 @@
-package com.eventty.applyservice.infrastructure;
+package com.eventty.applyservice.infrastructure.resttemplate;
 import com.eventty.applyservice.domain.exception.ApiException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;

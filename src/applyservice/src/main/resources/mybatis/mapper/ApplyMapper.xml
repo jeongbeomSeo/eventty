@@ -38,19 +38,20 @@
 
     <select id="findByUserId" parameterType="Long" resultType="com.eventty.applyservice.application.dto.FindByUserIdDTO">
         SELECT
-            A.event_id AS eventId,
-            A.ticket_id AS ticketId,
-            A.applicant_num AS applicantNum,
-            A.phone,
-            A.apply_date AS applyDate,
-            A.delete_date AS deleteDate,
-            A.id AS applyId
-          FROM apply AS A
-         INNER JOIN (SELECT MAX(id) AS id
-                       FROM apply AS apply
-                      WHERE user_id = #{userId}
-                      GROUP BY event_id) AS AG
-            ON A.id = AG.id;
+            id              AS applyId,
+            event_id        AS eventId,
+            ticket_id       AS ticketId,
+            applicant_num   AS applicantNum,
+            phone,
+            apply_date      AS applyDate,
+            delete_date     AS deleteDate,
+            CASE
+                WHEN apply_date > delete_date THEN apply_date
+                ELSE delete_date
+            END             AS recentDate
+          FROM apply
+         WHERE user_id = #{userId}
+         ORDER BY recentDate DESC
     </select>
 
     <select id="findByEventIdGroupByTicket" parameterType="Long" resultType="com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO">
@@ -61,6 +62,6 @@
          WHERE 1=1
            AND event_id = #{eventId}
            AND delete_date IS NULL
-         GROUP BY ticket_id;
+         GROUP BY ticket_id
     </select>
 </mapper>
