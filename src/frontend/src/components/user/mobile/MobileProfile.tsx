@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useRef, useState} from "react";
 import {Avatar, Button, Center, FileButton, Flex, Group, Paper, Stack, Text, TextInput, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import {DatePickerInput} from "@mantine/dates";
@@ -29,16 +29,17 @@ function MobileProfile() {
     const curEmail = sessionStorage.getItem("EMAIL")!;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imgPreview, setImgPreview] = useState(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
+    const [imgDel, setImgDel] = useState(false);
+    const [imgPreview, setImgPreview] = useState(DATA.imagePath && `${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
+    const resetRef = useRef<() => void>(null);
 
     const {deleteAccountFetch, changeProfileFetch} = useFetch();
     const {changePWModal} = useModal();
 
-    const {register, handleSubmit, setValue, control, formState: {errors}}
+    const {register, handleSubmit, watch, getValues, setValue, control, formState: {errors}}
         = useForm<IUpdateUser>({
         defaultValues: {
-            image: DATA.imagePath ? Base64toFile(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`!, DATA.originFileName!, `image/${DATA.originFileName!.split(".").pop()}`) : null,
+            image: null,
             imageId: DATA.imageId,
             phone: DATA.phone,
             birth: new Date(DATA.birth!),
@@ -48,8 +49,19 @@ function MobileProfile() {
         }
     });
 
+    const handleImageDelete = () => {
+        if (!imgDel) {
+            setImgDel(true);
+            setImgPreview("");
+            setValue("image", null);
+            setValue("isUpdate", true);
+            resetRef.current?.();
+        }
+    }
+
     const onSubmit = (data: IUpdateUser) => {
         data.birth?.setDate(data.birth?.getDate() + 1);
+        data.image === null && delete data.image;
 
         const formData = new FormData();
         for (const e in data) {
@@ -70,12 +82,12 @@ function MobileProfile() {
     }, []);
 
     useEffect(() => {
-        if (imageFile !== null) {
-            setImgPreview(URL.createObjectURL(imageFile));
-            setValue("image", imageFile);
+        if (getValues("image") !== null) {
+            setImgPreview(URL.createObjectURL(getValues("image")!));
             setValue("isUpdate", true);
+            imgDel && setImgDel(false);
         }
-    }, [imageFile]);
+    }, [watch("image")]);
 
     return (
         <Stack spacing={"2rem"}>
@@ -83,8 +95,10 @@ function MobileProfile() {
                 <Title order={3} style={{padding: "1rem 0"}}>프로필</Title>
                 <PaperItem>
                     <Stack align={"center"}>
-                        <Avatar size={"8rem"} radius={"8rem"} src={imgPreview}/>
-                        <FileButton onChange={setImageFile} accept={"image/png, image/jpeg, image/webp"}>
+                        <Avatar size={"8rem"} radius={"8rem"} src={imgPreview} onClick={handleImageDelete}/>
+                        <FileButton onChange={(file) => setValue("image", file)}
+                                    accept={"image/png, image/jpeg, image/webp"}
+                                    resetRef={resetRef}>
                             {(props) => <Button {...props} className={classes["btn-primary"]}>이미지 변경</Button>}
                         </FileButton>
                     </Stack>

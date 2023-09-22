@@ -45,7 +45,7 @@ services:
         aliases:
           - "user server"
   authservice:
-    image: jeongbeom4693/auth:1.4
+    image: jeongbeom4693/auth:1.5
     container_name: Auth_Server
     build:
       context: ./authservice
@@ -58,20 +58,6 @@ services:
       eventty:
         aliases:
           - "auth server"
-  applyservice:
-    image: hyungyunk/apply:1.5
-    container_name: Apply_Server
-    build:
-      context: ./applyservice
-      dockerfile: Dockerfile
-    ports: 
-      - "8003:8003"
-    volumes:
-      - ./applyservice:/src/applyservice
-    networks:
-      eventty:
-        aliases:
-          - "apply server"
   gateway:
     image: jeongbeom4693/gateway:1.5
     container_name: Gateway

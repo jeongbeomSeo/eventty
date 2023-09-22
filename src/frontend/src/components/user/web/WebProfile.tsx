@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Avatar,
     Button,
@@ -19,25 +19,28 @@ import {useFetch} from "../../../util/hook/useFetch";
 import {MessageAlert} from "../../../util/MessageAlert";
 import {useModal} from "../../../util/hook/useModal";
 import {Controller, useForm} from "react-hook-form";
-import {Base64toFile} from "../../../util/ConvertFile";
+import {getProfile} from "../../../service/user/fetchUser";
+import {useRecoilState} from "recoil";
+import {userState} from "../../../states/userState";
 
 function WebProfile() {
     const {classes} = customStyle();
     const DATA = useLoaderData() as IUser;
-    const routeError = useRouteError();
     const curEmail = sessionStorage.getItem("EMAIL")!;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
-    const [imgFile, setImgFile] = useState<File | null>(null);
-    const [imgPreview, setImgPreview] = useState(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
+    const [imgDel, setImgDel] = useState(false);
+    const [imgPreview, setImgPreview] = useState(DATA.imagePath && `${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
+    const resetRef = useRef<() => void>(null);
+    const [userStateValue, setUserStateValue] = useRecoilState(userState);
 
     const {deleteAccountFetch, changeProfileFetch} = useFetch();
     const {changePWModal} = useModal();
 
-    const {register, handleSubmit, setValue, control, formState: {errors}}
+    const {register, handleSubmit, watch, getValues, setValue, control, formState: {errors}}
         = useForm<IUpdateUser>({
         defaultValues: {
-            image: DATA.imagePath ? Base64toFile(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`!, DATA.originFileName!, `image/${DATA.originFileName!.split(".").pop()}`) : null,
+            image: null,
             imageId: DATA.imageId,
             phone: DATA.phone,
             birth: new Date(DATA.birth!),
@@ -47,8 +50,20 @@ function WebProfile() {
         }
     });
 
+    const handleImageDelete = () => {
+        if (!imgDel) {
+            setImgDel(true);
+            setImgPreview("");
+            setValue("image", null);
+            setValue("isUpdate", true);
+            resetRef.current?.();
+        }
+    }
+
     const onSubmit = (data: IUpdateUser) => {
         data.birth?.setDate(data.birth?.getDate() + 1);
+        data.image === null && delete data.image;
+        imgDel && delete data.imageId;
 
         const formData = new FormData();
         for (const e in data) {
@@ -63,18 +78,23 @@ function WebProfile() {
     }
 
     useEffect(() => {
-        if (isRouteErrorResponse(routeError)) {
-            MessageAlert("error", "내 정보 조회 실패", null);
+        if (DATA.imagePath !== userStateValue.imagePath){
+            if (DATA.imagePath){
+                setUserStateValue(prev => {
+                    return {...prev, imagePath: DATA.imagePath ? DATA.imagePath : ""}
+                });
+                sessionStorage.setItem("IMG_PATH", DATA.imagePath);
+            }
         }
     }, []);
 
     useEffect(() => {
-        if (imgFile !== null) {
-            setImgPreview(URL.createObjectURL(imgFile));
-            setValue("image", imgFile);
+        if (getValues("image") !== null) {
+            setImgPreview(URL.createObjectURL(getValues("image")!));
             setValue("isUpdate", true);
+            imgDel && setImgDel(false);
         }
-    }, [imgFile]);
+    }, [watch("image")]);
 
     return (
         <>
@@ -84,8 +104,15 @@ function WebProfile() {
                     <Divider/>
                     <Flex gap={"2rem"}>
                         <Stack align={"center"}>
-                            <Avatar size={"8rem"} radius={"8rem"} src={imgPreview}/>
-                            <FileButton onChange={setImgFile} accept={"image/png, image/jpeg, image/webp"}>
+                            <Avatar size={"8rem"}
+                                    radius={"8rem"}
+                                    src={imgPreview}
+                                    onClick={handleImageDelete}
+                                    style={{cursor: "pointer"}}
+                            />
+                            <FileButton onChange={(file) => setValue("image", file)}
+                                        accept={"image/png, image/jpeg, image/webp"}
+                                        resetRef={resetRef}>
                                 {(props) => <Button {...props} className={classes["btn-primary"]}>이미지 변경</Button>}
                             </FileButton>
                         </Stack>
@@ -116,7 +143,8 @@ function WebProfile() {
                                             <PhoneNumberInput {...rest}
                                                               inputRef={ref}
                                                               error={errors.phone?.message}
-                                                              asterisk={true}/>
+                                                              asterisk={true}
+                                                              label={true}/>
                                         )}/>
 
                             <Controller control={control}
@@ -129,7 +157,6 @@ function WebProfile() {
 
                             <TextInput {...register("address")}
                                        label={"주소"}
-                                       defaultValue={DATA.address}
                                        className={classes["input"]}/>
 
                             <Group position={"right"}>

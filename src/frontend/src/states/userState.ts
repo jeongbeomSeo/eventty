@@ -6,5 +6,6 @@ export const userState = atom({
         email: "",
         isHost: false,
         userId: 0,
+        imagePath: "",
     },
 })

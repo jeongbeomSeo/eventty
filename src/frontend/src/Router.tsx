@@ -28,6 +28,9 @@ import EventBooking from "./pages/events/EventBooking";
 import EventsList from "./pages/events/EventsList";
 import EventsError from "./exception/EventsError";
 import Test from "./pages/Test";
+import Find from "./pages/Find";
+import FindEmail from "./pages/find/FindEmail";
+import FindPassword from "./pages/find/FindPassword";
 
 const Router = createBrowserRouter([
     {
@@ -145,6 +148,10 @@ const Router = createBrowserRouter([
                             },
                         ]
                     },
+                    {
+                        path: "/find/:params",
+                        element: <Find/>,
+                    }
                 ]
             },
             {

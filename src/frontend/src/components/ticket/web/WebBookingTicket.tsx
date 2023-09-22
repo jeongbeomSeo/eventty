@@ -14,7 +14,7 @@ import {
     Text, TextInput,
     Title, UnstyledButton
 } from "@mantine/core";
-import {useLoaderData, useLocation, useParams, useRouteLoaderData, useSearchParams} from "react-router-dom";
+import {useFetcher, useLoaderData, useLocation, useParams, useRouteLoaderData, useSearchParams} from "react-router-dom";
 import {IEventBooking, IEventDetail, IEventTicketDetail} from "../../../types/IEvent";
 import {getEvent} from "../../../service/event/fetchEvent";
 import customStyle from "../../../styles/customStyle";
@@ -27,6 +27,7 @@ import {useForm} from "react-hook-form";
 function WebBookingTicket() {
     const {classes} = customStyle();
     const EVENT_DATA = useRouteLoaderData("event") as IEventDetail;
+    const fetcher = useFetcher();
     const [PROFILE_DATA, setPROFILE_DATA] = useState<IUser>();
     const [searchParams, setSearchParams] = useSearchParams();
     const [curTicket, setCurTicket] = useState<IEventTicketDetail>(EVENT_DATA.tickets[0]);

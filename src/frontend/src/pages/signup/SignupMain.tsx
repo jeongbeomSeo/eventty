@@ -16,16 +16,13 @@ function SignupMain() {
     }, []);
 
     return (
-        <Stack>
+        <Stack style={{paddingTop: "2rem"}}>
             <Button style={{height:"2.6rem"}} className={classes["btn-primary"]} component={Link} to={"user"}>
                 개인 회원가입
             </Button>
             <Button style={{height:"2.6rem"}} className={classes["btn-gray-outline"]} component={Link} to={"host"}>
                 <span style={{color:"var(--primary)"}}>주최자&nbsp;</span> 회원가입
             </Button>
-
-            <Divider my={"xs"} labelPosition={"center"} label={`또는 \n SNS 가입하기`}
-                     className={classes["signup-divider"]}/>
         </Stack>
     )
 }

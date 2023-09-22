@@ -1,13 +1,21 @@
 import React from "react";
-import {Box, Container, Flex, Stack} from "@mantine/core";
+import {Box, Container, Divider, Flex, Group, Stack, Title} from "@mantine/core";
 import SearchBox from "../../common/SearchBox";
 import MobileEventList from "./MobileEventList";
 import customStyle from "../../../styles/customStyle";
 import MobileCategoryBtn from "./MobileCategoryBtn";
-import {Outlet} from "react-router-dom";
+import {Outlet, useParams, useSearchParams} from "react-router-dom";
+import {CATEGORY_LIST} from "../../../util/const/categoryList";
+import SearchResult from "../SearchResult";
+
+type TParams = {
+    category: string;
+}
 
 function MobileEvents() {
     const {classes} = customStyle();
+    const {category} = useParams<keyof TParams>() as TParams;
+    const [searchParams, setSearchParams] = useSearchParams();
 
     return (
         <>
@@ -17,6 +25,13 @@ function MobileEvents() {
                         <MobileCategoryBtn/>
                     </Flex>
                 </Box>
+
+                {category &&
+                    <Group>
+                        <Title>{CATEGORY_LIST[category]}</Title>
+                        <Divider my={"2rem"}/>
+                    </Group>}
+                {searchParams.size > 0 && <SearchResult/>}
             </Stack>
             <Outlet/>
         </>

@@ -101,7 +101,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                             required: "이메일을 입력해주세요",
                             pattern: {
                                 value: emailRegEx,
-                                message: "이메일이 올바르지 않습니다",
+                                message: "이메일 형식이 올바르지 않습니다",
                             }
                         })}
                                    placeholder="이메일"

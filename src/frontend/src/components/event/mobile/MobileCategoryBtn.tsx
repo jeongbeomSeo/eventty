@@ -1,6 +1,6 @@
 import React from "react";
 import {Text, UnstyledButton} from "@mantine/core";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {
     IconBallBaseball, IconBook, IconCode,
     IconHandRock,
@@ -9,31 +9,39 @@ import {
     IconTent
 } from "@tabler/icons-react";
 import customStyle from "../../../styles/customStyle";
+import {useSetRecoilState} from "recoil";
+import {searchDrawerState} from "../../../states/searchDrawerState";
+
+const ICON_SIZE = "40px"
+const CATEGORY_LIST = [
+    {category: "콘서트", link: "concert", icon: <IconHandRock size={ICON_SIZE}/>},
+    {category: "클래식", link: "classical", icon: <IconPiano size={ICON_SIZE}/>},
+    {category: "전시", link: "exhibition", icon: <IconPalette size={ICON_SIZE}/>},
+    {category: "스포츠", link: "sports", icon: <IconBallBaseball size={ICON_SIZE}/>},
+    {category: "캠핑", link: "camping", icon: <IconTent size={ICON_SIZE}/>},
+    {category: "아동", link: "children", icon: <IconHorseToy size={ICON_SIZE}/>},
+    {category: "영화", link: "movie", icon: <IconMovie size={ICON_SIZE}/>},
+    {category: "IT", link: "it", icon: <IconCode size={ICON_SIZE}/>},
+    {category: "교양", link: "culture", icon: <IconBook size={ICON_SIZE}/>},
+    {category: "TOPIC", link: "topic", icon: <IconPresentation size={ICON_SIZE}/>},
+]
 
 function MobileCategoryBtn() {
     const {classes} = customStyle();
+    const navigate = useNavigate();
+    const setSearchDrawer = useSetRecoilState(searchDrawerState);
 
-    const ICON_SIZE = "40px"
-    const CATEGORY_LIST = [
-        {category: "콘서트", link: "/events/category/콘서트", icon: <IconHandRock size={ICON_SIZE}/>},
-        {category: "클래식", link: "/events/category/클래식", icon: <IconPiano size={ICON_SIZE}/>},
-        {category: "전시", link: "/events/category/전시", icon: <IconPalette size={ICON_SIZE}/>},
-        {category: "스포츠", link: "/events/category/스포츠", icon: <IconBallBaseball size={ICON_SIZE}/>},
-        {category: "캠핑", link: "/events/category/캠핑", icon: <IconTent size={ICON_SIZE}/>},
-        {category: "아동", link: "/events/category/아동", icon: <IconHorseToy size={ICON_SIZE}/>},
-        {category: "영화", link: "/events/category/영화", icon: <IconMovie size={ICON_SIZE}/>},
-        {category: "IT", link: "/events/category/IT", icon: <IconCode size={ICON_SIZE}/>},
-        {category: "교양", link: "/events/category/교양", icon: <IconBook size={ICON_SIZE}/>},
-        {category: "TOPIC", link: "/events/category/TOPIC", icon: <IconPresentation size={ICON_SIZE}/>},
-    ]
+    const handleOnClick = (link: string) => {
+        setSearchDrawer(false);
+        navigate(`/events/category/${link}`);
+    }
 
     const items = CATEGORY_LIST.map((item) => (
 
-        <UnstyledButton component={Link}
-                        to={item.link}
-                        key={item.category}
+        <UnstyledButton key={item.category}
                         className={classes["mobile-nav-link"]}
-                        style={{textAlign: "center"}}>
+                        style={{textAlign: "center"}}
+                        onClick={() => handleOnClick(item.link)}>
             {item.icon}
             <Text fz={"xs"}>{item.category}</Text>
         </UnstyledButton>

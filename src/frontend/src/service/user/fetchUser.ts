@@ -1,8 +1,6 @@
-import {IChangePW, IGoogleLogin, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser";
+import {IChangePW, IFindEmail, IFindPassword, IGoogleLogin, ILogin, ISignup} from "../../types/IUser";
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {redirect} from "react-router-dom";
-import {CheckLogin} from "../../util/CheckLogin";
-import {googleLogout} from "@react-oauth/google";
 
 export const postSignupEmailValid = async (data: string) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`, {
@@ -25,6 +23,28 @@ export const postSignupUser = async (data: ISignup) => {
 }
 export const postSignupHost = async (data: ISignup) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/me/host`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .catch(res => console.error(res));
+}
+
+// 이메일 찾기
+export const postFindEmail = async (data: IFindEmail) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/find/email`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .catch(res => console.error(res));
+}
+
+// 비밀번호 찾기
+export const postFindPassword = async (data: IFindPassword) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/find/password`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
