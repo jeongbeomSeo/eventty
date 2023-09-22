@@ -231,8 +231,12 @@ public class EventController {
             .body(SuccessResponseDTO.of(deleteTicketId));
     }
 
-    /*
-    API 요청
+    /**
+     * (API) 이벤트와 티켓 정보 반환
+     * - Apply Server 로부터 요청을 받아, 이벤트와 티켓 정보를 반환하는 API
+     * - 유저가 신청한 티켓 ID 리스트를 파라미터로 보내면, 해당 티켓과 이벤트의 정보를 조회하기 위한 용도.
+     * @param ticketIds
+     * @return ResponseEntity<SuccessResponseDTO>
      */
     @GetMapping("/api/events")
     @Operation(summary = "Apply 서버로부터의 요청 처리 - 신청한 티켓 ID 리스트를 파라미터로 보내면, 해당 티켓과 이벤트의 정보를 조회하기 위한 용도.")
