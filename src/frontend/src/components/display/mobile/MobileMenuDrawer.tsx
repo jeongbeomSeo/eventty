@@ -78,7 +78,9 @@ function MobileMenuDrawer() {
                         <Drawer.Body>
                             <Stack>
                                 <Flex align={"center"} gap={"1rem"}>
-                                    <Avatar size={"3.5rem"} radius={"4rem"}/>
+                                    <Avatar size={"3.5rem"}
+                                            radius={"4rem"}
+                                            src={`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${userStateValue.imagePath}`}/>
                                     <Text style={{whiteSpace: "pre-wrap"}}>
                                         {isLoggedIn ?
                                             userStateValue.email :

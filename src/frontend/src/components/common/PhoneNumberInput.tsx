@@ -25,6 +25,8 @@ function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk, l
         setPhoneValue(formattedValue);
     }
 
+    console.log(value);
+
     return (
         <TextInput placeholder={"휴대폰 번호"}
                    label={label && "휴대폰 번호"}

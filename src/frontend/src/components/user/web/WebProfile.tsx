@@ -20,6 +20,8 @@ import {MessageAlert} from "../../../util/MessageAlert";
 import {useModal} from "../../../util/hook/useModal";
 import {Controller, useForm} from "react-hook-form";
 import {getProfile} from "../../../service/user/fetchUser";
+import {useRecoilState} from "recoil";
+import {userState} from "../../../states/userState";
 
 function WebProfile() {
     const {classes} = customStyle();
@@ -30,6 +32,7 @@ function WebProfile() {
     const [imgDel, setImgDel] = useState(false);
     const [imgPreview, setImgPreview] = useState(DATA.imagePath && `${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
     const resetRef = useRef<() => void>(null);
+    const [userStateValue, setUserStateValue] = useRecoilState(userState);
 
     const {deleteAccountFetch, changeProfileFetch} = useFetch();
     const {changePWModal} = useModal();
@@ -73,6 +76,17 @@ function WebProfile() {
 
         changeProfileFetch(formData);
     }
+
+    useEffect(() => {
+        if (DATA.imagePath !== userStateValue.imagePath){
+            if (DATA.imagePath){
+                setUserStateValue(prev => {
+                    return {...prev, imagePath: DATA.imagePath ? DATA.imagePath : ""}
+                });
+                sessionStorage.setItem("IMG_PATH", DATA.imagePath);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         if (getValues("image") !== null) {
@@ -129,7 +143,8 @@ function WebProfile() {
                                             <PhoneNumberInput {...rest}
                                                               inputRef={ref}
                                                               error={errors.phone?.message}
-                                                              asterisk={true}/>
+                                                              asterisk={true}
+                                                              label={true}/>
                                         )}/>
 
                             <Controller control={control}
@@ -142,7 +157,6 @@ function WebProfile() {
 
                             <TextInput {...register("address")}
                                        label={"주소"}
-                                       defaultValue={DATA.address}
                                        className={classes["input"]}/>
 
                             <Group position={"right"}>
