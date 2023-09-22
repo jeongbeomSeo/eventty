@@ -32,7 +32,7 @@ public class EventBasicWithHostInfoResponseDTO {
     public static EventBasicWithHostInfoResponseDTO from(EventBasicEntity eventBasicEntity, HostFindByIdResponseDTO hostInfo) {
         return EventBasicWithHostInfoResponseDTO.builder()
                 .id(eventBasicEntity.getId())
-                .hostId(eventBasicEntity.getUserId())
+                .hostId(eventBasicEntity.getHostId())
                 .title(eventBasicEntity.getTitle())
                 .eventStartAt(eventBasicEntity.getEventStartAt())
                 .eventEndAt(eventBasicEntity.getEventEndAt())

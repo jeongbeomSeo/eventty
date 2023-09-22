@@ -26,7 +26,7 @@ public class EventBasicWithoutHostInfoResponseDTO {
     public static EventBasicWithoutHostInfoResponseDTO fromEntity(EventBasicEntity eventBasicEntity) {
         return EventBasicWithoutHostInfoResponseDTO.builder()
                 .id(eventBasicEntity.getId())
-                .hostId(eventBasicEntity.getUserId())
+                .hostId(eventBasicEntity.getHostId())
                 .title(eventBasicEntity.getTitle())
                 .eventStartAt(eventBasicEntity.getEventStartAt())
                 .eventEndAt(eventBasicEntity.getEventEndAt())

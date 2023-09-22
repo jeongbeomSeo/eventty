@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class
 EventBasicEntity {
     private Long id;
-    private Long userId;
+    private Long hostId;
     private String title;
     private LocalDateTime eventStartAt;
     private LocalDateTime eventEndAt;

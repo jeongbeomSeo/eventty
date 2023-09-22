@@ -53,7 +53,7 @@ public class EventCreateRequestDTO {
 
     public EventBasicEntity toEventBasicEntity() {
         return EventBasicEntity.builder()
-                .userId(userId)
+                .hostId(userId)
                 .title(title)
                 .eventStartAt(eventStartAt)
                 .eventEndAt(eventEndAt)

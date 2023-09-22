@@ -6,15 +6,15 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Category {
-    Concert(1L, "Concert"),
-    Classical(2L, "Classical"),
-    Exhibition(3L, "Exhibition"),
-    Sports(4L, "Sports"),
-    Camping(5L, "Camping"),
-    Children(6L, "Children"),
-    Movie(7L, "Movie"),
+    concert(1L, "concert"),
+    classical(2L, "classical"),
+    exhibition(3L, "exhibition"),
+    sports(4L, "sports"),
+    camping(5L, "camping"),
+    children(6L, "children"),
+    movie(7L, "movie"),
     IT(8L, "IT"),
-    Culture(9L, "Culture"),
+    culture(9L, "culture"),
     TOPIC(10L, "TOPIC");
 
     private final Long id;

@@ -80,7 +80,7 @@ public class EventBasicService {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
         // User Server API 호출하여 Host 정보 가져오기
-        HostFindByIdResponseDTO hostInfo = getUserInfoForEventHost(eventBasic.getUserId());
+        HostFindByIdResponseDTO hostInfo = getUserInfoForEventHost(eventBasic.getHostId());
 
         return EventBasicWithHostInfoResponseDTO.from(eventBasic, hostInfo);
     }
@@ -143,7 +143,7 @@ public class EventBasicService {
     public void checkHostId(Long hostId, Long eventId) {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
-        if(!eventBasic.getUserId().equals(hostId)){
+        if(!eventBasic.getHostId().equals(hostId)){
             throw AccessDeniedException.EXCEPTION;
         }
     }
