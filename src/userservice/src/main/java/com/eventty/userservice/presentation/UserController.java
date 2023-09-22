@@ -7,6 +7,7 @@ import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
 import com.eventty.userservice.application.dto.response.HostFindByIdResposneDTO;
 import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.application.dto.response.UserImageFindByIdResponseDTO;
+import com.eventty.userservice.application.dto.response.UserUpdateImageResponseDTO;
 import com.eventty.userservice.domain.annotation.ApiErrorCode;
 import com.eventty.userservice.domain.annotation.ApiSuccessData;
 import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ import java.util.List;
 
 import static com.eventty.userservice.domain.code.ErrorCode.*;
 
+@Slf4j
 @RestController
 @Tag(name = "User", description = "User Server - About Users")
 @RequiredArgsConstructor
@@ -84,8 +87,8 @@ public class UserController {
 
         Long userId = getUserIdByUserContextHolder();
 
-        userService.updateMyInfo(userId, userUpdateRequestDTO, userImageUpdateRequestDTO);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        UserUpdateImageResponseDTO response = userService.updateMyInfo(userId, userUpdateRequestDTO, userImageUpdateRequestDTO);
+        return ResponseEntity.ok(response == null ? null : SuccessResponseDTO.of(response));
     }
 
     /**
@@ -99,6 +102,7 @@ public class UserController {
     public ResponseEntity<SuccessResponseDTO> apiGetHostInfo(@RequestParam Long hostId){
 
         HostFindByIdResposneDTO response =  userService.apiGetHostInfo(hostId);
+        log.debug("(API) 호스트 정보 반환 Response : {}", response);
         return ResponseEntity.ok(SuccessResponseDTO.of(response));
     }
 
@@ -115,6 +119,7 @@ public class UserController {
         Long userId = getUserIdByUserContextHolder();
 
         UserImageFindByIdResponseDTO response = userService.apiGetUserImage(userId);
+        log.debug("(API) User Image 반환 Response : {}", response);
         return ResponseEntity.ok(response == null ? false : SuccessResponseDTO.of(response));
     }
 
@@ -128,6 +133,7 @@ public class UserController {
     @Operation(summary = "(API) 유저 정보 확인 (비밀번호 찾기)")
     public ResponseEntity<?> apiCheckUserInfo(@RequestBody @Valid UserCheckRequestDTO userCheckRequestDTO){
         List<Long> response = userService.apiCheckUserInfo(userCheckRequestDTO);
+        log.debug("(API) 유저 정보 확인 (비밀번호 찾기) Response : {}", response);
         return ResponseEntity.ok(response == null ? false : SuccessResponseDTO.of(response));
     }
 

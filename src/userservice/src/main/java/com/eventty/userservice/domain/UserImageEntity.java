@@ -3,14 +3,11 @@ package com.eventty.userservice.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity @Builder @Getter
+@Entity @Builder @Getter @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "userImage")

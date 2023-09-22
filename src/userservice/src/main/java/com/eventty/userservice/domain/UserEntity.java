@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity @Builder @Getter
+@Entity @Builder @Getter @ToString
 @AllArgsConstructor @DynamicUpdate
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)

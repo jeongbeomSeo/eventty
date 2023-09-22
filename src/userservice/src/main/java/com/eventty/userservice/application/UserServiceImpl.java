@@ -8,6 +8,7 @@ import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
 import com.eventty.userservice.application.dto.response.HostFindByIdResposneDTO;
 import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
 import com.eventty.userservice.application.dto.response.UserImageFindByIdResponseDTO;
+import com.eventty.userservice.application.dto.response.UserUpdateImageResponseDTO;
 import com.eventty.userservice.domain.UserEntity;
 import com.eventty.userservice.domain.UserImageEntity;
 import com.eventty.userservice.domain.UserImageJPARepository;
@@ -53,50 +54,60 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public UserEntity updateMyInfo(Long userId,
+    public UserUpdateImageResponseDTO updateMyInfo(Long userId,
                                    UserUpdateRequestDTO userUpdateRequestDTO,
                                    UserImageUpdateRequestDTO userImageUpdateRequestDTO){
-
+        // 초기화
         UserUpdateRequestDTO userUpdate = new UserUpdateRequestDTO(userUpdateRequestDTO);
         UserImageUpdateRequestDTO userImageUpdate = new UserImageUpdateRequestDTO(userImageUpdateRequestDTO);
+        UserImageEntity userImageEntity = null;
 
+        // 파일 관련 logic
         UserImageDTO userImageDTO = fileUpload(userId, userImageUpdate);
 
         Long imageId = userImageDTO.getId();
         if(imageId != null && imageId != 0){
             imageId = (imageId == -1) ? 0L : imageId;
         }else{
-            imageId = userImageJPARepository.save(userImageDTO.toEntity()).getId();
+            userImageEntity = userImageJPARepository.save(userImageDTO.toEntity());
+            imageId = userImageEntity.getId();
         }
 
         // 회원 정보 저장
-        return userJPARepository.save(
+        userJPARepository.save(
                 new UserUpdateDTO(findUserByEMAndDB(userId))
-                        .toEntity(userUpdate, imageId)
-        );
+                        .toEntity(userUpdate, imageId));
+
+        if(userImageEntity == null && imageId == 0L) return null;
+        else if(userImageEntity != null) return new UserUpdateImageResponseDTO(userImageEntity.getStoredFilePath(), userImageEntity.getOriginalFileName(), imageId);
+        else return new UserUpdateImageResponseDTO(imageId);
     }
 
     @Override
     public HostFindByIdResposneDTO apiGetHostInfo(Long hostId) {
         UserEntity host = findUserByEMAndDB(hostId);
+        log.debug("Return : {}", host);
         return new HostFindByIdResposneDTO(host);
     }
 
     @Override
     public UserImageFindByIdResponseDTO apiGetUserImage(Long userId) {
         UserEntity user = findUserByEMAndDB(userId);
+        log.debug("Return : {}", user);
         UserImageEntity userImage = null;
 
         if(user.getImageId() == null)
             return null;
 
         userImage = findUserImageByEMAndDB(user.getImageId());
+        log.debug("Return : {}", userImage);
         return new UserImageFindByIdResponseDTO(userImage);
     }
 
     @Override
     public List<Long> apiCheckUserInfo(UserCheckRequestDTO userCheckRequestDTO) {
         List<UserEntity> users = userJPARepository.findByNameAndPhone(userCheckRequestDTO.getName(), userCheckRequestDTO.getPhone());
+        log.debug("Return : {}", users);
         if(users.size() == 0 || users.isEmpty())
             return null;
 
