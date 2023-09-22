@@ -112,7 +112,7 @@ public class EventBasicService {
             eventBasic.updateTitle(eventUpdateRequestDTO.getTitle());
         }
         if(eventUpdateRequestDTO.getCategory() != null){
-            eventBasic.updateCategory(eventUpdateRequestDTO.getCategory());
+            eventBasic.updateCategory(Category.getIdfromName(eventUpdateRequestDTO.getCategory()));
         }
         if(eventUpdateRequestDTO.getIsActive() != null){
             eventBasic.updateIsActive(eventUpdateRequestDTO.getIsActive());

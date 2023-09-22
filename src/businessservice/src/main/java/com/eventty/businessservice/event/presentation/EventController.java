@@ -134,7 +134,7 @@ public class EventController {
      */
 
     @GetMapping( "/events/registered")
-    @Operation(summary = "(HOST) 호스트 본인이 주최한 이벤트 리스트를 가져옵니다.")
+    @Operation(summary = "(HOST) 호스트 본인이 주최한 이벤트 리스트를 조회합니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
     @ApiErrorCode(ErrorCode.EVENT_NOT_FOUND)
     @Permission(Roles = {UserRole.HOST})

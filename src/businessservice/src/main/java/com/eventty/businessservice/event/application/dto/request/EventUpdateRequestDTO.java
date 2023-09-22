@@ -1,6 +1,5 @@
 package com.eventty.businessservice.event.application.dto.request;
 
-import jakarta.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,8 +11,7 @@ public class EventUpdateRequestDTO {
     // Event
     private String title;
 
-    @Min(1)
-    private Long category;
+    private String category;
 
     private Boolean isActive;
 

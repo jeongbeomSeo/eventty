@@ -1,5 +1,6 @@
 package com.eventty.businessservice.event.application.dto.request;
 
+import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -34,8 +35,7 @@ public class EventCreateRequestDTO {
     @NotBlank
     private String location;
 
-    @Min(1)
-    private Long category;
+    private String category;
 
     private Boolean isActive;
     private Boolean isDeleted;
@@ -59,7 +59,7 @@ public class EventCreateRequestDTO {
                 .eventEndAt(eventEndAt)
                 .participateNum(participateNum)
                 .location(location)
-                .category(category)
+                .category(Category.getIdfromName(category))
                 .isActive(true)
                 .isDeleted(false)
                 .build();
