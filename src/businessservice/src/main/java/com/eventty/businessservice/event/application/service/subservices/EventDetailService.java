@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,7 @@ public class EventDetailService {
 
     // 이벤트 상세 조회 후 조회수 증가 (비동기)
     @Async("asyncExecutor")
+    @Transactional
     public void increaseView(Long eventId){
         eventDetailRepository.updateView(eventId);
     }

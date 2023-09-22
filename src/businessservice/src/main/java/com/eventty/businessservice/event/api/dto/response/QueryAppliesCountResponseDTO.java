@@ -14,5 +14,5 @@ import lombok.*;
 @ToString
 public class QueryAppliesCountResponseDTO {
     Long ticketId;
-    Long appliedTicketCount;
+    Long appliedTicketCount; // 예약된 티켓 수
 }

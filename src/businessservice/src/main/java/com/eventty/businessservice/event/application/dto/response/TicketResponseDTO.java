@@ -35,7 +35,7 @@ public class TicketResponseDTO {
                 .price(ticketEntity.getPrice())
                 .quantity(ticketEntity.getQuantity())
                 .eventId(ticketEntity.getEventId())
-                .appliedTicketCount(appliesInfo.getAppliedTicketCount())
+                .appliedTicketCount(appliesInfo == null ? 0L : appliesInfo.getAppliedTicketCount()) // 신청된 티켓 갯수 정보가 없으면 0으로 반환
                 .build();
     }
 }
