@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,13 +41,24 @@ public class EventBasicService {
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
-    public List<EventBasicWithoutHostInfoResponseDTO> findEventsByIdList(List<Long> eventIdList){
-        return Optional.ofNullable(eventBasicRepository.selectEventsByIdList(eventIdList))
-                .filter(events -> !events.isEmpty())
-                .orElseThrow(() -> EventNotFoundException.EXCEPTION)
-                .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+    public List<EventBasicWithoutHostInfoResponseDTO> findEventsByIdList(List<Long> eventIdList) {
+        // List 안의 ID 순서대로 조회
+        List<EventBasicWithoutHostInfoResponseDTO> eventList = eventIdList.stream()
+                .map(eventId -> {
+                    EventBasicEntity eventEntity = eventBasicRepository.selectActiveEventById(eventId);
+                    if (eventEntity != null) {
+                        return EventBasicWithoutHostInfoResponseDTO.fromEntity(eventEntity);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+
+        if (eventList.isEmpty()) {
+            throw EventNotFoundException.EXCEPTION;
+        }
+
+        return eventList;
     }
 
     public List<EventBasicWithoutHostInfoResponseDTO> findEventsByHostId(Long hostId){

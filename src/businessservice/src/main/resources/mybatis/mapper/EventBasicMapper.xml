@@ -23,11 +23,17 @@
         WHERE id = #{id} AND is_deleted = false
     </select>
 
+    <!--특정 이벤트 조회 (열려 있는 행사만 조회)-->
+    <select id="selectActiveEventById" resultMap="EventResultMap" parameterType="java.lang.Long">
+        SELECT * FROM event_basic
+        WHERE id = #{id} AND is_deleted = false AND is_active = true
+    </select>
+
     <!--전체 이벤트 조회-->
     <select id="selectAllEvents" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT * FROM event_basic
         WHERE is_deleted = false
-        ORDER BY id DESC
+        ORDER BY event_start_at ASC
     </select>
 
     <!-- 호스트가 주최한 이벤트 조회 -->
@@ -35,16 +41,6 @@
         SELECT *
         FROM event_basic
         WHERE host_id = #{hostId}
-        AND is_deleted = false
-    </select>
-
-    <!--이벤트 ID List 에 따른 이벤트 조회-->
-    <select id="selectEventsByIdList" resultMap="EventResultMap" parameterType="java.util.List">
-        SELECT * FROM event_basic
-        WHERE id IN
-        <foreach collection="list" item="id" open="(" separator="," close=")">
-            #{id}
-        </foreach>
         AND is_deleted = false
     </select>
 
