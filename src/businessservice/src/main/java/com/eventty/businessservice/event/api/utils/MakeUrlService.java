@@ -16,8 +16,8 @@ public class MakeUrlService {
         return URI.create(urlProperties.getUserServer() + QUERY_USER_INFO_API_PATH);
     }
 
-    public URI queryTicketCount() {
-        String QUERY_TICKET_COUNT_API_PATH = "/api/applies/count";
+    public URI queryTicketCount(Long eventId) {
+        String QUERY_TICKET_COUNT_API_PATH = "/api/applies/count=" + eventId;
         return URI.create(urlProperties.getApplyServer() + QUERY_TICKET_COUNT_API_PATH);
     }
 }

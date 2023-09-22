@@ -1,14 +1,11 @@
 package com.eventty.businessservice.event.application.service.subservices;
 
 import com.eventty.businessservice.event.api.ApiClient;
-import com.eventty.businessservice.event.api.dto.request.QueryAppliesCountRequestDTO;
 import com.eventty.businessservice.event.api.dto.response.QueryAppliesCountResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.TicketResponseDTO;
-import com.eventty.businessservice.event.domain.entity.EventImageEntity;
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
-import com.eventty.businessservice.event.domain.exception.EventImageNotFoundException;
 import com.eventty.businessservice.event.domain.exception.TicketNotFoundException;
 import com.eventty.businessservice.event.domain.repository.TicketRepository;
 import com.eventty.businessservice.event.presentation.response.ResponseDTO;
@@ -16,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +30,7 @@ public class TicketService {
     public List<TicketResponseDTO> findTicketsByEventId(Long eventId){
 
         // 해당 이벤트를 신청한 내역 리스트 가져오기 (Apply Server API 호출)
-        ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> appliesInfoResponse = apiClient.queryAppliesCountApi(
-                QueryAppliesCountRequestDTO.builder()
-                        .eventId(eventId)
-                        .build()
-        );
+        ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> appliesInfoResponse = apiClient.queryAppliesCountApi(eventId);
         List<QueryAppliesCountResponseDTO> appliesInfo = Objects.requireNonNull(appliesInfoResponse.getBody()).getSuccessResponseDTO().getData();
 
         // 티켓 정보 가져오기
