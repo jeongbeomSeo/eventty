@@ -18,8 +18,4 @@ public class EventDetailEntity {
     private LocalDateTime deleteDate;
     private LocalDateTime updateDate;
     private LocalDateTime createDate;
-
-    public void updateContent(String content){
-        this.content = content;
-    }
 }

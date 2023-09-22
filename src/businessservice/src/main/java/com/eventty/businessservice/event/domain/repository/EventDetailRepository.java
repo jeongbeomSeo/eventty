@@ -13,7 +13,7 @@ public interface EventDetailRepository {
     List<Long> selectTop10EventsIdByCreateDate();
     List<Long> selectTop10EventsIdByApplyEndAt();
     Long insertEventDetail(EventDetailEntity request);
-    Long updateEventDetail(EventDetailEntity request);
+    Long updateEventDetail(Long id, String content);
     Long updateView(Long id);
     Long deleteEventDetail(Long id);
 }

@@ -56,9 +56,9 @@ public class EventDetailService {
         // 업데이트 전, 해당 데이터 존재 여부 확인
         EventDetailEntity eventDetail = getEventDetailIfExists(eventId);
 
-        eventDetail.updateContent(eventUpdateRequestDTO.getContent());
-        eventDetailRepository.updateEventDetail(eventDetail);
-
+        if(eventUpdateRequestDTO.getContent() != null){
+            eventDetailRepository.updateEventDetail(eventId, eventUpdateRequestDTO.getContent());
+        }
         return eventId;
     }
 

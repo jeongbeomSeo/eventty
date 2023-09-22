@@ -25,13 +25,6 @@
         VALUES(#{eventId}, #{originalFileName}, #{storedFilePath}, #{fileSize}, #{isDeleted})
     </insert>
 
-    <!--이벤트 이미지 수정-->
-    <update id="updateEventImage" parameterType="com.eventty.businessservice.event.domain.entity.EventImageEntity">
-        UPDATE event_image
-        SET original_file_name = #{originalFileName}, stored_file_path = #{storedFilePath}, file_size = #{fileSize}
-        WHERE id = #{id}
-    </update>
-
     <!--이벤트 이미지 삭제-->
     <update id="deleteEventImageByEventId" parameterType="java.lang.Long">
         UPDATE event_image

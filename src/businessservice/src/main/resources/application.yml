@@ -15,17 +15,19 @@ spring:
 #### mybatis
 mybatis:
   mapper-locations: classpath:mybatis/mapper/**/**.xml
+  configuration:
+    log-impl: ${log-impl}
 
 #### logging
 logging:
   level:
     root: INFO
-    com.eventty.com.eventty.businessservice: ${level}
     org:
       hibernate:
         type:
           descriptor:
             sql: trace
+    com.eventty.com.eventty.businessservice: ${level}
 
 #### Swagger
 springdoc:
