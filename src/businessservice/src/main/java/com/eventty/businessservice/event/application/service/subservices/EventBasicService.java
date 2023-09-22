@@ -41,24 +41,13 @@ public class EventBasicService {
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
 
-    public List<EventBasicWithoutHostInfoResponseDTO> findEventsByIdList(List<Long> eventIdList) {
-        // List 안의 ID 순서대로 조회
-        List<EventBasicWithoutHostInfoResponseDTO> eventList = eventIdList.stream()
-                .map(eventId -> {
-                    EventBasicEntity eventEntity = eventBasicRepository.selectActiveEventById(eventId);
-                    if (eventEntity != null) {
-                        return EventBasicWithoutHostInfoResponseDTO.fromEntity(eventEntity);
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
+    public List<EventBasicWithoutHostInfoResponseDTO> findEventsByIdList(List<Long> eventIdList){
+        return Optional.ofNullable(eventBasicRepository.selectEventsByIdList(eventIdList))
+                .filter(events -> !events.isEmpty())
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION)
+                .stream()
+                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
                 .collect(Collectors.toList());
-
-        if (eventList.isEmpty()) {
-            throw EventNotFoundException.EXCEPTION;
-        }
-
-        return eventList;
     }
 
     public List<EventBasicWithoutHostInfoResponseDTO> findEventsByHostId(Long hostId){

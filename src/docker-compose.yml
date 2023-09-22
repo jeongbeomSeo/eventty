@@ -73,7 +73,7 @@ services:
         aliases:
           - "apply server"
   gateway:
-    image: jeongbeom4693/gateway:1.5
+    image: jeongbeom4693/gateway:1.6
     container_name: Gateway
     build:
       context: ./gateway

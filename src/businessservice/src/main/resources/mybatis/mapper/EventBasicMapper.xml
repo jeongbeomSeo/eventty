@@ -44,6 +44,21 @@
         AND is_deleted = false
     </select>
 
+    <!-- 이벤트 ID List 에 따른 이벤트 조회 (Top10 목록 조회시 사용) -->
+    <select id="selectEventsByIdList" resultMap="EventResultMap" parameterType="java.util.List">
+        SELECT *
+        FROM event_basic
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_active = true AND is_deleted = false
+        ORDER BY FIELD(id,
+        <foreach collection="list" item="id" open="" separator="," close="">
+            #{id}
+        </foreach>)
+    </select>
+
     <!--카테고리 별 이벤트 조회-->
     <select id="selectEventsByCategory" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT *
