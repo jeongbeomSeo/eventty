@@ -40,10 +40,6 @@ public class EventController {
 
     private final EventService eventService;
 
-    /*
-    USER 권한 API
-     */
-
     @GetMapping( "/events")
     @Operation(summary = "(ALL) 전체 이벤트 리스트를 가져옵니다.")
     @ApiSuccessData(value = FullEventFindAllResponseDTO.class, array = true)
