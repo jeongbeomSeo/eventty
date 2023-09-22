@@ -20,6 +20,7 @@ enum ERROR_MESSAGE {
 }
 
 function Login() {
+    console.log(process.env["REACT_APP_GOOGLE_CLIENT_ID"]);
     const setIsLoggedIn = useSetRecoilState(loginState);
     const setUsersStateValue = useSetRecoilState(userState);
     const navigate = useNavigate();

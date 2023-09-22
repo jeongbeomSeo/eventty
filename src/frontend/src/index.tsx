@@ -16,7 +16,7 @@ root.render(
         <RecoilRoot>
             <NormalizeCSS/>
             <GlobalStyle/>
-            <GoogleOAuthProvider clientId={process.env["REACT_APP_GOOGLE_CLIENT_ID"]!}>
+            <GoogleOAuthProvider  clientId={process.env["REACT_APP_GOOGLE_CLIENT_ID"]!}>
                 <RouterProvider router={Router}/>
             </GoogleOAuthProvider>
         </RecoilRoot>

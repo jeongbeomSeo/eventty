@@ -36,7 +36,9 @@ public enum ErrorCode {
     CSRF_TOKEN_NOT_FOUND(401, "G000", "Csrf Token Not Found Exception"),
     INVALID_CSRF_TOKEN(401, "G000", "Invalid CSRF Token Exception"),
 
-    DUPLICATE_EMAIL(409, "", "Duplicate Email");
+    DUPLICATE_EMAIL(409, "", "Duplicate Email"),
+
+    SESSION_IS_EXPIRED_RESET_PASSWORD(400, "", "Password reset request failed due to expired session");
 
     private final int status;
     private final String code;

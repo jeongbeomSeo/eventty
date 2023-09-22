@@ -8,6 +8,7 @@ import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import jakarta.servlet.http.HttpSession;
 
 public interface AuthService {
 
@@ -23,4 +24,5 @@ public interface AuthService {
     void deleteAllToken(Long userId);
     boolean emailMatch (String email, AuthUserEntity authUserEntity);
     String encryptePassword(String rawPassword);
+    Long getUserIdInSession(HttpSession sessison);
 }

@@ -7,10 +7,13 @@ import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.applicaiton.service.utils.token.TokenProvider;
+import com.eventty.authservice.domain.Enum.SessionAttr;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.InvalidCsrfTokenException;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
+import com.eventty.authservice.domain.exception.SessionIsExpiredResetPasswordException;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -107,5 +110,18 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public String encryptePassword(String rawPassword) {
         return customPasswordEncoder.encodePassword(rawPassword);
+    }
+
+    @Override
+    public Long getUserIdInSession(HttpSession session) {
+        Object userIdInSession = session.getAttribute(SessionAttr.USER_ID.getKey());
+
+        if (userIdInSession == null)
+            throw new SessionIsExpiredResetPasswordException();
+
+        // 세션 파기 시키기
+        session.invalidate();
+
+        return Long.parseLong(userIdInSession.toString());
     }
 }

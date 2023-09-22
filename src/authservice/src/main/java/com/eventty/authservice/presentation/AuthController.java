@@ -4,6 +4,7 @@ import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
+import com.eventty.authservice.domain.Enum.SessionAttr;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.global.Enum.SuccessCode;
 import com.eventty.authservice.global.response.ResponseDTO;
@@ -17,6 +18,7 @@ import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -204,13 +206,34 @@ public class AuthController {
      * 패스워드 변경 이전 검증 작업
      */
     @PostMapping("/find/password")
-    public ResponseEntity<SuccessResponseDTO<PWFindResponseDTO>> findPassword(@Valid @RequestBody PWFindRequestDTO findPWRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO<Void>> findPassword(@Valid @RequestBody PWFindRequestDTO findPWRequestDTO,
+                                                                              HttpSession session) {
         log.debug("Current Position: Controller:: 패스워드 찾기");
 
         PWFindResponseDTO pwFindResponseDTO = userService.queryFindPW(findPWRequestDTO);
 
+        // 세션에 값을 설정
+        session.setAttribute(SessionAttr.USER_ID.getKey(), pwFindResponseDTO.getUserId());
+
+        // 세션 유효 시간을 10분으로 설정
+        session.setMaxInactiveInterval(10 * 60); // 5분
+
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
-                .body(SuccessResponseDTO.of(pwFindResponseDTO));
+                .body(SuccessResponseDTO.of(null));
+    }
+
+    /**
+     * 패스워드 찾기 이후 변경 작업
+     */
+    @PostMapping("/find/password/callback")
+    public ResponseEntity<SuccessResponseDTO<Void>> findPasswordCallBack(@Valid @RequestBody ResetPWRequestDTO resetPWRequestDTO, HttpSession session) {
+        log.debug("Current Position: Controller:: 패스워드 찾기 이후 변경 작업");
+
+        userService.resetPW(resetPWRequestDTO, session);
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
+                .body(SuccessResponseDTO.of(null));
     }
 }

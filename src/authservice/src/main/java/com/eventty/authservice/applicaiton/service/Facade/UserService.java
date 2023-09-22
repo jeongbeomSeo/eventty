@@ -8,6 +8,7 @@ import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import com.eventty.authservice.presentation.dto.response.EmailFindResponseDTO;
 import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.List;
 
@@ -22,4 +23,5 @@ public interface UserService {
     CsrfTokenDTO changePW(PWChangeRequestDTO pwChangeRequestDTO, SessionTokensDTO sessionTokensDTO, String csrfToken);
     List<EmailFindResponseDTO> queryFindEmail(EmailFindRequestDTO emailFindRequestDTO);
     PWFindResponseDTO queryFindPW(PWFindRequestDTO pwFindRequestDTO);
+    void resetPW(ResetPWRequestDTO resetPWRequestDTO, HttpSession session);
 }

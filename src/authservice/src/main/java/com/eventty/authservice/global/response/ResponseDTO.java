@@ -14,7 +14,7 @@ import lombok.*;
 @ToString
 public class ResponseDTO<T> {
 
-    private boolean isSuccess;
+    private Boolean isSuccess;
     private ErrorResponseDTO errorResponseDTO;
     private SuccessResponseDTO<T> successResponseDTO;
 
@@ -24,7 +24,7 @@ public class ResponseDTO<T> {
         this.successResponseDTO = null;
     }
 
-    private ResponseDTO(SuccessResponseDTO<T> successResponseDTO) {
+    public ResponseDTO(SuccessResponseDTO<T> successResponseDTO) {
         this.isSuccess = true;
         this.errorResponseDTO = null;
         this.successResponseDTO = successResponseDTO;

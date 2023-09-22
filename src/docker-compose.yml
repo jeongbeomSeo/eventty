@@ -1,37 +1,37 @@
 version: "3.9"
 services:
-  frontend:
-    image: front:1.5
-    command: npm start
-    container_name: Frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
-      - /app/front/node_modules
-      - ./frontend:/app/front
-    networks:
-      eventty:
-        aliases:
-          - "front server"
-  businessservice:
-    image: serin0404/event:1.6
-    container_name: Event_Server
-    build:
-      context: ./businessservice
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    volumes:
-      - ./businessservice:/src/businessservice
-    networks:
-      eventty:
-        aliases:
-          - "event server"
+  # frontend:
+  #   image: front:1.5
+  #   command: npm start
+  #   container_name: Frontend
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - /app/front/node_modules
+  #     - ./frontend:/app/front
+  #   networks:
+  #     eventty:
+  #       aliases:
+  #         - "front server"
+  # businessservice:
+  #   image: serin0404/event:1.6
+  #   container_name: Event_Server
+  #   build:
+  #     context: ./businessservice
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./businessservice:/src/businessservice
+  #   networks:
+  #     eventty:
+  #       aliases:
+  #         - "event server"
   userservice:
-    image: hyungyunk/eventty:1.5
+    image: hyungyunk/eventty:1.6
     container_name: User_Server
     build:
       context: ./userservice
@@ -45,7 +45,7 @@ services:
         aliases:
           - "user server"
   authservice:
-    image: jeongbeom4693/auth:1.5
+    image: auth:1.6
     container_name: Auth_Server
     build:
       context: ./authservice
@@ -59,7 +59,7 @@ services:
         aliases:
           - "auth server"
   gateway:
-    image: jeongbeom4693/gateway:1.5
+    image: jeongbeom4693/gateway:1.6
     container_name: Gateway
     build:
       context: ./gateway
@@ -72,6 +72,20 @@ services:
       eventty:
         aliases:
           - "gateway server"
+  # applyservice:
+  #   image: hyungyunk/apply:1.6
+  #   container_name: Apply_Server
+  #   build:
+  #     context: ./apply
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8003:8003"
+  #   volumes:
+  #     - ./apply:/src/apply
+  #   networks:
+  #     eventty:
+  #       aliases:
+  #         - "apply server"
 networks:
   eventty:
     driver: bridge
