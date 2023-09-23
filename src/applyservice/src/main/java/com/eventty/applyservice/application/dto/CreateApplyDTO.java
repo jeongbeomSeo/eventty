@@ -8,4 +8,6 @@ public class CreateApplyDTO {
     private Long userId;
     private Long eventId;
     private Long ticketId;
+    private Long applicantNum;
+    private String phone;
 }

@@ -6,14 +6,15 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Getter @Builder
 @AllArgsConstructor
-@Builder
 public class ApplyEntity {
     private Long id;
     private Long userId;
     private Long eventId;
     private Long ticketId;
+    private String phone;
+    private Long applicantNum;
     private LocalDateTime applyDate;
     private LocalDateTime deleteDate;
 }
