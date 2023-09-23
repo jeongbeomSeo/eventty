@@ -54,7 +54,7 @@ export const postEvent = async (data: FormData) => {
 }
 
 export const deleteEvent = async (data: number) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/events/${data}`, {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events/${data}`, {
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
     })

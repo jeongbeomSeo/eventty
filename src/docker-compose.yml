@@ -44,20 +44,6 @@ services:
       eventty:
         aliases:
           - "user server"
-    applyservice:
-      image: hyungyunk/apply:1.6
-      container_name: Apply_Server
-      build:
-        context: ./applyservice
-        dockerfile: Dockerfile
-      ports:
-        - "8003:8003"
-      volumes:
-        - ./userservice:/src/applyservice
-      networks:
-        eventty:
-          aliases:
-            - "apply server"
   authservice:
     image: jeongbeom4693/auth:1.6
     container_name: Auth_Server
@@ -86,6 +72,20 @@ services:
       eventty:
         aliases:
           - "gateway server"
+  applyservice:
+    image: hyungyunk/apply:1.6
+    container_name: Apply_Server
+    build:
+      context: ./applyservice
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./applyservice:/src/applyservice
+    networks:
+      eventty:
+        aliases:
+          - "apply server"
 networks:
   eventty:
     driver: bridge

@@ -16,7 +16,6 @@ import {
 } from "@mantine/core";
 import {useFetcher, useLoaderData, useLocation, useParams, useRouteLoaderData, useSearchParams} from "react-router-dom";
 import {IEventBooking, IEventDetail, IEventTicketDetail} from "../../../types/IEvent";
-import {getEvent} from "../../../service/event/fetchEvent";
 import customStyle from "../../../styles/customStyle";
 import {IconCalendar, IconDeviceMobile, IconPhone, IconTicket, IconUsers} from "@tabler/icons-react";
 import PhoneNumberInput from "../../common/PhoneNumberInput";

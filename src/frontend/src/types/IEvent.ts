@@ -37,12 +37,14 @@ export interface IEventTicket {
 export interface IEventTicketDetail extends IEventTicket{
     id: number;
     eventId: number;
-    is_deleted: boolean;
+    appliedTicketCount: number;
 }
 
-export interface IEventDetail {
+export interface IEventDetail{
     id: number;
-    userId: number;
+    hostId: number;
+    hostName: string;
+    hostPhone: string;
     title: string;
     eventStartAt: Date;
     eventEndAt: Date;
@@ -50,7 +52,6 @@ export interface IEventDetail {
     location: string;
     categoryName: string;
     isActive: boolean;
-    isDeleted: boolean;
     content: string;
     applyStartAt: Date;
     applyEndAt: Date;

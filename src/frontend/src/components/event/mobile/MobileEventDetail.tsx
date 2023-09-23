@@ -9,13 +9,13 @@ import {eventTicketDrawerState} from "../../../states/eventTicketDrawerState";
 import {CheckLogin} from "../../../util/CheckLogin";
 import {useModal} from "../../../util/hook/useModal";
 
-function HostInfo({hostId}: {hostId: number}) {
+function HostInfo({hostName}: {hostName: string}) {
     return(
         <Paper p={"md"} withBorder>
             <Group noWrap>
                 <Avatar radius={"xl"}/>
                 <div>
-                    {hostId}
+                    {hostName}
                 </div>
             </Group>
             <Group>
@@ -46,7 +46,7 @@ function MobileEventDetail() {
                         `~ ${eventEndtAt.getMonth()+1}월 ${eventEndtAt.getDate()}일`}
                     </Title>
                     <Divider/>
-                    <HostInfo hostId={DATA.userId}/>
+                    <HostInfo hostName={DATA.hostName}/>
                     <div>{DATA.content}</div>
                 </Stack>
             </Container>

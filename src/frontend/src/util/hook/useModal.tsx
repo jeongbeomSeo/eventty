@@ -43,6 +43,7 @@ export function useModal() {
             centered: true,
             xOffset: "",
             size: "xs",
+            zIndex: 1002,
         })
     }
 
