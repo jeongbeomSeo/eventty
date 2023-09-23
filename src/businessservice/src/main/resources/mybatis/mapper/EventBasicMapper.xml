@@ -63,9 +63,9 @@
     <select id="selectEventsByCategory" resultMap="EventResultMap" parameterType="java.lang.Long">
         SELECT *
         FROM event_basic e
-                 INNER JOIN categories c ON e.category = c.id
+            INNER JOIN categories c ON e.category = c.id
         WHERE c.id = #{categoryId}
-          AND is_deleted = false
+            AND is_deleted = false
     </select>
 
     <!--이벤트 검색-->

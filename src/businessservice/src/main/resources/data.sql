@@ -47,16 +47,16 @@ CREATE TABLE categories (
     name VARCHAR(255) NOT NULL
 );
 
-INSERT INTO categories (id, name) VALUES (1, 'Concert');
-INSERT INTO categories (id, name) VALUES (2, 'Classical');
-INSERT INTO categories (id, name) VALUES (3, 'Exhibition');
-INSERT INTO categories (id, name) VALUES (4, 'Sports');
-INSERT INTO categories (id, name) VALUES (5, 'Camping');
-INSERT INTO categories (id, name) VALUES (6, 'Children');
-INSERT INTO categories (id, name) VALUES (7, 'Movie');
-INSERT INTO categories (id, name) VALUES (8, 'IT');
-INSERT INTO categories (id, name) VALUES (9, 'Culture');
-INSERT INTO categories (id, name) VALUES (10, 'TOPIC');
+INSERT INTO categories (id, name) VALUES (1, 'concert');
+INSERT INTO categories (id, name) VALUES (2, 'classical');
+INSERT INTO categories (id, name) VALUES (3, 'exhibition');
+INSERT INTO categories (id, name) VALUES (4, 'sports');
+INSERT INTO categories (id, name) VALUES (5, 'camping');
+INSERT INTO categories (id, name) VALUES (6, 'children');
+INSERT INTO categories (id, name) VALUES (7, 'movie');
+INSERT INTO categories (id, name) VALUES (8, 'it');
+INSERT INTO categories (id, name) VALUES (9, 'culture');
+INSERT INTO categories (id, name) VALUES (10, 'topic');
 
 -- -- events 테이블 더미 데이터 삽입
 -- INSERT INTO events (id, host_id, title, image, event_start_at, event_end_at, participate_num, location, category)

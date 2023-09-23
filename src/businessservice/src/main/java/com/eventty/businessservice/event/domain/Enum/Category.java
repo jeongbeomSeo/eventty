@@ -13,9 +13,9 @@ public enum Category {
     camping(5L, "camping"),
     children(6L, "children"),
     movie(7L, "movie"),
-    IT(8L, "it"),
+    it(8L, "it"),
     culture(9L, "culture"),
-    TOPIC(10L, "topic");
+    topic(10L, "topic");
 
     private final Long id;
     private final String name;
