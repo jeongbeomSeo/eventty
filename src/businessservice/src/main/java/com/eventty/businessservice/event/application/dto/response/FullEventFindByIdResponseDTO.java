@@ -14,6 +14,7 @@ import java.util.List;
 public class FullEventFindByIdResponseDTO {
     // eventBasic
     private Long id;
+    private Long hostId;
     private String hostName; // from User Server
     private String hostPhone; // from User Server
     private String title;
@@ -45,6 +46,7 @@ public class FullEventFindByIdResponseDTO {
             ImageResponseDTO imageInfo) {
         return FullEventFindByIdResponseDTO.builder()
                 .id(eventBasic.getId())
+                .hostId(eventBasic.getHostId())
                 .hostName(eventBasic.getHostName())
                 .hostPhone(eventBasic.getHostPhone())
                 .title(eventBasic.getTitle())
