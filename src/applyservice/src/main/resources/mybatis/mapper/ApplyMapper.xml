@@ -51,7 +51,7 @@
             END             AS recentDate
           FROM apply
          WHERE user_id = #{userId}
-         ORDER BY recentDate DESC
+         ORDER BY recentDate
     </select>
 
     <select id="findByEventIdGroupByTicket" parameterType="Long" resultType="com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO">

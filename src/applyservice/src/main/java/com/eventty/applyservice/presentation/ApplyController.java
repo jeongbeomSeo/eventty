@@ -13,6 +13,7 @@ import com.eventty.applyservice.presentation.dto.SuccessResponseDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static com.eventty.applyservice.domain.code.ErrorCode.*;
 
+@Slf4j
 @RestController
 @Tag(name = "Apply", description = "Apply Server - About Applies")
 @RequiredArgsConstructor
@@ -72,9 +74,9 @@ public class ApplyController {
     }
 
     @GetMapping("/api/applies/count")
-    @Permission(Roles = {UserRole.USER})
     public ResponseEntity<SuccessResponseDTO> getTicketCount(@RequestParam Long eventId) {
         List<FindUsingTicketResponseDTO> responses = applyService.getUsingTicketList(eventId);
+        log.error("현재 신청자 현황 Response : {}", responses);
         return ResponseEntity.ok(SuccessResponseDTO.of(responses));
     }
 

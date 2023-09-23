@@ -4,9 +4,10 @@ import com.eventty.applyservice.domain.code.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
-@Builder
+@Builder @ToString
 @NoArgsConstructor
 public class ErrorResponseDTO {
 

@@ -89,6 +89,8 @@ public class ApplyServiceImpl implements ApplyService{
         for(FindByUserIdDTO apply : applies){
             FindEventInfoResponseDTO eventResponse = eventInfoMap.get(apply.getTicketId());
 
+            log.debug("EventRespone : {}", eventResponse);
+
             // 예약 상태(status) & 예약or취소 날짜(date) 설정
             String status;
             LocalDateTime date = null;
@@ -144,6 +146,15 @@ public class ApplyServiceImpl implements ApplyService{
         if(response.getBody() == null || response.getBody().getErrorResponseDTO() != null){
             log.error("ApplyServer - response is null or getErrorResponse : {}", response);
             return null;
+        }
+
+        log.debug("Resposne : {}", response);
+        if(response.getBody() != null && response.getBody().getSuccessResponseDTO() != null){
+            for(FindEventInfoResponseDTO responseDTO : response.getBody().getSuccessResponseDTO().getData()){
+                log.debug("ResponseDTO : {}", responseDTO);
+            }
+        }else {
+            log.error("Response Error!!!!!");
         }
 
         return response.getBody().getSuccessResponseDTO().getData();
