@@ -45,12 +45,13 @@ public class EventService {
 
         List<String> criteriaList = Arrays.asList("Views", "CreatedAt", "ApplyEndAt");
 
-        for (String criteria : criteriaList) {
+        criteriaList.forEach(criteria -> {
             String key = "Top10" + criteria;
             List<Long> eventIds = getEventIdsByCriteria(criteria);
             List<FullEventFindAllResponseDTO> eventFullList = mapEventIdListToEventFullFindAllResponseDTO(eventIds);
             result.put(key, eventFullList);
-        }
+        });
+
         return result;
     }
 
@@ -95,7 +96,7 @@ public class EventService {
         // 이벤트 이미지
         ImageResponseDTO imageInfo = imageService.findImageByEventId(eventId);
 
-        return FullEventFindByIdResponseDTO.of(eventBasic, eventDetail, tickets, imageInfo);
+        return FullEventFindByIdResponseDTO.from(eventBasic, eventDetail, tickets, imageInfo);
     }
 
     public Long createEvent(Long hostId, EventCreateRequestDTO eventCreateRequestDTO, MultipartFile image) {
@@ -199,7 +200,7 @@ public class EventService {
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return FullEventFindAllResponseDTO.of(eventBasic, imageInfo);
+                    return FullEventFindAllResponseDTO.from(eventBasic, imageInfo);
                 })
                 .toList();
     }
@@ -208,12 +209,12 @@ public class EventService {
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return FullEventFindAllResponseDTO.of(eventBasic, imageInfo);
+                    return FullEventFindAllResponseDTO.from(eventBasic, imageInfo);
                 })
                 .collect(Collectors.toList());
     }
 
-    private void checkTicketHostId(Long hostId, Long ticketId) {
+    public void checkTicketHostId(Long hostId, Long ticketId) {
         Long eventIdOfTicket = ticketService.findEventIdByTicketId(ticketId);
         eventBasicService.checkHostId(hostId, eventIdOfTicket);
     }

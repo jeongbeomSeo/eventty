@@ -24,7 +24,7 @@ public class EventDetailService {
 
     public EventDetailFindByIdResponseDTO findEventById(Long eventId) {
         return Optional.ofNullable(eventDetailRepository.selectEventDetailById(eventId))
-                .map(EventDetailFindByIdResponseDTO::fromEntity)
+                .map(EventDetailFindByIdResponseDTO::from)
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION);
     }
 

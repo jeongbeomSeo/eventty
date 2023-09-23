@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,10 +32,9 @@ public class EventBasicService {
     private final ApiClient apiClient;
 
     public List<EventBasicWithoutHostInfoResponseDTO> findAllEvents(){
-        // 메인 화면에서는 호스트 정보 노출 안함
         return Optional.ofNullable(eventBasicRepository.selectAllEvents())
                 .map(events -> events.stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList()))
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
@@ -46,7 +44,7 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -55,7 +53,7 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -64,7 +62,7 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -73,13 +71,14 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
     public EventBasicWithHostInfoResponseDTO findEventByIdWithHostInfo(Long eventId) {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
+        // 이벤트 상세 조회 시 호스트 정보도 함께 응답하기 위하여
         // User Server API 호출하여 Host 정보 가져오기
         HostFindByIdResponseDTO hostInfo = getUserInfoForEventHost(eventBasic.getHostId());
 
@@ -89,7 +88,7 @@ public class EventBasicService {
     public EventBasicWithoutHostInfoResponseDTO findEventByIdWithoutHostInfo(Long eventId) {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
-        return EventBasicWithoutHostInfoResponseDTO.fromEntity(eventBasic);
+        return EventBasicWithoutHostInfoResponseDTO.from(eventBasic);
     }
 
 

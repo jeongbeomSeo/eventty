@@ -1,12 +1,28 @@
 package com.eventty.businessservice.application;
 
+import com.eventty.businessservice.event.application.dto.response.EventBasicWithoutHostInfoResponseDTO;
+import com.eventty.businessservice.event.application.service.subservices.EventBasicService;
+import com.eventty.businessservice.event.domain.Enum.Category;
+import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
+import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
+import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.eventty.businessservice.utils.TestUtil.createFakeEventEntityList;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EventBasicServiceTest {
 
-    /*
     @Mock
     private EventBasicRepository eventBasicRepository;
 
@@ -17,7 +33,7 @@ public class EventBasicServiceTest {
     @DisplayName("전체 이벤트 조회 테스트")
     public void findAllEventsTest() {
         // Given
-        List<EventBasicEntity> mockEventEntities = createEventEntityList(3L);
+        List<EventBasicEntity> mockEventEntities = createFakeEventEntityList(3L);
         when(eventBasicRepository.selectAllEvents()).thenReturn(mockEventEntities);
 
         // When
@@ -33,7 +49,7 @@ public class EventBasicServiceTest {
     public void findEventsByHostIdTest() {
         // given
         Long hostId = 1L;
-        List<EventBasicEntity> mockEvents = createEventEntityList(3L);
+        List<EventBasicEntity> mockEvents = createFakeEventEntityList(3L);
         when(eventBasicRepository.selectEventsByHostId(hostId)).thenReturn(mockEvents);
 
         // when
@@ -49,8 +65,8 @@ public class EventBasicServiceTest {
     @DisplayName("이벤트 카테고리별 조회 테스트")
     public void findEventsByCategoryTest() {
         // given
-        Category category = Category.교양;
-        List<EventBasicEntity> mockEvents = createEventEntityList(3L);
+        Category category = Category.sports;
+        List<EventBasicEntity> mockEvents = createFakeEventEntityList(3L);
         when(eventBasicRepository.selectEventsByCategory(category.getId())).thenReturn(mockEvents);
 
         // when
@@ -66,7 +82,7 @@ public class EventBasicServiceTest {
     @DisplayName("이벤트 카테고리별 조회 테스트 - 이벤트 없음")
     public void findEventsByCategoryTest_NoEventsFound() {
         // given
-        Category category = Category.교양;
+        Category category = Category.it;
         when(eventBasicRepository.selectEventsByCategory(category.getId())).thenReturn(new ArrayList<>());
 
         // when & then
@@ -80,7 +96,7 @@ public class EventBasicServiceTest {
     public void findEventsBySearchTest() {
         // given
         String keyword = "Sample";
-        List<EventBasicEntity> mockEvents = createEventEntityList(3L);
+        List<EventBasicEntity> mockEvents = createFakeEventEntityList(3L);
         when(eventBasicRepository.selectEventsBySearch(keyword)).thenReturn(mockEvents);
 
         // when
@@ -91,34 +107,5 @@ public class EventBasicServiceTest {
         assertFalse(result.isEmpty());
         assertEquals(mockEvents.size(), result.size());
     }
-
-    private static EventBasicEntity createEventEntity(Long i){
-        return EventBasicEntity.builder()
-            .id(i)
-            .hostId(i)
-            .title("Sample Event")
-            .image("sample.jpg")
-            .eventStartAt(Timestamp.valueOf("2023-08-21 10:00:00").toLocalDateTime())
-            .eventEndAt(Timestamp.valueOf("2023-08-21 15:00:00").toLocalDateTime())
-            .participateNum(100L)
-            .location("Sample Location")
-            .category(1L)
-            .isActive(true)
-            .isDeleted(false)
-            .build();
-    }
-
-    private static List<EventBasicEntity> createEventEntityList(Long count) {
-        List<EventBasicEntity> eventBasicEntityList = new ArrayList<>();
-
-        for (Long i = 0L; i < count; i++) {
-            EventBasicEntity eventBasicEntity = createEventEntity(i);
-            eventBasicEntityList.add(eventBasicEntity);
-        }
-
-        return eventBasicEntityList;
-    }
-
-     */
 
 }

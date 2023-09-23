@@ -20,7 +20,7 @@ public class EventDetailFindByIdResponseDTO {
     private LocalDateTime updateDate;
     private LocalDateTime createDate;
 
-    public static EventDetailFindByIdResponseDTO fromEntity(EventDetailEntity eventDetailEntity){
+    public static EventDetailFindByIdResponseDTO from(EventDetailEntity eventDetailEntity){
         return EventDetailFindByIdResponseDTO.builder()
                 .id(eventDetailEntity.getId())
                 .content(eventDetailEntity.getContent())

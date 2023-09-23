@@ -1,9 +1,11 @@
 package com.eventty.businessservice.event.application.dto.request;
 
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class TicketCreateRequestDTO {
     private String name;
     private Long price;

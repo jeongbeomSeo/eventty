@@ -39,7 +39,7 @@ public class FullEventFindByIdResponseDTO {
     private String originFileName; // 원본 파일명
 
 
-    public static FullEventFindByIdResponseDTO of(
+    public static FullEventFindByIdResponseDTO from(
             EventBasicWithHostInfoResponseDTO eventBasic,
             EventDetailFindByIdResponseDTO eventDetail,
             List<TicketResponseDTO> tickets,

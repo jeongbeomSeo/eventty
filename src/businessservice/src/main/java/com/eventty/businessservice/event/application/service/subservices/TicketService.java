@@ -40,7 +40,7 @@ public class TicketService {
         ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> appliesInfoResponse = apiClient.queryAppliesCountApi(eventId);
         if(appliesInfoResponse.getBody() == null){
             return ticketList.stream()
-                    .map(TicketResponseDTO::fromEntity)
+                    .map(TicketResponseDTO::from)
                     .toList();
         }
         List<QueryAppliesCountResponseDTO> appliesInfo = Objects.requireNonNull(appliesInfoResponse.getBody()).getSuccessResponseDTO().getData();
@@ -55,7 +55,7 @@ public class TicketService {
     public List<TicketResponseDTO> findTicketsByTicketIdList(List<Long> ticketIds){
         List<TicketEntity> ticketList = getTicketListIfExists(ticketIds);
         return ticketList.stream()
-                .map(TicketResponseDTO::fromEntity)
+                .map(TicketResponseDTO::from)
                 .toList();
     }
 

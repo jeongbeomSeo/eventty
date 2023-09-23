@@ -23,7 +23,7 @@ public class EventBasicWithoutHostInfoResponseDTO {
     private String categoryName;
     private Boolean isActive;
 
-    public static EventBasicWithoutHostInfoResponseDTO fromEntity(EventBasicEntity eventBasicEntity) {
+    public static EventBasicWithoutHostInfoResponseDTO from(EventBasicEntity eventBasicEntity) {
         return EventBasicWithoutHostInfoResponseDTO.builder()
                 .id(eventBasicEntity.getId())
                 .hostId(eventBasicEntity.getHostId())

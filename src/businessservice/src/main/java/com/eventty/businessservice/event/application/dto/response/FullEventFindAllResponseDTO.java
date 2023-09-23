@@ -23,7 +23,7 @@ public class FullEventFindAllResponseDTO {
     private String image; // 이미지 파일
     private String originFileName; // 원본 파일명
 
-    public static FullEventFindAllResponseDTO of(
+    public static FullEventFindAllResponseDTO from(
             EventBasicWithoutHostInfoResponseDTO eventBasic,
             ImageResponseDTO imageInfo) {
         return FullEventFindAllResponseDTO.builder()
