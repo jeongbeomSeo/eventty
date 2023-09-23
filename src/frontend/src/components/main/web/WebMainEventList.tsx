@@ -1,38 +1,24 @@
 import React from "react";
-import {AspectRatio, Image, SimpleGrid, Stack, Text, Title} from "@mantine/core";
-import {Link} from "react-router-dom";
+import {AspectRatio, Image, Paper, SimpleGrid, Stack, Text, Title} from "@mantine/core";
+import {Link, useLoaderData} from "react-router-dom";
+import {IEvent} from "../../../types/IEvent";
+import WebEventItem from "../../event/web/WebEventItem";
 
-const items = () => {
-    const list = [];
-    for (let i = 0; i < 10; i++) {
-        list.push(
-            <Link to={"/"} key={i}>
-                <Stack>
-                    <AspectRatio ratio={4 / 3} mih={100}>
-                        <Image
-                            src={null}
-                            withPlaceholder
-                        />
-                    </AspectRatio>
-                    <Stack spacing={"0.5rem"}>
-                        <Text fz={"sm"} fw={700} color={"var(--primary)"}>
-                            00월 00일
-                        </Text>
-                        <Title order={5}>[행사 제목]</Title>
-                    </Stack>
-                </Stack>
-            </Link>
+function WebMainEventList({data}: { data: IEvent[] }) {
+
+    const items = data.map((item) => {
+        if (item.isDeleted) return;
+
+        return (
+            <WebEventItem item={item} badge={false}/>
         )
-    }
-    return list;
-}
+    });
 
-function WebMainEventList() {
     return (
         <SimpleGrid cols={5}
                     breakpoints={[{maxWidth: "62rem", cols: 3}]}
                     verticalSpacing={"2rem"}>
-            {items()}
+            {items}
         </SimpleGrid>
     );
 }

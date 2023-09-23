@@ -4,8 +4,8 @@ import Autoplay from "embla-carousel-autoplay";
 import {Carousel} from "@mantine/carousel";
 import {Link, useNavigate} from "react-router-dom";
 
-const CAROUSEL_HEIGHT = "30vw";
-const CAROUSEL_MIN_HEIGHT = "200px";
+const CAROUSEL_HEIGHT = "35vw";
+const CAROUSEL_MIN_HEIGHT = "230px";
 const CAROUSEL_MAX_HEIGHT = "400px";
 const CAROUSEL_DELAY = 4000;
 const CAROUSEL_ITEMS = [
@@ -43,9 +43,6 @@ function WebCarousel() {
 
     return (
         <Carousel slideSize={"100%"}
-                  height={CAROUSEL_HEIGHT}
-                  mih={CAROUSEL_MIN_HEIGHT}
-                  mah={CAROUSEL_MAX_HEIGHT}
                   sx={{flex: 1}}
                   draggable
                   withControls
@@ -54,6 +51,11 @@ function WebCarousel() {
                   plugins={[autoPlay.current]}
                   onMouseEnter={autoPlay.current.stop}
                   onMouseLeave={autoPlay.current.reset}
+                  style={{
+                      height: CAROUSEL_HEIGHT,
+                      minHeight: CAROUSEL_MIN_HEIGHT,
+                      maxHeight: CAROUSEL_MAX_HEIGHT,
+                  }}
                   styles={{
                       indicator: {
                           width: "0.5rem",

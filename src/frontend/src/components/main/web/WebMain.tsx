@@ -4,29 +4,32 @@ import {Button, Container, Divider, Flex, Grid, Group, SimpleGrid, Stack, Text, 
 import WebCategoryBtn from "../../event/web/WebCategoryBtn";
 import WebMainEventList from "./WebMainEventList";
 import {googleLogout} from "@react-oauth/google";
+import {useLoaderData} from "react-router-dom";
+import {IEvent, IEventMain} from "../../../types/IEvent";
 
 function WebMain() {
+    const DATA = useLoaderData() as IEventMain;
 
     return (
         <>
-            <WebCarousel />
+            <WebCarousel/>
             <Container>
-                <SimpleGrid cols={1} verticalSpacing={"7rem"} style={{ margin: "5rem 0" }}>
-                    <div>
-                        <Title order={3}>인기 상승중인 행사</Title>
-                        <WebMainEventList />
-                    </div>
+                <Stack spacing={"8rem"} style={{margin: "5rem 0"}}>
+                    <Stack>
+                        <Title order={2}>인기 상승중인 행사</Title>
+                        <WebMainEventList data={DATA.Top10Views}/>
+                    </Stack>
 
-                    <div>
-                        <Title order={3}>신규 행사</Title>
-                        <WebMainEventList />
-                    </div>
+                    <Stack>
+                        <Title order={2}>신규 행사</Title>
+                        <WebMainEventList data={DATA.Top10CreatedAt}/>
+                    </Stack>
 
-                    <div>
-                        <Title order={3}>마감 임박</Title>
-                        <WebMainEventList />
-                    </div>
-                </SimpleGrid>
+                    <Stack>
+                        <Title order={2}>마감 임박</Title>
+                        <WebMainEventList data={DATA.Top10ApplyEndAt}/>
+                    </Stack>
+                </Stack>
             </Container>
         </>
     );

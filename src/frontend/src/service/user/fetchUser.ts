@@ -116,13 +116,13 @@ export const postProfile = async (data: FormData) => {
     })
         .then((res) => {
             SetCsrfToken(res);
-            return res.status;
+            return res.json();
         })
         .catch(res => SetCsrfToken(res));
 }
 
 export const postChangePassword = async (data: IChangePW) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/changePW`, {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/change/password`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},

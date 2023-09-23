@@ -20,7 +20,7 @@ function FindPassword() {
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
     const {register, handleSubmit, control, formState: {errors}} = useForm<IFindPassword>();
 
-    const onSubmit = (data: IFindEmail) => {
+    const onSubmit = (data: IFindPassword) => {
         findPasswordFetch(data);
     }
 

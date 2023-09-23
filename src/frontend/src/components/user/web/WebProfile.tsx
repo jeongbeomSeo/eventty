@@ -29,10 +29,8 @@ function WebProfile() {
     const curEmail = sessionStorage.getItem("EMAIL")!;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
-    const [imgDel, setImgDel] = useState(false);
     const [imgPreview, setImgPreview] = useState(DATA.imagePath && `${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
     const resetRef = useRef<() => void>(null);
-    const [userStateValue, setUserStateValue] = useRecoilState(userState);
 
     const {deleteAccountFetch, changeProfileFetch} = useFetch();
     const {changePWModal} = useModal();
@@ -51,19 +49,20 @@ function WebProfile() {
     });
 
     const handleImageDelete = () => {
-        if (!imgDel) {
-            setImgDel(true);
-            setImgPreview("");
-            setValue("image", null);
-            setValue("isUpdate", true);
-            resetRef.current?.();
-        }
+        setImgPreview("");
+        setValue("image", null);
+        setValue("isUpdate", true);
+        resetRef.current?.();
     }
 
     const onSubmit = (data: IUpdateUser) => {
         data.birth?.setDate(data.birth?.getDate() + 1);
-        data.image === null && delete data.image;
-        imgDel && delete data.imageId;
+        if (data.image === null) {
+            delete data.image;
+            if (!data.isUpdate) {
+                delete data.imageId;
+            }
+        }
 
         const formData = new FormData();
         for (const e in data) {
@@ -78,21 +77,9 @@ function WebProfile() {
     }
 
     useEffect(() => {
-        if (DATA.imagePath !== userStateValue.imagePath){
-            if (DATA.imagePath){
-                setUserStateValue(prev => {
-                    return {...prev, imagePath: DATA.imagePath ? DATA.imagePath : ""}
-                });
-                sessionStorage.setItem("IMG_PATH", DATA.imagePath);
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        if (getValues("image") !== null) {
+        if (watch("image") !== null) {
             setImgPreview(URL.createObjectURL(getValues("image")!));
             setValue("isUpdate", true);
-            imgDel && setImgDel(false);
         }
     }, [watch("image")]);
 

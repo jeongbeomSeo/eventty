@@ -176,6 +176,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                                 <PhoneNumberInput {...rest}
                                                   inputRef={ref}
                                                   asterisk={true}
+                                                  label={true}
                                                   error={errors.phone?.message}/>
                             )}/>
 

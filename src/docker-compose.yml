@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   frontend:
-    image: front:1.5
+    image: front:1.6
     command: npm start
     container_name: Frontend
     build:
@@ -31,7 +31,7 @@ services:
         aliases:
           - "event server"
   userservice:
-    image: hyungyunk/eventty:1.5
+    image: hyungyunk/eventty:1.6
     container_name: User_Server
     build:
       context: ./userservice
@@ -44,8 +44,22 @@ services:
       eventty:
         aliases:
           - "user server"
+    applyservice:
+      image: hyungyunk/apply:1.6
+      container_name: Apply_Server
+      build:
+        context: ./applyservice
+        dockerfile: Dockerfile
+      ports:
+        - "8003:8003"
+      volumes:
+        - ./userservice:/src/applyservice
+      networks:
+        eventty:
+          aliases:
+            - "apply server"
   authservice:
-    image: jeongbeom4693/auth:1.5
+    image: jeongbeom4693/auth:1.6
     container_name: Auth_Server
     build:
       context: ./authservice
@@ -59,7 +73,7 @@ services:
         aliases:
           - "auth server"
   gateway:
-    image: jeongbeom4693/gateway:1.5
+    image: jeongbeom4693/gateway:1.6
     container_name: Gateway
     build:
       context: ./gateway

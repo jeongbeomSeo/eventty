@@ -1,6 +1,6 @@
 export interface IEvent {
     id: number;
-    userId: number;
+    hostId: number;
     title: string;
     eventStartAt: Date;
     eventEndAt: Date;
@@ -17,16 +17,15 @@ export interface IEventWrite {
     [key:string]: string|any;
     userId: number;
     title: string;
-    image?: File;
     eventStartAt: Date;
     eventEndAt: Date;
-    participateNum: number;
     location: string;
     category: string;
     content: string;
     applyStartAt: Date;
     applyEndAt: Date;
     tickets: IEventTicket[];
+    image: File;
 }
 
 export interface IEventTicket {
@@ -63,4 +62,10 @@ export interface IEventDetail {
 
 export interface IEventBooking {
     userId: number;
+}
+
+export interface IEventMain {
+    Top10CreatedAt: IEvent[],
+    Top10ApplyEndAt: IEvent[],
+    Top10Views: IEvent[],
 }

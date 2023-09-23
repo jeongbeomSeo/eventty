@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Avatar, Button, Divider, Grid, Group, Indicator, Menu, UnstyledButton} from "@mantine/core";
 import {useRecoilValue} from "recoil";
 import {userState} from "../../../../states/userState";
@@ -8,10 +8,14 @@ import customStyles from "../../../../styles/customStyle";
 import {useFetch} from "../../../../util/hook/useFetch";
 
 function WebUserInfoBtn() {
+    const {classes} = customStyles();
     const userStateValue = useRecoilValue(userState);
+    const [profileImg, setProfileImg] = useState(`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${userStateValue.imagePath}`);
     const {logoutFetch} = useFetch();
 
-    const {classes} = customStyles();
+    useEffect(() => {
+        setProfileImg(userStateValue.imagePath ? `${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${userStateValue.imagePath}` : "");
+    }, [userStateValue.imagePath]);
 
     return (
         <>
@@ -25,12 +29,12 @@ function WebUserInfoBtn() {
             }
             <Menu width={"12rem"} shadow={"sm"} position={"top-end"}>
                 <Menu.Target>
-                    <Avatar src={`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${userStateValue.imagePath}`} radius={"xl"} style={{cursor: "pointer"}}/>
+                    <Avatar src={profileImg} radius={"xl"} style={{cursor: "pointer"}}/>
                 </Menu.Target>
                 <Menu.Dropdown>
                     <Menu.Item style={{pointerEvents: "none"}}>
                         <Group>
-                            <Avatar src={`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${userStateValue.imagePath}`} radius={"xl"}/>
+                            <Avatar src={profileImg} radius={"xl"}/>
                             {userStateValue.email}
                         </Group>
                     </Menu.Item>

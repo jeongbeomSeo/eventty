@@ -5,10 +5,9 @@ import customStyle from "../../styles/customStyle";
 import {IEventTicket} from "../../types/IEvent";
 import {getValue} from "@testing-library/user-event/dist/utils";
 
-function TicketEditModal({open, title, left, data}: {
+function TicketEditModal({open, title, data}: {
     open: boolean,
     title: string[],
-    left: number,
     data: IEventTicket
 }) {
     const {classes} = customStyle();
@@ -116,12 +115,11 @@ function TicketEditModal({open, title, left, data}: {
                                             {...field}
                                             label={"인원"}
                                             min={0}
-                                            max={left+data.quantity}
+                                            max={999999}
                                             type={"number"}
                                             defaultValue={data.quantity}
                                             error={errors.quantity && errors.quantity.message}
                                             className={classes["input"]}/>
-                                        <Text fz={"xs"}>{data.quantity+left-watch("quantity")}명 남았습니다</Text>
                                     </Flex>
                                 )}/>
                     <Group grow>

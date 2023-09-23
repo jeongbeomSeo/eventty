@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {
     Button,
     Container, FileButton,
-    Group, Image, NumberInput,
+    Group, Image,
     Paper,
     Select, SimpleGrid,
     Stack, Text,
@@ -14,28 +14,21 @@ import customStyle from "../styles/customStyle";
 import {Controller, FormProvider, useFieldArray, useForm} from "react-hook-form";
 import {IEventTicket, IEventWrite} from "../types/IEvent";
 import WriteHeader from "../components/display/WriteHeader";
-import {
-    IconBallBaseball, IconBook, IconCode,
-    IconHandRock,
-    IconHorseToy, IconMovie,
-    IconPalette,
-    IconPiano, IconPlus, IconPresentation,
-    IconTent, IconX
-} from "@tabler/icons-react";
+import {IconPlus, IconX} from "@tabler/icons-react";
 import EventDatePicker from "../components/write/EventDatePicker";
 import TicketSubmitModal from "../components/write/TicketSubmitModal";
 import TicketEditModal from "../components/write/TicketEditModal";
 import {CheckXsSize} from "../util/CheckMediaQuery";
 import QuillEditor from "../components/common/QuillEditor";
-import {postEvent} from "../service/event/fetchEvent";
-import {MessageAlert} from "../util/MessageAlert";
-import {useNavigate} from "react-router-dom";
 import {useFetch} from "../util/hook/useFetch";
+import {useSetRecoilState} from "recoil";
+import {loadingState} from "../states/loadingState";
 
 function Write() {
     const {classes} = customStyle();
     const {createEventFetch} = useFetch();
     const isMobile = CheckXsSize();
+    const setLoading = useSetRecoilState(loadingState);
     const [ticketModalOpened, setTicketModalOpened] = useState(false);
     const [ticketEditModalOpened, setTicketEditModalOpened] = useState(false);
 
@@ -62,39 +55,32 @@ function Write() {
 
     const currentDate = new Date();
     const CATEGORY_LIST = [
-        {label: "콘서트", value: "콘서트"},
-        {label: "클래식", value: "클래식"},
-        {label: "전시", value: "전시"},
-        {label: "스포츠", value: "스포츠"},
-        {label: "캠핑", value: "캠핑"},
-        {label: "아동", value: "아동"},
-        {label: "영화", value: "영화"},
-        {label: "IT", value: "IT"},
-        {label: "교양", value: "교양"},
-        {label: "TOPIC", value: "TOPIC"},
+        {label: "콘서트", value: "conert"},
+        {label: "클래식", value: "classic"},
+        {label: "전시", value: "exhibition"},
+        {label: "스포츠", value: "sports"},
+        {label: "캠핑", value: "camping"},
+        {label: "아동", value: "children"},
+        {label: "영화", value: "movie"},
+        {label: "IT", value: "it"},
+        {label: "교양", value: "culture"},
+        {label: "TOPIC", value: "topic"},
     ];
     const TICKET_LIMIT = 3;
     const [ticketEdit, setTicketEdit] = useState<IEventTicket | null>(null);
     const [ticketIdx, setTicketIdx] = useState(0);
     const disabledTitle = fields.map((ticket) => ticket.name);
-    const leftTicket = watch("participateNum") - fields.reduce((acc, cur) => acc + cur.quantity, 0);
 
     const [imgFile, setImgFile] = useState<File | null>(null);
     const [imgPreview, setImgPreview] = useState("");
 
     const onSubmit = (data: IEventWrite) => {
-        if (leftTicket !== 0) {
-            setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}},);
-            return;
-        }
-        if (imgFile === null){
+        if (imgFile === null) {
             setError("image", {types: {validate: "이미지를 업로드해주세요"}})
             return;
         }
 
-        delete data.image;
-
-        data.eventStartAt?.setDate(data.applyStartAt?.getDate() + 1);
+        data.eventStartAt?.setDate(data.eventStartAt?.getDate() + 1);
         data.eventEndAt?.setDate(data.eventEndAt?.getDate() + 1);
         data.applyStartAt?.setDate(data.applyStartAt?.getDate() + 1);
         data.applyEndAt?.setDate(data.applyEndAt?.getDate() + 1);
@@ -103,6 +89,7 @@ function Write() {
         formData.append("image", imgFile!);
         formData.append("eventInfo", new Blob([JSON.stringify(data)], {type: "application/json"}));
 
+        setLoading(true);
         createEventFetch(formData);
     }
 
@@ -115,11 +102,7 @@ function Write() {
     }
 
     const handleTicketModalOpened = () => {
-        if (getValues("participateNum") > 0) {
-            setTicketModalOpened(prev => !prev);
-        } else {
-            setError("tickets", {types: {validate: "우선 인원수를 설정해주세요"}});
-        }
+        setTicketModalOpened(prev => !prev);
     }
 
     const handleTicketEditModalOpened = (data: IEventTicket, idx: number) => {
@@ -151,18 +134,11 @@ function Write() {
     });
 
     useEffect(() => {
-        if (leftTicket !== 0 && ticketItems.length !== 0) {
-            setError("tickets", {types: {validate: "총 인원수를 확인해주세요"}});
-        } else {
-            clearErrors("tickets");
-        }
-    }, [leftTicket]);
-
-    useEffect(() => {
         if (imgFile !== null) {
             setImgPreview(URL.createObjectURL(imgFile));
             clearErrors("image");
         }
+
     }, [imgFile]);
 
     return (
@@ -171,8 +147,7 @@ function Write() {
             <FormProvider {...ticketMethods}>
                 <form onSubmit={ticketMethods.handleSubmit(onTicketCreate)}>
                     <TicketSubmitModal open={ticketModalOpened}
-                                       title={disabledTitle}
-                                       left={leftTicket}/>
+                                       title={disabledTitle}/>
                 </form>
             </FormProvider>
 
@@ -182,8 +157,7 @@ function Write() {
                     <form onSubmit={ticketEditMethods.handleSubmit(onTicketEdit)}>
                         <TicketEditModal open={ticketEditModalOpened}
                                          title={disabledTitle}
-                                         data={ticketEdit}
-                                         left={leftTicket}/>
+                                         data={ticketEdit}/>
                     </form>
                 </FormProvider>
             }
@@ -197,6 +171,7 @@ function Write() {
                             <TextInput {...register("title", {
                                 required: "제목을 입력해주세요",
                             })}
+                                       maxLength={50}
                                        error={errors.title?.message}
                                        className={`${classes["input"]} ${errors.title && "error"}`}/>
                         </Stack>
@@ -217,32 +192,12 @@ function Write() {
                                         )}/>
                         </Stack>
 
-                        <Stack align={"flex-start"}>
-                            <Title order={3}>인원</Title>
-                            <Controller control={control}
-                                        name={"participateNum"}
-                                        rules={{
-                                            required: "인원을 입력해주세요",
-                                            validate: (value) => value > 0 || "최소 1명 이상 입력해주세요",
-                                        }}
-                                        render={({field}) => (
-                                            <NumberInput
-                                                {...field}
-                                                min={0}
-                                                type={"number"}
-                                                style={{width: isMobile ? "50vw" : "300px"}}
-                                                error={errors.participateNum?.message}
-                                                className={classes["input"]}/>
-                                        )}/>
-                        </Stack>
-
                         <Stack>
                             <Title order={3}>티켓 정보</Title>
                             <SimpleGrid cols={4} breakpoints={[{maxWidth: "xs", cols: 2}]}>
                                 {ticketItems}
                                 <UnstyledButton onClick={handleTicketModalOpened}
-                                                hidden={(ticketItems.length === TICKET_LIMIT) ||
-                                                    (ticketItems.length > 0 && leftTicket < 1)}>
+                                                hidden={ticketItems.length === TICKET_LIMIT}>
                                     <Paper style={{
                                         border: "1px dashed #cdcdcd",
                                         color: "#cdcdcd",
@@ -336,7 +291,6 @@ function Write() {
                                 <Image width={"280px"} height={"210px"} withPlaceholder
                                        src={imgPreview}/>
                                 <div>
-                                    <Text>jpg, png 파일만 업로드 가능합니다</Text>
                                     <FileButton onChange={setImgFile} accept={"image/png, image/jpeg, image/webp"}>
                                         {(props) =>
                                             <Button {...props} className={classes["btn-primary"]}>
