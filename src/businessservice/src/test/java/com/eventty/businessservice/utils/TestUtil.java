@@ -25,7 +25,7 @@ public class TestUtil {
                 .eventEndAt(LocalDateTime.now().plusHours(2))
                 .participateNum(50L)
                 .location("Test Location")
-                .categoryName("sports")
+                .category("sports")
                 .isActive(true)
                 .build();
     }
@@ -39,7 +39,7 @@ public class TestUtil {
                 .eventEndAt(LocalDateTime.now().plusHours(2))
                 .participateNum(50L)
                 .location("Test Location")
-                .categoryName("sports")
+                .category("sports")
                 .isActive(true)
                 .hostName("Test Host")
                 .build();
@@ -238,7 +238,7 @@ public class TestUtil {
                         .eventEndAt(LocalDateTime.now().plusHours(2))
                         .participateNum(50L)
                         .location("Test Location 1")
-                        .categoryName("sports")
+                        .category("sports")
                         .isActive(true)
                         .build(),
                 FullEventFindAllResponseDTO.builder()
@@ -250,7 +250,7 @@ public class TestUtil {
                         .eventEndAt(LocalDateTime.now().plusHours(2))
                         .participateNum(50L)
                         .location("Test Location 2")
-                        .categoryName("sports")
+                        .category("sports")
                         .isActive(true)
                         .build(),
                 FullEventFindAllResponseDTO.builder()
@@ -262,7 +262,7 @@ public class TestUtil {
                         .eventEndAt(LocalDateTime.now().plusHours(2))
                         .participateNum(50L)
                         .location("Test Location 3")
-                        .categoryName("sports")
+                        .category("sports")
                         .isActive(true)
                         .build()
         ).subList(0, size.intValue());
@@ -278,7 +278,7 @@ public class TestUtil {
                 .eventEndAt(LocalDateTime.now().plusHours(2))
                 .participateNum(50L)
                 .location("Test Location")
-                .categoryName("sports")
+                .category("sports")
                 .isActive(true)
                 .content("Test Event Detail")
                 .applyStartAt(LocalDateTime.now())
