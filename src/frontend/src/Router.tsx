@@ -14,7 +14,7 @@ import RootSetStates from "./components/RootSetStates";
 import User from "./pages/User";
 import EventDetail from "./pages/events/EventDetail";
 import Profile from "./pages/user/Profile";
-import EventsInfo from "./pages/user/EventsInfo";
+import Registers from "./pages/user/Registers";
 import Write from "./pages/Write";
 import SignupUser from "./pages/signup/SignupUser";
 import {loader as eventLoader} from "./routes/event";
@@ -23,6 +23,7 @@ import {loader as profileLoader} from "./routes/profile";
 import {loader as categoryLoader} from "./routes/category";
 import {loader as searchLoader} from "./routes/search";
 import {loader as mainLoader} from "./routes/main";
+import {loader as registerLoader} from "./routes/register";
 import HostRoute from "./components/HostRoute";
 import Bookings from "./pages/user/Bookings";
 import EventBooking from "./pages/events/EventBooking";
@@ -103,13 +104,9 @@ const Router = createBrowserRouter([
                                     errorElement: <Navigate to={"/login"}/>,
                                 },
                                 {
-                                    element: <HostRoute/>,
-                                    children: [
-                                        {
-                                            path: "events",
-                                            element: <EventsInfo/>,
-                                        },
-                                    ]
+                                    path: "events",
+                                    element: <Registers/>,
+                                    loader: registerLoader,
                                 },
                                 {
                                     element: <></>,

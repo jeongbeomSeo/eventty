@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Button, Divider, Grid, Group, Indicator, Menu, UnstyledButton} from "@mantine/core";
+import {Avatar, Button, Divider, Group, Menu} from "@mantine/core";
 import {useRecoilValue} from "recoil";
 import {userState} from "../../../../states/userState";
-import {IconBell, IconHome, IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {IconReceipt, IconUser} from "@tabler/icons-react";
+import {Link} from "react-router-dom";
 import customStyles from "../../../../styles/customStyle";
 import {useFetch} from "../../../../util/hook/useFetch";
 

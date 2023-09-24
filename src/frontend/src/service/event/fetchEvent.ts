@@ -1,6 +1,7 @@
 import {IEventWrite} from "../../types/IEvent";
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {MessageAlert} from "../../util/MessageAlert";
+import {redirect} from "react-router-dom";
 
 // 행사 상세 조회
 export const getEvent = async (eventId: string) => {
@@ -38,6 +39,28 @@ export const getKeywordEvents = async (data: string) => {
         .then(res => res.successResponseDTO.data);
 }
 
+// 특정 주최자의 전체 행사 조회
+export const getHostIdEvents = async (data: number) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/events/host/${data}`)
+        .then(res => res.json())
+        .then(res => res.successResponseDTO.data);
+}
+
+// 주최자 본인의 전체 행사 조회
+export const getHostEvents = async () => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events/registered`,{
+        method: "GET",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
+    })
+        .then(res => {
+            SetCsrfToken(res);
+            return res.json();
+        })
+        .then(res => res.successResponseDTO.data)
+        .catch(res => SetCsrfToken(res));
+}
+
 // 행사 주최
 export const postEvent = async (data: FormData) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events`, {
@@ -53,6 +76,7 @@ export const postEvent = async (data: FormData) => {
         .catch(res => SetCsrfToken(res));
 }
 
+// 행사 삭제
 export const deleteEvent = async (data: number) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events/${data}`, {
         method: "DELETE",
@@ -60,3 +84,22 @@ export const deleteEvent = async (data: number) => {
     })
         .then((res) => res.status);
 }
+
+// 행사 신청 내역
+/*
+export const getApplyEvents = async () => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/applies`, {
+        method: "GET",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        })
+        .then((res) => res.successResponseDTO.data)
+        .catch(res => {
+            SetCsrfToken(res);
+            redirect("/login");
+        });
+}*/

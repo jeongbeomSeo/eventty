@@ -3,88 +3,82 @@ import {Badge, Button, Group, Image, Stack, Text, Title, UnstyledButton} from "@
 import customStyle from "../../../styles/customStyle";
 import {useNavigate} from "react-router-dom";
 import {CheckHost} from "../../../util/CheckHost";
-
-interface IEventState {
-    id: string;
-    title: string;
-    state: string;
-    date: Date;
-}
+import {IEvent} from "../../../types/IEvent";
 
 const eventState = {
-    user: {
-        open:{
+    host: {
+        open: {
             label: "게시중",
-            color: "violet",
-            variant: "filled",
+            color: "indigo.7",
+            variant: "light",
         },
-        close:{
+        close: {
             label: "예약 종료",
-            color: "violet",
-            variant: "outline",
-        },
-        cancel:{
-            label: "행사 취소",
-            color: "gray",
+            color: "indigo.7",
             variant: "outline",
         },
     },
-    host: {
-        open:{
+    user: {
+        open: {
             label: "예약 완료",
-            color: "violet",
-            variant: "filled",
+            color: "indigo.7",
+            variant: "light",
         },
-        close:{
+        close: {
             label: "행사 종료",
-            color: "violet",
-            variant: "outline",
-        },
-        cancel:{
-            label: "예약 취소",
-            color: "gray",
+            color: "indigo.7",
             variant: "outline",
         },
     },
 }
 
-function WebEventsDetailBtn(props: IEventState) {
+function WebEventsDetailBtn({data}: { data: IEvent }) {
     const {classes} = customStyle();
     const navigate = useNavigate();
-    const isHost = CheckHost();
+    const role = CheckHost() ? "host" : "user";
+    const state = data.isActive ? "open" : "close";
+    const eventStartAt = new Date(data.eventStartAt);
+    const eventEndAt = new Date(data.eventEndAt);
 
     return (
         <UnstyledButton
-            onClick={() => navigate(`/event/${props.id}`)}
+            onClick={() => navigate(`/event/${data.id}`)}
             style={{border: "1px solid #cdcdcd", padding: "1.2rem", borderRadius: "0.3rem"}}>
-            <Group noWrap position={"apart"} style={{opacity: props.state === "cancel" ? "0.3" : "",}}>
+            <Group noWrap position={"apart"} style={{opacity: state === "close" ? "0.3" : "",}}>
                 <Group>
-                    <Image src={""}
+                    <Image src={`${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${data.image}`}
                            width={100}
                            height={80}
                            radius={"md"}
                            withPlaceholder/>
                     <Stack>
-                        <Title order={4} lineClamp={1}>{props.title}</Title>
+                        <Title order={4} lineClamp={1}>{data.title}</Title>
                         <Group noWrap>
                             <Badge size={"lg"}
-                                   radius={"0.3rem"}
-                                   color={"violet"}
-                                   variant={"filled"}
-                                   style={{width: "6rem"}}>
+                                   radius={"lg"}
+                                   color={eventState[role][state]["color"]}
+                                   variant={eventState[role][state]["variant"]}
+                                   style={{width: "5rem"}}>
+                                {eventState[role][state]["label"]}
                             </Badge>
-                            <Text>{props.date.toLocaleDateString()} 까지</Text>
+                            <Text fz={"sm"}>
+                                {`${eventStartAt.getFullYear()}년
+                                ${eventStartAt.getMonth()}월
+                                ${eventStartAt.getDate()}일`}
+                                {` ~ ${eventEndAt.getFullYear()}년
+                                ${eventEndAt.getMonth()}월
+                                ${eventEndAt.getDate()}일`}
+                            </Text>
                         </Group>
                     </Stack>
                 </Group>
-                {props.state !== "cancel" &&
-                    <Button onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/applices/${props.id}`)
-                    }}
-                            className={classes["btn-primary"]}>
-                        신청내역
-                    </Button>}
+                <Button onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/applices/${data.id}`)
+                }}
+                        className={classes["btn-primary"]}>
+                    신청내역
+                </Button>
             </Group>
         </UnstyledButton>
     );
