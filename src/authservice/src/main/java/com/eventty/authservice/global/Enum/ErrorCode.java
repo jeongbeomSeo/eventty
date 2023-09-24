@@ -43,7 +43,8 @@ public enum ErrorCode {
 
     // OAuth
     OAUTH_NOT_FOUND_USER_INFO(400, "", "OAuth - Failed to request OAuth user info"),
-    OAUTH_NOT_FOUND_VERIFIED_EMAIL(400, "", "OAuth - Failed to find verified email");
+    OAUTH_NOT_FOUND_VERIFIED_EMAIL(400, "", "OAuth - Failed to find verified email"),
+    OAUTH_FAIL_GET_ACCESS_TOKEN(400, "", "OAuth - Failed to request OAuth Access Token");
 
     private final int status;
     private final String code;
