@@ -11,18 +11,11 @@ import com.eventty.applyservice.domain.code.ServerUri;
 import com.eventty.applyservice.domain.exception.AlreadyCancelApplyException;
 import com.eventty.applyservice.domain.exception.ExceedApplicantsException;
 import com.eventty.applyservice.domain.exception.NonExistentIdException;
-import com.eventty.applyservice.presentation.dto.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,8 +25,8 @@ import java.util.*;
 public class ApplyServiceImpl implements ApplyService{
 
     private final ApplyReposiroty applyReposiroty;
-    private final RestTemplate customRestTemplate;
     private final ServerUri serverUri;
+    private final ApiService apiService;
 
     @Override
     public Long createApply(Long userId, CreateApplyRequestDTO createApplyRequestDTO) {
@@ -76,7 +69,9 @@ public class ApplyServiceImpl implements ApplyService{
 
 
         // api request----------------------------------------------------
-        List<FindEventInfoResponseDTO> eventInfos = apiRequest(params);
+        apiService.uriPathSetting(serverUri.getEventServer(), serverUri.getGET_EVENT_TICKET_INFO());
+        apiService.paramSetting(params);
+        List<FindEventInfoResponseDTO> eventInfos = apiService.apiRequest();
 
 
         // service logic--------------------------------------------------
@@ -125,66 +120,13 @@ public class ApplyServiceImpl implements ApplyService{
     public List<FindUsingTicketResponseDTO> getUsingTicketList(Long eventId) {
         return applyReposiroty.findByEventIdGroupByTicket(eventId);
     }
-
-    //------------------------------------------ ApiClient -----------------------------------------------//
-    public List<FindEventInfoResponseDTO> apiRequest(MultiValueMap<String, String> params){
-        URI uri = makeUri(params,  serverUri.getEventServer() + serverUri.getGET_EVENT_TICKET_INFO());
-
-        log.info("API 호출 From: {} To: {} Purpose: {}", "Apply Server", "Event Server", "Find Events List");
-        ResponseEntity<ResponseDTO<List<FindEventInfoResponseDTO>>> response = null;
-        try{
-            response =  customRestTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    createHttpPostEntity(null),
-                    new ParameterizedTypeReference<ResponseDTO<List<FindEventInfoResponseDTO>>>() {}
-            );
-        }catch(Exception e){
-            log.error(e.getMessage());
-        }
-
-        if(response.getBody() == null || response.getBody().getErrorResponseDTO() != null){
-            log.error("ApplyServer - response is null or getErrorResponse : {}", response);
-            return null;
-        }
-
-        log.debug("Resposne : {}", response);
-        if(response.getBody() != null && response.getBody().getSuccessResponseDTO() != null){
-            for(FindEventInfoResponseDTO responseDTO : response.getBody().getSuccessResponseDTO().getData()){
-                log.debug("ResponseDTO : {}", responseDTO);
-            }
-        }else {
-            log.error("Response Error!!!!!");
-        }
-
-        return response.getBody().getSuccessResponseDTO().getData();
-    }
-
-    public URI makeUri(MultiValueMap<String, String> params, String path){
-        return UriComponentsBuilder
-                .fromHttpUrl(path)
-                .queryParams(params)
-                .build()
-                .encode()
-                .toUri();
-    }
-
-    private <T> HttpEntity<T> createHttpPostEntity(T dto) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add("X-Requires-Auth", "True");
-
-        return new HttpEntity<>(dto, headers);
-    }
-
     //------------------------------------------ validation -----------------------------------------------//
 
     private void validateBeforeApply(CreateApplyRequestDTO createApplyRequestDTO){
         // 신청 인원수 확인
         Long count = applyReposiroty.getApplyNum(createApplyRequestDTO.getEventId());
-        if(count != null && createApplyRequestDTO.getQuantity() <= count)
-            throw new ExceedApplicantsException(count);
+        if(count != null && createApplyRequestDTO.getQuantity() <= count + createApplyRequestDTO.getApplicantNum())
+            throw new ExceedApplicantsException(count + createApplyRequestDTO.getApplicantNum());
     }
 
     private void validateBeforeCancel(Long applyId){
