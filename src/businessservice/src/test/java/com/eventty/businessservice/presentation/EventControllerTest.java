@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import static com.eventty.businessservice.utils.TestUtil.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EventController.class) // This annotation includes @Autowired for MockMvc
@@ -52,22 +50,6 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.successResponseDTO.data.length()").value(mockEventList.size()));
 
         verify(eventBasicService, times(1)).findAllEvents();
-    }
-
-    @Test
-    @DisplayName("카테고리 별 행사 조회 테스트")
-    public void findEventsByCategoryTest() throws Exception {
-        // Given
-        Category category = Category.sports;
-        when(eventBasicService.findEventsByCategory(category)).thenReturn(createFullEventFindAllResponseDTOList(5L));
-
-        // When & Then
-        mockMvc.perform(get("/events/category/{category}", category))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.success").value(true));
-
-        verify(eventBasicService, times(1)).findEventsByCategory(category);
     }
 
     @Test

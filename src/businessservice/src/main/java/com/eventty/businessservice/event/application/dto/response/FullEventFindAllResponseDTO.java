@@ -17,7 +17,7 @@ public class FullEventFindAllResponseDTO {
     private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
-    private String categoryName;
+    private String category;
     private Boolean isActive;
 
     private String image; // 이미지 파일
@@ -34,7 +34,7 @@ public class FullEventFindAllResponseDTO {
                 .eventEndAt(eventBasic.getEventEndAt())
                 .participateNum(eventBasic.getParticipateNum())
                 .location(eventBasic.getLocation())
-                .categoryName(eventBasic.getCategoryName())
+                .category(eventBasic.getCategory())
                 .isActive(eventBasic.getIsActive())
                 .image(imageInfo.getImagePathFromStorage())
                 .originFileName(imageInfo.getImageOriginalFileName())

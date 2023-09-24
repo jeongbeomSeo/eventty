@@ -22,7 +22,7 @@ public class FullEventFindByIdResponseDTO {
     private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
-    private String categoryName;
+    private String category;
     private Boolean isActive;
 
     // eventDetail
@@ -54,7 +54,7 @@ public class FullEventFindByIdResponseDTO {
                 .eventEndAt(eventBasic.getEventEndAt())
                 .participateNum(eventBasic.getParticipateNum())
                 .location(eventBasic.getLocation())
-                .categoryName(eventBasic.getCategoryName())
+                .category(eventBasic.getCategory())
                 .isActive(eventBasic.getIsActive())
                 .content(eventDetail.getContent())
                 .applyStartAt(eventDetail.getApplyStartAt())
