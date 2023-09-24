@@ -125,7 +125,7 @@ public class EventService {
         eventBasicService.checkHostId(hostId, eventId);
 
         // 티켓 정보 : title, price, quantity, description 수정 가능
-        Long newParticipateNum = ticketService.updateTickets(eventUpdateRequestDTO.getTicketList());
+        Long newParticipateNum = ticketService.updateTickets(eventId, eventUpdateRequestDTO.getTicketList());
         eventUpdateRequestDTO.setParticipateNum(newParticipateNum); // 업데이트된 티켓 수량을 기준으로 참가 인원수 수정
 
         // 이벤트 기본 정보 : title, eventStartAt, eventEndAt, location, category, isActive 수정 가능

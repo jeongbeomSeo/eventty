@@ -81,19 +81,27 @@ public class TicketService {
         return eventId;
     }
 
-    public Long updateTickets(List<TicketUpdateRequestDTO> ticketUpdateRequestDTOList) {
-        Long participantNum = 0L;
+    public Long updateTickets(Long eventId, List<TicketUpdateRequestDTO> ticketUpdateRequestDTOList) {
+
+        // 이벤트의 모든 티켓 불러오기
+        List<TicketEntity> ticketList = getTicketListIfExists(eventId);
+
+        // 기존 티켓의 총 참가자 수 계산
+        Long totalParticipantNum = ticketList.stream()
+                .map(TicketEntity::getQuantity)
+                .reduce(0L, Long::sum);
+
         for (TicketUpdateRequestDTO ticketUpdateRequestDTO : ticketUpdateRequestDTOList) {
             // 업데이트 전, 데이터 존재 확인
             TicketEntity ticket = getTicketIfExists(ticketUpdateRequestDTO.getId());
 
+            totalParticipantNum = totalParticipantNum - ticket.getQuantity() + ticketUpdateRequestDTO.getQuantity();
+
             ticket.update(ticketUpdateRequestDTO);
             ticketRepository.updateTicket(ticket);
-
-            // 티켓 수량 수정 후 이벤트 인원 수 갱신
-            participantNum += ticket.getQuantity();
         }
-        return participantNum;
+
+        return totalParticipantNum;
     }
 
     public Long updateTicket(Long ticketId, TicketUpdateRequestDTO ticketUpdateRequestDTO) {
