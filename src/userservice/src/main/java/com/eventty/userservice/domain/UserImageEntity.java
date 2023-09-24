@@ -19,10 +19,8 @@ public class UserImageEntity {
     @NotNull
     private Long userId;
 
-    @NotEmpty
     private String originalFileName;
 
-    @NotEmpty
     private String storedFilePath;
 
     private Long fileSize;

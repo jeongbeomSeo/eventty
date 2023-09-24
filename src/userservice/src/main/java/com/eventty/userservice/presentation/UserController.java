@@ -1,16 +1,10 @@
 package com.eventty.userservice.presentation;
 
 import com.eventty.userservice.application.UserService;
-import com.eventty.userservice.application.dto.request.UserCheckRequestDTO;
-import com.eventty.userservice.application.dto.request.UserImageUpdateRequestDTO;
-import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
-import com.eventty.userservice.application.dto.response.HostFindByIdResposneDTO;
-import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
-import com.eventty.userservice.application.dto.response.UserImageFindByIdResponseDTO;
-import com.eventty.userservice.application.dto.response.UserUpdateImageResponseDTO;
+import com.eventty.userservice.application.dto.request.*;
+import com.eventty.userservice.application.dto.response.*;
 import com.eventty.userservice.domain.annotation.ApiErrorCode;
 import com.eventty.userservice.domain.annotation.ApiSuccessData;
-import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
 import com.eventty.userservice.domain.annotation.Permission;
 import com.eventty.userservice.domain.code.UserRole;
 import com.eventty.userservice.infrastructure.context.UserContextHolder;
@@ -39,7 +33,7 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * (API)ID, PW 제외한 내 정보 등록 (회원가입)
+     * (API) 회원가입
      *
      * @author khg
      * @param userCreateRequestDTO
@@ -52,6 +46,19 @@ public class UserController {
     public ResponseEntity<SuccessResponseDTO> signUp(@RequestBody @Valid UserCreateRequestDTO userCreateRequestDTO){
         userService.signUp(userCreateRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * (API) 회원가입 - 소셜로그인
+     * @param userOAuthCreateRequestDTO
+     * @return
+     */
+    @PostMapping("/api/users/me/oauth")
+    public ResponseEntity<?> authSignUpOrUpdate(@RequestBody @Valid UserOAuthCreateRequestDTO userOAuthCreateRequestDTO){
+        UserSaveImageResponseDTO response = userService.oauthSignUp(userOAuthCreateRequestDTO);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response == null ? false : SuccessResponseDTO.of(response));
     }
 
     /**
