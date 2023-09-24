@@ -1,5 +1,6 @@
 package com.eventty.authservice.global.Enum;
 
+import com.eventty.authservice.domain.Enum.OAuth;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -38,7 +39,11 @@ public enum ErrorCode {
 
     DUPLICATE_EMAIL(409, "", "Duplicate Email"),
 
-    SESSION_IS_EXPIRED_RESET_PASSWORD(400, "", "Password reset request failed due to expired session");
+    SESSION_IS_EXPIRED_RESET_PASSWORD(400, "", "Password reset request failed due to expired session"),
+
+    // OAuth
+    OAUTH_NOT_FOUND_USER_INFO(400, "", "OAuth - Failed to request OAuth user info"),
+    OAUTH_NOT_FOUND_VERIFIED_EMAIL(400, "", "OAuth - Failed to find verified email");
 
     private final int status;
     private final String code;

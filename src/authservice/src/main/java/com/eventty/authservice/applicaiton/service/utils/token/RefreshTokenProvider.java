@@ -2,7 +2,6 @@ package com.eventty.authservice.applicaiton.service.utils.token;
 
 import com.eventty.authservice.applicaiton.dto.ValidateRefreshTokenDTO;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
-import com.eventty.authservice.domain.entity.CsrfTokenEntity;
 import com.eventty.authservice.domain.entity.RefreshTokenEntity;
 import com.eventty.authservice.domain.exception.InValidRefreshTokenException;
 import com.eventty.authservice.domain.exception.RefreshTokenNotFoundException;
@@ -23,15 +22,15 @@ public class RefreshTokenProvider {
     private final TokenProperties tokenProperties;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public String generate(AuthUserEntity authUserEntity, Date now, Date expiry) {
+    public String generate(AuthUserEntity AuthUserEntity, Date now, Date expiry) {
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setHeaderParam("alg", "HS256")
                 .setIssuer(tokenProperties.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .setSubject(authUserEntity.getEmail())
-                .claim("userId", authUserEntity.getId())
+                .setSubject(AuthUserEntity.getEmail())
+                .claim("userId", AuthUserEntity.getId())
                 .signWith(SignatureAlgorithm.HS256, tokenProperties.getSecretKey())
                 .compact();
     }

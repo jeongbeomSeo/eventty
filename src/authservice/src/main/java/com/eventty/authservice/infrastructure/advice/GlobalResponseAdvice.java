@@ -43,7 +43,7 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice {
             return ResponseDTO.of(isSuccess);
         }
 
-        return ResponseDTO.of(true);
+        return body;
     }
 }
 

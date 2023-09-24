@@ -8,18 +8,20 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "auth_authority")
-public class AuthorityEntity {
+@Table(name = "auth_social_user")
+public class OAuthUserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false)
-    private Long id;
+    Long id;
 
     @Column(nullable = false)
-    private String name;    // 권한 이름(역할)
+    Long userId;
 
-    @JoinColumn(name = "auth_user_id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private AuthUserEntity AuthUserEntity;
+    @Column(nullable = false)
+    String clientId;
+
+    @Column(nullable = false)
+    String socialName;
 }

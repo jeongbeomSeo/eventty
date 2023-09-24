@@ -1,9 +1,7 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
-import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.exception.AccessDeletedUserException;
 import com.eventty.authservice.domain.exception.UserNotFoundException;
-import com.eventty.authservice.presentation.dto.request.PWChangeRequestDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
@@ -38,12 +36,12 @@ public class UserDetailServiceImpl implements UserDetailService {
     // Soft Delete
     @Transactional
     @Override
-    public Long delete(AuthUserEntity authUserEntity) {
-        authUserEntity.setDelete(true);
-        authUserEntity.setDeleteDate(LocalDateTime.now());
-        userRepository.save(authUserEntity);
+    public Long delete(AuthUserEntity AuthUserEntity) {
+        AuthUserEntity.setDelete(true);
+        AuthUserEntity.setDeleteDate(LocalDateTime.now());
+        userRepository.save(AuthUserEntity);
 
-        return authUserEntity.getId();
+        return AuthUserEntity.getId();
     }
 
     @Override
@@ -58,29 +56,29 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Transactional
     @Override
-    public Long create(AuthUserEntity authUserEntity, UserRole userRole) {
+    public Long create(AuthUserEntity AuthUserEntity, UserRole userRole) {
         // 이메일 중복 검사
-        validateEmail(authUserEntity.getEmail());
+        validateEmail(AuthUserEntity.getEmail());
 
         // EntityManager를 사용하여 데이터베이스에 저장 => id 저장
-        em.persist(authUserEntity);
+        em.persist(AuthUserEntity);
 
         // 권한 저장하기
         AuthorityEntity newAuthority = AuthorityEntity.builder()
                 .name(userRole.getRole())
-                .authUserEntity(authUserEntity)
+                .AuthUserEntity(AuthUserEntity)
                 .build();
 
         em.persist(newAuthority);
 
-        return authUserEntity.getId();
+        return AuthUserEntity.getId();
     }
 
     // 삭제된 유저인지 확인
     @Override
-    public void validationUser(AuthUserEntity authUserEntity) {
-        if (authUserEntity.isDelete())
-            throw new AccessDeletedUserException(authUserEntity);
+    public void validationUser(AuthUserEntity AuthUserEntity) {
+        if (AuthUserEntity.isDelete())
+            throw new AccessDeletedUserException(AuthUserEntity);
     }
 
     @Override
@@ -94,13 +92,13 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Transactional
     @Override
-    public AuthUserEntity changePwAuthUser(String encryptedPassword, AuthUserEntity authUserEntity) {
+    public AuthUserEntity changePwAuthUser(String encryptedPassword, AuthUserEntity AuthUserEntity) {
 
-        authUserEntity.setPassword(encryptedPassword);
+        AuthUserEntity.setPassword(encryptedPassword);
 
-        em.persist(authUserEntity);
+        em.persist(AuthUserEntity);
 
-        return authUserEntity;
+        return AuthUserEntity;
     }
 
     @Override

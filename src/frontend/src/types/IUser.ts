@@ -14,7 +14,9 @@ export interface ILogin {
 }
 
 export interface IGoogleLogin {
-    OAuth_AccessToken: string;
+    accessToken: string;
+    tokenType: string;
+    
 }
 
 export interface IUser {

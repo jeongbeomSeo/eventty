@@ -15,7 +15,7 @@ function GoogleLoginButton() {
                 <GoogleLogin
                     onSuccess={credentialResponse => {
                         console.log(credentialResponse);
-                        const accessToken:IGoogleLogin = {OAuth_AccessToken:credentialResponse.credential!};
+                        const accessToken:IGoogleLogin = {accessToken:credentialResponse.credential!, tokenType: "Ba"};
                         postGoogleLogin(accessToken);
                     }}
                     onError={() => {

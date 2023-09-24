@@ -7,6 +7,7 @@ import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import com.eventty.authservice.presentation.dto.response.EmailFindResponseDTO;
+import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
 import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
 import jakarta.servlet.http.HttpSession;
 
@@ -24,4 +25,5 @@ public interface UserService {
     List<EmailFindResponseDTO> queryFindEmail(EmailFindRequestDTO emailFindRequestDTO);
     PWFindResponseDTO queryFindPW(PWFindRequestDTO pwFindRequestDTO);
     void resetPW(ResetPWRequestDTO resetPWRequestDTO, HttpSession session);
+    LoginSuccessDTO oauthLogin(OAuthLoginRequestDTO oAuthLoginRequestDTO, String socialName);
 }

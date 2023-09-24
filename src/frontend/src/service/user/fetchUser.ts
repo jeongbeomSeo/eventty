@@ -66,9 +66,10 @@ export const postLogin = async (data: ILogin) => {
         });
 }
 
-// Google 로그인
+// Google 로그인 => 현재 작업을 위해 Auth Serve로 보내는 중 
 export const postGoogleLogin = async (data: IGoogleLogin) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login`, {
+    console.log(data);
+    return await fetch(`http://localhost:8002/api/auth/oauth/login`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json"},

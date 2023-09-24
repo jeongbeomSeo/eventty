@@ -4,6 +4,7 @@ import com.eventty.authservice.applicaiton.dto.CsrfTokenDTO;
 import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
 import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.Facade.UserService;
+import com.eventty.authservice.domain.Enum.OAuth;
 import com.eventty.authservice.domain.Enum.SessionAttr;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.global.Enum.SuccessCode;
@@ -102,6 +103,23 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .header(HEADER_CSRF, loginSuccessDTO.csrfToken())
                 .body(SuccessResponseDTO.of(loginResponseDTO));
+    }
+
+    /**
+     * 소셜 로그인
+     */
+
+    // 구글
+    @PostMapping("/oauth/login/{socialName}")
+    public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> oauthLogin(@Valid @RequestBody OAuthLoginRequestDTO oAuthLoginRequestDTO,
+                                                                           @PathVariable("socialName") OAuth oAuth) {
+
+        LoginSuccessDTO loginSuccessDTO = userService.oauthLogin(oAuthLoginRequestDTO, OAuth.GOOGLE.getSocialName());
+
+
+
+        return null;
+
     }
 
     /**

@@ -1,10 +1,12 @@
 package com.eventty.authservice.applicaiton.service.Facade;
 
+import com.eventty.authservice.api.dto.request.OAuthUserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
 import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
 import com.eventty.authservice.applicaiton.dto.*;
-import com.eventty.authservice.applicaiton.service.subservices.AuthService;
-import com.eventty.authservice.applicaiton.service.subservices.AuthServiceImpl;
+import com.eventty.authservice.applicaiton.service.subservices.*;
+import com.eventty.authservice.applicaiton.service.subservices.factory.OAuthService;
+import com.eventty.authservice.domain.entity.OAuthUserEntity;
 import com.eventty.authservice.domain.exception.UserNotFoundException;
 import com.eventty.authservice.domain.model.Authority;
 import com.eventty.authservice.global.response.ResponseDTO;
@@ -18,20 +20,18 @@ import jakarta.transaction.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.eventty.authservice.api.ApiClient;
 import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
-import com.eventty.authservice.applicaiton.service.subservices.UserDetailService;
-import com.eventty.authservice.applicaiton.service.subservices.UserDetailServiceImpl;
 import com.eventty.authservice.domain.Enum.UserRole;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -41,16 +41,19 @@ public class UserServiceImpl implements UserService {
     private final AuthService authService;
     private final ApiClient apiClient;
     private final CustomConverter customConverter;
+    private final OAuthServiceFactory oAuthServiceFactory;
 
     @Autowired
     public UserServiceImpl(UserDetailServiceImpl userServiceImpl,
                            AuthServiceImpl authServiceImpl,
-                           @Lazy ApiClient apiClient,
-                           @Lazy CustomConverter converterService) {
+                           ApiClient apiClient,
+                           CustomConverter converterService,
+                           OAuthServiceFactory oAuthServiceFactory) {
         this.userDetailService = userServiceImpl;
         this.authService = authServiceImpl;
         this.apiClient = apiClient;
         this.customConverter = converterService;
+        this.oAuthServiceFactory = oAuthServiceFactory;
     }
 
     @Override
@@ -68,43 +71,39 @@ public class UserServiceImpl implements UserService {
         // 비밀번호 매칭
         authService.credentialMatch(userLoginRequestDTO, authUserEntity);
 
-        Long userId = authUserEntity.getId();
+        // 유저 정보 User Context Holder에 저장
+        saveUserContext(authUserEntity);
 
-        log.debug("User Context 업데이트");
-        // 모든 과정 성공시 User Context 업데이트
-        List<Authority> authorities = customConverter.convertAuthority(authUserEntity);
-        UserContextHolder.getContext().setUserId(String.valueOf(userId));
-        UserContextHolder.getContext().setAuthorities(authorities);
-
-        log.debug("User Server Api Call - Query Image");
         // 이미지 불러오기
-        ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> reponse =
-                apiClient.queryImageApi();
+        log.debug("User Server Api Call - Query Image");
+        ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> response = apiClient.queryImageApi();
 
-        log.debug("이미지 담는 작업");
-        ImageQueryApiResponseDTO imageQueryApiResponseDTO;
-        if (reponse.hasBody() && Objects.requireNonNull(reponse.getBody()).getIsSuccess()) {
-            imageQueryApiResponseDTO = reponse.getBody().getSuccessResponseDTO().getData();
-            log.debug("Image: {}", imageQueryApiResponseDTO.getOriginFileName());
-            log.debug("Image Path: {}", imageQueryApiResponseDTO.getImagePath());
-        }
-        else {
-            imageQueryApiResponseDTO = new ImageQueryApiResponseDTO();
-            log.debug("Image가 없습니다.");
-        }
+        // Response에서 이미지 정보 꺼내오기
+        ImageQueryApiResponseDTO imageQueryApiResponseDTO = getUserImage(response);
 
-        log.debug("AuthServcie -> 세션 토큰 생성");
-        // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환 => 권한 X 역할만 담기
-        SessionTokensDTO sessionTokensDTO = authService.getToken(authUserEntity);
+        return processLoginPostActions(authUserEntity, imageQueryApiResponseDTO);
+    }
 
-        log.debug("AuthService -> csrf 토큰 생성 혹은 업데이트");
-        // 로그인을 했을 때 DB에 토큰이 있을 수 있고, 없을 수 있으니 구분져서 로직 구성
-        String csrfToken = authService.checkCsrfToken(userId) ?
-                authService.getUpdateCsrfToken(userId) : authService.getNewCsrfToken(userId);
+    @Override
+    public LoginSuccessDTO oauthLogin(OAuthLoginRequestDTO oAuthLoginRequestDTO, String socialName) {
+        log.debug("OAuth 로그인 시작");
 
-        log.debug("반환");
-        return customConverter
-                .convertLoginSuccessDTO(sessionTokensDTO, authUserEntity, csrfToken, imageQueryApiResponseDTO);
+        log.debug("Factory 객체에서 필요한 서비스 가져오기");
+        // Factory 객체에서 필요한 서비스 가져오기
+        OAuthService oAuthService = oAuthServiceFactory.getOAuthService(socialName);
+
+        log.debug("OAuthService -> 유저 정보 받아오기");
+        // 유저 정보 받아오기
+        OAuthUserInfoDTO oAuthUserInfoDTO = oAuthService.getUserInfo(oAuthLoginRequestDTO);
+
+        // 기존 유저 회원인지 검증하기 (소셜 로그인 DB 확인)
+        Optional<OAuthUserEntity> oAuthUserEntityOpt = oAuthService.findOAuthUserEntity(oAuthUserInfoDTO.clientId());
+
+        // Entity 와 Image 가져오기
+        OAuthLoginEntityAndImageDTO dto = processUser(oAuthService, oAuthUserEntityOpt, oAuthUserInfoDTO, socialName);
+
+        // 토큰 발급 및 SuccessResponseDTO 반환
+        return processLoginPostActions(dto.authUserEntity(), dto.imageQueryApiResponseDTO());
     }
 
     @Override
@@ -116,11 +115,18 @@ public class UserServiceImpl implements UserService {
         // 전달 받은 DTO로 Entity로 변환
         String email = fullUserCreateRequestDTO.getEmail();
         String encryptedPassword = authService.encryptePassword(fullUserCreateRequestDTO.getPassword());
-        AuthUserEntity authUserEntity = customConverter.convertAuthEntityConvert(email, encryptedPassword);
+        AuthUserEntity AuthUserEntity = customConverter.convertAuthUserEntityConvert(email, encryptedPassword);
+
+        /*
+
+        소셜 로그인으로 회원 가입이 되어 있는지 체크하고 연동
+
+
+         */
 
         log.debug("유저 생성");
         // 유저 생성
-        Long userId = userDetailService.create(authUserEntity, role);
+        Long userId = userDetailService.create(AuthUserEntity, role);
 
         log.debug("User Server Api Call - 회원가입 요청 ");
         // API 요청 로직
@@ -147,15 +153,15 @@ public class UserServiceImpl implements UserService {
                 sessionTokensDTO, csrfToken, customConverter, userDetailService);
 
         // 가독성을 위해서 꺼내서 활용 => needsUpdate는 필요 없지만 일단은 DTO 재활용
-        AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();
+        AuthUserEntity AuthUserEntity = authenticationResultDTO.AuthUserEntity();
 
         log.debug("토큰 삭제");
         // 모든 토큰 삭제 후
-        authService.deleteAllToken(authUserEntity.getId());
+        authService.deleteAllToken(AuthUserEntity.getId());
 
         log.debug("유저 삭제");
         // 유저 삭제
-        return userDetailService.delete(authUserEntity);
+        return userDetailService.delete(AuthUserEntity);
     }
 
     @Override
@@ -172,25 +178,25 @@ public class UserServiceImpl implements UserService {
                 sessionTokensDTO, userAuthenticateRequestDTO.getCsrfToken(), customConverter, userDetailService);
 
         // 가독성을 위해서 꺼내서 활용
-        AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();
+        AuthUserEntity AuthUserEntity = authenticationResultDTO.AuthUserEntity();
         boolean TokensNeedUpdate = authenticationResultDTO.needsUpate();
 
         log.debug("Auth Service -> 새로운 csrf 토큰 가져오기");
         // 모든 검증을 마친 후 토큰 업데이트가 필요하면 수행
-        String newCsrfToken = authService.getUpdateCsrfToken(authUserEntity.getId());
+        String newCsrfToken = authService.getUpdateCsrfToken(AuthUserEntity.getId());
 
         if (TokensNeedUpdate) {
             log.debug("Auth Service -> 새로운 토큰 가져오기");
             // 검증 로직 없이 새로운 토큰 가져오기
-            sessionTokensDTO = authService.getToken(authenticationResultDTO.authUserEntity());
+            sessionTokensDTO = authService.getToken(authenticationResultDTO.AuthUserEntity());
         }
 
         log.debug("Conveter -> Authority List를 JSON으로 변환");
         // 모든 권한 가져온 후 Json형태로 변환
-        String authoritiesJson = customConverter.convertAuthoritiesJson(authUserEntity);
+        String authoritiesJson = customConverter.convertAuthoritiesJson(AuthUserEntity);
 
         return new AuthenticationDetailsResponseDTO(
-                authUserEntity.getId(),
+                AuthUserEntity.getId(),
                 sessionTokensDTO.accessToken(),
                 sessionTokensDTO.refreshToken(),
                 newCsrfToken,
@@ -209,14 +215,14 @@ public class UserServiceImpl implements UserService {
                 sessionTokensDTO, csrfToken, customConverter, userDetailService);
 
         // 가독성을 위해서 꺼내서 활용 => needsUpdate는 필요 없지만 일단은 DTO 재활용
-        AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();
+        AuthUserEntity AuthUserEntity = authenticationResultDTO.AuthUserEntity();
 
         log.debug("Auth Service -> 토큰 삭제");
         // 모든 토큰 삭제 후
-        authService.deleteAllToken(authUserEntity.getId());
+        authService.deleteAllToken(AuthUserEntity.getId());
 
         // 유저 아이디 반환
-        return authUserEntity.getId();
+        return AuthUserEntity.getId();
     }
 
     @Override
@@ -230,7 +236,7 @@ public class UserServiceImpl implements UserService {
         );
 
         // 가독성을 위해서 꺼내서 활용
-        AuthUserEntity authUserEntity = authenticationResultDTO.authUserEntity();
+        AuthUserEntity AuthUserEntity = authenticationResultDTO.AuthUserEntity();
 
         log.debug("Auth Service -> 비밀번호 암호화");
         // 비밀번호 암호화
@@ -238,13 +244,13 @@ public class UserServiceImpl implements UserService {
 
         log.debug("User Detail Service -> 비밀번호 저장");
         // 비밀번호 저장
-        authUserEntity = userDetailService.changePwAuthUser(encryptedPassword, authUserEntity);
+        AuthUserEntity = userDetailService.changePwAuthUser(encryptedPassword, AuthUserEntity);
 
         log.debug("Auth Service -> CSRF 토큰 업데이트");
         // CSRF Token Update
-        String newCsrfToken = authService.getUpdateCsrfToken(authUserEntity.getId());
+        String newCsrfToken = authService.getUpdateCsrfToken(AuthUserEntity.getId());
 
-        return new CsrfTokenDTO(authUserEntity.getId(), newCsrfToken);
+        return new CsrfTokenDTO(AuthUserEntity.getId(), newCsrfToken);
     }
 
     @Override
@@ -283,17 +289,39 @@ public class UserServiceImpl implements UserService {
         // 삭제되지 않은 유저 이메일 정보 모두 가져오기
         List<AuthUserEntity> authUserEntities = userDetailService.findNotDeletedAuthUserList(userIdList);
 
-        log.debug("Auth Service -> 이메일 검증");
         // 이메일 검증
-        AuthUserEntity authUserEntity = authUserEntities.stream()
+        AuthUserEntity AuthUserEntity = getValidationAuthUserEntity(authUserEntities, pwFindRequestDTO);
+
+        return customConverter.convertPWFindResponseDTO(AuthUserEntity);
+    }
+
+    @Override
+    public void resetPW(ResetPWRequestDTO resetPWRequestDTO, HttpSession session) {
+
+        log.debug("Auth Service -> Session 만료 기간 검증 후 유저 아이디 가져오기");
+        Long userId = authService.getUserIdInSession(session);
+
+        log.debug("User Detail -> 유저 id:{}인 entity 가져오기", userId);
+        AuthUserEntity AuthUserEntity = userDetailService.findAuthUser(userId);
+
+        log.debug("Auth Service -> 비밀번호 암호화");
+        String encryptedPassword = authService.encryptePassword(resetPWRequestDTO.getPassword());
+
+        log.debug("User Detail Service -> 비밀번호 저장");
+        AuthUserEntity = userDetailService.changePwAuthUser(encryptedPassword, AuthUserEntity);
+    }
+
+    private AuthUserEntity getValidationAuthUserEntity(List<AuthUserEntity> authUserEntities, PWFindRequestDTO pwFindRequestDTO) {
+
+        log.debug("Auth Service -> 이메일 검증");
+        return authUserEntities.stream()
                 .filter(authuUserEntiy -> authService.emailMatch(pwFindRequestDTO.getEmail(), authuUserEntiy))
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException(pwFindRequestDTO.getEmail(), "email"));
-
-        return customConverter.convertPWFindResponseDTO(authUserEntity);
     }
 
     private List<Long> getUserIdList(UserIdFindApiRequestDTO userIdFindApiRequestDTO) {
+
         log.debug("User Server Api Call -> Get User Id List");
         ResponseEntity<ResponseDTO<List<Long>>> response =
                 apiClient.findUserIdApi(userIdFindApiRequestDTO);
@@ -308,23 +336,100 @@ public class UserServiceImpl implements UserService {
         return response.getBody().getSuccessResponseDTO().getData();
     }
 
-    @Override
-    public void resetPW(ResetPWRequestDTO resetPWRequestDTO, HttpSession session) {
+    /*
+            OAuth Login Method
+     */
 
-        log.debug("Auth Service -> Session 만료 기간 검증 후 유저 아이디 가져오기");
-        // Session 만료 기간 체크 후 유저 아이디 가져오기
-        Long userId = authService.getUserIdInSession(session);
+    private void saveUserContext(AuthUserEntity authUserEntity) {
 
-        log.debug("User Detail -> 유저 id:{}인 entity 가져오기", userId);
-        // 유저 가져오기
+        log.debug("User Context 업데이트");
+        List<Authority> authorities = customConverter.convertAuthority(authUserEntity);
+        UserContextHolder.getContext().setUserId(String.valueOf(authUserEntity.getId()));
+        UserContextHolder.getContext().setAuthorities(authorities);
+    }
+    private OAuthLoginEntityAndImageDTO processUser(OAuthService oAuthService, Optional<OAuthUserEntity> oAuthUserEntityOpt, OAuthUserInfoDTO oAuthUserInfoDTO, String socialName) {
+        if (oAuthUserEntityOpt.isPresent()) {
+            return processExistingUser(oAuthUserEntityOpt);
+        }
+        else {
+            return processNewUser(oAuthService, oAuthUserInfoDTO, socialName);
+        }
+    }
+
+    private OAuthLoginEntityAndImageDTO processExistingUser(Optional<OAuthUserEntity> oAuthUserEntityOpt) {
+        // 기존 유저 O -> 우리 애플리케이션에서 주는 유저 id 가져오기
+        Long userId = oAuthUserEntityOpt.get().getUserId();
+
+        log.debug("기존 회원 -> 유저 아이디: {}", userId);
         AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
 
-        log.debug("Auth Service -> 비밀번호 암호화");
-        // 비밀번호 암호화
-        String encryptedPassword = authService.encryptePassword(resetPWRequestDTO.getPassword());
+        // 유저 정보 User Context Holder에 저장
+        saveUserContext(authUserEntity);
 
-        log.debug("User Detail Service -> 비밀번호 저장");
-        // 비밀번호 저장
-        authUserEntity = userDetailService.changePwAuthUser(encryptedPassword, authUserEntity);
+        // 이미지 불러오기 (기존 이미지 업데이트 X -> 저장되어 있는 이미지 사용)
+        log.debug("User Server Api Call - Query Image");
+        ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> response = apiClient.queryImageApi();
+
+        // 이미지 담는 작업
+        ImageQueryApiResponseDTO imageQueryApiResponseDTO = getUserImage(response);
+
+        // Entity와 Image DTO 반환
+        return new OAuthLoginEntityAndImageDTO(authUserEntity, imageQueryApiResponseDTO);
+    }
+
+    private OAuthLoginEntityAndImageDTO processNewUser(OAuthService oAuthService, OAuthUserInfoDTO oAuthUserInfoDTO, String socialName) {
+        // 기존 유저 X -> 신규 가입 및 연동
+        AuthUserEntity authUserEntity = customConverter.convertAuthUserEntity(oAuthUserInfoDTO.email());
+
+        // ROLE_USER로 회원 가입
+        Long userId = userDetailService.create(authUserEntity, UserRole.USER);
+        log.debug("신규 가입 -> 유저 아이디: {}", userId);
+        OAuthUserEntity oAuthUserEntity = customConverter.convertOAuthUserEntity(userId, oAuthUserInfoDTO.clientId(), socialName);
+
+        // OAuth Repository에 clientID 저장
+        Long id = oAuthService.create(oAuthUserEntity);
+
+        // User Server 저장 후 이미지 가져오기
+        OAuthUserCreateApiRequestDTO userCreateApiRequestDTO = customConverter.convertOAuthUserCreateApiRequestDTO(oAuthUserInfoDTO, userId);
+        ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> response = apiClient.createOAuthUserApi(userCreateApiRequestDTO);
+
+        // 이미지 담는 작업
+        ImageQueryApiResponseDTO imageQueryApiResponseDTO = getUserImage(response);
+
+        // Entity와 Image DTO 반환
+        return new OAuthLoginEntityAndImageDTO(authUserEntity, imageQueryApiResponseDTO);
+    }
+
+    private ImageQueryApiResponseDTO getUserImage(ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> response) {
+        log.debug("이미지 담는 작업");
+        ImageQueryApiResponseDTO imageQueryApiResponseDTO;
+        if (response.hasBody() && Objects.requireNonNull(response.getBody()).getIsSuccess()) {
+            imageQueryApiResponseDTO = response.getBody().getSuccessResponseDTO().getData();
+            log.debug("Image: {}", imageQueryApiResponseDTO.getOriginFileName());
+            log.debug("Image Path: {}", imageQueryApiResponseDTO.getImagePath());
+        }
+        else {
+            imageQueryApiResponseDTO = new ImageQueryApiResponseDTO();
+            log.debug("Image가 없습니다.");
+        }
+
+        return imageQueryApiResponseDTO;
+    }
+
+    private LoginSuccessDTO processLoginPostActions(AuthUserEntity authUserEntity, ImageQueryApiResponseDTO imageQueryApiResponseDTO) {
+        // 신규 토큰 발급해주기 (검증 X)
+        log.debug("AuthServcie -> 세션 토큰 생성");
+        // 모든 과정 성공시 JWT, Refresh Token과 email, 권한을 각각 DTO에 담아서 LoginSuccessDTO에 담아서 반환 => 권한 X 역할만 담기
+        SessionTokensDTO sessionTokensDTO = authService.getToken(authUserEntity);
+
+        log.debug("AuthService -> csrf 토큰 생성 혹은 업데이트");
+        // 로그인을 했을 때 DB에 토큰이 있을 수 있고, 없을 수 있으니 구분져서 로직 구성
+        String csrfToken = authService.checkCsrfToken(authUserEntity.getId()) ?
+                authService.getUpdateCsrfToken(authUserEntity.getId()) : authService.getNewCsrfToken(authUserEntity.getId());
+
+        log.debug("반환");
+
+        return customConverter
+                .convertLoginSuccessDTO(sessionTokensDTO, authUserEntity, csrfToken, imageQueryApiResponseDTO);
     }
 }

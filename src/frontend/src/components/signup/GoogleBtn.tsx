@@ -10,9 +10,10 @@ function GoogleBtn() {
     const login = useGoogleLogin({
         onSuccess: tokenResponse => {
             console.log(tokenResponse);
-            const accessToken:IGoogleLogin = {OAuth_AccessToken:tokenResponse.access_token!};
+            const accessToken:IGoogleLogin = {accessToken:tokenResponse.access_token!, tokenType: tokenResponse.token_type!};
             postGoogleLogin(accessToken);
         },
+        scope: 'email profile phone'
     });
 
     return (
