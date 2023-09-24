@@ -59,7 +59,7 @@ public class EventCreateRequestDTO {
                 .eventEndAt(eventEndAt)
                 .participateNum(participateNum)
                 .location(location)
-                .category(Category.getIdfromName(category))
+                .category(Category.valueOf(category).getId())
                 .isActive(true)
                 .isDeleted(false)
                 .build();

@@ -89,9 +89,11 @@
         UPDATE event_basic
         SET
             title = #{title},
+            event_start_at = #{eventStartAt},
+            event_end_at = #{eventEndAt},
+            location = #{location},
             category = #{category},
-            is_active = #{isActive},
-            participate_num = #{participateNum}
+            is_active = #{isActive}
         WHERE id = #{id}
     </update>
 

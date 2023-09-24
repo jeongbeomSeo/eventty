@@ -3,6 +3,7 @@ package com.eventty.businessservice.event.application.service.subservices;
 import com.eventty.businessservice.event.api.ApiClient;
 import com.eventty.businessservice.event.api.dto.response.QueryAppliesCountResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.TicketResponseDTO;
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
@@ -77,6 +78,13 @@ public class TicketService {
         List<TicketEntity> tickets = getTicketListIfExists(eventId);
 
         ticketRepository.deleteTicketsByEventId(eventId);
+        return eventId;
+    }
+
+    public Long updateTickets(Long eventId, EventUpdateRequestDTO eventUpdateRequestDTO) {
+
+        //
+
         return eventId;
     }
 

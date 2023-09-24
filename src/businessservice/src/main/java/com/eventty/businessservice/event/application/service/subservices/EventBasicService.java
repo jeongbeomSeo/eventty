@@ -7,6 +7,7 @@ import com.eventty.businessservice.event.application.dto.request.EventUpdateRequ
 import com.eventty.businessservice.event.application.dto.request.TicketCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.EventBasicWithoutHostInfoResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.EventBasicWithHostInfoResponseDTO;
+import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.exception.HostInfoNotFoundException;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
@@ -107,17 +108,7 @@ public class EventBasicService {
         // 업데이트 전, 해당 데이터 존재 여부 확인
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
-        // 각 필드가 null 이 아닐때에만 업데이트
-        if(eventUpdateRequestDTO.getTitle() != null){
-            eventBasic.updateTitle(eventUpdateRequestDTO.getTitle());
-        }
-        if(eventUpdateRequestDTO.getCategory() != null){
-            eventBasic.updateCategory(Category.getIdfromName(eventUpdateRequestDTO.getCategory()));
-        }
-        if(eventUpdateRequestDTO.getIsActive() != null){
-            eventBasic.updateIsActive(eventUpdateRequestDTO.getIsActive());
-        }
-
+        eventBasic.updateEventBasic(eventUpdateRequestDTO);
         eventBasicRepository.updateEvent(eventBasic);
 
         return eventId;

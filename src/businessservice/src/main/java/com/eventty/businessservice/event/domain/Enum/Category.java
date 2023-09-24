@@ -29,13 +29,4 @@ public enum Category {
         return null;
     }
 
-    public static Long getIdfromName(String name) {
-        for (Category category : Category.values()) {
-            if (category.getName().equals(name)) {
-                return category.id;
-            }
-        }
-        return null;
-    }
-
 }
