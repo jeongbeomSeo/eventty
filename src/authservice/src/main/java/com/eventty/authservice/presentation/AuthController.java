@@ -87,39 +87,24 @@ public class AuthController {
         // 로그인
         LoginSuccessDTO loginSuccessDTO = userService.login(userLoginRequestDTO);
 
-        // JWT & Refresh Token
-        ResponseCookie jwtCookie = cookieUtils.createAccessTokenCookie(
-                loginSuccessDTO.sessionTokensDTO().accessToken());
-
-        ResponseCookie refreshTokenCookie = cookieUtils.createRefreshTokenCookie(
-                loginSuccessDTO.sessionTokensDTO().refreshToken());
-
-        // Response
-        LoginResponseDTO loginResponseDTO = loginSuccessDTO.loginResponseDTO();
-
-        return ResponseEntity
-                .status(SuccessCode.IS_OK.getStatus())
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .header(HEADER_CSRF, loginSuccessDTO.csrfToken())
-                .body(SuccessResponseDTO.of(loginResponseDTO));
+        // 토큰들 쿠키에 담는 작업 및 헤더에 담는 작업과 body에 필요한 데이터 담아서 보내기
+        return processLoginPostActions(loginSuccessDTO);
     }
 
     /**
      * 소셜 로그인
      */
 
-    // 구글
     @PostMapping("/oauth/login/{socialName}")
     public ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> oauthLogin(@Valid @RequestBody OAuthLoginRequestDTO oAuthLoginRequestDTO,
                                                                            @PathVariable("socialName") OAuth oAuth) {
+        log.debug("Current Position: Controller :: OAuth 로그인");
 
-        LoginSuccessDTO loginSuccessDTO = userService.oauthLogin(oAuthLoginRequestDTO, OAuth.GOOGLE.getSocialName());
+        // 로그인
+        LoginSuccessDTO loginSuccessDTO = userService.oauthLogin(oAuthLoginRequestDTO, oAuth.getSocialName());
 
-
-
-        return null;
-
+        // 토큰들 쿠키에 담는 작업 및 헤더에 담는 작업과 body에 필요한 데이터 담아서 보내기
+        return processLoginPostActions(loginSuccessDTO);
     }
 
     /**
@@ -253,5 +238,24 @@ public class AuthController {
         return ResponseEntity
                 .status(SuccessCode.IS_OK.getStatus())
                 .body(SuccessResponseDTO.of(null));
+    }
+
+    private ResponseEntity<SuccessResponseDTO<LoginResponseDTO>> processLoginPostActions(LoginSuccessDTO loginSuccessDTO) {
+        // JWT & Refresh Token
+        ResponseCookie jwtCookie = cookieUtils.createAccessTokenCookie(
+                loginSuccessDTO.sessionTokensDTO().accessToken());
+
+        ResponseCookie refreshTokenCookie = cookieUtils.createRefreshTokenCookie(
+                loginSuccessDTO.sessionTokensDTO().refreshToken());
+
+        // Response
+        LoginResponseDTO loginResponseDTO = loginSuccessDTO.loginResponseDTO();
+
+        return ResponseEntity
+                .status(SuccessCode.IS_OK.getStatus())
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .header(HEADER_CSRF, loginSuccessDTO.csrfToken())
+                .body(SuccessResponseDTO.of(loginResponseDTO));
     }
 }

@@ -4,7 +4,6 @@ import com.eventty.authservice.api.dto.request.OAuthUserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
 import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
-import com.jogamp.common.net.Uri;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;

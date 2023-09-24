@@ -85,6 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public LoginSuccessDTO oauthLogin(OAuthLoginRequestDTO oAuthLoginRequestDTO, String socialName) {
         log.debug("OAuth 로그인 시작");
 
@@ -96,12 +97,15 @@ public class UserServiceImpl implements UserService {
         // 유저 정보 받아오기
         OAuthUserInfoDTO oAuthUserInfoDTO = oAuthService.getUserInfo(oAuthLoginRequestDTO);
 
-        // 기존 유저 회원인지 검증하기 (소셜 로그인 DB 확인)
+        log.debug("OauthService -> 기존 회원인지 확인");
+        // 기존 유효한 유저 회원인지 검증하기 (소셜 로그인 DB 확인)
         Optional<OAuthUserEntity> oAuthUserEntityOpt = oAuthService.findOAuthUserEntity(oAuthUserInfoDTO.clientId());
 
-        // Entity 와 Image 가져오기
+        log.debug("UserService, OAuthService -> 저장 혹은 조회 후 Entity 와 Image 가져오기");
+        // 삭제되지 않은 Entity 와 Image 가져오기 (If. 삭제된 회원이라면 현재의 기능으로는 복구 불가)
         OAuthLoginEntityAndImageDTO dto = processUser(oAuthService, oAuthUserEntityOpt, oAuthUserInfoDTO, socialName);
 
+        log.debug("토큰 발급 및 SuccessResponseDTO 반환");
         // 토큰 발급 및 SuccessResponseDTO 반환
         return processLoginPostActions(dto.authUserEntity(), dto.imageQueryApiResponseDTO());
     }
@@ -115,25 +119,18 @@ public class UserServiceImpl implements UserService {
         // 전달 받은 DTO로 Entity로 변환
         String email = fullUserCreateRequestDTO.getEmail();
         String encryptedPassword = authService.encryptePassword(fullUserCreateRequestDTO.getPassword());
-        AuthUserEntity AuthUserEntity = customConverter.convertAuthUserEntityConvert(email, encryptedPassword);
-
-        /*
-
-        소셜 로그인으로 회원 가입이 되어 있는지 체크하고 연동
-
-
-         */
+        AuthUserEntity authUserEntity = customConverter.convertAuthUserEntityConvert(email, encryptedPassword);
 
         log.debug("유저 생성");
         // 유저 생성
-        Long userId = userDetailService.create(AuthUserEntity, role);
+        authUserEntity = userDetailService.create(authUserEntity, role);
 
         log.debug("User Server Api Call - 회원가입 요청 ");
         // API 요청 로직
-        UserCreateApiRequestDTO userCreateApiRequestDTO = customConverter.convertUserCreateRequestDTO(fullUserCreateRequestDTO, userId);
+        UserCreateApiRequestDTO userCreateApiRequestDTO = customConverter.convertUserCreateRequestDTO(fullUserCreateRequestDTO, authUserEntity.getId());
         apiClient.createUserApi(userCreateApiRequestDTO);
 
-        return userId;
+        return authUserEntity.getId();
     }
 
     @Override
@@ -226,6 +223,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public CsrfTokenDTO changePW(PWChangeRequestDTO pwChangeRequestDTO, SessionTokensDTO sessionTokensDTO, String csrfToken) {
         log.debug("비밀번호 변경 서비스 시작");
 
@@ -339,14 +337,6 @@ public class UserServiceImpl implements UserService {
     /*
             OAuth Login Method
      */
-
-    private void saveUserContext(AuthUserEntity authUserEntity) {
-
-        log.debug("User Context 업데이트");
-        List<Authority> authorities = customConverter.convertAuthority(authUserEntity);
-        UserContextHolder.getContext().setUserId(String.valueOf(authUserEntity.getId()));
-        UserContextHolder.getContext().setAuthorities(authorities);
-    }
     private OAuthLoginEntityAndImageDTO processUser(OAuthService oAuthService, Optional<OAuthUserEntity> oAuthUserEntityOpt, OAuthUserInfoDTO oAuthUserInfoDTO, String socialName) {
         if (oAuthUserEntityOpt.isPresent()) {
             return processExistingUser(oAuthUserEntityOpt);
@@ -363,6 +353,9 @@ public class UserServiceImpl implements UserService {
         log.debug("기존 회원 -> 유저 아이디: {}", userId);
         AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
 
+        // 삭제된 회원인지 체크
+        userDetailService.validationUser(authUserEntity);
+
         // 유저 정보 User Context Holder에 저장
         saveUserContext(authUserEntity);
 
@@ -378,19 +371,22 @@ public class UserServiceImpl implements UserService {
     }
 
     private OAuthLoginEntityAndImageDTO processNewUser(OAuthService oAuthService, OAuthUserInfoDTO oAuthUserInfoDTO, String socialName) {
+        log.debug("신규 OAuth User 회원 가입");
         // 기존 유저 X -> 신규 가입 및 연동
         AuthUserEntity authUserEntity = customConverter.convertAuthUserEntity(oAuthUserInfoDTO.email());
 
         // ROLE_USER로 회원 가입
-        Long userId = userDetailService.create(authUserEntity, UserRole.USER);
-        log.debug("신규 가입 -> 유저 아이디: {}", userId);
-        OAuthUserEntity oAuthUserEntity = customConverter.convertOAuthUserEntity(userId, oAuthUserInfoDTO.clientId(), socialName);
+        authUserEntity = userDetailService.create(authUserEntity, UserRole.USER);
+        log.debug("신규 가입 -> 유저 아이디: {}", authUserEntity.getId());
+        OAuthUserEntity oAuthUserEntity = customConverter.convertOAuthUserEntity(authUserEntity.getId(), oAuthUserInfoDTO.clientId(), socialName);
 
+        log.debug("OAuth Service -> OAuth User 저장");
         // OAuth Repository에 clientID 저장
-        Long id = oAuthService.create(oAuthUserEntity);
+        oAuthService.create(oAuthUserEntity);
 
+        log.debug("Api Client -> 신규 OAuth User 회원가입 요청 (저장되는 이미지 정보 받아오기)");
         // User Server 저장 후 이미지 가져오기
-        OAuthUserCreateApiRequestDTO userCreateApiRequestDTO = customConverter.convertOAuthUserCreateApiRequestDTO(oAuthUserInfoDTO, userId);
+        OAuthUserCreateApiRequestDTO userCreateApiRequestDTO = customConverter.convertOAuthUserCreateApiRequestDTO(oAuthUserInfoDTO, authUserEntity.getId());
         ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> response = apiClient.createOAuthUserApi(userCreateApiRequestDTO);
 
         // 이미지 담는 작업
@@ -414,6 +410,14 @@ public class UserServiceImpl implements UserService {
         }
 
         return imageQueryApiResponseDTO;
+    }
+
+    private void saveUserContext(AuthUserEntity authUserEntity) {
+
+        log.debug("User Context 업데이트");
+        List<Authority> authorities = customConverter.convertAuthority(authUserEntity);
+        UserContextHolder.getContext().setUserId(String.valueOf(authUserEntity.getId()));
+        UserContextHolder.getContext().setAuthorities(authorities);
     }
 
     private LoginSuccessDTO processLoginPostActions(AuthUserEntity authUserEntity, ImageQueryApiResponseDTO imageQueryApiResponseDTO) {

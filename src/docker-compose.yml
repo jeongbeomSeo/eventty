@@ -31,7 +31,7 @@ services:
   #       aliases:
   #         - "event server"
   userservice:
-    image: hyungyunk/eventty:1.6
+    image: hyungyunk/eventty:1.7
     container_name: User_Server
     build:
       context: ./userservice
@@ -45,7 +45,7 @@ services:
         aliases:
           - "user server"
   authservice:
-    image: auth:1.6
+    image: auth:1.7
     container_name: Auth_Server
     build:
       context: ./authservice

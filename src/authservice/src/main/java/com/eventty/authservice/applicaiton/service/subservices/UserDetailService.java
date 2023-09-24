@@ -8,7 +8,7 @@ import java.util.List;
 public interface UserDetailService {
 
     Long delete(AuthUserEntity AuthUserEntity);
-    Long create(AuthUserEntity AuthUserEntity, UserRole userRole);
+    AuthUserEntity create(AuthUserEntity AuthUserEntity, UserRole userRole);
 
     void validateEmail(String email);
     void validationUser(AuthUserEntity AuthUserEntity);

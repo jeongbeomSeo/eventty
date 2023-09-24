@@ -20,25 +20,27 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 
 @Slf4j
-@Service("GoogleOAuthService")
+@Service("googleOAuthService")
 public class GoogleOAuthService implements OAuthService{
 
     private final RestTemplate restTemplate;
     private final OAuthUserRepository oAuthUserRepository;
-    private EntityManager em;
+    private final EntityManager em;
 
 
     @Autowired
-    public GoogleOAuthService(RestTemplate restTemplate, OAuthUserRepository oAuthUserRepository) {
+    public GoogleOAuthService(RestTemplate restTemplate, OAuthUserRepository oAuthUserRepository, EntityManager em) {
         this.restTemplate = restTemplate;
         this.oAuthUserRepository = oAuthUserRepository;
+        this.em = em;
     }
 
     public OAuthUserInfoDTO getUserInfo(OAuthLoginRequestDTO oAuthLoginRequestDTO) {
 
         HttpEntity<Void> entity = createOAthHttpEntity(oAuthLoginRequestDTO);
 
-        log.debug("Auth Server", "Google Resource Server", "Request goolge user info");
+        log.info("API 호출 From: {} To: {} Purpose: {}",
+                "Auth Server", "Google Resource Server", "Request goolge user info");
 
         ResponseEntity<GoogleUserInfoResponseDTO> response = restTemplate.exchange(
                 OAuth.GOOGLE.getUri(), OAuth.GOOGLE.getMethod(), entity, GoogleUserInfoResponseDTO.class
@@ -79,6 +81,6 @@ public class GoogleOAuthService implements OAuthService{
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", oAuthLoginRequestDTO.getTokenType() + " " + oAuthLoginRequestDTO.getAccessToken());
 
-        return new HttpEntity<>(null, headers);
+        return new HttpEntity<>(headers);
     }
 }

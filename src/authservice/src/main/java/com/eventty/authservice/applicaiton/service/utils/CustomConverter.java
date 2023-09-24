@@ -91,8 +91,8 @@ public class CustomConverter {
                 userId,
                 oAuthUserInfoDTO.name(),
                 oAuthUserInfoDTO.birth(),
-                oAuthUserInfoDTO.phone(),
-                oAuthUserInfoDTO.picture()
+                oAuthUserInfoDTO.phone() != null ? oAuthUserInfoDTO.phone() : "",
+                oAuthUserInfoDTO.picture() != null ? oAuthUserInfoDTO.picture() : ""
         );
     }
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,23 +57,30 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Transactional
     @Override
-    public Long create(AuthUserEntity AuthUserEntity, UserRole userRole) {
+    public AuthUserEntity create(AuthUserEntity authUserEntity, UserRole userRole) {
         // 이메일 중복 검사
-        validateEmail(AuthUserEntity.getEmail());
+        validateEmail(authUserEntity.getEmail());
 
         // EntityManager를 사용하여 데이터베이스에 저장 => id 저장
-        em.persist(AuthUserEntity);
+        em.persist(authUserEntity);
 
-        // 권한 저장하기
+        // 권한 저장하기 (현재는 리스트 형태 X)
         AuthorityEntity newAuthority = AuthorityEntity.builder()
                 .name(userRole.getRole())
-                .AuthUserEntity(AuthUserEntity)
+                .authUserEntity(authUserEntity)
                 .build();
 
         em.persist(newAuthority);
 
-        return AuthUserEntity.getId();
+        // 권한을 AuthUserEntity의 Authorities 리스트에 추가
+        if (authUserEntity.getAuthorities() == null) {
+            authUserEntity.setAuthorities(new ArrayList<>());
+        }
+        authUserEntity.getAuthorities().add(newAuthority);
+
+        return authUserEntity;
     }
+
 
     // 삭제된 유저인지 확인
     @Override

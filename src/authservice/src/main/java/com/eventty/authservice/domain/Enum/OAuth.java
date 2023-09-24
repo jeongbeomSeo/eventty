@@ -10,7 +10,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public enum OAuth {
 
-    GOOGLE("Google",
+    GOOGLE("google",
             URI.create("https://www.googleapis.com/oauth2/v2/userinfo"),
             HttpMethod.GET),
     NAVER("naver",

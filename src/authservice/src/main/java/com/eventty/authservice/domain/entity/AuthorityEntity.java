@@ -21,5 +21,5 @@ public class AuthorityEntity {
 
     @JoinColumn(name = "auth_user_id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private AuthUserEntity AuthUserEntity;
+    private AuthUserEntity authUserEntity;
 }

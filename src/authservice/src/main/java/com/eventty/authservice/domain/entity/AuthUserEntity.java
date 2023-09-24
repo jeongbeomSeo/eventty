@@ -35,5 +35,5 @@ public class AuthUserEntity {
 
     // @JsonManagedReference
     @OneToMany(mappedBy = "authUserEntity", cascade = CascadeType.PERSIST)
-    private List<AuthorityEntity> Authorities;
+    private List<AuthorityEntity> authorities;
 }
