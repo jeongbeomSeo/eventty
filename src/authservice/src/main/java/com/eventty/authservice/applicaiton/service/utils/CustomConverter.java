@@ -1,11 +1,13 @@
 package com.eventty.authservice.applicaiton.service.utils;
 
+import com.eventty.authservice.api.dto.request.OAuthUserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
 import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
 import com.eventty.authservice.applicaiton.dto.*;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.entity.AuthorityEntity;
+import com.eventty.authservice.domain.entity.OAuthUserEntity;
 import com.eventty.authservice.domain.model.Authority;
 import com.eventty.authservice.presentation.dto.request.UserAuthenticateRequestDTO;
 import com.eventty.authservice.presentation.dto.request.EmailFindRequestDTO;
@@ -18,11 +20,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Lazy
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -46,10 +50,25 @@ public class CustomConverter {
     public ValidateRefreshTokenDTO convertToValidationRefreshTokenDTO(Long userId, SessionTokensDTO SessionTokensDTO) {
         return new ValidateRefreshTokenDTO(userId, SessionTokensDTO.refreshToken());
 }
-    public AuthUserEntity convertAuthEntityConvert(String email, String encryptedPassword) {
+    public AuthUserEntity convertAuthUserEntityConvert(String email, String encryptedPassword) {
         return AuthUserEntity.builder()
                 .email(email)
                 .password(encryptedPassword)
+                .build();
+    }
+
+    public AuthUserEntity convertAuthUserEntity(String email) {
+        return AuthUserEntity.builder()
+                .email(email)
+                .password("")
+                .build();
+    }
+
+    public OAuthUserEntity convertOAuthUserEntity(Long userId, String clientId, String socialName) {
+        return OAuthUserEntity.builder()
+                .userId(userId)
+                .clientId(clientId)
+                .socialName(socialName)
                 .build();
     }
 
@@ -67,11 +86,21 @@ public class CustomConverter {
         );
     }
 
-    public LoginSuccessDTO convertLoginSuccessDTO(SessionTokensDTO sessionTokensDTO, AuthUserEntity authUserEntity, String csrfToken, ImageQueryApiResponseDTO imageQueryApiResponseDTO) {
+    public OAuthUserCreateApiRequestDTO convertOAuthUserCreateApiRequestDTO(OAuthUserInfoDTO oAuthUserInfoDTO, Long userId) {
+        return new OAuthUserCreateApiRequestDTO(
+                userId,
+                oAuthUserInfoDTO.name(),
+                oAuthUserInfoDTO.birth(),
+                oAuthUserInfoDTO.phone() != null ? oAuthUserInfoDTO.phone() : "",
+                oAuthUserInfoDTO.picture() != null ? oAuthUserInfoDTO.picture() : ""
+        );
+    }
+
+    public LoginSuccessDTO convertLoginSuccessDTO(SessionTokensDTO sessionTokensDTO, AuthUserEntity AuthUserEntity, String csrfToken, ImageQueryApiResponseDTO imageQueryApiResponseDTO) {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
-                authUserEntity.getId(),
-                authUserEntity.getEmail(), // email
-                getRole(authUserEntity.getAuthorities()),  // Role
+                AuthUserEntity.getId(),
+                AuthUserEntity.getEmail(), // email
+                getRole(AuthUserEntity.getAuthorities()),  // Role
                 imageQueryApiResponseDTO.getOriginFileName(),
                 imageQueryApiResponseDTO.getImagePath()
         );
@@ -79,12 +108,12 @@ public class CustomConverter {
         return new LoginSuccessDTO(sessionTokensDTO, loginResponseDTO, csrfToken);
     }
 
-    public PWFindResponseDTO convertPWFindResponseDTO(AuthUserEntity authUserEntity) {
-        return new PWFindResponseDTO(authUserEntity.getId(), authUserEntity.getEmail());
+    public PWFindResponseDTO convertPWFindResponseDTO(AuthUserEntity AuthUserEntity) {
+        return new PWFindResponseDTO(AuthUserEntity.getId(), AuthUserEntity.getEmail());
     }
 
-    public EmailFindResponseDTO convertEmailFindResponseDTO(AuthUserEntity authUserEntity) {
-        return new EmailFindResponseDTO(authUserEntity.getEmail());
+    public EmailFindResponseDTO convertEmailFindResponseDTO(AuthUserEntity AuthUserEntity) {
+        return new EmailFindResponseDTO(AuthUserEntity.getEmail());
     }
 
     // 현재 DTO로 건네주니깐 이러한 상황이 발생
@@ -100,15 +129,15 @@ public class CustomConverter {
      * Authorites Converter => User
      */
 
-    public List<Authority> convertAuthority(AuthUserEntity authUserEntity) {
-        return authUserEntity.getAuthorities()
+    public List<Authority> convertAuthority(AuthUserEntity AuthUserEntity) {
+        return AuthUserEntity.getAuthorities()
                 .stream()
                 .map(authorityEntity -> Authority.builder().role(authorityEntity.getName()).build())
                 .collect(Collectors.toList());
     }
 
-    public String convertAuthoritiesJson(AuthUserEntity authUserEntity) {
-        List<Authority> authorities = convertAuthorities(authUserEntity.getAuthorities());
+    public String convertAuthoritiesJson(AuthUserEntity AuthUserEntity) {
+        List<Authority> authorities = convertAuthorities(AuthUserEntity.getAuthorities());
         try {
             return objectMapper.writeValueAsString(authorities);
         } catch (JsonProcessingException e) {

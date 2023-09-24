@@ -4,6 +4,7 @@ import {CheckXsSize} from "../util/CheckMediaQuery";
 
 function Main() {
     const isMobile = CheckXsSize();
+    console.log(process.env["REACT_APP_REACT_SERVER_URL"]);
 
     return (
         <>

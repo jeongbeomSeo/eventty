@@ -1,9 +1,11 @@
 package com.eventty.authservice.api;
 
+import com.eventty.authservice.api.dto.request.OAuthUserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
 import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +21,7 @@ import lombok.AllArgsConstructor;
 import com.eventty.authservice.api.utils.MakeUrlService;
 import com.eventty.authservice.global.response.ResponseDTO;
 
+@Lazy
 @Slf4j
 @Component
 @AllArgsConstructor
@@ -26,8 +29,6 @@ public class ApiClient {
 
     // @Bean에 이름을 지정하지 않아서 생성자 이름을 따라감
     private final MakeUrlService makeUrlService;
-
-    private final RestTemplate basicRestTemplate;
 
     private final RestTemplate customRestTemplate;
 
@@ -43,6 +44,19 @@ public class ApiClient {
                 uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<Void>>() {}
         );
     }
+
+    public ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> createOAuthUserApi(OAuthUserCreateApiRequestDTO oAuthUserCreateApiRequestDTO) {
+
+        HttpEntity<OAuthUserCreateApiRequestDTO> entity = createHttpEntity(oAuthUserCreateApiRequestDTO);
+
+        URI uri = makeUrlService.createOAuthUserUri();
+
+        logApiCall("Auth Server", "User server", "Create OAuth User");
+        return customRestTemplate.exchange(
+                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<ImageQueryApiResponseDTO>>(){}
+        );
+    }
+
 
     public ResponseEntity<ResponseDTO<ImageQueryApiResponseDTO>> queryImageApi() {
 

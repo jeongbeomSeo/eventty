@@ -1,9 +1,7 @@
 package com.eventty.authservice.applicaiton.service.subservices;
 
-import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.domain.exception.AccessDeletedUserException;
 import com.eventty.authservice.domain.exception.UserNotFoundException;
-import com.eventty.authservice.presentation.dto.request.PWChangeRequestDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
@@ -11,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,12 +37,12 @@ public class UserDetailServiceImpl implements UserDetailService {
     // Soft Delete
     @Transactional
     @Override
-    public Long delete(AuthUserEntity authUserEntity) {
-        authUserEntity.setDelete(true);
-        authUserEntity.setDeleteDate(LocalDateTime.now());
-        userRepository.save(authUserEntity);
+    public Long delete(AuthUserEntity AuthUserEntity) {
+        AuthUserEntity.setDelete(true);
+        AuthUserEntity.setDeleteDate(LocalDateTime.now());
+        userRepository.save(AuthUserEntity);
 
-        return authUserEntity.getId();
+        return AuthUserEntity.getId();
     }
 
     @Override
@@ -58,14 +57,14 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Transactional
     @Override
-    public Long create(AuthUserEntity authUserEntity, UserRole userRole) {
+    public AuthUserEntity create(AuthUserEntity authUserEntity, UserRole userRole) {
         // 이메일 중복 검사
         validateEmail(authUserEntity.getEmail());
 
         // EntityManager를 사용하여 데이터베이스에 저장 => id 저장
         em.persist(authUserEntity);
 
-        // 권한 저장하기
+        // 권한 저장하기 (현재는 리스트 형태 X)
         AuthorityEntity newAuthority = AuthorityEntity.builder()
                 .name(userRole.getRole())
                 .authUserEntity(authUserEntity)
@@ -73,14 +72,21 @@ public class UserDetailServiceImpl implements UserDetailService {
 
         em.persist(newAuthority);
 
-        return authUserEntity.getId();
+        // 권한을 AuthUserEntity의 Authorities 리스트에 추가
+        if (authUserEntity.getAuthorities() == null) {
+            authUserEntity.setAuthorities(new ArrayList<>());
+        }
+        authUserEntity.getAuthorities().add(newAuthority);
+
+        return authUserEntity;
     }
+
 
     // 삭제된 유저인지 확인
     @Override
-    public void validationUser(AuthUserEntity authUserEntity) {
-        if (authUserEntity.isDelete())
-            throw new AccessDeletedUserException(authUserEntity);
+    public void validationUser(AuthUserEntity AuthUserEntity) {
+        if (AuthUserEntity.isDelete())
+            throw new AccessDeletedUserException(AuthUserEntity);
     }
 
     @Override
@@ -94,13 +100,13 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Transactional
     @Override
-    public AuthUserEntity changePwAuthUser(String encryptedPassword, AuthUserEntity authUserEntity) {
+    public AuthUserEntity changePwAuthUser(String encryptedPassword, AuthUserEntity AuthUserEntity) {
 
-        authUserEntity.setPassword(encryptedPassword);
+        AuthUserEntity.setPassword(encryptedPassword);
 
-        em.persist(authUserEntity);
+        em.persist(AuthUserEntity);
 
-        return authUserEntity;
+        return AuthUserEntity;
     }
 
     @Override

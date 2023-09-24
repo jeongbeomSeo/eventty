@@ -7,10 +7,13 @@ import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
 import com.eventty.authservice.applicaiton.service.utils.CustomConverter;
 import com.eventty.authservice.applicaiton.service.utils.CustomPasswordEncoder;
 import com.eventty.authservice.applicaiton.service.utils.token.TokenProvider;
+import com.eventty.authservice.domain.Enum.SessionAttr;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 import com.eventty.authservice.domain.exception.InvalidCsrfTokenException;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
+import com.eventty.authservice.domain.exception.SessionIsExpiredResetPasswordException;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +34,13 @@ public class AuthServiceImpl implements AuthService{
         Long userId= tokenParsingDTO.userId();
 
         // 2차 검증 (삭제되어 있는 User인지 확인)
-        AuthUserEntity authUserEntity = userDetailService.findAuthUser(userId);
+        AuthUserEntity AuthUserEntity = userDetailService.findAuthUser(userId);
 
         // 3차 검증 (CSRF 검증) => 성공시 재발급 및 저장
         CsrfTokenDTO csrfTokenDTO = converter.convertCsrfTokenDTO(userId, csrfToken);
         csrfTokenValidationCheck(csrfTokenDTO);
 
-        return new AuthenticationResultDTO(authUserEntity, tokenParsingDTO.needsUpdate());
+        return new AuthenticationResultDTO(AuthUserEntity, tokenParsingDTO.needsUpdate());
     }
 
     // CSRF 유효한지 확인
@@ -73,8 +76,8 @@ public class AuthServiceImpl implements AuthService{
 
     // 비밀번호 매칭
     @Override
-    public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity authUserEntity) {
-        if (!customPasswordEncoder.match(userLoginRequestDTO.getPassword(), authUserEntity.getPassword())) {
+    public boolean credentialMatch(UserLoginRequestDTO userLoginRequestDTO, AuthUserEntity AuthUserEntity) {
+        if (!customPasswordEncoder.match(userLoginRequestDTO.getPassword(), AuthUserEntity.getPassword())) {
             throw new InvalidPasswordException(userLoginRequestDTO);
         }
 
@@ -83,9 +86,9 @@ public class AuthServiceImpl implements AuthService{
 
     // 검증 로직 X
     @Override
-    public SessionTokensDTO getToken(AuthUserEntity authUserEntity) {
+    public SessionTokensDTO getToken(AuthUserEntity AuthUserEntity) {
         // 2시간 동안 유효한 액세스 토큰 생성 및 2일 동안 유효한 리프레시 토큰 생성 
-        return tokenProvider.getAllToken(authUserEntity);
+        return tokenProvider.getAllToken(AuthUserEntity);
     }
 
     // 모든 토큰 삭제 -> 만약 없다면 예외 발생시키지 말고 그냥 넘어가기
@@ -100,12 +103,25 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public boolean emailMatch(String email, AuthUserEntity authUserEntity) {
-        return email.equals(authUserEntity.getEmail());
+    public boolean emailMatch(String email, AuthUserEntity AuthUserEntity) {
+        return email.equals(AuthUserEntity.getEmail());
     }
 
     @Override
     public String encryptePassword(String rawPassword) {
         return customPasswordEncoder.encodePassword(rawPassword);
+    }
+
+    @Override
+    public Long getUserIdInSession(HttpSession session) {
+        Object userIdInSession = session.getAttribute(SessionAttr.USER_ID.getKey());
+
+        if (userIdInSession == null)
+            throw new SessionIsExpiredResetPasswordException();
+
+        // 세션 파기 시키기
+        session.invalidate();
+
+        return Long.parseLong(userIdInSession.toString());
     }
 }

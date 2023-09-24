@@ -30,18 +30,18 @@ public class TokenProvider {
 
 
     // 두개 이상 토큰 처리 메서드
-    public SessionTokensDTO getAllToken(AuthUserEntity authUserEntity) {
+    public SessionTokensDTO getAllToken(AuthUserEntity AuthUserEntity) {
 
         Date now = new Date();
 
         // Access Token의 만료 시간: 2시간
-        String accessToken = accessTokenProvider.generateToken(authUserEntity, now, createExpiry(now, Duration.ofHours(tokenProperties.getAccessExpiredTime())));
+        String accessToken = accessTokenProvider.generateToken(AuthUserEntity, now, createExpiry(now, Duration.ofHours(tokenProperties.getAccessExpiredTime())));
 
         // Refresh Token의 만교 기간: 2일
-        String refreshToken = refreshTokenProvider.generate(authUserEntity, now, createExpiry(now, Duration.ofDays(tokenProperties.getRefreshExpiredTime())));
+        String refreshToken = refreshTokenProvider.generate(AuthUserEntity, now, createExpiry(now, Duration.ofDays(tokenProperties.getRefreshExpiredTime())));
 
         // Refresh Token 저장 혹은 업데이트
-        refreshTokenProvider.saveOrUpdate(refreshToken, authUserEntity.getId());
+        refreshTokenProvider.saveOrUpdate(refreshToken, AuthUserEntity.getId());
 
         return new SessionTokensDTO(accessToken, refreshToken);
     }
