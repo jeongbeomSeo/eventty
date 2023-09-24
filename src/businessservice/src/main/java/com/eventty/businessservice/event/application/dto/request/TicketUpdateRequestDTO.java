@@ -9,8 +9,13 @@ import lombok.Setter;
 @Setter
 @Builder
 public class TicketUpdateRequestDTO {
+    private Long id;
+
     private String name;
 
     @PositiveOrZero
     private Long price;
+
+    @PositiveOrZero
+    private Long quantity; // 티켓 수량
 }

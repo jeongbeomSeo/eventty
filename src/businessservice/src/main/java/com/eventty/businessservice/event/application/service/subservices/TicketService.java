@@ -81,26 +81,26 @@ public class TicketService {
         return eventId;
     }
 
-    public Long updateTickets(Long eventId, EventUpdateRequestDTO eventUpdateRequestDTO) {
+    public Long updateTickets(List<TicketUpdateRequestDTO> ticketUpdateRequestDTOList) {
+        Long participantNum = 0L;
+        for (TicketUpdateRequestDTO ticketUpdateRequestDTO : ticketUpdateRequestDTOList) {
+            // 업데이트 전, 데이터 존재 확인
+            TicketEntity ticket = getTicketIfExists(ticketUpdateRequestDTO.getId());
 
-        //
+            ticket.update(ticketUpdateRequestDTO);
+            ticketRepository.updateTicket(ticket);
 
-        return eventId;
+            // 티켓 수량 수정 후 이벤트 인원 수 갱신
+            participantNum += ticket.getQuantity();
+        }
+        return participantNum;
     }
 
     public Long updateTicket(Long ticketId, TicketUpdateRequestDTO ticketUpdateRequestDTO) {
         // 업데이트 전, 데이터 존재 확인
         TicketEntity ticket = getTicketIfExists(ticketId);
 
-        // 티켓 이름 수정이 들어왔을 경우에만 업데이트
-        if(ticketUpdateRequestDTO.getName() != null) {
-            ticket.updateName(ticketUpdateRequestDTO.getName());
-        }
-
-        // 티켓 가격 수정이 들어왔을 경우에만 업데이트
-        if(ticketUpdateRequestDTO.getPrice() != null) {
-            ticket.updatePrice(ticketUpdateRequestDTO.getPrice());
-        }
+        ticket.update(ticketUpdateRequestDTO);
 
         ticketRepository.updateTicket(ticket);
         return ticketId;

@@ -31,6 +31,7 @@ EventBasicEntity {
         this.title = request.getTitle() == null ? this.title : request.getTitle();
         this.eventStartAt = request.getEventStartAt() == null ? this.eventStartAt : request.getEventStartAt();
         this.eventEndAt = request.getEventEndAt() == null ? this.eventEndAt : request.getEventEndAt();
+        this.participateNum = request.getParticipateNum() == null ? this.participateNum : request.getParticipateNum();
         this.location = request.getLocation() == null ? this.location : request.getLocation();
         this.category = request.getCategory() == null ? this.category : Category.valueOf(request.getCategory()).getId();
         this.isActive = request.getIsActive() == null ? this.isActive : request.getIsActive();

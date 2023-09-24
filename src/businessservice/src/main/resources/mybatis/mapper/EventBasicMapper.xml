@@ -91,6 +91,7 @@
             title = #{title},
             event_start_at = #{eventStartAt},
             event_end_at = #{eventEndAt},
+            participate_num = #{participateNum},
             location = #{location},
             category = #{category},
             is_active = #{isActive}

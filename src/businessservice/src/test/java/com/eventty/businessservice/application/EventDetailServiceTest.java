@@ -1,27 +1,16 @@
 package com.eventty.businessservice.application;
 
-import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
-import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.EventDetailFindByIdResponseDTO;
-import com.eventty.businessservice.event.application.dto.response.FullEventFindByIdResponseDTO;
 import com.eventty.businessservice.event.application.service.subservices.EventDetailService;
 import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
-import com.eventty.businessservice.event.domain.entity.EventBasicEntity;
-import com.eventty.businessservice.event.domain.entity.TicketEntity;
 import com.eventty.businessservice.event.domain.repository.EventDetailRepository;
-import com.eventty.businessservice.event.domain.repository.EventBasicRepository;
 import com.eventty.businessservice.event.domain.exception.EventNotFoundException;
-import com.eventty.businessservice.event.domain.repository.TicketRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.sql.Timestamp;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

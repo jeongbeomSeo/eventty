@@ -124,14 +124,15 @@ public class EventService {
         // 호스트가 주최한 이벤트인지 확인
         eventBasicService.checkHostId(hostId, eventId);
 
+        // 티켓 정보 : title, price, quantity, description 수정 가능
+        Long newParticipateNum = ticketService.updateTickets(eventUpdateRequestDTO.getTicketList());
+        eventUpdateRequestDTO.setParticipateNum(newParticipateNum); // 업데이트된 티켓 수량을 기준으로 참가 인원수 수정
+
         // 이벤트 기본 정보 : title, eventStartAt, eventEndAt, location, category, isActive 수정 가능
         eventBasicService.updateEvent(eventId, eventUpdateRequestDTO);
 
         // 이벤트 상세 정보 : content, applyStartAt, applyEndAt 수정 가능
         eventDetailService.updateEventDetail(eventId, eventUpdateRequestDTO);
-
-        // 티켓 정보 : title, price, quantity, description 수정 가능
-        ticketService.updateTickets(eventId, eventUpdateRequestDTO);
 
         return eventId;
     }
