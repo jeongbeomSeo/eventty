@@ -18,10 +18,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class BasicSecurityConfig {
 
-    private final String test = "test";
-
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
+//    private final String test = "test";
+//
+//    @Value("${spring.profiles.active}")
+//    private String activeProfile;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){return new BCryptPasswordEncoder(); }
@@ -32,11 +32,11 @@ public class BasicSecurityConfig {
                 // 1. 권한 설정
                 .authorizeHttpRequests(authorizationConfig -> {
                     // "test" 프로파일일 경우 H2 콘솔 접근을 허용합니다.
-                    if (test.equals(activeProfile)) {
+/*                    if (test.equals(activeProfile)) {
                         authorizationConfig
                                 .requestMatchers(PathRequest.toH2Console()) // H2 콘솔 접근 허용
                                 .permitAll();
-                    }
+                    }*/
                     authorizationConfig
                             .anyRequest()  // 모든 요청에 대해서
                             .permitAll();  // 허용합니다.

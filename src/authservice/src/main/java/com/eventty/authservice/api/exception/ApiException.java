@@ -1,5 +1,6 @@
 package com.eventty.authservice.api.exception;
 
+import com.eventty.authservice.global.response.ResponseDTO;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 
@@ -16,5 +17,4 @@ public class ApiException extends RuntimeException {
         this.message = "API 호출 실패 URI: " + uri + ", Method: " + httpMethod;
         this.HttpStatusCode = HttpStatusCode;
     }
-
 }

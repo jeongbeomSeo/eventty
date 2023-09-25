@@ -5,11 +5,11 @@ import lombok.*;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PWChangeRequestDTO {
-        @NotNull
-        private String password;
+public class OAuthLoginRequestDTO {
+    @NotNull
+    private String accessToken;
+    private String tokenType;
 }

@@ -6,13 +6,9 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,11 +16,11 @@ public class AccessTokenProvider {
 
     private final TokenProperties tokenProperties;
 
-    public String generateToken(AuthUserEntity authUserEntity, Date now, Date expiry) {
+    public String generateToken(AuthUserEntity AuthUserEntity, Date now, Date expiry) {
 
-        Claims claims = Jwts.claims().setSubject(authUserEntity.getEmail());
+        Claims claims = Jwts.claims().setSubject(AuthUserEntity.getEmail());
 
-        claims.put(TokenEnum.USERID.getName(), authUserEntity.getId());
+        claims.put(TokenEnum.USERID.getName(), AuthUserEntity.getId());
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -33,7 +29,7 @@ public class AccessTokenProvider {
                 .setIssuer(tokenProperties.getIssuer())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .setSubject(authUserEntity.getEmail())
+                .setSubject(AuthUserEntity.getEmail())
                 .signWith(SignatureAlgorithm.HS256, tokenProperties.getSecretKey())
                 .compact();
     }

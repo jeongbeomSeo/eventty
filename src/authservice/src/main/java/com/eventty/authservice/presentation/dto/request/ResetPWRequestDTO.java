@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PWChangeRequestDTO {
-        @NotNull
-        private String password;
+public class ResetPWRequestDTO {
+    @NotNull
+    String password;
 }
