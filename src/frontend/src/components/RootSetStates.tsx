@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {searchDrawerState} from "../states/searchDrawerState";
 import {Outlet, ScrollRestoration, useLocation, useNavigation} from "react-router-dom";
@@ -22,8 +22,8 @@ function RootSetStates() {
     const setSearchDrawer = useSetRecoilState(searchDrawerState);
     const setEventTicketDrawer = useSetRecoilState(eventTicketDrawerState);
     const setMenuDrawer = useSetRecoilState(menuDrawerState);
+    const [loadingOverlay, setLoadingOverlay] = useState(false);
     const mobile = useMediaQuery({query: `(max-width:${useMantineTheme().breakpoints.xs})`});
-    const {searchModal} = useModal();
 
     useEffect(() => {
         return () => {
@@ -51,18 +51,29 @@ function RootSetStates() {
         }
     });
 
+    // 일정 시간 뒤 로딩 화면 보여주기
+    useEffect(() => {
+        const loadingTimer = setTimeout(() => {
+            if (state === "loading" || loadingValue) {
+                setLoadingOverlay(true);
+            }else{
+                setLoadingOverlay(false);
+            }
+        }, 600);
+
+        return(() => clearTimeout(loadingTimer))
+    }, [state, loadingValue]);
+
     return (
         <>
             <ModalsProvider>
                 {/* Router Loader 로딩 오버레이 */}
-                {(state === "loading") &&
-                    <LoadingOverlay visible
-                                    loaderProps={{size: "md", color: "var(--primary)", variant: "dots"}}
-                                    overlayBlur={2}
-                                    style={{position: "fixed"}}
-                                    zIndex={1002}
-                    />
-                }
+                <LoadingOverlay visible={loadingOverlay}
+                                loaderProps={{size: "md", color: "var(--primary)", variant: "dots"}}
+                                overlayBlur={1}
+                                style={{position: "fixed"}}
+                                zIndex={1002}
+                />
                 <Notifications position={mobile ? "top-center" : "bottom-right"} zIndex={"1003"}/>
                 <ScrollRestoration/>
                 <Outlet/>

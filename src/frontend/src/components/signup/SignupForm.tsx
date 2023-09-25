@@ -1,10 +1,9 @@
 import {Button, Checkbox, Grid, Stack, TextInput} from "@mantine/core";
 import {useNavigate} from "react-router-dom";
-import {useRecoilState, useSetRecoilState} from "recoil";
-import {userState} from "../../states/userState";
+import {useRecoilState} from "recoil";
 import {Controller, useForm} from "react-hook-form";
 import customStyles from "../../styles/customStyle";
-import {ChangeEvent, useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import {ISignup} from "../../types/IUser";
 import "dayjs/locale/ko";
 import {postSignupEmailValid, postSignupHost, postSignupUser} from "../../service/user/fetchUser";
@@ -21,7 +20,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
     const [loadingStateValue, setLoadingStateValue] = useRecoilState(loadingState);
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
-    const nameRegEX = /^[가-힣]{2,}$/;
+    const nameRegEX = /^[가-힣A-Za-z]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
     const {
         register, handleSubmit, getValues, setValue, control, watch, setFocus, formState: {errors}
@@ -46,7 +45,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
         if (isHost) {
             postSignupHost(data)
                 .then(res => {
-                    if (res.success) {
+                    if (res === 201) {
                         MessageAlert("success", "회원 가입 완료", "로그인 해주세요");
                         navigate("/");
                     } else {
@@ -57,7 +56,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
         } else {
             postSignupUser(data)
                 .then(res => {
-                    if (res.success) {
+                    if (res === 201) {
                         MessageAlert("success", "회원 가입 완료", "로그인 해주세요");
                         navigate("/");
                     } else {
@@ -76,7 +75,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
             } else {
                 postSignupEmailValid(emailInputValue)
                     .then(res => {
-                        if (res.success) {
+                        if (res === 200) {
                             messageModal("사용 가능합니다");
                             setIsEmailValid(true);
                         } else {
@@ -176,6 +175,7 @@ function SignupForm({isHost}: { isHost: boolean }) {
                                 <PhoneNumberInput {...rest}
                                                   inputRef={ref}
                                                   asterisk={true}
+                                                  label={true}
                                                   error={errors.phone?.message}/>
                             )}/>
 

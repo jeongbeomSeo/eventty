@@ -1,11 +1,10 @@
 import React, {useEffect} from "react";
-import {useRecoilValue, useSetRecoilState} from "recoil";
+import {useSetRecoilState} from "recoil";
 import {cardTitleState} from "../../states/cardTitleState";
-import {loadingState} from "../../states/loadingState";
 import {Button, Stack, TextInput} from "@mantine/core";
 import {Controller, useForm} from "react-hook-form";
 import PhoneNumberInput from "../../components/common/PhoneNumberInput";
-import {IFindEmail, IFindPassword} from "../../types/IUser";
+import {IFindPassword} from "../../types/IUser";
 import {useFetch} from "../../util/hook/useFetch";
 import customStyle from "../../styles/customStyle";
 
@@ -13,14 +12,13 @@ function FindPassword() {
     const {classes} = customStyle();
     const setCardTitleState = useSetRecoilState(cardTitleState);
     const {findPasswordFetch} = useFetch();
-    const loading = useRecoilValue(loadingState);
 
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
     const nameRegEX = /^[가-힣]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
     const {register, handleSubmit, control, formState: {errors}} = useForm<IFindPassword>();
 
-    const onSubmit = (data: IFindEmail) => {
+    const onSubmit = (data: IFindPassword) => {
         findPasswordFetch(data);
     }
 
@@ -63,10 +61,8 @@ function FindPassword() {
                 style={{height: "2.6rem"}}
                 className={classes["btn-primary"]}
                 onClick={handleSubmit(onSubmit)}
-                loading={loading}
-                loaderPosition={"center"}
             >
-                이메일 찾기
+                비밀번호 찾기
             </Button>
         </Stack>
     );

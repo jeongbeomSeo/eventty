@@ -1,7 +1,6 @@
 import React, {ChangeEvent, useEffect, useRef, useState} from "react";
 import {Avatar, Button, Center, FileButton, Flex, Group, Paper, Stack, Text, TextInput, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
-import {DatePickerInput} from "@mantine/dates";
 import BirthdayPicker from "../../common/BirthdayPicker";
 import {isRouteErrorResponse, useLoaderData, useRouteError} from "react-router-dom";
 import {IUpdateUser, IUser} from "../../../types/IUser";
@@ -10,7 +9,6 @@ import {useModal} from "../../../util/hook/useModal";
 import {Controller, useForm} from "react-hook-form";
 import {MessageAlert} from "../../../util/MessageAlert";
 import PhoneNumberInput from "../../common/PhoneNumberInput";
-import {Base64toFile} from "../../../util/ConvertFile";
 
 function PaperItem({children}: { children: React.ReactNode }) {
     return (
@@ -27,14 +25,13 @@ function MobileProfile() {
     const DATA = useLoaderData() as IUser;
     const routeError = useRouteError();
     const curEmail = sessionStorage.getItem("EMAIL")!;
-    const nameRegEX = /^[가-힣]{2,}$/;
+    const nameRegEX = /^[가-힣A-Za-z]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
-    const [imgDel, setImgDel] = useState(false);
     const [imgPreview, setImgPreview] = useState(DATA.imagePath && `${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
     const resetRef = useRef<() => void>(null);
 
     const {deleteAccountFetch, changeProfileFetch} = useFetch();
-    const {changePWModal} = useModal();
+    const {changePWModal, accountDeleteModal} = useModal();
 
     const {register, handleSubmit, watch, getValues, setValue, control, formState: {errors}}
         = useForm<IUpdateUser>({
@@ -50,18 +47,21 @@ function MobileProfile() {
     });
 
     const handleImageDelete = () => {
-        if (!imgDel) {
-            setImgDel(true);
-            setImgPreview("");
-            setValue("image", null);
-            setValue("isUpdate", true);
-            resetRef.current?.();
-        }
+        setImgPreview("");
+        setValue("image", null);
+        setValue("isUpdate", true);
+        resetRef.current?.();
     }
 
     const onSubmit = (data: IUpdateUser) => {
         data.birth?.setDate(data.birth?.getDate() + 1);
-        data.image === null && delete data.image;
+
+        if (data.image === null) {
+            delete data.image;
+            if (!data.isUpdate) {
+                delete data.imageId;
+            }
+        }
 
         const formData = new FormData();
         for (const e in data) {
@@ -85,7 +85,6 @@ function MobileProfile() {
         if (getValues("image") !== null) {
             setImgPreview(URL.createObjectURL(getValues("image")!));
             setValue("isUpdate", true);
-            imgDel && setImgDel(false);
         }
     }, [watch("image")]);
 
@@ -171,7 +170,7 @@ function MobileProfile() {
                         <Title order={5}>회원 탈퇴</Title>
                         <Button color={"red"}
                                 style={{width: "8rem"}}
-                                onClick={() => deleteAccountFetch()}>
+                                onClick={() => accountDeleteModal()}>
                             회원탈퇴
                         </Button>
                     </Group>

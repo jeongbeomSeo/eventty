@@ -1,24 +1,38 @@
 import {Button} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
-import {GoogleOAuthProvider, useGoogleLogin} from "@react-oauth/google";
-import {IGoogleLogin} from "../../types/IUser";
-import {postGoogleLogin} from "../../service/user/fetchUser";
+import {useGoogleLogin} from "@react-oauth/google";
+import {useFetch} from "../../util/hook/useFetch";
+import {useRecoilState} from "recoil";
+import {loadingState} from "../../states/loadingState";
+import {ISocialLogin} from "../../types/IUser";
 
 function GoogleBtn() {
     const {classes} = customStyle();
+    const {googleLoginFetch} = useFetch();
+    const [loading, setLoading] = useRecoilState(loadingState);
 
     const login = useGoogleLogin({
-        onSuccess: tokenResponse => {
-            console.log(tokenResponse);
-            const accessToken:IGoogleLogin = {OAuth_AccessToken:tokenResponse.access_token!};
-            postGoogleLogin(accessToken);
+        onSuccess: codeResponse => {
+            const code:ISocialLogin = {
+                code: codeResponse.code,
+            }
+            googleLoginFetch(code);
         },
+        flow: "auth-code",
     });
 
     return (
-        <Button style={{height: "2.6rem"}} className={classes["btn-gray-outline"]} onClick={() => login()}>
-            <img src={`${process.env.PUBLIC_URL}/images/google_normal.svg`} style={{paddingRight: "0.5rem"}}/>
-            구글 로그인
+        <Button
+                style={{
+                    height: "50px",
+                    width: "50px",
+                    backgroundImage: `url(${process.env.PUBLIC_URL}/images/google_normal.svg)`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundSize: "26px",
+                }}
+                className={classes["btn-gray-outline"]}
+                onClick={() => login()}>
         </Button>
     );
 }

@@ -1,12 +1,12 @@
 import React from "react";
 import {Button, Group, Stack, Text, TextInput, Title} from "@mantine/core";
-import customStyle from "../../../styles/customStyle";
+import customStyle from "../../styles/customStyle";
 import {modals} from "@mantine/modals";
 import {useForm} from "react-hook-form";
-import {IChangePW} from "../../../types/IUser";
-import {useFetch} from "../../../util/hook/useFetch";
+import {IChangePW} from "../../types/IUser";
+import {useFetch} from "../../util/hook/useFetch";
 
-function WebChangePwModal() {
+function ChangePWModal() {
     const {classes} = customStyle();
     const {changePasswordFetch} = useFetch();
 
@@ -69,4 +69,4 @@ function WebChangePwModal() {
     );
 }
 
-export default WebChangePwModal;
+export default ChangePWModal;

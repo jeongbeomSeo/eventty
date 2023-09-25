@@ -16,7 +16,7 @@ const toolbarOptions = [
     [{ list: "ordered" }, { list: "bullet" }],
     [{ color: [] }, { background: [] }],
     [{ align: [] }],
-    ["link", "image", "video"],
+    ["link", "video"],
 ];
 
 const formats = [
@@ -57,7 +57,7 @@ function QuillEditor({value, onChange, onBlur, inputRef}: IQuill) {
                 theme={"snow"}
                 modules={modules}
                 formats={formats}
-                style={{height: "500px", flex:1}}
+                style={{height: "500px", flex:1, fontSize: "20px"}}
             />
         </>
     );

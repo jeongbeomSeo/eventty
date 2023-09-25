@@ -165,6 +165,13 @@ const customStyle = createStyles((theme) => ({
             },
         },
     },
+    "btn-naver":{
+        backgroundColor: "#03c75a !important",
+        color: "#ffffff !important",
+        ":hover": {
+            filter: "brightness(0.97)",
+        },
+    },
     "signup-footer": {
         fontSize: "0.8rem",
         color: "#666666",

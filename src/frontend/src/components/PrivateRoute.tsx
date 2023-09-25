@@ -1,11 +1,11 @@
 import {Navigate, Outlet, useLocation} from 'react-router-dom';
 import {CheckLogin} from "../util/CheckLogin";
+import {CheckHost} from "../util/CheckHost";
 
 function PrivateRoute() {
     const {pathname} = useLocation();
-    const isLoggedIn = CheckLogin();
 
-    return isLoggedIn ? <Outlet /> : <Navigate to={"/login"} state={pathname}/>
+    return CheckLogin() ? <Outlet /> : <Navigate to={"/login"} state={pathname}/>
 }
 
 export default PrivateRoute;

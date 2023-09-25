@@ -1,17 +1,18 @@
-import {Stack, Button, TextInput, Flex, Divider, Text, Checkbox} from "@mantine/core";
+import {Stack, Button, TextInput, Flex, Divider, Text, Group} from "@mantine/core";
 import CardForm from "../components/signup/CardForm";
 import {useForm} from "react-hook-form";
 import {Link, useNavigate} from "react-router-dom";
-import {useSetRecoilState} from 'recoil';
+import {useRecoilState, useSetRecoilState} from 'recoil';
 import {cardTitleState} from '../states/cardTitleState';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useEffect} from 'react';
 import {userState} from '../states/userState';
 import {loginState} from '../states/loginState';
 import customStyle from "../styles/customStyle";
 import {ILogin} from "../types/IUser";
 import {postLogin} from "../service/user/fetchUser";
-import GoogleLoginButton from "../components/signup/GoogleLoginButton";
 import GoogleBtn from "../components/signup/GoogleBtn";
+import {loadingState} from "../states/loadingState";
+import NaverBtn from "../components/signup/NaverBtn";
 
 enum ERROR_MESSAGE {
     email = "이메일을 입력해주세요",
@@ -21,8 +22,8 @@ enum ERROR_MESSAGE {
 
 function Login() {
     const setIsLoggedIn = useSetRecoilState(loginState);
+    const [loading, setLoading] = useRecoilState(loadingState);
     const setUsersStateValue = useSetRecoilState(userState);
-    const navigate = useNavigate();
 
     const {register, handleSubmit, setFocus, setError, formState: {errors}} = useForm<ILogin>();
     const onSubmit = (data: ILogin) => {
@@ -33,9 +34,10 @@ function Login() {
             return;
         }
 
+        setLoading(true);
         postLogin(data)
             .then(res => {
-                if (res.success) {
+                if (res.isSuccess) {
                     const resEmail = res.successResponseDTO.data.email;
                     const resRole = res.successResponseDTO.data.role
                     const resUserId = res.successResponseDTO.data.userId;
@@ -56,8 +58,8 @@ function Login() {
                 } else {
                     setError("root", {message: ERROR_MESSAGE["fail"]});
                 }
-            })
-            .catch(res => console.error(res));
+            }).catch(res => console.error(res))
+            .finally(() => setLoading(false));
     };
 
     const {classes} = customStyle();
@@ -105,8 +107,10 @@ function Login() {
                     </Flex>
                     <Divider my={"xs"} labelPosition={"center"} label={"SNS 로그인"}
                              className={classes["signup-divider"]}/>
-                    <GoogleBtn/>
-                    {/*<GoogleLoginButton/>*/}
+                    <Group noWrap position={"center"}>
+                        <GoogleBtn/>
+                        <NaverBtn/>
+                    </Group>
                 </Stack>
             </form>
         </CardForm>

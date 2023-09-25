@@ -10,9 +10,11 @@ interface IPhoneNumber {
     asterisk?: boolean;
     error?: string;
     label?: boolean;
+    description?: boolean;
+    width?: string;
 }
 
-function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk, label}: IPhoneNumber) {
+function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk, label, description, width}: IPhoneNumber) {
     const {classes} = customStyle();
 
     const [phoneValue, setPhoneValue] = useState(value || "");
@@ -25,11 +27,10 @@ function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk, l
         setPhoneValue(formattedValue);
     }
 
-    console.log(value);
-
     return (
         <TextInput placeholder={"휴대폰 번호"}
                    label={label && "휴대폰 번호"}
+                   description={description && "휴대폰 번호"}
                    withAsterisk={asterisk}
                    maxLength={13}
                    value={phoneValue}
@@ -38,6 +39,7 @@ function PhoneNumberInput({value, onChange, onBlur, inputRef, error, asterisk, l
                    ref={inputRef}
                    onInput={handlePhoneInputChange}
                    error={error}
+                   style={{width: width}}
                    className={`${classes["input"]} ${error && "error"}`}/>
     );
 }

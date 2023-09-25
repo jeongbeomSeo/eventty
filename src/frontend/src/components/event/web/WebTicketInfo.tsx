@@ -29,7 +29,8 @@ function WebTicketInfo({tickets}:ITickets) {
                    id={item.id}
                    name={item.name}
                    price={item.price}
-                   quantity={item.quantity}/>
+                   quantity={item.quantity}
+                   applied={item.appliedTicketCount}/>
     ));
 
     return (

@@ -21,7 +21,12 @@ function MobileCarousel() {
     const autoPlay = useRef(Autoplay({delay: CAROUSEL_DELAY}));
 
     const items = CAROUSEL_ITEMS.map((item, idx) => (
-        <Carousel.Slide key={idx}>
+        <Carousel.Slide key={idx}
+                        style={{
+                            height: CAROUSEL_HEIGHT,
+                            minHeight: CAROUSEL_MIN_HEIGHT,
+                            maxHeight: CAROUSEL_MAX_HEIGHT,
+                        }}>
             <UnstyledButton style={{
                 backgroundColor: item.color,
                 backgroundImage: `url("${process.env["REACT_APP_NCLOUD_ENDPOINT"]}/${process.env["REACT_APP_NCLOUD_BUCKET_NAME"]}/main/mobile/${item.bgImage}")`,
@@ -42,13 +47,13 @@ function MobileCarousel() {
                   height={CAROUSEL_HEIGHT}
                   mih={CAROUSEL_MIN_HEIGHT}
                   mah={CAROUSEL_MAX_HEIGHT}
+                  draggable
+                  withControls
+                  loop
                   slidesToScroll={1}
                   slideGap={"1rem"}
                   controlSize={30}
                   align={"center"}
-                  draggable
-                  withControls
-                  loop
                   plugins={[autoPlay.current]}
                   onMouseEnter={autoPlay.current.stop}
                   onMouseLeave={autoPlay.current.reset}
