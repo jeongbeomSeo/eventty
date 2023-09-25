@@ -59,7 +59,7 @@ services:
         aliases:
           - "auth server"
   applyservice:
-    image: hyungyunk/apply:1.6
+    image: hyungyunk/apply:1.7
     container_name: Apply_Server
     build:
       context: ./applyservice

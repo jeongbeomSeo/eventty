@@ -310,7 +310,7 @@ public class EventController {
     @GetMapping("/api/events")
     @Operation(summary = "Apply 서버로부터의 요청 처리 - 신청한 티켓 ID 리스트를 파라미터로 보내면, 해당 티켓과 이벤트의 정보를 조회하기 위한 용도.")
     @ApiSuccessData(value = EventInfoApiResponseDTO.class, array = true)
-    @Permission(Roles = {UserRole.USER})
+    @Permission(Roles = {UserRole.USER, UserRole.HOST})
     public ResponseEntity<SuccessResponseDTO<List<EventInfoApiResponseDTO>>> findEventInfoApi(
             @RequestParam List<Long> ticketIds
     ) {
