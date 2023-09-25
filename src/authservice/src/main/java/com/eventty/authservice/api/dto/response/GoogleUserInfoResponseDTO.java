@@ -1,4 +1,4 @@
-package com.eventty.authservice.presentation.dto.response;
+package com.eventty.authservice.api.dto.response;
 
 import lombok.*;
 

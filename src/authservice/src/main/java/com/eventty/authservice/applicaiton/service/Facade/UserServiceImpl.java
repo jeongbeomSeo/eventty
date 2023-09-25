@@ -93,9 +93,13 @@ public class UserServiceImpl implements UserService {
         // Factory 객체에서 필요한 서비스 가져오기
         OAuthService oAuthService = oAuthServiceFactory.getOAuthService(socialName);
 
+        log.debug("인증 서버로부터 AccessToken 받아오기");
+        // AccessToken 받아오기
+        OAuthAccessTokenDTO oAuthAccessTokenDTO = oAuthService.getToken(oAuthLoginRequestDTO);
+
         log.debug("OAuthService -> 유저 정보 받아오기");
         // 유저 정보 받아오기
-        OAuthUserInfoDTO oAuthUserInfoDTO = oAuthService.getUserInfo(oAuthLoginRequestDTO);
+        OAuthUserInfoDTO oAuthUserInfoDTO = oAuthService.getUserInfo(oAuthAccessTokenDTO);
 
         log.debug("OauthService -> 기존 회원인지 확인");
         // 기존 유효한 유저 회원인지 검증하기 (소셜 로그인 DB 확인)

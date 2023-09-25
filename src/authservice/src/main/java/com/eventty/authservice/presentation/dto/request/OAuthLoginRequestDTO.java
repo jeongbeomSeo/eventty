@@ -9,7 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class OAuthLoginRequestDTO {
-    @NotNull
+    /*@NotNull
     private String accessToken;
-    private String tokenType;
+    private String tokenType;*/
+    private String code;
 }
