@@ -1,9 +1,12 @@
 package com.eventty.applyservice.application;
 
 import com.eventty.applyservice.application.dto.CreateApplyDTO;
+import com.eventty.applyservice.application.dto.FindApplicantsListDTO;
 import com.eventty.applyservice.application.dto.FindByUserIdDTO;
 import com.eventty.applyservice.application.dto.request.CreateApplyRequestDTO;
+import com.eventty.applyservice.application.dto.request.FindApplicantsListRequestDTO;
 import com.eventty.applyservice.application.dto.response.FindAppicaionListResponseDTO;
+import com.eventty.applyservice.application.dto.response.FindApplicantsListResposneDTO;
 import com.eventty.applyservice.application.dto.response.FindEventInfoResponseDTO;
 import com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO;
 import com.eventty.applyservice.domain.ApplyReposiroty;
@@ -40,6 +43,7 @@ public class ApplyServiceImpl implements ApplyService{
                 .ticketId(createApplyRequestDTO.getTicketId())
                 .applicantNum(createApplyRequestDTO.getApplicantNum())
                 .phone(createApplyRequestDTO.getPhone())
+                .name(createApplyRequestDTO.getName())
                 .build());
     }
 
@@ -106,7 +110,7 @@ public class ApplyServiceImpl implements ApplyService{
                                 .ticketName(eventResponse.getTicketName())
                                 .title(eventResponse.getTitle())
                                 .image(eventResponse.getImage())
-                                .ticketPrice(eventResponse.getTicketPrice())
+                                .ticketPrice(eventResponse.getTicketPrice() * apply.getApplicantNum())
                                 .status(status)
                                 .date(date)
                                 .applyId(apply.getApplyId())
@@ -119,6 +123,65 @@ public class ApplyServiceImpl implements ApplyService{
     @Override
     public List<FindUsingTicketResponseDTO> getUsingTicketList(Long eventId) {
         return applyReposiroty.findByEventIdGroupByTicket(eventId);
+    }
+
+    @Override
+    public List<FindApplicantsListResposneDTO> findApplicantsList(FindApplicantsListRequestDTO findApplicantsListRequestDTO) {
+        Long state = findApplicantsListRequestDTO.getState();
+
+        List<FindApplicantsListDTO> applies = applyReposiroty.findByEventId(findApplicantsListRequestDTO);
+
+        if(applies.size() == 0 || applies == null) return null;
+
+        // Event Server로 보내기위한 TicketIds 중복 제거(Parameter 생성)
+        Set<String> ticketIds = new HashSet<>();
+        for(FindApplicantsListDTO apply : applies){
+            ticketIds.add(apply.getTicketId().toString());
+        }
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.put("ticketIds", new ArrayList<>(ticketIds));
+
+        // api request----------------------------------------------------
+        apiService.uriPathSetting(serverUri.getEventServer(), serverUri.getGET_EVENT_TICKET_INFO());
+        apiService.paramSetting(params);
+        List<FindEventInfoResponseDTO> eventInfos = apiService.apiRequest();
+
+        // ----------------------------------------------------------------
+
+        Map<Long, FindEventInfoResponseDTO> eventInfoMap = new HashMap<>();
+        for(FindEventInfoResponseDTO eventResponse : eventInfos){
+            eventInfoMap.put(eventResponse.getTicketId(), eventResponse);
+        }
+
+        List<FindApplicantsListResposneDTO> applicantsList = new ArrayList<>();
+        for(FindApplicantsListDTO applicant : applies){
+
+            FindEventInfoResponseDTO eventInfo = eventInfoMap.get(applicant.getTicketId());
+
+            Long price = eventInfo.getTicketPrice() * applicant.getApplicantNum();
+            Long priceMin = findApplicantsListRequestDTO.getPriceMin();
+            Long priceMax = findApplicantsListRequestDTO.getPriceMax();
+
+            if(priceMin != null && priceMax != null){
+                if(price < priceMin || price > priceMax) continue;
+            }else if(priceMin != null){
+                if(price < priceMin) continue;
+            }else if(priceMax != null){
+                if(price > priceMax) continue;
+            }
+
+            applicantsList.add(FindApplicantsListResposneDTO
+                    .builder()
+                    .applyId(applicant.getApplyId())
+                    .date(applicant.getDate())
+                    .name(applicant.getName())
+                    .phone(applicant.getPhone())
+                    .price(eventInfo.getTicketPrice() * applicant.getApplicantNum())
+                    .state(applicant.getState())
+                    .build());
+        }
+
+        return applicantsList;
     }
     //------------------------------------------ validation -----------------------------------------------//
 
