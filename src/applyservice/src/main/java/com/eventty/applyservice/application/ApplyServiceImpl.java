@@ -16,6 +16,7 @@ import com.eventty.applyservice.domain.exception.ExceedApplicantsException;
 import com.eventty.applyservice.domain.exception.NonExistentIdException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -31,12 +32,13 @@ public class ApplyServiceImpl implements ApplyService{
     private final ServerUri serverUri;
     private final ApiService apiService;
 
+    @Async
     @Override
-    public Long createApply(Long userId, CreateApplyRequestDTO createApplyRequestDTO) {
+    public void createApply(Long userId, CreateApplyRequestDTO createApplyRequestDTO) {
         // 신청전 유효성 검사
         validateBeforeApply(createApplyRequestDTO);
 
-        return applyReposiroty.insertApply(CreateApplyDTO
+        applyReposiroty.insertApply(CreateApplyDTO
                 .builder()
                 .userId(userId)
                 .eventId(createApplyRequestDTO.getEventId())
@@ -47,13 +49,13 @@ public class ApplyServiceImpl implements ApplyService{
                 .build());
     }
 
+    @Async
     @Override
-    public Long cancelApply(Long applyId) {
+    public void cancelApply(Long applyId) {
 
         // 신청 취소전 유효성 검증
         validateBeforeCancel(applyId);
-
-        return applyReposiroty.deleteApply(applyId);
+        applyReposiroty.deleteApply(applyId);
     }
 
     @Override
@@ -114,6 +116,7 @@ public class ApplyServiceImpl implements ApplyService{
                                 .status(status)
                                 .date(date)
                                 .applyId(apply.getApplyId())
+                                .applicantNum(apply.getApplicantNum())
                                 .build());
         }
         
@@ -127,8 +130,6 @@ public class ApplyServiceImpl implements ApplyService{
 
     @Override
     public List<FindApplicantsListResposneDTO> findApplicantsList(FindApplicantsListRequestDTO findApplicantsListRequestDTO) {
-        Long state = findApplicantsListRequestDTO.getState();
-
         List<FindApplicantsListDTO> applies = applyReposiroty.findByEventId(findApplicantsListRequestDTO);
 
         if(applies.size() == 0 || applies == null) return null;

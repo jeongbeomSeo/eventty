@@ -26,4 +26,7 @@ public interface ApplyReposiroty {
     
     // 신청 참가자들 내역 조회
     public List<FindApplicantsListDTO> findByEventId(FindApplicantsListRequestDTO request);
+
+    // 동시성 Test
+    public Long countTestCode();
 }

@@ -51,13 +51,13 @@
             END             AS recentDate
           FROM apply
          WHERE user_id = #{userId}
-         ORDER BY recentDate
+         ORDER BY recentDate DESC
     </select>
 
     <select id="findByEventIdGroupByTicket" parameterType="Long" resultType="com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO">
         SELECT
             ticket_id AS ticketId,
-            SUM(applicant_num) as usingCount
+            SUM(applicant_num) as appliedTicketCount
           FROM apply
          WHERE 1=1
            AND event_id = #{eventId}
@@ -128,5 +128,8 @@
                 ORDER BY ad.date
             </when>
         </choose>
+    </select>
+    <select id="countTestCode" resultType="Long">
+        select count(*) from apply where user_id = 1000
     </select>
 </mapper>

@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface ApplyService {
 
-    public Long createApply(Long userId, CreateApplyRequestDTO applyEventRequestDTO);
+    public void createApply(Long userId, CreateApplyRequestDTO applyEventRequestDTO);
 
-    public Long cancelApply(Long applyId);
+    public void cancelApply(Long applyId);
 
     public List<FindAppicaionListResponseDTO> findApplicationList(Long userId);
 

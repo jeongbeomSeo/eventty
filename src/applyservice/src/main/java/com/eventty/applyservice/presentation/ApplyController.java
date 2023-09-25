@@ -65,7 +65,7 @@ public class ApplyController {
     }
 
     /**
-     * 참여자 기준 - 행사 참여 내역 조회
+     * 참여자 - 행사 신청 내역 조회
      * @return
      */
     @GetMapping("/applies")
@@ -76,6 +76,11 @@ public class ApplyController {
         return ResponseEntity.ok((response == null || response.size() == 0) ? null : SuccessResponseDTO.of(response));
     }
 
+    /**
+     * (API)신청 현황(Count) 조회
+     * @param eventId
+     * @return
+     */
     @GetMapping("/api/applies/count")
     public ResponseEntity<SuccessResponseDTO> getTicketCount(@RequestParam Long eventId) {
         List<FindUsingTicketResponseDTO> responses = applyService.getUsingTicketList(eventId);
@@ -88,7 +93,9 @@ public class ApplyController {
     }
 
     /**
-     * 
+     * 주최자 - 행사 별 참여자 목록 조회
+     * @param findApplicantsListRequestDTO
+     * @return
      */
     @GetMapping("/applies/host")
     public ResponseEntity<SuccessResponseDTO> getApplicantsList(FindApplicantsListRequestDTO findApplicantsListRequestDTO){

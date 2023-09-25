@@ -14,4 +14,5 @@ public class FindAppicaionListResponseDTO {
     private LocalDateTime date;         // 신청 일자 또는 취소 일자 - ApplyTable
     private String status;              // 신청상태 - 예약 완료, 예약 취소, 행사 종료
     private Long applyId;               // apply 고유 ID
+    private Long applicantNum;          // 함께 신청했던 참여자 수
 }
