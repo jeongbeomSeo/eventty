@@ -69,18 +69,23 @@ public class FullEventFindByIdResponseDTO {
 
     // Swagger 을 위하여 기본 생성자로 기본값 설정
     public FullEventFindByIdResponseDTO() {
-        this.id = 1L;
-        this.title = "String";
-        this.image = "String";
+this.id = 1L;
+        this.hostId = 1L;
+        this.hostName = "Test Host 1";
+        this.hostPhone = "010-1234-5678";
+        this.title = "Test Event 1";
         this.eventStartAt = LocalDateTime.now();
         this.eventEndAt = LocalDateTime.now();
-        this.participateNum = 1L;
-        this.location = "String";
+        this.participateNum = 50L;
+        this.location = "Location 1";
+        this.category = "sports";
         this.isActive = true;
-        this.content = "String";
+        this.content = "Test Content 1";
         this.applyStartAt = LocalDateTime.now();
         this.applyEndAt = LocalDateTime.now();
-        this.views = 1L;
+        this.views = 100L;
         this.tickets = new ArrayList<>();
+        this.image = "https://eventty-storage.s3.ap-northeast-2.amazonaws.com/2021/08/15/1629025200_1.jpg";
+        this.originFileName = "1629025200_1.jpg";
     }
 }

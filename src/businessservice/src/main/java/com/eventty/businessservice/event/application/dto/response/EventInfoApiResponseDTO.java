@@ -35,4 +35,15 @@ public class EventInfoApiResponseDTO {
                 .eventId(eventBasic.getId())
                 .build();
     }
+
+    // Swagger 을 위하여 기본 생성자로 기본값 설정
+    public EventInfoApiResponseDTO() {
+        this.image = "https://eventty-storage.s3.ap-northeast-2.amazonaws.com/2021/08/15/1629025200_1.jpg";
+        this.title = "Test Event 1";
+        this.ticketId = 1L;
+        this.ticketName = "VVIP";
+        this.ticketPrice = 100000L;
+        this.eventEndAt = LocalDateTime.now();
+        this.eventId = 1L;
+    }
 }

@@ -7,7 +7,6 @@ import com.eventty.businessservice.event.application.dto.request.EventUpdateRequ
 import com.eventty.businessservice.event.application.dto.request.TicketCreateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.EventBasicWithoutHostInfoResponseDTO;
 import com.eventty.businessservice.event.application.dto.response.EventBasicWithHostInfoResponseDTO;
-import com.eventty.businessservice.event.domain.entity.EventDetailEntity;
 import com.eventty.businessservice.event.domain.exception.HostInfoNotFoundException;
 import com.eventty.businessservice.event.domain.Enum.Category;
 import com.eventty.businessservice.event.domain.entity.EventBasicEntity;

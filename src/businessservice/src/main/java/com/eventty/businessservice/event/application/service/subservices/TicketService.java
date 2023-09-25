@@ -45,6 +45,7 @@ public class TicketService {
                     .toList();
         }
         List<QueryAppliesCountResponseDTO> appliesInfo = Objects.requireNonNull(appliesInfoResponse.getBody()).getSuccessResponseDTO().getData();
+        log.info("appliesInfo : {}", appliesInfo);
 
         return ticketList.stream()
                 .map(ticket -> TicketResponseDTO.from(
