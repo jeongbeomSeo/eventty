@@ -1,18 +1,25 @@
 import {
     deleteAccount,
-    postChangePassword, postFindEmail, postFindPassword,
-    postLogout, postProfile
+    postChangePassword, postFindEmail, postFindPassword, postGoogleLogin,
+    postLogout, postNaverLogin, postProfile
 } from "../../service/user/fetchUser";
 import {MessageAlert} from "../MessageAlert";
 import {useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState} from "recoil";
 import {loginState} from "../../states/loginState";
 import {userState} from "../../states/userState";
 import {useNavigate} from "react-router-dom";
-import {deleteEvent, postEvent} from "../../service/event/fetchEvent";
-import {IChangePW, IFindEmail, IFindPassword} from "../../types/IUser";
+import {
+    deleteApplyCancelEvent,
+    deleteEvent,
+    postApplyEvent,
+    postEvent,
+    postUpdateEvent
+} from "../../service/event/fetchEvent";
+import {IChangePW, IFindEmail, IFindPassword, ISocialLogin} from "../../types/IUser";
 import {modals} from "@mantine/modals";
 import {menuDrawerState} from "../../states/menuDrawerState";
 import {loadingState} from "../../states/loadingState";
+import {IEventBooking, IEventDetail, IEventUpdate} from "../../types/IEvent";
 
 export function useFetch() {
     const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
@@ -28,9 +35,8 @@ export function useFetch() {
 
         postFindEmail(data)
             .then(res => {
-                if (res.success) {
-                    console.log(res);
-                    navigate("/find/result", {state: res.successResponseDTO.data});
+                if (res.isSuccess) {
+                    navigate("/find/result/email", {state: res.successResponseDTO.data});
                 } else {
                     MessageAlert("error", "해당 계정을 찾을 수 없습니다", "다시 시도해주세요");
                 }
@@ -43,12 +49,70 @@ export function useFetch() {
 
         postFindPassword(data)
             .then(res => {
-                if (res.success) {
-                    navigate("/find/result", {state: res.success});
+                if (res.isSuccess) {
+                    navigate("/find/result/password");
                 } else {
                     MessageAlert("error", "해당 계정을 찾을 수 없습니다", "다시 시도해주세요");
                 }
             }).finally(() => setLoading(prev => !prev));
+    }
+
+    const googleLoginFetch = (data: ISocialLogin) => {
+        setLoading(true);
+
+        postGoogleLogin(data)
+            .then(res => {
+                if (res.isSuccess){
+                    const resEmail = res.successResponseDTO.data.email;
+                    const resRole = res.successResponseDTO.data.role
+                    const resUserId = res.successResponseDTO.data.userId;
+                    const resImgPath = res.successResponseDTO.data.imagePath;
+
+                    setIsLoggedIn((prev) => !prev);
+                    setUserStateValue({
+                        email: resEmail,
+                        isHost: resRole === "ROLE_HOST",
+                        userId: resUserId,
+                        imagePath: resImgPath !== null && resImgPath,
+                    });
+
+                    sessionStorage.setItem("EMAIL", resEmail);
+                    sessionStorage.setItem("AUTHORITY", resRole);
+                    sessionStorage.setItem("USER_ID", resUserId);
+                    sessionStorage.setItem("IMG_PATH", resImgPath);
+                }
+            }).catch(() => MessageAlert("error", "구글 로그인에 실패했습니다", null))
+            .finally(() => setLoading(false));
+    }
+
+    const naverLoginFetch = (data: ISocialLogin) => {
+        setLoading(true);
+
+        postNaverLogin(data)
+            .then(res => {
+                if (res.isSuccess){
+                    const resEmail = res.successResponseDTO.data.email;
+                    const resRole = res.successResponseDTO.data.role
+                    const resUserId = res.successResponseDTO.data.userId;
+                    const resImgPath = res.successResponseDTO.data.imagePath;
+
+                    setIsLoggedIn((prev) => !prev);
+                    setUserStateValue({
+                        email: resEmail,
+                        isHost: resRole === "ROLE_HOST",
+                        userId: resUserId,
+                        imagePath: resImgPath !== null && resImgPath,
+                    });
+
+                    sessionStorage.setItem("EMAIL", resEmail);
+                    sessionStorage.setItem("AUTHORITY", resRole);
+                    sessionStorage.setItem("USER_ID", resUserId);
+                    sessionStorage.setItem("IMG_PATH", resImgPath);
+
+                    window.close();
+                }
+            }).catch(() => MessageAlert("error", "네이버 로그인에 실패했습니다", null))
+            .finally(() => setLoading(false));
     }
 
     // 로그아웃
@@ -121,7 +185,7 @@ export function useFetch() {
                     } else {
                         MessageAlert("error", "회원 탈퇴 실패", null);
                     }
-                });
+                }).finally(() => modals.closeAll());
         }
     }
 
@@ -131,6 +195,19 @@ export function useFetch() {
             .then(res => {
                 if (res.isSuccess) {
                     MessageAlert("success", "작성 성공", null);
+                    navigate("/");
+                } else {
+                    MessageAlert("error", "작성 실패", null);
+                }
+            }).finally(() => setLoading(false));
+    }
+
+    // 행사 수정
+    const updateEventFetch = (data: IEventUpdate, eventId:number) => {
+        postUpdateEvent(data, eventId)
+            .then(res => {
+                if (res.isSuccess) {
+                    MessageAlert("success", "수정 성공", null);
                     navigate("/");
                 } else {
                     MessageAlert("error", "작성 실패", null);
@@ -148,7 +225,34 @@ export function useFetch() {
                 } else {
                     MessageAlert("error", "행사 취소 실패", null);
                 }
-            })
+            }).finally(() => modals.closeAll());
+    }
+
+    const applyEventFetch = (data: IEventBooking) => {
+        postApplyEvent(data)
+            .then(res => {
+                if (res.isSuccess){
+                    MessageAlert("success", "신청 성공", null);
+                    navigate("/");
+                }else{
+                    MessageAlert("error", "신청 실패", "다시 시도해주세요");
+                }
+            }).finally(() => setLoading(false));
+    }
+
+    const applyEventCancelFetch = (data: number) => {
+        deleteApplyCancelEvent(data)
+            .then(res => {
+                if (res.isSuccess){
+                    MessageAlert("success", "취소 성공", null);
+                    navigate("/");
+                }else{
+                    MessageAlert("error", "취소 실패", "다시 시도해주세요");
+                }
+            }).finally(() => {
+            setLoading(false);
+            modals.closeAll();
+        });
     }
 
     return {
@@ -160,5 +264,10 @@ export function useFetch() {
         createEventFetch,
         findEmailFetch,
         findPasswordFetch,
+        applyEventFetch,
+        googleLoginFetch,
+        naverLoginFetch,
+        updateEventFetch,
+        applyEventCancelFetch
     };
 }

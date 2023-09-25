@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Button, Divider, Group, Menu} from "@mantine/core";
+import {Avatar, Button, Divider, Group, Menu, Text} from "@mantine/core";
 import {useRecoilValue} from "recoil";
 import {userState} from "../../../../states/userState";
 import {IconReceipt, IconUser} from "@tabler/icons-react";
@@ -33,9 +33,9 @@ function WebUserInfoBtn() {
                 </Menu.Target>
                 <Menu.Dropdown>
                     <Menu.Item style={{pointerEvents: "none"}}>
-                        <Group>
+                        <Group noWrap>
                             <Avatar src={profileImg} radius={"xl"}/>
-                            {userStateValue.email}
+                            <Text style={{wordBreak: "break-all"}}>{userStateValue.email}</Text>
                         </Group>
                     </Menu.Item>
                     <Divider/>

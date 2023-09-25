@@ -2,13 +2,14 @@ import React, {useEffect, useState} from "react";
 import {Button, Checkbox, Flex, Group, Modal, NumberInput, Select, Stack, Text, TextInput} from "@mantine/core";
 import {Controller, useFormContext} from "react-hook-form";
 import customStyle from "../../styles/customStyle";
-import {IEventTicket} from "../../types/IEvent";
+import {IEventTicket, IEventTicketUpdate} from "../../types/IEvent";
 import {getValue} from "@testing-library/user-event/dist/utils";
 
-function TicketEditModal({open, title, data}: {
+function TicketEditModal({open, title, data, update}: {
     open: boolean,
     title: string[],
-    data: IEventTicket
+    data: IEventTicket | IEventTicketUpdate,
+    update: boolean,
 }) {
     const {classes} = customStyle();
 
@@ -24,7 +25,7 @@ function TicketEditModal({open, title, data}: {
         resetField,
         clearErrors,
         formState: {errors}
-    } = useFormContext<IEventTicket>();
+    } = useFormContext<IEventTicketUpdate>();
 
     const disabledTitle = title.filter(item => item !== data.name);
 
@@ -47,6 +48,9 @@ function TicketEditModal({open, title, data}: {
     }, [open]);
 
     useEffect(() => {
+        if ("id" in data) {
+            setValue("id", data.id);
+        }
         setValue("name", data.name);
         setValue("price", data.price);
         setValue("quantity", data.quantity);
@@ -118,6 +122,7 @@ function TicketEditModal({open, title, data}: {
                                             max={999999}
                                             type={"number"}
                                             defaultValue={data.quantity}
+                                            disabled={update}
                                             error={errors.quantity && errors.quantity.message}
                                             className={classes["input"]}/>
                                     </Flex>

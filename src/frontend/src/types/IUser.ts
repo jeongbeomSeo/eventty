@@ -13,8 +13,8 @@ export interface ILogin {
     password: string;
 }
 
-export interface IGoogleLogin {
-    OAuth_AccessToken: string;
+export interface ISocialLogin {
+    code: string;
 }
 
 export interface IUser {

@@ -1,16 +1,28 @@
 import React, {useMemo} from "react";
-import {Avatar, Container, Divider, Group, Image, Paper, Stack, Text, Title} from "@mantine/core";
-import {IEvent, IEventDetail} from "../../../types/IEvent";
-import {useLoaderData, useLocation, useNavigate, useRouteLoaderData} from "react-router-dom";
-import EventDetailNavBar from "../../display/mobile/navbar/EventDetailNavBar";
+import {
+    Avatar,
+    Container,
+    Divider,
+    Group,
+    Image,
+    Paper,
+    SimpleGrid,
+    Stack,
+    Text,
+    Title,
+    UnstyledButton
+} from "@mantine/core";
+import {IEventDetail} from "../../../types/IEvent";
+import {useNavigate, useRouteLoaderData} from "react-router-dom";
 import MobileTicketInfo from "./MobileTicketInfo";
 import {useRecoilValue} from "recoil";
 import {eventTicketDrawerState} from "../../../states/eventTicketDrawerState";
-import {CheckLogin} from "../../../util/CheckLogin";
-import {useModal} from "../../../util/hook/useModal";
+import WebHostInfo from "../web/WebHostInfo";
+import DOMPurify from "dompurify";
+import {CATEGORY_LIST} from "../../../util/const/categoryList";
 
-function HostInfo({hostName}: {hostName: string}) {
-    return(
+function HostInfo({hostName}: { hostName: string }) {
+    return (
         <Paper p={"md"} withBorder>
             <Group noWrap>
                 <Avatar radius={"xl"}/>
@@ -26,6 +38,7 @@ function HostInfo({hostName}: {hostName: string}) {
 }
 
 function MobileEventDetail() {
+    const navigate = useNavigate();
     const eventTicketDrawerValue = useRecoilValue(eventTicketDrawerState);
     const DATA = useRouteLoaderData("event") as IEventDetail;
 
@@ -34,20 +47,52 @@ function MobileEventDetail() {
 
     return (
         <>
-            <Image src={DATA.image}
-                   height={"30vh"}
-                   withPlaceholder/>
+            <Paper radius={0}
+                   style={{
+                       width: "100%",
+                       height: 0,
+                       paddingBottom: "75%",
+                       backgroundImage: `url(${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.image})`,
+                       backgroundRepeat: "no-repeat",
+                       backgroundPosition: "center",
+                       backgroundSize: "cover",
+                       borderTop: "1px solid #cdcdcd",
+                       borderBottom: "1px solid #cdcdcd",
+                   }}/>
             <Container>
-                <Stack style={{marginTop: "5vh"}}>
-                    <Text fz={"1rem"} color={"var(--primary)"}>{DATA.categoryName}</Text>
-                    <Title>{DATA.title}</Title>
-                    <Title order={4}>{`${eventStartAt.getMonth()+1}월 ${eventStartAt.getDate()}일`}
-                        {DATA.eventStartAt !== DATA.eventEndAt &&
-                        `~ ${eventEndtAt.getMonth()+1}월 ${eventEndtAt.getDate()}일`}
-                    </Title>
+                <Stack spacing={"1.5rem"} style={{margin: "5vh 0"}}>
+                    <Stack>
+                        <UnstyledButton onClick={() => navigate(`/events/category/${DATA.category}`)}>
+                            <Title order={4} color={"var(--primary)"}>{CATEGORY_LIST[DATA.category]}</Title>
+                        </UnstyledButton>
+                        <Title order={2}>{DATA.title}</Title>
+                        <Title order={4}>
+                            {`${eventStartAt.getFullYear()}년 `}
+                            {`${eventStartAt.getMonth()}월 `}
+                            {`${eventStartAt.getDate()}일 `}
+                            {!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
+                                && `${eventStartAt.getHours()}시
+                                ${eventStartAt.getMinutes() !== 0 ? `${eventStartAt.getMinutes()}분` : ""}`}
+                        </Title>
+                        <Title order={4}>
+                            {`${!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
+                                ? `~ ${eventEndtAt.getFullYear()}년  
+                                    ${eventEndtAt.getMonth()}월 
+                                    ${eventEndtAt.getDate()}일 
+                                    ${eventEndtAt.getHours()}시 
+                                    ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""} `
+                                : `${eventStartAt.getHours()}시 
+                                    ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""}
+                                    ~ ${eventEndtAt.getHours()}시 
+                                    ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""}`}`}
+                        </Title>
+                        <Text color={"gray"}>{DATA.location}</Text>
+                    </Stack>
                     <Divider/>
-                    <HostInfo hostName={DATA.hostName}/>
-                    <div>{DATA.content}</div>
+
+                    <WebHostInfo hostName={DATA.hostName} hostPhone={DATA.hostPhone}/>
+                    {/* XSS 방지 */}
+                    <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(DATA.content)}}></div>
                 </Stack>
             </Container>
             <MobileTicketInfo open={eventTicketDrawerValue} tickets={DATA.tickets}/>

@@ -1,25 +1,19 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Badge, Divider, Drawer, Flex, Group, Paper, Space, Stack, Text} from "@mantine/core";
-import customStyle from "../../../styles/customStyle";
+import {Drawer, Stack} from "@mantine/core";
 import TicketBtn from "../TicketBtn";
 import {IconChevronDown} from "@tabler/icons-react";
-import {DrawerContent} from "@mantine/core/lib/Drawer/DrawerContent/DrawerContent";
 import {useLocation, useNavigate} from "react-router-dom";
 import {CheckLogin} from "../../../util/CheckLogin";
 import {useModal} from "../../../util/hook/useModal";
-import {IEventTicket, IEventTicketDetail} from "../../../types/IEvent";
+import {IEventTicketDetail} from "../../../types/IEvent";
 
 interface ITickets {
     open: boolean;
     tickets: IEventTicketDetail[];
 }
 
-function MobileTicketInfo({open, tickets}:ITickets) {
+function MobileTicketInfo({open, tickets}: ITickets) {
     const [opened, setOpened] = useState(open);
-    const navigate = useNavigate();
-    const {pathname} = useLocation();
-    const isLoggedIn = CheckLogin();
-    const {loginAlertModal} = useModal();
 
     const handleOpen = () => {
         setOpened(prev => !prev);
@@ -30,7 +24,8 @@ function MobileTicketInfo({open, tickets}:ITickets) {
                    id={item.id}
                    name={item.name}
                    price={item.price}
-                   quantity={item.quantity}/>
+                   quantity={item.quantity}
+                   applied={item.appliedTicketCount}/>
     ));
 
     useEffect(() => {

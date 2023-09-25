@@ -1,13 +1,10 @@
 import React, {useCallback, useMemo} from "react";
-import {useLoaderData, useLocation, useNavigate, useParams, useRouteLoaderData} from "react-router-dom";
+import {useNavigate, useRouteLoaderData} from "react-router-dom";
 import {
-    Avatar,
     Button,
     Container,
     Divider,
     Grid,
-    Group,
-    Image,
     Paper,
     Stack,
     Text,
@@ -20,8 +17,6 @@ import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
 import {useModal} from "../../../util/hook/useModal";
-import {useFetch} from "../../../util/hook/useFetch";
-import {Base64toSrc} from "../../../util/ConvertFile";
 import DOMPurify from "dompurify";
 import WebHostInfo from "./WebHostInfo";
 import {CATEGORY_LIST} from "../../../util/const/categoryList";
@@ -29,8 +24,7 @@ import {CATEGORY_LIST} from "../../../util/const/categoryList";
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
-    const {loginAlertModal} = useModal();
-    const {deleteEventFetch} = useFetch();
+    const {loginAlertModal, eventDeleteModal} = useModal();
     const isLoggedIn = CheckLogin();
     const {classes} = customStyle();
 
@@ -65,8 +59,8 @@ function WebEventDetail() {
                 <Grid.Col span={"auto"}>
                     <Stack justify={"space-between"} style={{height: "100%"}}>
                         <Stack>
-                            <UnstyledButton onClick={() => navigate(`/events/category/${DATA.categoryName}`)}>
-                                <Title order={5} color={"var(--primary)"}>{CATEGORY_LIST[DATA.categoryName]}</Title>
+                            <UnstyledButton onClick={() => navigate(`/events/category/${DATA.category}`)}>
+                                <Title order={5} color={"var(--primary)"}>{CATEGORY_LIST[DATA.category]}</Title>
                             </UnstyledButton>
                             <Title order={2}>{DATA.title}</Title>
                             <Title order={4}>
@@ -85,19 +79,27 @@ function WebEventDetail() {
                                     ${eventEndtAt.getHours()}시 
                                     ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""} `
                                     : `${eventStartAt.getHours()}시 
-                                    ${eventStartAt.getMinutes()}분 
+                                    ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""}
                                     ~ ${eventEndtAt.getHours()}시 
                                     ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""}`}`}
                             </Title>
                             <Text color={"gray"}>{DATA.location}</Text>
                         </Stack>
                         {userStateValue.isHost && (userStateValue.userId === DATA.hostId) ?
-                            <Button color={"red"}
-                                    variant={"outline"}
-                                    onClick={() => deleteEventFetch(DATA.id)}
-                                    style={{height: "2.5rem"}}>
-                                행사 취소
-                            </Button> :
+                            <Stack>
+                                <Button
+                                    onClick={() => navigate(`/update/${DATA.id}`)}
+                                    className={classes["btn-primary-outline"]}
+                                >
+                                    행사 수정
+                                </Button>
+                                <Button color={"red"}
+                                        variant={"outline"}
+                                        onClick={() => eventDeleteModal(DATA.id)}
+                                        style={{height: "2.5rem"}}>
+                                    행사 취소
+                                </Button>
+                            </Stack> :
                             userStateValue.isHost ?
                                 <Button className={`${classes["btn-primary"]} disable`}
                                         style={{height: "2.5rem"}}>

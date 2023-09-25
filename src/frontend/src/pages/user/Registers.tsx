@@ -1,14 +1,14 @@
 import React from "react";
 import {CheckXsSize} from "../../util/CheckMediaQuery";
-import WebRegister from "../../components/user/web/WebRegister";
-import MobileEventsInfo from "../../components/user/mobile/MobileEventsInfo";
+import WebHostRegister from "../../components/user/web/WebHostRegister";
+import MobileHostRegister from "../../components/user/mobile/MobileHostRegister";
 
 function Registers() {
     const isMobile = CheckXsSize();
 
     return (
         <>
-            {isMobile ? <MobileEventsInfo/> : <WebRegister/>}
+            {isMobile ? <MobileHostRegister/> : <WebHostRegister/>}
         </>
     );
 }

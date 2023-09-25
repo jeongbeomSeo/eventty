@@ -1,15 +1,14 @@
 import React from "react";
-import {Button, Divider, Group, Stack, Title} from "@mantine/core";
-import customStyle from "../../../styles/customStyle";
-import WebEventsDetailBtn from "./WebEventsDetailBtn";
+import {Divider, Stack, Title} from "@mantine/core";
+import WebRegisteBtn from "./WebRegisteBtn";
 import {useLoaderData} from "react-router-dom";
 import {IEvent} from "../../../types/IEvent";
 
-function WebRegister() {
+function WebHostRegister() {
     const DATA = useLoaderData() as IEvent[];
 
     const items = DATA.map(item => (
-        <WebEventsDetailBtn data={item}/>
+        <WebRegisteBtn data={item}/>
     ));
 
     return (
@@ -23,4 +22,4 @@ function WebRegister() {
     );
 }
 
-export default WebRegister;
+export default WebHostRegister;

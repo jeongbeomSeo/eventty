@@ -1,4 +1,4 @@
-import {Stack, Button, TextInput, Flex, Divider, Text} from "@mantine/core";
+import {Stack, Button, TextInput, Flex, Divider, Text, Group} from "@mantine/core";
 import CardForm from "../components/signup/CardForm";
 import {useForm} from "react-hook-form";
 import {Link, useNavigate} from "react-router-dom";
@@ -12,6 +12,7 @@ import {ILogin} from "../types/IUser";
 import {postLogin} from "../service/user/fetchUser";
 import GoogleBtn from "../components/signup/GoogleBtn";
 import {loadingState} from "../states/loadingState";
+import NaverBtn from "../components/signup/NaverBtn";
 
 enum ERROR_MESSAGE {
     email = "이메일을 입력해주세요",
@@ -95,7 +96,6 @@ function Login() {
                     </Text>
 
                     <Button type="submit"
-                            loading={loading}
                             style={{height: "2.6rem"}}
                             className={classes["btn-primary"]}>
                         로그인
@@ -107,7 +107,10 @@ function Login() {
                     </Flex>
                     <Divider my={"xs"} labelPosition={"center"} label={"SNS 로그인"}
                              className={classes["signup-divider"]}/>
-                    <GoogleBtn/>
+                    <Group noWrap position={"center"}>
+                        <GoogleBtn/>
+                        <NaverBtn/>
+                    </Group>
                 </Stack>
             </form>
         </CardForm>

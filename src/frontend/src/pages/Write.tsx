@@ -26,6 +26,7 @@ import {loadingState} from "../states/loadingState";
 
 function Write() {
     const {classes} = customStyle();
+
     const {createEventFetch} = useFetch();
     const isMobile = CheckXsSize();
     const setLoading = useSetRecoilState(loadingState);
@@ -56,7 +57,7 @@ function Write() {
     const currentDate = new Date();
     const CATEGORY_LIST = [
         {label: "콘서트", value: "conert"},
-        {label: "클래식", value: "classic"},
+        {label: "클래식", value: "classical"},
         {label: "전시", value: "exhibition"},
         {label: "스포츠", value: "sports"},
         {label: "캠핑", value: "camping"},
@@ -157,7 +158,8 @@ function Write() {
                     <form onSubmit={ticketEditMethods.handleSubmit(onTicketEdit)}>
                         <TicketEditModal open={ticketEditModalOpened}
                                          title={disabledTitle}
-                                         data={ticketEdit}/>
+                                         data={ticketEdit}
+                                         update={false}/>
                     </form>
                 </FormProvider>
             }

@@ -4,7 +4,10 @@ import {Button, Stack} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {useLocation, useNavigate} from "react-router-dom";
 import WebSearchKeywordsList from "../../components/display/web/WebSearchKeywordsList";
-import WebChangePWModal from "../../components/user/web/WebChangePWModal";
+import WebChangePWModal from "../../components/user/ChangePWModal";
+import EventDeleteModal from "../../components/event/EventDeleteModal";
+import EventApplyCancelModal from "../../components/user/EventApplyCancelModal";
+import DeleteAccountModal from "../../components/user/DeleteAccountModal";
 
 export function useModal() {
     const {classes} = customStyle();
@@ -63,7 +66,7 @@ export function useModal() {
 
     const changePWModal = () => {
         return modals.open({
-            children:(
+            children: (
                 <WebChangePWModal/>
             ),
             zIndex: 1001,
@@ -75,5 +78,55 @@ export function useModal() {
         })
     }
 
-    return {messageModal, loginAlertModal, searchModal, changePWModal};
+    const accountDeleteModal = () => {
+        return modals.open({
+            children: (
+                <DeleteAccountModal/>
+            ),
+            zIndex: 1001,
+            withCloseButton: false,
+            centered: true,
+            xOffset: "",
+            size: "auto",
+            overlayProps: {opacity: 0.5},
+        })
+    }
+
+    const eventDeleteModal = (eventId: number) => {
+        return modals.open({
+            children: (
+                <EventDeleteModal id={eventId}/>
+            ),
+            zIndex: 1001,
+            withCloseButton: false,
+            centered: true,
+            xOffset: "",
+            size: "auto",
+            overlayProps: {opacity: 0.5},
+        })
+    }
+
+    const eventApplyCancelModal = (applyId: number) => {
+        return modals.open({
+            children: (
+                <EventApplyCancelModal applyId={applyId}/>
+            ),
+            zIndex: 1001,
+            withCloseButton: false,
+            centered: true,
+            xOffset: "",
+            size: "auto",
+            overlayProps: {opacity: 0.5},
+        })
+    }
+
+    return {
+        messageModal,
+        loginAlertModal,
+        searchModal,
+        changePWModal,
+        eventDeleteModal,
+        accountDeleteModal,
+        eventApplyCancelModal,
+    };
 }

@@ -13,27 +13,23 @@ import {
 import customStyle from "../../../styles/customStyle";
 import BirthdayPicker from "../../common/BirthdayPicker";
 import PhoneNumberInput from "../../common/PhoneNumberInput";
-import {isRouteErrorResponse, useLoaderData, useRouteError} from "react-router-dom";
+import {useLoaderData} from "react-router-dom";
 import {IUpdateUser, IUser} from "../../../types/IUser";
 import {useFetch} from "../../../util/hook/useFetch";
-import {MessageAlert} from "../../../util/MessageAlert";
 import {useModal} from "../../../util/hook/useModal";
 import {Controller, useForm} from "react-hook-form";
-import {getProfile} from "../../../service/user/fetchUser";
-import {useRecoilState} from "recoil";
-import {userState} from "../../../states/userState";
 
 function WebProfile() {
     const {classes} = customStyle();
     const DATA = useLoaderData() as IUser;
     const curEmail = sessionStorage.getItem("EMAIL")!;
-    const nameRegEX = /^[가-힣]{2,}$/;
+    const nameRegEX = /^[가-힣A-Za-z]{2,}$/;
     const phoneRegEX = /^01([0|1|6|7|8|9])-([0-9]{4})-([0-9]{4})$/;
     const [imgPreview, setImgPreview] = useState(DATA.imagePath && `${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.imagePath}`);
     const resetRef = useRef<() => void>(null);
 
-    const {deleteAccountFetch, changeProfileFetch} = useFetch();
-    const {changePWModal} = useModal();
+    const {changeProfileFetch} = useFetch();
+    const {changePWModal, accountDeleteModal} = useModal();
 
     const {register, handleSubmit, watch, getValues, setValue, control, formState: {errors}}
         = useForm<IUpdateUser>({
@@ -175,7 +171,7 @@ function WebProfile() {
                         <Title order={5}>회원 탈퇴</Title>
                         <Button color={"red"}
                                 style={{width: "8rem"}}
-                                onClick={() => deleteAccountFetch()}>
+                                onClick={() => accountDeleteModal()}>
                             회원 탈퇴
                         </Button>
                     </Group>

@@ -1,4 +1,4 @@
-import {IChangePW, IFindEmail, IFindPassword, IGoogleLogin, ILogin, ISignup} from "../../types/IUser";
+import {IChangePW, IFindEmail, IFindPassword, ILogin, ISignup, ISocialLogin} from "../../types/IUser";
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {redirect} from "react-router-dom";
 
@@ -8,7 +8,7 @@ export const postSignupEmailValid = async (data: string) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
     })
-        .then(res => res.json())
+        .then(res => res.status)
         .catch(res => console.error(res));
 }
 
@@ -18,7 +18,7 @@ export const postSignupUser = async (data: ISignup) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
     })
-        .then((res) => res.json())
+        .then((res) => res.status)
         .catch(res => console.error(res));
 }
 export const postSignupHost = async (data: ISignup) => {
@@ -27,7 +27,7 @@ export const postSignupHost = async (data: ISignup) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
     })
-        .then((res) => res.json())
+        .then((res) => res.status)
         .catch(res => console.error(res));
 }
 
@@ -67,8 +67,22 @@ export const postLogin = async (data: ILogin) => {
 }
 
 // Google 로그인
-export const postGoogleLogin = async (data: IGoogleLogin) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login`, {
+export const postGoogleLogin = async (data: ISocialLogin) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login/google`, {
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        });
+}
+
+// Naver 로그인
+export const postNaverLogin = async (data: ISocialLogin) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login/naver`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json"},
@@ -136,9 +150,16 @@ export const postChangePassword = async (data: IChangePW) => {
 }
 
 export const deleteAccount = async () => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/secret/me`, {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/me`, {
         method: "DELETE",
-        headers: {"Content-Type": "application/json"},
+        headers: {"X-Csrf-Token": GetCsrfToken()!},
     })
-        .then((res) => res.status);
+        .then((res) => {
+            SetCsrfToken(res);
+            return res;
+        })
+        .then((res) => res.status)
+        .catch(res => {
+            SetCsrfToken(res);
+        });
 }

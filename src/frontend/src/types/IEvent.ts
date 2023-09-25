@@ -25,10 +25,31 @@ export interface IEventWrite {
     applyStartAt: Date;
     applyEndAt: Date;
     tickets: IEventTicket[];
-    image: File;
+    image: File | null;
+}
+
+export interface IEventUpdate {
+    [key:string]: string|any;
+    title: string;
+    eventStartAt: Date;
+    eventEndAt: Date;
+    location: string;
+    category: string;
+    content: string;
+    isActive: boolean;
+    applyStartAt: Date;
+    applyEndAt: Date;
+    ticketList: IEventTicketUpdate[];
 }
 
 export interface IEventTicket {
+    name: string;
+    price: number;
+    quantity: number;
+}
+
+export interface IEventTicketUpdate {
+    id: number;
     name: string;
     price: number;
     quantity: number;
@@ -50,7 +71,7 @@ export interface IEventDetail{
     eventEndAt: Date;
     participateNum: number;
     location: string;
-    categoryName: string;
+    category: string;
     isActive: boolean;
     content: string;
     applyStartAt: Date;
@@ -62,7 +83,23 @@ export interface IEventDetail{
 }
 
 export interface IEventBooking {
-    userId: number;
+    eventId: number,
+    ticketId: number,
+    quantity: number,
+    name: string,
+    phone: string,
+    applicantNum: number,
+}
+
+export interface IEventUserBookings{
+    applyId: number,
+    applicantNum: number,
+    date: Date,
+    image: string,
+    status: string,
+    ticketName: string,
+    ticketPrice: number,
+    title: string,
 }
 
 export interface IEventMain {

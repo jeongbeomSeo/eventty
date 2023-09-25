@@ -8,12 +8,13 @@ interface ITicket {
     name: string;
     price: number;
     quantity: number;
+    applied: number;
 }
 
-function TicketBtn({id, name, price, quantity}: ITicket) {
+function TicketBtn({id, name, price, quantity, applied}: ITicket) {
     const {classes} = customStyle();
     const navigate = useNavigate();
-    
+
     const handleOnClick = (id:number) => {
         navigate(`booking?item=${id}`);
     }
@@ -25,9 +26,11 @@ function TicketBtn({id, name, price, quantity}: ITicket) {
                    className={classes["ticket-select"]}>
                 <Stack>
                     <Group position={"apart"}>
-                        <Text fw={"1000"} fz={"xl"}>{price.toLocaleString("ko-kr")} 원</Text>
+                        <Text fw={"1000"} fz={"xl"}>
+                            {price > 0 ? `${price.toLocaleString("ko-kr")} 원` : "무료"}
+                        </Text>
                         <Badge radius={"sm"} color={"red"} style={{padding: "0.7rem 0.5rem"}}>
-                            {quantity.toLocaleString("ko-kr")}개 남음
+                            {(quantity - applied).toLocaleString("ko-kr")}개 남음
                         </Badge>
                     </Group>
                     <Text fz={"sm"}>{name}</Text>

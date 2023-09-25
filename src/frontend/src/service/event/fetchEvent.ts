@@ -1,7 +1,6 @@
-import {IEventWrite} from "../../types/IEvent";
+import {IEventBooking, IEventUpdate} from "../../types/IEvent";
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {MessageAlert} from "../../util/MessageAlert";
-import {redirect} from "react-router-dom";
 
 // 행사 상세 조회
 export const getEvent = async (eventId: string) => {
@@ -61,6 +60,21 @@ export const getHostEvents = async () => {
         .catch(res => SetCsrfToken(res));
 }
 
+// 참여자가 신청한 전체 행사 조회
+export const getApplyEvent = async () => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/apply/secret/applies`, {
+        method: "GET",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
+    })
+        .then(res => {
+            SetCsrfToken(res);
+            return res.json()
+        })
+        .then(res => res.successResponseDTO.data)
+        .catch(res => SetCsrfToken(res));
+}
+
 // 행사 주최
 export const postEvent = async (data: FormData) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events`, {
@@ -76,17 +90,65 @@ export const postEvent = async (data: FormData) => {
         .catch(res => SetCsrfToken(res));
 }
 
+// 행사 수정
+export const postUpdateEvent = async (data: IEventUpdate, eventId: number) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events/${eventId}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
+        body: JSON.stringify(data),
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        })
+        .catch(res => SetCsrfToken(res));
+}
+
 // 행사 삭제
 export const deleteEvent = async (data: number) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events/${data}`, {
         method: "DELETE",
-        headers: {"Content-Type": "application/json"},
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
     })
-        .then((res) => res.status);
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.status;
+        })
+        .catch(res => SetCsrfToken(res));
 }
 
-// 행사 신청 내역
-/*
+// 행사 신청
+export const postApplyEvent = async (data: IEventBooking) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/apply/secret/applies`, {
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
+        body: JSON.stringify(data),
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        })
+        .catch(res => SetCsrfToken(res));
+}
+
+// 행사 예약 취소
+export const deleteApplyCancelEvent = async (data: number) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/apply/secret/applies/${data}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        })
+        .catch(res => SetCsrfToken(res));
+}
+
+// 행사 예약 내역(유저)
 export const getApplyEvents = async () => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/user/secret/applies`, {
         method: "GET",
@@ -97,9 +159,12 @@ export const getApplyEvents = async () => {
             SetCsrfToken(res);
             return res.json();
         })
-        .then((res) => res.successResponseDTO.data)
+        .then((res) => {
+            if (res.successResponseDTO && res.successResponseDTO.data.length > 0){
+                return res.successResponseDTO.data;
+            }else throw Error;
+        })
         .catch(res => {
             SetCsrfToken(res);
-            redirect("/login");
         });
-}*/
+}
