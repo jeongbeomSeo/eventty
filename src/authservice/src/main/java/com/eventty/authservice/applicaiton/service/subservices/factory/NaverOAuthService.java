@@ -1,6 +1,7 @@
 package com.eventty.authservice.applicaiton.service.subservices.factory;
 
-import com.eventty.authservice.api.dto.response.GoogleTokenResponseDTO;
+import com.eventty.authservice.api.dto.response.GoogleUserInfoResponseDTO;
+import com.eventty.authservice.api.dto.response.NaverResponseDTO;
 import com.eventty.authservice.api.dto.response.NaverTokenResponseDTO;
 import com.eventty.authservice.applicaiton.dto.OAuthAccessTokenDTO;
 import com.eventty.authservice.applicaiton.dto.OAuthUserInfoDTO;
@@ -13,9 +14,12 @@ import com.eventty.authservice.domain.exception.OAuthNotFoundVerifiedEmailExcept
 import com.eventty.authservice.domain.repository.OAuthUserRepository;
 import com.eventty.authservice.presentation.dto.request.OAuthLoginRequestDTO;
 import com.eventty.authservice.api.dto.response.NaverUserInfoResponseDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,6 +31,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -37,29 +42,34 @@ public class NaverOAuthService implements OAuthService {
     private final OAuthUserRepository oAuthUserRepository;
     private final EntityManager em;
     private final NaverProperties properties;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public NaverOAuthService(RestTemplate restTemplate, OAuthUserRepository oAuthUserRepository,
-                             EntityManager em, NaverProperties naverProperties) {
+                             EntityManager em, NaverProperties naverProperties, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.oAuthUserRepository = oAuthUserRepository;
         this.em = em;
         this.properties = naverProperties;
+        this.objectMapper = objectMapper;
     }
 
     @Override
-    public OAuthAccessTokenDTO getToken(OAuthLoginRequestDTO oAuthLoginRequestDTO) {
+    public OAuthAccessTokenDTO getToken(OAuthLoginRequestDTO oAuthLoginRequestDTO){
 
         HttpEntity<MultiValueMap<String, String>> entity = createTokenHttpEntity(oAuthLoginRequestDTO.getCode());
 
         log.info("API 호출 From: {} To: {} Purpose: {}",
                 "Auth Server", "Naver Auth Server", "Request naver access token");
+
         ResponseEntity<NaverTokenResponseDTO> response = restTemplate.exchange(
                 OAuth.NAVER.getTokenUri(), OAuth.NAVER.getTokenMethod(), entity, NaverTokenResponseDTO.class
         );
 
         if (response.getBody() == null)
             throw new OAuthFailGetAccessTokenException(OAuth.NAVER.getSocialName());
+
+
 
         return new OAuthAccessTokenDTO(response.getBody().getAccessToken(), response.getBody().getTokenType());
     }
@@ -72,24 +82,29 @@ public class NaverOAuthService implements OAuthService {
         log.info("API 호출 From: {} To: {} Purpose: {}",
                 "Auth Server", "Naver Resource Server", "Request Naver user info");
 
-        ResponseEntity<NaverUserInfoResponseDTO> response = restTemplate.exchange(
-                OAuth.NAVER.getUserInfoUri(), OAuth.NAVER.getUserInfoMethod(), entity, NaverUserInfoResponseDTO.class
+        ResponseEntity<NaverResponseDTO> response = restTemplate.exchange(
+                OAuth.NAVER.getUserInfoUri(), OAuth.NAVER.getUserInfoMethod(), entity, NaverResponseDTO.class
         );
+
+        log.debug("Naver Response Body Json: {}", response.getBody());
 
         if (response.getBody() == null)
             throw new OAuthNotFoundUserInfoException(OAuth.NAVER.getSocialName());
         if (response.getBody() == null)
             throw new OAuthNotFoundVerifiedEmailException(OAuth.NAVER.getSocialName());
 
-        log.debug("Api Call 성공:: Client ID: {}", response.getBody().getId());
+        // 네이버는 response로 한번 더 감싸져 있어서 parsing 해주기
+        NaverUserInfoResponseDTO body = response.getBody().getResponse();
+
+        log.debug("Api Call 성공:: Client ID: {}", body.getId());
 
         return new OAuthUserInfoDTO(
-                response.getBody().getId(),
-                response.getBody().getEmail(),
-                response.getBody().getName(),
-                convertLocaleDate(response.getBody().getBrithyear(), response.getBody().getBirthday()),
-                response.getBody().getMobile(),
-                response.getBody().getProfileImage()
+                body.getId(),
+                body.getEmail(),
+                body.getName(),
+                convertLocaleDate(body.getBirthyear(), body.getBirthday()),
+                body.getMobile(),
+                body.getProfileImage()
         );
     }
 
@@ -105,6 +120,16 @@ public class NaverOAuthService implements OAuthService {
         em.persist(oAuthUserEntity);
 
         return oAuthUserEntity.getId();
+    }
+
+    private NaverTokenResponseDTO parsingToken(ResponseEntity<String> response) {
+        NaverTokenResponseDTO result = null;
+        try {
+            return objectMapper.readValue(response.getBody(), NaverTokenResponseDTO.class);
+        } catch (JsonProcessingException e) {
+            log.error("Naver Token parsing Error occurred: {}", e.getMessage());
+            throw new OAuthFailGetAccessTokenException(OAuth.NAVER.getSocialName());
+        }
     }
 
     private HttpEntity<MultiValueMap<String, String>> createTokenHttpEntity(String authorizationCode) {
@@ -123,9 +148,11 @@ public class NaverOAuthService implements OAuthService {
 
         return new HttpEntity<>(body, headers);
     }
-
     private HttpEntity<Void> createUserInfoHttpEntity(OAuthAccessTokenDTO oAuthAccessTokenDTO) {
         HttpHeaders headers = new HttpHeaders();
+
+        log.debug("Access Token: {}", oAuthAccessTokenDTO.accessToken());
+        log.debug("Access Token Type: {}", oAuthAccessTokenDTO.tokenType());
         headers.add("Authorization", oAuthAccessTokenDTO.tokenType() + " " + oAuthAccessTokenDTO.accessToken());
 
         return new HttpEntity<>(headers);

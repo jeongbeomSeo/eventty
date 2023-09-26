@@ -435,7 +435,8 @@ public class UserServiceImpl implements UserService {
         String csrfToken = authService.checkCsrfToken(authUserEntity.getId()) ?
                 authService.getUpdateCsrfToken(authUserEntity.getId()) : authService.getNewCsrfToken(authUserEntity.getId());
 
-        log.debug("반환");
+        log.debug("모든 정보 반환");
+        log.debug("Csrf Token: {}", csrfToken);
 
         return customConverter
                 .convertLoginSuccessDTO(sessionTokensDTO, authUserEntity, csrfToken, imageQueryApiResponseDTO);
