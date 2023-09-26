@@ -4,6 +4,7 @@ import com.eventty.authservice.applicaiton.dto.OAuthAccessTokenDTO;
 import com.eventty.authservice.applicaiton.dto.OAuthUserInfoDTO;
 import com.eventty.authservice.domain.entity.OAuthUserEntity;
 import com.eventty.authservice.presentation.dto.request.OAuthLoginRequestDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Optional;
 

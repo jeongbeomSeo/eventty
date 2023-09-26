@@ -122,6 +122,9 @@ public class GoogleOAuthService implements OAuthService{
 
     private HttpEntity<Void> createUserInfoHttpEntity(OAuthAccessTokenDTO oAuthAccessTokenDTO) {
         HttpHeaders headers = new HttpHeaders();
+
+        log.debug("Access Token: {}", oAuthAccessTokenDTO.accessToken());
+        log.debug("Access Token Type: {}", oAuthAccessTokenDTO.tokenType());
         headers.add("Authorization", oAuthAccessTokenDTO.tokenType() + " " + oAuthAccessTokenDTO.accessToken());
 
         return new HttpEntity<>(headers);
