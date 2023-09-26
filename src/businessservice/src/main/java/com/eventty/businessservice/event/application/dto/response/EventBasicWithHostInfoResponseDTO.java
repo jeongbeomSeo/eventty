@@ -21,7 +21,7 @@ public class EventBasicWithHostInfoResponseDTO {
     private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
-    private String categoryName;
+    private String category;
     private Boolean isActive;
 
     // Host 정보의 경우, 상세 페이지에서만 조회. 메인 화면에서는 노출 안함
@@ -32,13 +32,13 @@ public class EventBasicWithHostInfoResponseDTO {
     public static EventBasicWithHostInfoResponseDTO from(EventBasicEntity eventBasicEntity, HostFindByIdResponseDTO hostInfo) {
         return EventBasicWithHostInfoResponseDTO.builder()
                 .id(eventBasicEntity.getId())
-                .hostId(eventBasicEntity.getUserId())
+                .hostId(eventBasicEntity.getHostId())
                 .title(eventBasicEntity.getTitle())
                 .eventStartAt(eventBasicEntity.getEventStartAt())
                 .eventEndAt(eventBasicEntity.getEventEndAt())
                 .participateNum(eventBasicEntity.getParticipateNum())
                 .location(eventBasicEntity.getLocation())
-                .categoryName(Category.getNamefromId(eventBasicEntity.getCategory()))
+                .category(Category.getNamefromId(eventBasicEntity.getCategory()))
                 .isActive(eventBasicEntity.getIsActive())
                 .hostName(hostInfo.getName())
                 .hostPhone(hostInfo.getPhone())

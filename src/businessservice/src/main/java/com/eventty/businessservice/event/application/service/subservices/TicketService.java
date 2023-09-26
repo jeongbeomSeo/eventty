@@ -1,14 +1,12 @@
 package com.eventty.businessservice.event.application.service.subservices;
 
 import com.eventty.businessservice.event.api.ApiClient;
-import com.eventty.businessservice.event.api.dto.request.QueryAppliesCountRequestDTO;
 import com.eventty.businessservice.event.api.dto.response.QueryAppliesCountResponseDTO;
 import com.eventty.businessservice.event.application.dto.request.EventCreateRequestDTO;
+import com.eventty.businessservice.event.application.dto.request.EventUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.request.TicketUpdateRequestDTO;
 import com.eventty.businessservice.event.application.dto.response.TicketResponseDTO;
-import com.eventty.businessservice.event.domain.entity.EventImageEntity;
 import com.eventty.businessservice.event.domain.entity.TicketEntity;
-import com.eventty.businessservice.event.domain.exception.EventImageNotFoundException;
 import com.eventty.businessservice.event.domain.exception.TicketNotFoundException;
 import com.eventty.businessservice.event.domain.repository.TicketRepository;
 import com.eventty.businessservice.event.presentation.response.ResponseDTO;
@@ -16,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,26 +30,34 @@ public class TicketService {
 
     public List<TicketResponseDTO> findTicketsByEventId(Long eventId){
 
-        // 해당 이벤트를 신청한 내역 리스트 가져오기 (Apply Server API 호출)
-        ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> appliesInfoResponse = apiClient.queryAppliesCountApi(
-                QueryAppliesCountRequestDTO.builder()
-                        .eventId(eventId)
-                        .build()
-        );
-        List<QueryAppliesCountResponseDTO> appliesInfo = Objects.requireNonNull(appliesInfoResponse.getBody()).getSuccessResponseDTO().getData();
-
         // 티켓 정보 가져오기
         List<TicketEntity> ticketList = getTicketListIfExists(eventId);
+        log.info("ticketList: {}", ticketList);
+
+        // 해당 이벤트를 신청한 내역 리스트 가져오기 (Apply Server API 호출)
+        // 각 티켓 정보에 Apply Server 로부터 받아온 신청된 티켓 갯수 정보를 더하여 반환
+        // 신청된 티켓 갯수 정보가 없으면 0으로 반환
+
+        ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> appliesInfoResponse = apiClient.queryAppliesCountApi(eventId);
+        if(appliesInfoResponse.getBody() == null){
+            return ticketList.stream()
+                    .map(TicketResponseDTO::from)
+                    .toList();
+        }
+        List<QueryAppliesCountResponseDTO> appliesInfo = Objects.requireNonNull(appliesInfoResponse.getBody()).getSuccessResponseDTO().getData();
+        log.info("appliesInfo : {}", appliesInfo);
+
         return ticketList.stream()
-                // 각 티켓 정보에 Apply Server 로부터 받아온 신청된 티켓 갯수 정보를 더하여 반환
-                .map(ticket -> TicketResponseDTO.from(ticket, getAppliesInfoByTicketId(appliesInfo, ticket.getId())))
+                .map(ticket -> TicketResponseDTO.from(
+                        ticket,
+                        getAppliesInfoByTicketId(appliesInfo, ticket.getId())))
                 .toList();
     }
 
     public List<TicketResponseDTO> findTicketsByTicketIdList(List<Long> ticketIds){
         List<TicketEntity> ticketList = getTicketListIfExists(ticketIds);
         return ticketList.stream()
-                .map(TicketResponseDTO::fromEntity)
+                .map(TicketResponseDTO::from)
                 .toList();
     }
 
@@ -77,19 +82,34 @@ public class TicketService {
         return eventId;
     }
 
+    public Long updateTickets(Long eventId, List<TicketUpdateRequestDTO> ticketUpdateRequestDTOList) {
+
+        // 이벤트의 모든 티켓 불러오기
+        List<TicketEntity> ticketList = getTicketListIfExists(eventId);
+
+        // 기존 티켓의 총 참가자 수 계산
+        Long totalParticipantNum = ticketList.stream()
+                .map(TicketEntity::getQuantity)
+                .reduce(0L, Long::sum);
+
+        for (TicketUpdateRequestDTO ticketUpdateRequestDTO : ticketUpdateRequestDTOList) {
+            // 업데이트 전, 데이터 존재 확인
+            TicketEntity ticket = getTicketIfExists(ticketUpdateRequestDTO.getId());
+
+            totalParticipantNum = totalParticipantNum - ticket.getQuantity() + ticketUpdateRequestDTO.getQuantity();
+
+            ticket.update(ticketUpdateRequestDTO);
+            ticketRepository.updateTicket(ticket);
+        }
+
+        return totalParticipantNum;
+    }
+
     public Long updateTicket(Long ticketId, TicketUpdateRequestDTO ticketUpdateRequestDTO) {
         // 업데이트 전, 데이터 존재 확인
         TicketEntity ticket = getTicketIfExists(ticketId);
 
-        // 티켓 이름 수정이 들어왔을 경우에만 업데이트
-        if(ticketUpdateRequestDTO.getName() != null) {
-            ticket.updateName(ticketUpdateRequestDTO.getName());
-        }
-
-        // 티켓 가격 수정이 들어왔을 경우에만 업데이트
-        if(ticketUpdateRequestDTO.getPrice() != null) {
-            ticket.updatePrice(ticketUpdateRequestDTO.getPrice());
-        }
+        ticket.update(ticketUpdateRequestDTO);
 
         ticketRepository.updateTicket(ticket);
         return ticketId;
@@ -105,7 +125,7 @@ public class TicketService {
 
     private List<TicketEntity> getTicketListIfExists(Long eventId) {
         Optional<List<TicketEntity>> ticketOptional = Optional.ofNullable(ticketRepository.selectTicketByEventId(eventId));
-        return ticketOptional.orElseThrow(() -> TicketNotFoundException.EXCEPTION);
+        return ticketOptional.orElseThrow(() -> null); // 티켓 정보가 없으면 null 반환
     }
 
     private TicketEntity getTicketIfExists(Long ticketId) {
@@ -123,9 +143,10 @@ public class TicketService {
     }
 
     private QueryAppliesCountResponseDTO getAppliesInfoByTicketId(List<QueryAppliesCountResponseDTO> appliesInfo, Long ticketId){
+        // appliesInfoDTO 의 ticketId 와 ticketId 가 일치하는 데이터를 찾아 반환
         return appliesInfo.stream()
                 .filter(appliesInfoDTO -> appliesInfoDTO.getTicketId().equals(ticketId))
                 .findFirst()
-                .orElseThrow(() -> TicketNotFoundException.EXCEPTION);
+                .orElse(null);
     }
 }

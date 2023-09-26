@@ -13,6 +13,7 @@ public class ImageUploadRequestDTO {
     private String originalFileName;
     private String storedFilePath;
     private Long fileSize;
+    private Boolean isDeleted;
 
     public EventImageEntity toEntity(){
         return EventImageEntity
@@ -22,6 +23,7 @@ public class ImageUploadRequestDTO {
                 .originalFileName(this.originalFileName)
                 .storedFilePath(this.storedFilePath)
                 .fileSize(this.fileSize)
+                .isDeleted(false)
                 .build();
     }
 }

@@ -34,7 +34,7 @@
     <!-- 티켓 수정 -->
     <update id="updateTicket" parameterType="com.eventty.businessservice.event.domain.entity.TicketEntity" useGeneratedKeys="true" keyColumn="id">
         UPDATE tickets
-        SET name = #{name}, price = #{price}
+        SET name = #{name}, price = #{price}, quantity = #{quantity}
         WHERE id = #{id}
     </update>
 

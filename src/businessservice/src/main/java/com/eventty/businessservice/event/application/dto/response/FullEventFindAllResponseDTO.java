@@ -17,13 +17,13 @@ public class FullEventFindAllResponseDTO {
     private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
-    private String categoryName;
+    private String category;
     private Boolean isActive;
 
     private String image; // 이미지 파일
     private String originFileName; // 원본 파일명
 
-    public static FullEventFindAllResponseDTO of(
+    public static FullEventFindAllResponseDTO from(
             EventBasicWithoutHostInfoResponseDTO eventBasic,
             ImageResponseDTO imageInfo) {
         return FullEventFindAllResponseDTO.builder()
@@ -34,7 +34,7 @@ public class FullEventFindAllResponseDTO {
                 .eventEndAt(eventBasic.getEventEndAt())
                 .participateNum(eventBasic.getParticipateNum())
                 .location(eventBasic.getLocation())
-                .categoryName(eventBasic.getCategoryName())
+                .category(eventBasic.getCategory())
                 .isActive(eventBasic.getIsActive())
                 .image(imageInfo.getImagePathFromStorage())
                 .originFileName(imageInfo.getImageOriginalFileName())
@@ -45,12 +45,15 @@ public class FullEventFindAllResponseDTO {
     public FullEventFindAllResponseDTO() {
         this.id = 1L;
         this.hostId = 1L;
-        this.title = "String";
+        this.title = "Test Event 1";
         this.eventStartAt = LocalDateTime.now();
         this.eventEndAt = LocalDateTime.now();
-        this.participateNum = 1L;
-        this.location = "String";
+        this.participateNum = 50L;
+        this.location = "Location 1";
+        this.category = "sports";
         this.isActive = true;
+        this.image = "https://eventty-storage.s3.ap-northeast-2.amazonaws.com/2021/08/15/1629025200_1.jpg";
+        this.originFileName = "1629025200_1.jpg";
     }
 
 }
