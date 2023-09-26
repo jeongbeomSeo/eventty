@@ -28,7 +28,8 @@ function WriteHeader({onSubmit}: IWriteSubmit) {
                     </UnstyledButton>
 
                     <Group>
-                        <Button className={classes["btn-primary-outline"]}>임시저장</Button>
+                        {/* 임시 저장 기능 구현 X */}
+                        {/*<Button className={classes["btn-primary-outline"]}>임시저장</Button>*/}
                         <Button onClick={onSubmit} className={classes["btn-primary"]}>게시하기</Button>
                     </Group>
                 </Group>

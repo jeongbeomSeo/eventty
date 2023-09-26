@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   frontend:
-    image: front:1.5
+    image: hyk0/eventty_front:latest
     command: npm start
     container_name: Frontend
     build:
@@ -17,7 +17,7 @@ services:
         aliases:
           - "front server"
   businessservice:
-    image: serin0404/event:1.6
+    image: serin0404/event:1.7
     container_name: Event_Server
     build:
       context: ./businessservice
@@ -31,7 +31,7 @@ services:
         aliases:
           - "event server"
   userservice:
-    image: hyungyunk/eventty:1.6
+    image: hyungyunk/eventty:1.7
     container_name: User_Server
     build:
       context: ./userservice
@@ -86,6 +86,20 @@ services:
       eventty:
         aliases:
           - "gateway server"
+  applyservice:
+    image: hyungyunk/apply:1.7
+    container_name: Apply_Server
+    build:
+      context: ./applyservice
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./applyservice:/src/applyservice
+    networks:
+      eventty:
+        aliases:
+          - "apply server"
 networks:
   eventty:
     driver: bridge

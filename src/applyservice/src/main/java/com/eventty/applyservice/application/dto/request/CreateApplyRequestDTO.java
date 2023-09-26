@@ -11,5 +11,11 @@ public class CreateApplyRequestDTO {
     @NotNull
     private Long ticketId;
     @NotNull
-    private Long participateNum;
+    private Long quantity;
+    @NotNull
+    private Long applicantNum;
+    @NotNull
+    private String phone;
+    @NotNull
+    private String name;
 }

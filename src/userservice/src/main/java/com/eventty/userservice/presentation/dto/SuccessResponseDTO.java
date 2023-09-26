@@ -3,8 +3,9 @@ package com.eventty.userservice.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.ToString;
 
-@Getter
+@Getter @ToString
 public class SuccessResponseDTO<T>{
 
     // code 번호 0으로 고정

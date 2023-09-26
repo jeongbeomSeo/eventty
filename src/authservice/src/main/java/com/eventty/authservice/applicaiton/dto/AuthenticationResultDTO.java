@@ -3,7 +3,7 @@ package com.eventty.authservice.applicaiton.dto;
 import com.eventty.authservice.domain.entity.AuthUserEntity;
 
 public record AuthenticationResultDTO(
-        AuthUserEntity authUserEntity,
+        AuthUserEntity AuthUserEntity,
         boolean needsUpate
 ) {
 }

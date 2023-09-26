@@ -8,12 +8,18 @@ import MobileHeader from "./MobileHeader";
 function MobileTopSection() {
     const HEADER_HEIGHT = "6vh";
     const {pathname} = useLocation();
+    const isEventPath = pathname.includes("/event/");
     const {classes} = customStyle();
 
     return (
-        <Header height={HEADER_HEIGHT} className={classes["header"]}>
-            <Container style={{height: "100%", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                {pathname.includes("/event/") ? <EventDetailHeader/> : <MobileHeader/>}
+        <Header height={HEADER_HEIGHT} className={`${classes["header"]} ${isEventPath && "mobile-event-detail"}`}>
+            <Container style={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+            }}>
+                {isEventPath ? <EventDetailHeader/> : <MobileHeader/>}
             </Container>
         </Header>
     );

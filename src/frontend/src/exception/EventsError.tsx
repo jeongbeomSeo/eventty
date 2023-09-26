@@ -6,7 +6,7 @@ function EventsError() {
         <Flex justify={"center"}
               align={"center"}
               style={{width: "100p%", height: "50vh"}}>
-            <Title order={2}>검색 결과가 없습니다</Title>
+            <Title order={2}>해당 내역이 없습니다</Title>
         </Flex>
     );
 }

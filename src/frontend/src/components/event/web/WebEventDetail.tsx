@@ -1,13 +1,10 @@
 import React, {useCallback, useMemo} from "react";
-import {useLoaderData, useLocation, useNavigate, useRouteLoaderData} from "react-router-dom";
+import {useNavigate, useRouteLoaderData} from "react-router-dom";
 import {
-    Avatar,
     Button,
     Container,
     Divider,
     Grid,
-    Group,
-    Image,
     Paper,
     Stack,
     Text,
@@ -20,14 +17,14 @@ import customStyle from "../../../styles/customStyle";
 import {CheckLogin} from "../../../util/CheckLogin";
 import WebTicketInfo from "./WebTicketInfo";
 import {useModal} from "../../../util/hook/useModal";
-import {useFetch} from "../../../util/hook/useFetch";
-import {Base64toSrc} from "../../../util/ConvertFile";
+import DOMPurify from "dompurify";
+import WebHostInfo from "./WebHostInfo";
+import {CATEGORY_LIST} from "../../../util/const/categoryList";
 
 function WebEventDetail() {
     const userStateValue = useRecoilValue(userState);
     const navigate = useNavigate();
-    const {loginAlertModal} = useModal();
-    const {deleteEventFetch} = useFetch();
+    const {loginAlertModal, eventDeleteModal} = useModal();
     const isLoggedIn = CheckLogin();
     const {classes} = customStyle();
 
@@ -46,36 +43,63 @@ function WebEventDetail() {
 
     return (
         <Container style={{paddingTop: "5vh", paddingBottom: "5vh"}}>
-            <Grid gutter={"xl"}>
+            <Grid gutter={"xl"} align={"stretch"}>
                 <Grid.Col span={8}>
-                    <Image src={Base64toSrc(DATA.image, DATA.originFileName)}
-                           height={"400"}
-                           withPlaceholder
-                    />
+                    <Paper
+                        style={{
+                            width: "100%",
+                            height: 0,
+                            paddingBottom: "75%",
+                            backgroundImage: `url(${process.env["REACT_APP_NCLOUD_IMAGE_PATH"]}/${DATA.image})`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "center",
+                            backgroundSize: "cover",
+                        }}/>
                 </Grid.Col>
                 <Grid.Col span={"auto"}>
                     <Stack justify={"space-between"} style={{height: "100%"}}>
                         <Stack>
-                            <UnstyledButton onClick={() => navigate(`/events/category/${DATA.categoryName}`)}>
-                                <Title order={5} color={"var(--primary)"}>{DATA.categoryName}</Title>
+                            <UnstyledButton onClick={() => navigate(`/events/category/${DATA.category}`)}>
+                                <Title order={5} color={"var(--primary)"}>{CATEGORY_LIST[DATA.category]}</Title>
                             </UnstyledButton>
                             <Title order={2}>{DATA.title}</Title>
                             <Title order={4}>
-                                {`${eventStartAt.getMonth() + 1}월 ${eventStartAt.getDate()}일`}
-                                {((eventStartAt.getMonth() === eventEndtAt.getMonth()) && (eventStartAt.getDate() === eventEndtAt.getDate())) ?
-                                    ` ${eventStartAt.getHours()}시 ~ ${eventEndtAt.getHours()}시` :
-                                    ` ~ ${eventEndtAt.getMonth() + 1}월 ${eventEndtAt.getDate()}일`
-                                }
+                                {`${eventStartAt.getFullYear()}년 `}
+                                {`${eventStartAt.getMonth()}월 `}
+                                {`${eventStartAt.getDate()}일 `}
+                                {!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
+                                    && `${eventStartAt.getHours()}시
+                                ${eventStartAt.getMinutes() !== 0 ? `${eventStartAt.getMinutes()}분` : ""}`}
                             </Title>
-                            <Text>{DATA.location}</Text>
+                            <Title order={4}>
+                                {`${!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
+                                    ? `~ ${eventEndtAt.getFullYear()}년  
+                                    ${eventEndtAt.getMonth()}월 
+                                    ${eventEndtAt.getDate()}일 
+                                    ${eventEndtAt.getHours()}시 
+                                    ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""} `
+                                    : `${eventStartAt.getHours()}시 
+                                    ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""}
+                                    ~ ${eventEndtAt.getHours()}시 
+                                    ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""}`}`}
+                            </Title>
+                            <Text color={"gray"}>{DATA.location}</Text>
                         </Stack>
-                        {userStateValue.isHost && (userStateValue.userId === DATA.userId) ?
-                            <Button color={"red"}
-                                    variant={"outline"}
-                                    onClick={() => deleteEventFetch(DATA.id)}
-                                    style={{height: "2.5rem"}}>
-                                행사 취소
-                            </Button> :
+                        {userStateValue.isHost && (userStateValue.userId === DATA.hostId) ?
+                            <Stack>
+                                <Button
+                                    onClick={() => navigate(`/update/${DATA.id}`)}
+                                    className={classes["btn-primary-outline"]}
+                                >
+                                    행사 수정
+                                </Button>
+                                <Button color={"red"}
+                                        variant={"outline"}
+                                        onClick={() => eventDeleteModal(DATA.id)}
+                                        style={{height: "2.5rem"}}>
+                                    행사 취소
+                                </Button>
+                            </Stack> :
                             userStateValue.isHost ?
                                 <Button className={`${classes["btn-primary"]} disable`}
                                         style={{height: "2.5rem"}}>
@@ -94,23 +118,14 @@ function WebEventDetail() {
             <Divider my={"3rem"}/>
 
             <Grid gutter={"xl"}>
-                <Grid.Col span={8}>
-                    {DATA.content}
+                {/* XSS 방지 */}
+                <Grid.Col span={8}
+                          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(DATA.content)}}>
                 </Grid.Col>
+
                 <Grid.Col span={"auto"}>
                     <Stack spacing={"3rem"}>
-                        <Paper p={"md"} withBorder>
-                            <Group noWrap>
-                                <Avatar radius={"xl"}/>
-                                <div>
-                                    {DATA.userId}
-                                </div>
-                            </Group>
-                            <Group>
-                                content
-                            </Group>
-                        </Paper>
-
+                        <WebHostInfo hostName={DATA.hostName} hostPhone={DATA.hostPhone}/>
                         <WebTicketInfo tickets={DATA.tickets}/>
                     </Stack>
                 </Grid.Col>

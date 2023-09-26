@@ -13,8 +13,8 @@ export interface ILogin {
     password: string;
 }
 
-export interface IGoogleLogin {
-    OAuth_AccessToken: string;
+export interface ISocialLogin {
+    code: string;
 }
 
 export interface IUser {
@@ -43,4 +43,15 @@ export interface IUpdateUser {
 export interface IChangePW {
     password: string;
     passwordConfirm?: string;
+}
+
+export interface IFindEmail {
+    name: string;
+    phone: string;
+}
+
+export interface IFindPassword {
+    email: string;
+    name: string;
+    phone: string;
 }

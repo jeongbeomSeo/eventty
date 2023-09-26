@@ -31,6 +31,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+	// Spring Context
+	implementation 'org.springframework:spring-context'
+
 	// JACKSON
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation("jakarta.json:jakarta.json-api:2.0.1")

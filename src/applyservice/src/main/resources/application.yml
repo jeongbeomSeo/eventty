@@ -5,7 +5,7 @@ server:
 spring:
   # Secret
   profiles:
-    active: db
+    active: dev
   # Mysql
   datasource:
     url: ${url}
@@ -39,3 +39,5 @@ logging:
       audit: OFF
       resultset: OFF
       connection: OFF
+    root: INFO
+    com.evnetty.applyService: ${level}

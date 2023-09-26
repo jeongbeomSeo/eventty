@@ -5,7 +5,7 @@ server:
 spring:
   # SECRET
   profiles:
-    active: dev
+    active: dev, oauth2
   # MYSQL
   datasource:
     url: ${url}
@@ -33,19 +33,6 @@ spring:
     console:
       enabled: ${h2}
 
-  ## Spring Security
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${google-client-id}
-            client-secret: ${google-client-secret}
-            scope:
-              - ${google-client-scope1}
-              - ${google-client-scope2}
-
-
 # LOGGING
 logging:
   level:
@@ -66,3 +53,13 @@ token.access-expired-time: ${token-access}
 token.refresh-expired-time: ${token-refresh}
 token.issuer: ${issuer}
 token.secret_key: ${secret-key}
+
+## Google
+oauth2.google.client_id: ${google_client_id}
+oauth2.google.client_secret: ${google_client_secret}
+oauth2.google.redirect_url: ${google_rediret_url}
+
+## naver
+oauth2.naver.client_id: ${naver_client_id}
+oauth2.naver.client_secret: ${naver_client_secret}
+oauth2.naver.redirect_url: ${naver_callback_url}

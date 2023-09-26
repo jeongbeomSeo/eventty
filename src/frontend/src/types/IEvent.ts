@@ -1,6 +1,6 @@
 export interface IEvent {
     id: number;
-    userId: number;
+    hostId: number;
     title: string;
     eventStartAt: Date;
     eventEndAt: Date;
@@ -17,16 +17,29 @@ export interface IEventWrite {
     [key:string]: string|any;
     userId: number;
     title: string;
-    image?: File;
     eventStartAt: Date;
     eventEndAt: Date;
-    participateNum: number;
     location: string;
     category: string;
     content: string;
     applyStartAt: Date;
     applyEndAt: Date;
     tickets: IEventTicket[];
+    image: File | null;
+}
+
+export interface IEventUpdate {
+    [key:string]: string|any;
+    title: string;
+    eventStartAt: Date;
+    eventEndAt: Date;
+    location: string;
+    category: string;
+    content: string;
+    isActive: boolean;
+    applyStartAt: Date;
+    applyEndAt: Date;
+    ticketList: IEventTicketUpdate[];
 }
 
 export interface IEventTicket {
@@ -35,23 +48,31 @@ export interface IEventTicket {
     quantity: number;
 }
 
+export interface IEventTicketUpdate {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+}
+
 export interface IEventTicketDetail extends IEventTicket{
     id: number;
     eventId: number;
-    is_deleted: boolean;
+    appliedTicketCount: number;
 }
 
-export interface IEventDetail {
+export interface IEventDetail{
     id: number;
-    userId: number;
+    hostId: number;
+    hostName: string;
+    hostPhone: string;
     title: string;
     eventStartAt: Date;
     eventEndAt: Date;
     participateNum: number;
     location: string;
-    categoryName: string;
+    category: string;
     isActive: boolean;
-    isDeleted: boolean;
     content: string;
     applyStartAt: Date;
     applyEndAt: Date;
@@ -62,5 +83,27 @@ export interface IEventDetail {
 }
 
 export interface IEventBooking {
-    userId: number;
+    eventId: number,
+    ticketId: number,
+    quantity: number,
+    name: string,
+    phone: string,
+    applicantNum: number,
+}
+
+export interface IEventUserBookings{
+    applyId: number,
+    applicantNum: number,
+    date: Date,
+    image: string,
+    status: string,
+    ticketName: string,
+    ticketPrice: number,
+    title: string,
+}
+
+export interface IEventMain {
+    Top10CreatedAt: IEvent[],
+    Top10ApplyEndAt: IEvent[],
+    Top10Views: IEvent[],
 }

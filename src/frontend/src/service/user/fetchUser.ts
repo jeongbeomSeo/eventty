@@ -1,8 +1,6 @@
-import {IChangePW, IGoogleLogin, ILogin, ISignup, IUpdateUser, IUser} from "../../types/IUser";
+import {IChangePW, IFindEmail, IFindPassword, ILogin, ISignup, ISocialLogin} from "../../types/IUser";
 import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
 import {redirect} from "react-router-dom";
-import {CheckLogin} from "../../util/CheckLogin";
-import {googleLogout} from "@react-oauth/google";
 
 export const postSignupEmailValid = async (data: string) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/email`, {
@@ -10,7 +8,7 @@ export const postSignupEmailValid = async (data: string) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
     })
-        .then(res => res.json())
+        .then(res => res.status)
         .catch(res => console.error(res));
 }
 
@@ -20,11 +18,33 @@ export const postSignupUser = async (data: ISignup) => {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
     })
-        .then((res) => res.json())
+        .then((res) => res.status)
         .catch(res => console.error(res));
 }
 export const postSignupHost = async (data: ISignup) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/me/host`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.status)
+        .catch(res => console.error(res));
+}
+
+// 이메일 찾기
+export const postFindEmail = async (data: IFindEmail) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/find/email`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .catch(res => console.error(res));
+}
+
+// 비밀번호 찾기
+export const postFindPassword = async (data: IFindPassword) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/find/password`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(data),
@@ -47,8 +67,22 @@ export const postLogin = async (data: ILogin) => {
 }
 
 // Google 로그인
-export const postGoogleLogin = async (data: IGoogleLogin) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login`, {
+export const postGoogleLogin = async (data: ISocialLogin) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login/google`, {
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => {
+            SetCsrfToken(res);
+            return res.json();
+        });
+}
+
+// Naver 로그인
+export const postNaverLogin = async (data: ISocialLogin) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/oauth/login/naver`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json"},
@@ -96,13 +130,13 @@ export const postProfile = async (data: FormData) => {
     })
         .then((res) => {
             SetCsrfToken(res);
-            return res.status;
+            return res.json();
         })
         .catch(res => SetCsrfToken(res));
 }
 
 export const postChangePassword = async (data: IChangePW) => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/changePW`, {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/change/password`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
@@ -116,9 +150,16 @@ export const postChangePassword = async (data: IChangePW) => {
 }
 
 export const deleteAccount = async () => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/secret/me`, {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/me`, {
         method: "DELETE",
-        headers: {"Content-Type": "application/json"},
+        headers: {"X-Csrf-Token": GetCsrfToken()!},
     })
-        .then((res) => res.status);
+        .then((res) => {
+            SetCsrfToken(res);
+            return res;
+        })
+        .then((res) => res.status)
+        .catch(res => {
+            SetCsrfToken(res);
+        });
 }

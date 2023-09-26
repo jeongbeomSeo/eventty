@@ -1,5 +1,6 @@
 package com.eventty.authservice.global.Enum;
 
+import com.eventty.authservice.domain.Enum.OAuth;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -36,7 +37,14 @@ public enum ErrorCode {
     CSRF_TOKEN_NOT_FOUND(401, "G000", "Csrf Token Not Found Exception"),
     INVALID_CSRF_TOKEN(401, "G000", "Invalid CSRF Token Exception"),
 
-    DUPLICATE_EMAIL(409, "", "Duplicate Email");
+    DUPLICATE_EMAIL(409, "", "Duplicate Email"),
+
+    SESSION_IS_EXPIRED_RESET_PASSWORD(400, "", "Password reset request failed due to expired session"),
+
+    // OAuth
+    OAUTH_NOT_FOUND_USER_INFO(400, "", "OAuth - Failed to request OAuth user info"),
+    OAUTH_NOT_FOUND_VERIFIED_EMAIL(400, "", "OAuth - Failed to find verified email"),
+    OAUTH_FAIL_GET_ACCESS_TOKEN(400, "", "OAuth - Failed to request OAuth Access Token");
 
     private final int status;
     private final String code;

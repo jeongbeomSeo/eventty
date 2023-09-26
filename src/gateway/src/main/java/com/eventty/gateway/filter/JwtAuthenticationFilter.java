@@ -51,25 +51,29 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
         // 함수형 인터페이스의 인스턴스를 간결하게 표한하는 람다 표현식
         return ((exchange, chain) -> {
+            log.debug("Current Postion:: JWT Authentication Filter");
 
             MultiValueMap<String, HttpCookie> cookies = exchange.getRequest().getCookies();
             Map<String, List<String>> headers = exchange.getRequest().getHeaders();
 
+            log.debug("Access Token 검증");
             // Access Token 검증
             boolean hasAccessToken = cookies.get(TokenEnum.ACCESS_TOKEN.getName()) != null;
             if (!hasAccessToken)
                 throw new NoAccessTokenException();
 
-
-
+            log.debug("Auth Server Api Call: Authenticate User");
             // 이 부분이 API 요청 보내는 로직으로 변경되어야 함
             ResponseEntity<ResponseDTO<AuthenticationDetailsResponseDTO>> response = apiClient.authenticateUser(customMappper.authenticateUserRequestDTO(cookies, headers));
 
             // 예외가 발생하지 않은 상태로 왔는데 데이터가 비어있는 경우 인증 서버에서 문제가 있는 것
-            if (response.getBody() == null)
+            if (response.getBody() == null) {
                 throw new AuthServerResponseErrorException();
+            }
 
             AuthenticationDetailsResponseDTO authenticationDetailsResponseDTO = response.getBody().getSuccessResponseDTO().getData();
+            log.debug("Auth User Id: {}", authenticationDetailsResponseDTO.getUserId());
+            log.debug("Auth User Authorities: {}", authenticationDetailsResponseDTO.getAuthoritiesJSON());
 
             // Authentication 객체를 직렬화해서 보낼 수 있지만, 데이터의 크기와 복잡성 때문에 각 서비스에서 만드는 것이 효율적
             ServerHttpRequest requestWithHeader = exchange.getRequest().

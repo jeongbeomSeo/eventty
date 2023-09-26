@@ -1,16 +1,38 @@
-import { Button } from "@mantine/core";
+import {Button} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
+import {useGoogleLogin} from "@react-oauth/google";
+import {useFetch} from "../../util/hook/useFetch";
+import {useRecoilState} from "recoil";
+import {loadingState} from "../../states/loadingState";
+import {ISocialLogin} from "../../types/IUser";
 
-type TGoogleBtn = {
-    children: string;
-}
+function GoogleBtn() {
+    const {classes} = customStyle();
+    const {googleLoginFetch} = useFetch();
+    const [loading, setLoading] = useRecoilState(loadingState);
 
-function GoogleBtn({ children }: TGoogleBtn) {
-    const { classes } = customStyle();
+    const login = useGoogleLogin({
+        onSuccess: codeResponse => {
+            const code:ISocialLogin = {
+                code: codeResponse.code,
+            }
+            googleLoginFetch(code);
+        },
+        flow: "auth-code",
+    });
+
     return (
-        <Button style={{height:"2.6rem"}} className={classes["btn-gray-outline"]}>
-            <img src={`${process.env.PUBLIC_URL}/images/google_normal.svg`} style={{paddingRight: "0.5rem"}}/>
-            {children}
+        <Button
+                style={{
+                    height: "50px",
+                    width: "50px",
+                    backgroundImage: `url(${process.env.PUBLIC_URL}/images/google_normal.svg)`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                    backgroundSize: "26px",
+                }}
+                className={classes["btn-gray-outline"]}
+                onClick={() => login()}>
         </Button>
     );
 }

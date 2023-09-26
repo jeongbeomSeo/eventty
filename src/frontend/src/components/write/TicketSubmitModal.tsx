@@ -4,7 +4,7 @@ import {Controller, useFormContext, useWatch} from "react-hook-form";
 import customStyle from "../../styles/customStyle";
 import {IEventTicket} from "../../types/IEvent";
 
-function TicketSubmitModal({open, title, left}: { open: boolean, title: string[], left: number }) {
+function TicketSubmitModal({open, title}: { open: boolean, title: string[]}) {
     const [modalOpened, setModalOpened] = useState(open)
     const [ticketPriceFree, setTicketPriceFree] = useState(false);
     const {
@@ -96,17 +96,10 @@ function TicketSubmitModal({open, title, left}: { open: boolean, title: string[]
                                             {...field}
                                             label={"인원"}
                                             min={0}
-                                            max={left}
-                                            defaultValue={0}
+                                            max={999999}
                                             type={"number"}
                                             error={errors.quantity && errors.quantity.message}
                                             className={classes["input"]}/>
-                                        <Text fz={"xs"}>
-                                            {left >= 0 ?
-                                                `${left}명 남았습니다` :
-                                                `${left * -1}명 초과했습니다`
-                                            }
-                                        </Text>
                                     </Flex>
                                 )}/>
                     <Group grow>

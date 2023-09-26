@@ -1,20 +1,22 @@
 import React from "react";
-import {Box, Divider, Group, Stack, Title} from "@mantine/core";
-import customStyle from "../../../styles/customStyle";
-import WebCategoryBtn from "./WebCategoryBtn";
-import {Outlet, useParams, useSearchParams} from "react-router-dom";
-import EventsList from "../../../pages/events/EventsList";
+import {Divider, Title} from "@mantine/core";
+import {Outlet, useLocation, useParams, useSearchParams} from "react-router-dom";
 import SearchResult from "../SearchResult";
+import {CATEGORY_LIST} from "../../../util/const/categoryList";
+
+type TParams = {
+    category: string;
+}
 
 function WebEvents() {
-    const {category} = useParams();
+    const {category} = useParams<keyof TParams>() as TParams;
     const [searchParams, setSearchParams] = useSearchParams();
 
     return (
         <>
             {category &&
                 <>
-                    <Title>{category}</Title>
+                    <Title>{CATEGORY_LIST[category]}</Title>
                     <Divider my={"1rem"}/>
                 </>}
             {searchParams.size > 0 && <SearchResult/>}

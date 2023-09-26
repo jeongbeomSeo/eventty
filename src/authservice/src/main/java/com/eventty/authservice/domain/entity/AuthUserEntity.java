@@ -1,6 +1,5 @@
 package com.eventty.authservice.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-// Setter의 경우 TestCode때문에 넣었어요
 @Setter
 @Entity
 @Builder
@@ -27,7 +25,6 @@ public class AuthUserEntity {
     @Column(nullable = false, unique = true)
     private String email;               // Email
 
-    @Column(nullable = false)
     private String password;            // 암호화된 Password
 
     @ColumnDefault("false")
@@ -38,5 +35,5 @@ public class AuthUserEntity {
 
     // @JsonManagedReference
     @OneToMany(mappedBy = "authUserEntity", cascade = CascadeType.PERSIST)
-    private List<AuthorityEntity> Authorities;
+    private List<AuthorityEntity> authorities;
 }
