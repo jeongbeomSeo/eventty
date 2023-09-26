@@ -10,4 +10,5 @@ public class CreateApplyDTO {
     private Long ticketId;
     private Long applicantNum;
     private String phone;
+    private String name;
 }

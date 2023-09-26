@@ -1,9 +1,12 @@
 package com.eventty.applyservice.application;
 
 import com.eventty.applyservice.application.dto.CreateApplyDTO;
+import com.eventty.applyservice.application.dto.FindApplicantsListDTO;
 import com.eventty.applyservice.application.dto.FindByUserIdDTO;
 import com.eventty.applyservice.application.dto.request.CreateApplyRequestDTO;
+import com.eventty.applyservice.application.dto.request.FindApplicantsListRequestDTO;
 import com.eventty.applyservice.application.dto.response.FindAppicaionListResponseDTO;
+import com.eventty.applyservice.application.dto.response.FindApplicantsListResposneDTO;
 import com.eventty.applyservice.application.dto.response.FindEventInfoResponseDTO;
 import com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO;
 import com.eventty.applyservice.domain.ApplyReposiroty;
@@ -11,18 +14,12 @@ import com.eventty.applyservice.domain.code.ServerUri;
 import com.eventty.applyservice.domain.exception.AlreadyCancelApplyException;
 import com.eventty.applyservice.domain.exception.ExceedApplicantsException;
 import com.eventty.applyservice.domain.exception.NonExistentIdException;
-import com.eventty.applyservice.presentation.dto.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,31 +29,33 @@ import java.util.*;
 public class ApplyServiceImpl implements ApplyService{
 
     private final ApplyReposiroty applyReposiroty;
-    private final RestTemplate customRestTemplate;
     private final ServerUri serverUri;
+    private final ApiService apiService;
 
+    @Async
     @Override
-    public Long createApply(Long userId, CreateApplyRequestDTO createApplyRequestDTO) {
+    public void createApply(Long userId, CreateApplyRequestDTO createApplyRequestDTO) {
         // 신청전 유효성 검사
         validateBeforeApply(createApplyRequestDTO);
 
-        return applyReposiroty.insertApply(CreateApplyDTO
+        applyReposiroty.insertApply(CreateApplyDTO
                 .builder()
                 .userId(userId)
                 .eventId(createApplyRequestDTO.getEventId())
                 .ticketId(createApplyRequestDTO.getTicketId())
                 .applicantNum(createApplyRequestDTO.getApplicantNum())
                 .phone(createApplyRequestDTO.getPhone())
+                .name(createApplyRequestDTO.getName())
                 .build());
     }
 
+    @Async
     @Override
-    public Long cancelApply(Long applyId) {
+    public void cancelApply(Long applyId) {
 
         // 신청 취소전 유효성 검증
         validateBeforeCancel(applyId);
-
-        return applyReposiroty.deleteApply(applyId);
+        applyReposiroty.deleteApply(applyId);
     }
 
     @Override
@@ -76,7 +75,9 @@ public class ApplyServiceImpl implements ApplyService{
 
 
         // api request----------------------------------------------------
-        List<FindEventInfoResponseDTO> eventInfos = apiRequest(params);
+        apiService.uriPathSetting(serverUri.getEventServer(), serverUri.getGET_EVENT_TICKET_INFO());
+        apiService.paramSetting(params);
+        List<FindEventInfoResponseDTO> eventInfos = apiService.apiRequest();
 
 
         // service logic--------------------------------------------------
@@ -111,10 +112,11 @@ public class ApplyServiceImpl implements ApplyService{
                                 .ticketName(eventResponse.getTicketName())
                                 .title(eventResponse.getTitle())
                                 .image(eventResponse.getImage())
-                                .ticketPrice(eventResponse.getTicketPrice())
+                                .ticketPrice(eventResponse.getTicketPrice() * apply.getApplicantNum())
                                 .status(status)
                                 .date(date)
                                 .applyId(apply.getApplyId())
+                                .applicantNum(apply.getApplicantNum())
                                 .build());
         }
         
@@ -126,65 +128,69 @@ public class ApplyServiceImpl implements ApplyService{
         return applyReposiroty.findByEventIdGroupByTicket(eventId);
     }
 
-    //------------------------------------------ ApiClient -----------------------------------------------//
-    public List<FindEventInfoResponseDTO> apiRequest(MultiValueMap<String, String> params){
-        URI uri = makeUri(params,  serverUri.getEventServer() + serverUri.getGET_EVENT_TICKET_INFO());
+    @Override
+    public List<FindApplicantsListResposneDTO> findApplicantsList(FindApplicantsListRequestDTO findApplicantsListRequestDTO) {
+        List<FindApplicantsListDTO> applies = applyReposiroty.findByEventId(findApplicantsListRequestDTO);
 
-        log.info("API 호출 From: {} To: {} Purpose: {}", "Apply Server", "Event Server", "Find Events List");
-        ResponseEntity<ResponseDTO<List<FindEventInfoResponseDTO>>> response = null;
-        try{
-            response =  customRestTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    createHttpPostEntity(null),
-                    new ParameterizedTypeReference<ResponseDTO<List<FindEventInfoResponseDTO>>>() {}
-            );
-        }catch(Exception e){
-            log.error(e.getMessage());
+        if(applies.size() == 0 || applies == null) return null;
+
+        // Event Server로 보내기위한 TicketIds 중복 제거(Parameter 생성)
+        Set<String> ticketIds = new HashSet<>();
+        for(FindApplicantsListDTO apply : applies){
+            ticketIds.add(apply.getTicketId().toString());
+        }
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.put("ticketIds", new ArrayList<>(ticketIds));
+
+        // api request----------------------------------------------------
+        apiService.uriPathSetting(serverUri.getEventServer(), serverUri.getGET_EVENT_TICKET_INFO());
+        apiService.paramSetting(params);
+        List<FindEventInfoResponseDTO> eventInfos = apiService.apiRequest();
+
+        // ----------------------------------------------------------------
+
+        Map<Long, FindEventInfoResponseDTO> eventInfoMap = new HashMap<>();
+        for(FindEventInfoResponseDTO eventResponse : eventInfos){
+            eventInfoMap.put(eventResponse.getTicketId(), eventResponse);
         }
 
-        if(response.getBody() == null || response.getBody().getErrorResponseDTO() != null){
-            log.error("ApplyServer - response is null or getErrorResponse : {}", response);
-            return null;
-        }
+        List<FindApplicantsListResposneDTO> applicantsList = new ArrayList<>();
+        for(FindApplicantsListDTO applicant : applies){
 
-        log.debug("Resposne : {}", response);
-        if(response.getBody() != null && response.getBody().getSuccessResponseDTO() != null){
-            for(FindEventInfoResponseDTO responseDTO : response.getBody().getSuccessResponseDTO().getData()){
-                log.debug("ResponseDTO : {}", responseDTO);
+            FindEventInfoResponseDTO eventInfo = eventInfoMap.get(applicant.getTicketId());
+
+            Long price = eventInfo.getTicketPrice() * applicant.getApplicantNum();
+            Long priceMin = findApplicantsListRequestDTO.getPriceMin();
+            Long priceMax = findApplicantsListRequestDTO.getPriceMax();
+
+            if(priceMin != null && priceMax != null){
+                if(price < priceMin || price > priceMax) continue;
+            }else if(priceMin != null){
+                if(price < priceMin) continue;
+            }else if(priceMax != null){
+                if(price > priceMax) continue;
             }
-        }else {
-            log.error("Response Error!!!!!");
+
+            applicantsList.add(FindApplicantsListResposneDTO
+                    .builder()
+                    .applyId(applicant.getApplyId())
+                    .date(applicant.getDate())
+                    .name(applicant.getName())
+                    .phone(applicant.getPhone())
+                    .price(eventInfo.getTicketPrice() * applicant.getApplicantNum())
+                    .state(applicant.getState())
+                    .build());
         }
 
-        return response.getBody().getSuccessResponseDTO().getData();
+        return applicantsList;
     }
-
-    public URI makeUri(MultiValueMap<String, String> params, String path){
-        return UriComponentsBuilder
-                .fromHttpUrl(path)
-                .queryParams(params)
-                .build()
-                .encode()
-                .toUri();
-    }
-
-    private <T> HttpEntity<T> createHttpPostEntity(T dto) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add("X-Requires-Auth", "True");
-
-        return new HttpEntity<>(dto, headers);
-    }
-
     //------------------------------------------ validation -----------------------------------------------//
 
     private void validateBeforeApply(CreateApplyRequestDTO createApplyRequestDTO){
         // 신청 인원수 확인
         Long count = applyReposiroty.getApplyNum(createApplyRequestDTO.getEventId());
-        if(count != null && createApplyRequestDTO.getQuantity() <= count)
-            throw new ExceedApplicantsException(count);
+        if(count != null && createApplyRequestDTO.getQuantity() <= count + createApplyRequestDTO.getApplicantNum())
+            throw new ExceedApplicantsException(count + createApplyRequestDTO.getApplicantNum());
     }
 
     private void validateBeforeCancel(Long applyId){

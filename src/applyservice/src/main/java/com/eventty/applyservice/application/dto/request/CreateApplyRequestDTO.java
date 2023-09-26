@@ -16,4 +16,6 @@ public class CreateApplyRequestDTO {
     private Long applicantNum;
     @NotNull
     private String phone;
+    @NotNull
+    private String name;
 }
