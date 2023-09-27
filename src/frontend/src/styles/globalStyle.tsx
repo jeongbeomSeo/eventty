@@ -19,6 +19,8 @@ const globalStyle = createGlobalStyle`
   :root {
     //--primary: #7536DC;
     --primary: #4E52DC;
+    --primary-rgb: 78, 82, 220;
+    --primary-light: rgba(var(--primary-rgb), 0.1);
   }
 
   .ql-editor{

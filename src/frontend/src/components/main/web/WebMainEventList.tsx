@@ -1,6 +1,5 @@
 import React from "react";
-import {AspectRatio, Image, Paper, SimpleGrid, Stack, Text, Title} from "@mantine/core";
-import {Link, useLoaderData} from "react-router-dom";
+import {SimpleGrid} from "@mantine/core";
 import {IEvent} from "../../../types/IEvent";
 import WebEventItem from "../../event/web/WebEventItem";
 

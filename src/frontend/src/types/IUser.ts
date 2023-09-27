@@ -55,3 +55,8 @@ export interface IFindPassword {
     name: string;
     phone: string;
 }
+
+export interface IFindCallbackPassword {
+    password: string;
+    passwordConfirm?: string;
+}

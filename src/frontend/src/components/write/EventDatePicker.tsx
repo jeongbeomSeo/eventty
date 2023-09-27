@@ -22,7 +22,7 @@ function EventDatePicker(props: IDateTimePicker) {
             value={props.value}
             onChange={(newValue: Date) => props.onChange(setTimeSecondsToZero(newValue))}
             onTimeUpdate={() => props.value?.setSeconds(0)}
-            valueFormat={"YYYY-MM-DD HH시 mm분"}
+            valueFormat={props.valueFormat ? props.valueFormat : "YYYY-MM-DD HH시 mm분"}
             placeholder={props.placeholder}
             weekendDays={[0]}
             firstDayOfWeek={0}

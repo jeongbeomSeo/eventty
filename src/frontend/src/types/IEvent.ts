@@ -107,3 +107,25 @@ export interface IEventMain {
     Top10ApplyEndAt: IEvent[],
     Top10Views: IEvent[],
 }
+
+export interface IEventApplices {
+    eventId: string,
+    state: string,
+    applyId?: string,
+    phone?: string,
+    order?: string,
+    name?: string,
+    dateMin?: Date,
+    dateMax?: Date,
+    priceMin?: string,
+    priceMax?: string,
+}
+
+export interface IEventApplicesResult {
+    applyId: number,
+    name: string,
+    phone: string,
+    price: number,
+    date: Date,
+    state: string,
+}

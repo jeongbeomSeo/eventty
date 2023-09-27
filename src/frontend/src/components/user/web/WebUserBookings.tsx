@@ -1,8 +1,7 @@
 import React from "react";
 import {Divider, Stack, Title} from "@mantine/core";
-import WebRegisteBtn from "./WebRegisteBtn";
 import {useLoaderData} from "react-router-dom";
-import {IEvent, IEventUserBookings} from "../../../types/IEvent";
+import {IEventUserBookings} from "../../../types/IEvent";
 import WebApplyBtn from "./WebApplyBtn";
 
 function WebUserBookings() {

@@ -22,11 +22,10 @@ import {loader as eventListLoader} from "./routes/events";
 import {loader as profileLoader} from "./routes/profile";
 import {loader as categoryLoader} from "./routes/category";
 import {loader as searchLoader} from "./routes/search";
-import {loader as mainLoader} from "./routes/main";
 import {loader as registerLoader} from "./routes/register";
 import {loader as updateLoader} from "./routes/update";
 import {loader as applyLoader} from "./routes/apply";
-import {loader as bookingLoader} from "./routes/booking";
+import {loader as applicesLoader} from "./routes/applices";
 import HostRoute from "./components/HostRoute";
 import Bookings from "./pages/user/Bookings";
 import EventBooking from "./pages/events/EventBooking";
@@ -37,6 +36,9 @@ import FindResult from "./pages/find/FindResult";
 import Update from "./pages/Update";
 import UserRoute from "./components/UserRoute";
 import NaverLogin from "./pages/login/NaverLogin";
+import Applices from "./pages/user/Applices";
+import WebApplicesResult from "./components/user/web/applices/WebApplicesResult";
+import ApplicesResult from "./pages/user/applices/ApplicesResult";
 
 const Router = createBrowserRouter([
         {
@@ -52,7 +54,6 @@ const Router = createBrowserRouter([
                         {
                             path: "",
                             element: <Main/>,
-                            loader: mainLoader,
                         },
                         {
                             path: "events/*",
@@ -140,6 +141,22 @@ const Router = createBrowserRouter([
                                 },
                             ]
                         },
+                        {
+                            element: <HostRoute/>,
+                            children: [
+                                {
+                                    path: "users/events/applices",
+                                    element: <Applices/>,
+                                    children: [
+                                        {
+                                            path: ":type/:eventId",
+                                            element: <ApplicesResult/>,
+                                            errorElement: <EventsError/>,
+                                        },
+                                    ]
+                                }
+                            ]
+                        }
                     ],
                 },
                 {
@@ -185,7 +202,7 @@ const Router = createBrowserRouter([
                     element: <PrivateRoute/>,
                     children: [
                         {
-                            // element: <HostRoute/>,
+                            element: <HostRoute/>,
                             children: [
                                 {
                                     path: "write",

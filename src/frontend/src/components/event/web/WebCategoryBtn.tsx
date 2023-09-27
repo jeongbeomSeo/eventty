@@ -1,17 +1,14 @@
 import React from "react";
-import {Button, Flex, Group, SimpleGrid, Stack, Text, UnstyledButton, useMantineTheme} from "@mantine/core";
-import {Link, useNavigate} from "react-router-dom";
+import {Text, UnstyledButton} from "@mantine/core";
+import {useNavigate} from "react-router-dom";
 import customStyle from "../../../styles/customStyle";
 import {
-    IconBallBaseball, IconBook,
-    IconCategoryFilled, IconCode,
+    IconBallBaseball, IconBook, IconCode,
     IconHandRock,
     IconHorseToy, IconMovie,
     IconPalette, IconPiano, IconPresentation,
     IconTent
 } from "@tabler/icons-react";
-import {useSetRecoilState} from "recoil";
-import {searchDrawerState} from "../../../states/searchDrawerState";
 
 const ICON_SIZE = "40px"
 

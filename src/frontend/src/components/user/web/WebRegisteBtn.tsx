@@ -1,5 +1,5 @@
 import React from "react";
-import {Badge, Button, Group, Image, Paper, Stack, Text, Title, UnstyledButton} from "@mantine/core";
+import {Badge, Button, Group, Paper, Stack, Text, Title, UnstyledButton} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import {useNavigate} from "react-router-dom";
 import {CheckHost} from "../../../util/CheckHost";
@@ -68,7 +68,7 @@ function WebRegisteBtn({data}: { data: IEvent }) {
                     <Stack spacing={"0.5rem"}>
                         <Button onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/applices/${data.id}`)
+                            navigate(`/users/events/applices/all/${data.id}`)
                         }}
                                 className={classes["btn-primary"]}>
                             신청내역

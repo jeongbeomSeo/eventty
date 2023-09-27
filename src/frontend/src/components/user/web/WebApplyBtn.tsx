@@ -1,9 +1,8 @@
 import React from "react";
-import {Badge, Button, Group, Image, Paper, Stack, Text, Title, UnstyledButton} from "@mantine/core";
+import {Badge, Button, Group, Paper, Stack, Text, Title, UnstyledButton} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import {useLocation, useNavigate} from "react-router-dom";
-import {CheckHost} from "../../../util/CheckHost";
-import {IEvent, IEventUserBookings} from "../../../types/IEvent";
+import {IEventUserBookings} from "../../../types/IEvent";
 import {useModal} from "../../../util/hook/useModal";
 
 const eventState = {

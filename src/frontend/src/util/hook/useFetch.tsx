@@ -1,13 +1,19 @@
 import {
     deleteAccount,
-    postChangePassword, postFindEmail, postFindPassword, postGoogleLogin,
-    postLogout, postNaverLogin, postProfile
+    postChangePassword,
+    postFindEmail,
+    postFindPassword,
+    postFindPasswordCallback,
+    postGoogleLogin,
+    postLogout,
+    postNaverLogin,
+    postProfile
 } from "../../service/user/fetchUser";
 import {MessageAlert} from "../MessageAlert";
-import {useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState} from "recoil";
+import {useRecoilState, useResetRecoilState, useSetRecoilState} from "recoil";
 import {loginState} from "../../states/loginState";
 import {userState} from "../../states/userState";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {
     deleteApplyCancelEvent,
     deleteEvent,
@@ -15,19 +21,20 @@ import {
     postEvent,
     postUpdateEvent
 } from "../../service/event/fetchEvent";
-import {IChangePW, IFindEmail, IFindPassword, ISocialLogin} from "../../types/IUser";
+import {IChangePW, IFindCallbackPassword, IFindEmail, IFindPassword, ISocialLogin} from "../../types/IUser";
 import {modals} from "@mantine/modals";
 import {menuDrawerState} from "../../states/menuDrawerState";
 import {loadingState} from "../../states/loadingState";
-import {IEventBooking, IEventDetail, IEventUpdate} from "../../types/IEvent";
+import {IEventBooking, IEventUpdate} from "../../types/IEvent";
 
 export function useFetch() {
     const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
-    const [loading, setLoading] = useRecoilState(loadingState);
+    const setLoading = useSetRecoilState(loadingState);
     const setMenuDrawer = useSetRecoilState(menuDrawerState);
-    const [userStateValue, setUserStateValue] = useRecoilState(userState);
+    const setUserStateValue = useSetRecoilState(userState);
     const resetUserState = useResetRecoilState(userState);
     const navigate = useNavigate();
+    const {state} = useLocation();
 
     // 이메일 찾기
     const findEmailFetch = (data: IFindEmail) => {
@@ -57,12 +64,27 @@ export function useFetch() {
             }).finally(() => setLoading(prev => !prev));
     }
 
+    // 비밀번호 찾기 후 변경
+    const findPasswordCallbackFetch = (data: IFindCallbackPassword) => {
+        setLoading(true);
+
+        postFindPasswordCallback(data)
+            .then(res => {
+                if (res.isSuccess) {
+                    MessageAlert("success", "비밀번호 변경 성공", null);
+                    navigate("/");
+                } else {
+                    MessageAlert("error", "비밀번호 변경에 실패했습니다", "다시 시도해주세요");
+                }
+            }).finally(() => setLoading(prev => !prev));
+    }
+
     const googleLoginFetch = (data: ISocialLogin) => {
         setLoading(true);
 
         postGoogleLogin(data)
             .then(res => {
-                if (res.isSuccess){
+                if (res.isSuccess) {
                     const resEmail = res.successResponseDTO.data.email;
                     const resRole = res.successResponseDTO.data.role
                     const resUserId = res.successResponseDTO.data.userId;
@@ -90,7 +112,7 @@ export function useFetch() {
 
         postNaverLogin(data)
             .then(res => {
-                if (res.isSuccess){
+                if (res.isSuccess) {
                     const resEmail = res.successResponseDTO.data.email;
                     const resRole = res.successResponseDTO.data.role
                     const resUserId = res.successResponseDTO.data.userId;
@@ -104,14 +126,16 @@ export function useFetch() {
                         imagePath: resImgPath !== null && resImgPath,
                     });
 
-                    sessionStorage.setItem("EMAIL", resEmail);
-                    sessionStorage.setItem("AUTHORITY", resRole);
-                    sessionStorage.setItem("USER_ID", resUserId);
-                    sessionStorage.setItem("IMG_PATH", resImgPath);
 
-                    window.close();
+                    window.opener.sessionStorage.setItem("EMAIL", resEmail);
+                    window.opener.sessionStorage.setItem("AUTHORITY", resRole);
+                    window.opener.sessionStorage.setItem("USER_ID", resUserId);
+                    window.opener.sessionStorage.setItem("IMG_PATH", resImgPath);
                 }
-            }).catch(() => MessageAlert("error", "네이버 로그인에 실패했습니다", null))
+            })
+            .then(() => window.opener.location.href = "/")
+            .then(() => window.close())
+            .catch(() => MessageAlert("error", "네이버 로그인에 실패했습니다", null))
             .finally(() => setLoading(false));
     }
 
@@ -147,7 +171,7 @@ export function useFetch() {
                         setUserStateValue(prev => {
                             return {...prev, imagePath: res.successResponseDTO.data.imagePath}
                         })
-                    }else{
+                    } else {
                         sessionStorage.setItem("IMG_PATH", "");
                         setUserStateValue(prev => {
                             return {...prev, imagePath: ""}
@@ -203,12 +227,12 @@ export function useFetch() {
     }
 
     // 행사 수정
-    const updateEventFetch = (data: IEventUpdate, eventId:number) => {
+    const updateEventFetch = (data: IEventUpdate, eventId: number) => {
         postUpdateEvent(data, eventId)
             .then(res => {
                 if (res.isSuccess) {
                     MessageAlert("success", "수정 성공", null);
-                    navigate("/");
+                    (state !== null) ? navigate(state) : navigate("/");
                 } else {
                     MessageAlert("error", "작성 실패", null);
                 }
@@ -221,32 +245,34 @@ export function useFetch() {
             .then(res => {
                 if (res === 200) {
                     MessageAlert("success", "행사 취소", null);
-                    navigate("/events");
+                    navigate("/");
                 } else {
                     MessageAlert("error", "행사 취소 실패", null);
                 }
             }).finally(() => modals.closeAll());
     }
 
+    // 행사 예약
     const applyEventFetch = (data: IEventBooking) => {
         postApplyEvent(data)
             .then(res => {
-                if (res.isSuccess){
+                if (res.isSuccess) {
                     MessageAlert("success", "신청 성공", null);
                     navigate("/");
-                }else{
+                } else {
                     MessageAlert("error", "신청 실패", "다시 시도해주세요");
                 }
             }).finally(() => setLoading(false));
     }
 
+    // 행사 예약 취소
     const applyEventCancelFetch = (data: number) => {
         deleteApplyCancelEvent(data)
             .then(res => {
-                if (res.isSuccess){
+                if (res.isSuccess) {
                     MessageAlert("success", "취소 성공", null);
                     navigate("/");
-                }else{
+                } else {
                     MessageAlert("error", "취소 실패", "다시 시도해주세요");
                 }
             }).finally(() => {
@@ -268,6 +294,7 @@ export function useFetch() {
         googleLoginFetch,
         naverLoginFetch,
         updateEventFetch,
-        applyEventCancelFetch
+        applyEventCancelFetch,
+        findPasswordCallbackFetch
     };
 }

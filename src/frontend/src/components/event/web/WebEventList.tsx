@@ -1,10 +1,7 @@
 import React from "react";
-import {Badge, Card, Group, Image, Paper, SimpleGrid, Stack, Text, Title,} from "@mantine/core";
-import {Link, useLoaderData} from "react-router-dom";
+import {SimpleGrid} from "@mantine/core";
+import {useLoaderData} from "react-router-dom";
 import {IEvent} from "../../../types/IEvent";
-import {Base64toSrc} from "../../../util/ConvertFile";
-import SearchError from "../../../exception/EventsError";
-import EventsError from "../../../exception/EventsError";
 import WebEventItem from "./WebEventItem";
 
 function WebEventList() {
@@ -14,7 +11,7 @@ function WebEventList() {
         if (item.isDeleted) return;
 
         return (
-            <WebEventItem item={item} badge={true}/>
+            <WebEventItem item={item} badge={false}/>
         );
     });
 

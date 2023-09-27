@@ -1,14 +1,12 @@
-import React, {useEffect} from "react";
-import {useRecoilValue, useSetRecoilState} from "recoil";
-import {cardTitleState} from "../../states/cardTitleState";
-import {Button, Divider, Stack, TextInput} from "@mantine/core";
+import React from "react";
+import {useRecoilValue} from "recoil";
+import {Button, Stack, TextInput} from "@mantine/core";
 import customStyle from "../../styles/customStyle";
 import {Controller, useForm} from "react-hook-form";
 import {IFindEmail} from "../../types/IUser";
 import PhoneNumberInput from "../../components/common/PhoneNumberInput";
 import {useFetch} from "../../util/hook/useFetch";
 import {loadingState} from "../../states/loadingState";
-import {useLocation} from "react-router-dom";
 
 function FindEmail() {
     const {classes} = customStyle();

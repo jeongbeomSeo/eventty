@@ -1,10 +1,7 @@
 import React from "react";
 import {Button} from "@mantine/core";
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import {useRecoilValue} from "recoil";
-import {loginState} from "../../../../states/loginState";
+import {useLocation, useNavigate} from "react-router-dom";
 import customStyles from "../../../../styles/customStyle";
-import {userState} from "../../../../states/userState";
 
 function WebLoginBtn() {
     const navigate = useNavigate();

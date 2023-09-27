@@ -10,7 +10,6 @@ import {loadingState} from "../states/loadingState";
 import {loginState} from "../states/loginState";
 import {userState} from "../states/userState";
 import {eventTicketDrawerState} from "../states/eventTicketDrawerState";
-import {useModal} from "../util/hook/useModal";
 import {ModalsProvider} from "@mantine/modals";
 
 function RootSetStates() {

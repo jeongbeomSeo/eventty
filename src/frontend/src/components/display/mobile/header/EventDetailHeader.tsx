@@ -1,15 +1,13 @@
-import {Container, Flex, Group, Header, Text, UnstyledButton,} from "@mantine/core";
-import {Link, useLocation, useNavigate, useNavigation} from "react-router-dom";
-import Logo from "../../../common/Logo";
+import {Group, UnstyledButton,} from "@mantine/core";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import customStyle from "../../../../styles/customStyle";
 import React from "react";
 import {IconChevronLeft, IconHome, IconSearch} from "@tabler/icons-react";
-import {useRecoilState, useSetRecoilState} from "recoil";
+import {useSetRecoilState} from "recoil";
 import {searchDrawerState} from "../../../../states/searchDrawerState";
 
 function EventDetailHeader() {
     const navigate = useNavigate();
-    const {state} = useLocation();
     const setSearchDrawer = useSetRecoilState(searchDrawerState);
 
     const {classes} = customStyle();
@@ -17,7 +15,7 @@ function EventDetailHeader() {
     return (
         <Group position={"apart"} style={{width:"100%"}}>
             <UnstyledButton className={classes["mobile-nav-link"]}
-                            onClick={() => navigate(state)}>
+                            onClick={() => navigate(-1)}>
                 <IconChevronLeft size={"3.5vh"}/>
             </UnstyledButton>
             <Group>

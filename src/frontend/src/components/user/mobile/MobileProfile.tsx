@@ -1,5 +1,5 @@
-import React, {ChangeEvent, useEffect, useRef, useState} from "react";
-import {Avatar, Button, Center, FileButton, Flex, Group, Paper, Stack, Text, TextInput, Title} from "@mantine/core";
+import React, {useEffect, useRef, useState} from "react";
+import {Avatar, Button, FileButton, Group, Paper, Stack, TextInput, Title} from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
 import BirthdayPicker from "../../common/BirthdayPicker";
 import {isRouteErrorResponse, useLoaderData, useRouteError} from "react-router-dom";
@@ -125,6 +125,7 @@ function MobileProfile() {
                                     }}
                                     render={({field: {ref, ...rest}}) => (
                                         <PhoneNumberInput {...rest}
+                                                          label={true}
                                                           inputRef={ref}
                                                           error={errors.phone?.message}
                                                           asterisk={true}/>

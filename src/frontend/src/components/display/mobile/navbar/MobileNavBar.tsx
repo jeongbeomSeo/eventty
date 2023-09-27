@@ -1,13 +1,11 @@
 import React from "react";
-import {Flex, Grid, Group, SimpleGrid, Text, UnstyledButton} from "@mantine/core";
+import {SimpleGrid, Text, UnstyledButton} from "@mantine/core";
 import {Link} from "react-router-dom";
-import {IconConfetti, IconHome, IconMenu2, IconSearch, IconUser} from "@tabler/icons-react";
+import {IconConfetti, IconHome, IconMenu2, IconSearch} from "@tabler/icons-react";
 import customStyle from "../../../../styles/customStyle";
 import {useSetRecoilState} from "recoil";
 import {searchDrawerState} from "../../../../states/searchDrawerState";
-import MobileSearchDrawer from "../MobileSearchDrawer";
 import {menuDrawerState} from "../../../../states/menuDrawerState";
-import MobileMenuDrawer from "../MobileMenuDrawer";
 
 function MobileNavBar() {
     const {classes} = customStyle();

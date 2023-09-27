@@ -1,6 +1,6 @@
 import React from "react";
 import {Divider, Title} from "@mantine/core";
-import {Outlet, useLocation, useParams, useSearchParams} from "react-router-dom";
+import {Outlet, useParams, useSearchParams} from "react-router-dom";
 import SearchResult from "../SearchResult";
 import {CATEGORY_LIST} from "../../../util/const/categoryList";
 

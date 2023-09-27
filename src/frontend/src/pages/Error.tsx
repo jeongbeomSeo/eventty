@@ -1,6 +1,5 @@
 import {Button, Container, Stack, Title} from '@mantine/core';
 import {Link} from 'react-router-dom';
-import {useSetRecoilState} from "recoil";
 import customStyle from "../styles/customStyle";
 
 export function Error() {

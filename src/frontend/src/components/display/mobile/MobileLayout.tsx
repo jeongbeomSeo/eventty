@@ -24,7 +24,7 @@ function MobileLayout() {
             <Outlet/>
             <MobileMenuDrawer/>
             <MobileSearchDrawer/>
-            {!pathname.includes("/events/") && <Footer/>}
+            {!pathname.includes("/event/") && <Footer/>}
             <MobileBottomSection/>
         </>
     );

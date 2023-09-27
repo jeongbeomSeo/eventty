@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Navigate, Outlet, useLocation, useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import CardForm from "../../components/signup/CardForm";
 import {useSetRecoilState} from "recoil";
 import {cardTitleState} from "../../states/cardTitleState";
@@ -10,7 +10,6 @@ function FindResult() {
     const {state} = useLocation();
     const {params} = useParams();
     const setCardTitle = useSetRecoilState(cardTitleState);
-    console.log(state);
 
     useEffect(() => {
         setCardTitle("조회 결과");
@@ -18,7 +17,7 @@ function FindResult() {
 
     return (
         <CardForm>
-            {!state && <Navigate to={"/"}/>}
+            {/*{!state && <Navigate to={"/"}/>}*/}
             {params === "email" ?
                 <FindResultEmail/> :
                 <FindResultPassword/>

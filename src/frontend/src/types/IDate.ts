@@ -1,4 +1,4 @@
-import React, {Ref} from "react";
+import React from "react";
 
 export interface IDatePicker {
     label?: string;
@@ -20,4 +20,5 @@ export interface IDateTimePicker {
     value: Date | undefined;
     onChange: (newValue: Date) => void;
     error?: string;
+    valueFormat?: string;
 }

@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Outlet, useLocation, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import CardForm from "../components/signup/CardForm";
 import {Stack, Tabs} from "@mantine/core";
 import customStyle from "../styles/customStyle";
