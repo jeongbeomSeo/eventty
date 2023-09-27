@@ -1,7 +1,6 @@
 import React from "react";
 import {useLoaderData} from "react-router-dom";
-import {IEvent, IEventUserBookings} from "../../../types/IEvent";
-import MobileRegisterBtn from "./MobileRegisterBtn";
+import {IEventUserBookings} from "../../../types/IEvent";
 import {Stack, Title} from "@mantine/core";
 import MobileApplyBtn from "./MobileApplyBtn";
 

@@ -13,7 +13,7 @@ function MobileHostRegister() {
 
     return (
         <Stack>
-            <Title order={3}>예약 내역</Title>
+            <Title order={3}>주최 내역</Title>
             {items}
         </Stack>
     );

@@ -1,6 +1,6 @@
 import React from "react";
 import {Text, UnstyledButton} from "@mantine/core";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {
     IconBallBaseball, IconBook, IconCode,
     IconHandRock,

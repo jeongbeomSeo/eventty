@@ -18,7 +18,7 @@ import PhoneNumberInput from "../../common/PhoneNumberInput";
 import {IUser} from "../../../types/IUser";
 import {Controller, useForm} from "react-hook-form";
 import {useFetch} from "../../../util/hook/useFetch";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {useRecoilState} from "recoil";
 import {loadingState} from "../../../states/loadingState";
 
 function WebBookingTicket() {
@@ -55,10 +55,10 @@ function WebBookingTicket() {
     const ticketItems = EVENT_DATA.tickets.map((item) => (
         <UnstyledButton key={item.id} onClick={() => handleTicketSelect(item)}>
             <Paper withBorder p={"1rem"}
-                   style={{height: "120px", position: "relative", width: "100%"}}
-                   className={classes["ticket-select"]}>
+                   style={{height: "100%", position: "relative", width: "100%"}}
+                   className={`${classes["ticket-select"]} ${item.id === watch("ticketId") && "selected"}`}>
                 <Stack>
-                    <Title order={4}>
+                    <Title order={4} style={{wordBreak: "break-all"}}>
                         {item.price === 0 ? "무료" : `${item.price.toLocaleString("ko-KR")}원`}
                     </Title>
                     <Text>{item.name}</Text>
@@ -85,6 +85,8 @@ function WebBookingTicket() {
         if (typeof item !== "undefined") {
             setCurTicket(item);
             setTotalPrice(item.price);
+            setValue("ticketId", item.id);
+            setValue("quantity", item.quantity);
         }
     }, [searchParams]);
 

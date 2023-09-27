@@ -5,7 +5,7 @@ import {IconSearch} from "@tabler/icons-react";
 import {useForm} from "react-hook-form";
 import {createSearchParams, useNavigate} from "react-router-dom";
 import {modals} from "@mantine/modals";
-import {useRecoilState, useSetRecoilState} from "recoil";
+import {useSetRecoilState} from "recoil";
 import {searchDrawerState} from "../../states/searchDrawerState";
 
 interface ISearch {

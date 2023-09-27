@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   frontend:
-    image: front:1.6
+    image: hyk0/eventty_front:latest
     command: npm start
     container_name: Frontend
     build:
@@ -17,7 +17,7 @@ services:
         aliases:
           - "front server"
   businessservice:
-    image: serin0404/event:1.6
+    image: serin0404/event:latest
     container_name: Event_Server
     build:
       context: ./businessservice
@@ -45,7 +45,7 @@ services:
         aliases:
           - "user server"
   authservice:
-    image: jeongbeom4693/auth:1.8
+    image: jeongbeom4693/auth:2.0
     container_name: Auth_Server
     build:
       context: ./authservice

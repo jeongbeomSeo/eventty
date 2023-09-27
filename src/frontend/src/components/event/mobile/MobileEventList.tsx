@@ -18,7 +18,7 @@ function MobileEventList() {
         if (item.isDeleted) return;
 
         return (
-            <MobileEventItem key={idx} item={item} badge={true}/>
+            <MobileEventItem key={idx} item={item} badge={false}/>
         )
     });
 

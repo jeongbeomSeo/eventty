@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Flex, Group, Modal, NumberInput, Select, Stack, Text, TextInput} from "@mantine/core";
-import {Controller, useFormContext, useWatch} from "react-hook-form";
+import {Button, Checkbox, Flex, Group, Modal, NumberInput, Select, Stack} from "@mantine/core";
+import {Controller, useFormContext} from "react-hook-form";
 import customStyle from "../../styles/customStyle";
 import {IEventTicket} from "../../types/IEvent";
 

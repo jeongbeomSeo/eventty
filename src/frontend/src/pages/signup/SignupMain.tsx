@@ -1,6 +1,5 @@
-import {Button, Divider, Stack} from "@mantine/core";
+import {Button, Stack} from "@mantine/core";
 import { Link } from "react-router-dom";
-import GoogleBtn from "../../components/signup/GoogleBtn";
 import { useSetRecoilState } from 'recoil';
 import { cardTitleState } from '../../states/cardTitleState';
 import { useEffect } from 'react';

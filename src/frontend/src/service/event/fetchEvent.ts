@@ -47,7 +47,7 @@ export const getHostIdEvents = async (data: number) => {
 
 // 주최자 본인의 전체 행사 조회
 export const getHostEvents = async () => {
-    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events/registered`,{
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/event/secret/events/registered`, {
         method: "GET",
         credentials: "include",
         headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
@@ -57,6 +57,25 @@ export const getHostEvents = async () => {
             return res.json();
         })
         .then(res => res.successResponseDTO.data)
+        .catch(res => SetCsrfToken(res));
+}
+
+// 행사에 참여한 인원 내역 조회
+export const getApplyUsers = async (data: string) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/apply/secret/applies/host?${data}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {"Content-Type": "application/json", "X-Csrf-Token": GetCsrfToken()!},
+    })
+        .then(res => {
+            SetCsrfToken(res);
+            return res.json();
+        })
+        .then(res => {
+            if (res.isSuccess && res.successResponseDTO) {
+                return res.successResponseDTO.data;
+            }
+        })
         .catch(res => SetCsrfToken(res));
 }
 
@@ -160,9 +179,9 @@ export const getApplyEvents = async () => {
             return res.json();
         })
         .then((res) => {
-            if (res.successResponseDTO && res.successResponseDTO.data.length > 0){
+            if (res.successResponseDTO && res.successResponseDTO.data.length > 0) {
                 return res.successResponseDTO.data;
-            }else throw Error;
+            } else throw Error;
         })
         .catch(res => {
             SetCsrfToken(res);

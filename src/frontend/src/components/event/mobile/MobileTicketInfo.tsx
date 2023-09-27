@@ -2,21 +2,23 @@ import React, {useEffect, useState} from "react";
 import {Drawer, Stack} from "@mantine/core";
 import TicketBtn from "../TicketBtn";
 import {IconChevronDown} from "@tabler/icons-react";
-import {useLocation, useNavigate} from "react-router-dom";
-import {CheckLogin} from "../../../util/CheckLogin";
-import {useModal} from "../../../util/hook/useModal";
 import {IEventTicketDetail} from "../../../types/IEvent";
+import {useRecoilState} from "recoil";
+import {eventTicketDrawerState} from "../../../states/eventTicketDrawerState";
 
 interface ITickets {
     open: boolean;
     tickets: IEventTicketDetail[];
+    isActive: boolean;
 }
 
-function MobileTicketInfo({open, tickets}: ITickets) {
+function MobileTicketInfo({open, tickets, isActive}: ITickets) {
     const [opened, setOpened] = useState(open);
+    const [eventTIcketDrawer, setEventTicketDrawer] = useRecoilState(eventTicketDrawerState);
 
     const handleOpen = () => {
         setOpened(prev => !prev);
+        setEventTicketDrawer(open);
     }
 
     const items = tickets.map(item => (
@@ -25,7 +27,8 @@ function MobileTicketInfo({open, tickets}: ITickets) {
                    name={item.name}
                    price={item.price}
                    quantity={item.quantity}
-                   applied={item.appliedTicketCount}/>
+                   applied={item.appliedTicketCount}
+                   isActive={isActive}/>
     ));
 
     useEffect(() => {

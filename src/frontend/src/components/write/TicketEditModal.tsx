@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Flex, Group, Modal, NumberInput, Select, Stack, Text, TextInput} from "@mantine/core";
+import {Button, Checkbox, Flex, Group, Modal, NumberInput, Select, Stack} from "@mantine/core";
 import {Controller, useFormContext} from "react-hook-form";
 import customStyle from "../../styles/customStyle";
 import {IEventTicket, IEventTicketUpdate} from "../../types/IEvent";
-import {getValue} from "@testing-library/user-event/dist/utils";
 
 function TicketEditModal({open, title, data, update}: {
     open: boolean,
@@ -19,8 +18,6 @@ function TicketEditModal({open, title, data, update}: {
     const {
         handleSubmit,
         control,
-        watch,
-        getValues,
         setValue,
         resetField,
         clearErrors,

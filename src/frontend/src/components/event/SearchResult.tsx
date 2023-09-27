@@ -1,7 +1,6 @@
-import React, {useEffect} from "react";
-import WebEventList from "./web/WebEventList";
+import React from "react";
 import {Divider, Text, Title} from "@mantine/core";
-import {useLoaderData, useRouteLoaderData, useSearchParams} from "react-router-dom";
+import {useRouteLoaderData, useSearchParams} from "react-router-dom";
 import {IEvent} from "../../types/IEvent";
 
 function SearchResult() {

@@ -1,16 +1,16 @@
-import {Button, Container, Group, Header, Input, Paper, TextInput, Transition, UnstyledButton} from "@mantine/core";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {Button, Container, Group, Header, Input, Paper, Transition, UnstyledButton} from "@mantine/core";
+import {Link, useNavigate} from "react-router-dom";
 import WebLoginBtn from "./WebLoginBtn";
 import Logo from "../../../common/Logo";
 import customStyle from "../../../../styles/customStyle";
-import React, {Ref, useEffect, useRef, useState} from "react";
-import {useRecoilState, useRecoilValue} from "recoil";
+import React, {useState} from "react";
+import {useRecoilValue} from "recoil";
 import {loginState} from "../../../../states/loginState";
 import WebUserInfoBtn from "./WebUserInfoBtn";
-import {IconChevronDown, IconSearch} from "@tabler/icons-react";
+import {IconSearch} from "@tabler/icons-react";
 import {useModal} from "../../../../util/hook/useModal";
 import WebCategoryBtn from "../../../event/web/WebCategoryBtn";
-import {CheckSmSize, CheckXsSize} from "../../../../util/CheckMediaQuery";
+import {CheckSmSize} from "../../../../util/CheckMediaQuery";
 
 const HEADER_HEIGHT = "65px";
 

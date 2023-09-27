@@ -1,12 +1,10 @@
-import React, {JSX, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Stack, Title} from "@mantine/core";
-import customStyle from "../../../styles/customStyle";
 import SearchBox from "../../common/SearchBox";
 import {SearchRecentHistory} from "../../../util/SearchRecentHistory";
 import SearchKeywordsItem from "../SearchKeywordsItem";
 
 function WebSearchKeywordsList() {
-    const {classes} = customStyle();
     const {keywords, handleAddKeyword, handleDeleteKeyword} = SearchRecentHistory();
     const [items, setItems] = useState<React.ReactNode[] | null>(null);
 

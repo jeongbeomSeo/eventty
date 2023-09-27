@@ -1,5 +1,5 @@
 import {notifications} from "@mantine/notifications";
-import {IconCheck, IconExclamationMark, IconInfoCircle, IconX} from "@tabler/icons-react";
+import {IconCheck, IconExclamationMark, IconX} from "@tabler/icons-react";
 
 type TAlert = "success" | "error" | "notice" | "info";
 

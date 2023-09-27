@@ -1,15 +1,6 @@
 import React, {useCallback, useMemo} from "react";
 import {useNavigate, useRouteLoaderData} from "react-router-dom";
-import {
-    Button,
-    Container,
-    Divider,
-    Grid,
-    Paper,
-    Stack,
-    Text,
-    Title, UnstyledButton
-} from "@mantine/core";
+import {Button, Container, Divider, Grid, Overlay, Paper, Stack, Text, Title, UnstyledButton} from "@mantine/core";
 import {useRecoilValue} from "recoil";
 import {IEventDetail} from "../../../types/IEvent";
 import {userState} from "../../../states/userState";
@@ -54,6 +45,7 @@ function WebEventDetail() {
                             backgroundRepeat: "no-repeat",
                             backgroundPosition: "center",
                             backgroundSize: "cover",
+                            opacity: DATA.isActive ? 1 : 0.5,
                         }}/>
                 </Grid.Col>
                 <Grid.Col span={"auto"}>
@@ -65,7 +57,7 @@ function WebEventDetail() {
                             <Title order={2}>{DATA.title}</Title>
                             <Title order={4}>
                                 {`${eventStartAt.getFullYear()}년 `}
-                                {`${eventStartAt.getMonth()}월 `}
+                                {`${eventStartAt.getMonth()+1}월 `}
                                 {`${eventStartAt.getDate()}일 `}
                                 {!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
                                     && `${eventStartAt.getHours()}시
@@ -74,7 +66,7 @@ function WebEventDetail() {
                             <Title order={4}>
                                 {`${!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
                                     ? `~ ${eventEndtAt.getFullYear()}년  
-                                    ${eventEndtAt.getMonth()}월 
+                                    ${eventEndtAt.getMonth()+1}월 
                                     ${eventEndtAt.getDate()}일 
                                     ${eventEndtAt.getHours()}시 
                                     ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""} `
@@ -87,20 +79,27 @@ function WebEventDetail() {
                         </Stack>
                         {userStateValue.isHost && (userStateValue.userId === DATA.hostId) ?
                             <Stack>
-                                <Button
-                                    onClick={() => navigate(`/update/${DATA.id}`)}
-                                    className={classes["btn-primary-outline"]}
-                                >
-                                    행사 수정
-                                </Button>
-                                <Button color={"red"}
-                                        variant={"outline"}
-                                        onClick={() => eventDeleteModal(DATA.id)}
-                                        style={{height: "2.5rem"}}>
-                                    행사 취소
-                                </Button>
+                                {(new Date(DATA.applyEndAt) > new Date()) ?
+                                    <>
+                                        <Button
+                                            onClick={() => navigate(`/update/${DATA.id}`)}
+                                            className={classes["btn-primary-outline"]}
+                                        >
+                                            행사 수정
+                                        </Button>
+                                        <Button color={"red"}
+                                                variant={"outline"}
+                                                onClick={() => eventDeleteModal(DATA.id)}
+                                                style={{height: "2.5rem"}}>
+                                            행사 취소
+                                        </Button>
+                                    </>
+                                    : <Button className={`${classes["btn-primary"]} disable`}
+                                              style={{height: "2.5rem"}}>
+                                        수정 불가
+                                    </Button>}
                             </Stack> :
-                            userStateValue.isHost ?
+                            (userStateValue.isHost || !DATA.isActive) ?
                                 <Button className={`${classes["btn-primary"]} disable`}
                                         style={{height: "2.5rem"}}>
                                     예약 불가
@@ -126,7 +125,7 @@ function WebEventDetail() {
                 <Grid.Col span={"auto"}>
                     <Stack spacing={"3rem"}>
                         <WebHostInfo hostName={DATA.hostName} hostPhone={DATA.hostPhone}/>
-                        <WebTicketInfo tickets={DATA.tickets}/>
+                        <WebTicketInfo tickets={DATA.tickets} isActive={DATA.isActive}/>
                     </Stack>
                 </Grid.Col>
             </Grid>

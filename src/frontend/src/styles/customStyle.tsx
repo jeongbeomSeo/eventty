@@ -168,8 +168,34 @@ const customStyle = createStyles((theme) => ({
     "btn-naver":{
         backgroundColor: "#03c75a !important",
         color: "#ffffff !important",
+        height: "50px",
+        width: "50px",
+        backgroundImage: `url(${process.env.PUBLIC_URL}/images/naver_normal.svg)`,
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        backgroundSize: "25px",
         ":hover": {
             filter: "brightness(0.97)",
+        },
+    },
+    "btn-google":{
+        backgroundColor: "white !important",
+        borderColor: "#b3b3b3 !important",
+        color: "#666666 !important",
+        height: "50px",
+        width: "50px",
+        backgroundImage: `url(${process.env.PUBLIC_URL}/images/google_normal.svg)`,
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        backgroundSize: "26px",
+        ":hover": {
+            filter: "brightness(0.97)",
+        },
+    },
+    "radio-primary":{
+        ".mantine-Radio-radio:checked":{
+            background: "var(--primary)",
+            borderColor: "var(--primary)",
         },
     },
     "signup-footer": {
@@ -206,7 +232,11 @@ const customStyle = createStyles((theme) => ({
             cursor: "pointer",
             borderColor: "var(--primary)",
             transition: "0.1s ease"
-        }
+        },
+        "&.selected":{
+            border: "2px solid var(--primary) !important",
+            backgroundColor: "var(--primary-light)",
+        },
     },
     "category-scroll": {
         overflowX: "scroll",

@@ -1,7 +1,7 @@
 import {Stack, Button, TextInput, Flex, Divider, Text, Group} from "@mantine/core";
 import CardForm from "../components/signup/CardForm";
 import {useForm} from "react-hook-form";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {useRecoilState, useSetRecoilState} from 'recoil';
 import {cardTitleState} from '../states/cardTitleState';
 import {useEffect} from 'react';

@@ -1,5 +1,13 @@
-import {IChangePW, IFindEmail, IFindPassword, ILogin, ISignup, ISocialLogin} from "../../types/IUser";
-import {GetCsrfToken, SetCsrfToken} from "../../util/UpdateToken";
+import {
+    IChangePW,
+    IFindCallbackPassword,
+    IFindEmail,
+    IFindPassword,
+    ILogin,
+    ISignup,
+    ISocialLogin
+} from "../../types/IUser";
+import {GetCsrfToken, SetCsrfToken, SetSnsCsrfToken} from "../../util/UpdateToken";
 import {redirect} from "react-router-dom";
 
 export const postSignupEmailValid = async (data: string) => {
@@ -53,6 +61,17 @@ export const postFindPassword = async (data: IFindPassword) => {
         .catch(res => console.error(res));
 }
 
+// 비밀번호 찾기 후 변경
+export const postFindPasswordCallback = async (data: IFindCallbackPassword) => {
+    return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/find/password/callback`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .catch(res => console.error(res));
+}
+
 export const postLogin = async (data: ILogin) => {
     return await fetch(`${process.env["REACT_APP_REACT_SERVER_URL"]}/api/auth/login`, {
         method: "POST",
@@ -89,7 +108,7 @@ export const postNaverLogin = async (data: ISocialLogin) => {
         body: JSON.stringify(data),
     })
         .then((res) => {
-            SetCsrfToken(res);
+            SetSnsCsrfToken(res);
             return res.json();
         });
 }

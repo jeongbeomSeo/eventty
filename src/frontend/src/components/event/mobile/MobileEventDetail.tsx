@@ -1,17 +1,5 @@
 import React, {useMemo} from "react";
-import {
-    Avatar,
-    Container,
-    Divider,
-    Group,
-    Image,
-    Paper,
-    SimpleGrid,
-    Stack,
-    Text,
-    Title,
-    UnstyledButton
-} from "@mantine/core";
+import {Container, Divider, Paper, Stack, Text, Title, UnstyledButton} from "@mantine/core";
 import {IEventDetail} from "../../../types/IEvent";
 import {useNavigate, useRouteLoaderData} from "react-router-dom";
 import MobileTicketInfo from "./MobileTicketInfo";
@@ -20,22 +8,7 @@ import {eventTicketDrawerState} from "../../../states/eventTicketDrawerState";
 import WebHostInfo from "../web/WebHostInfo";
 import DOMPurify from "dompurify";
 import {CATEGORY_LIST} from "../../../util/const/categoryList";
-
-function HostInfo({hostName}: { hostName: string }) {
-    return (
-        <Paper p={"md"} withBorder>
-            <Group noWrap>
-                <Avatar radius={"xl"}/>
-                <div>
-                    {hostName}
-                </div>
-            </Group>
-            <Group>
-                content
-            </Group>
-        </Paper>
-    )
-}
+import EventDetailNavBar from "../../display/mobile/navbar/EventDetailNavBar";
 
 function MobileEventDetail() {
     const navigate = useNavigate();
@@ -58,9 +31,10 @@ function MobileEventDetail() {
                        backgroundSize: "cover",
                        borderTop: "1px solid #cdcdcd",
                        borderBottom: "1px solid #cdcdcd",
+                       opacity: DATA.isActive ? 1 : 0.5,
                    }}/>
             <Container>
-                <Stack spacing={"1.5rem"} style={{margin: "5vh 0"}}>
+                <Stack spacing={"1.5rem"} style={{margin: "5vh 0", paddingBottom: "5rem"}}>
                     <Stack>
                         <UnstyledButton onClick={() => navigate(`/events/category/${DATA.category}`)}>
                             <Title order={4} color={"var(--primary)"}>{CATEGORY_LIST[DATA.category]}</Title>
@@ -68,7 +42,7 @@ function MobileEventDetail() {
                         <Title order={2}>{DATA.title}</Title>
                         <Title order={4}>
                             {`${eventStartAt.getFullYear()}년 `}
-                            {`${eventStartAt.getMonth()}월 `}
+                            {`${eventStartAt.getMonth()+1}월 `}
                             {`${eventStartAt.getDate()}일 `}
                             {!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
                                 && `${eventStartAt.getHours()}시
@@ -77,7 +51,7 @@ function MobileEventDetail() {
                         <Title order={4}>
                             {`${!((eventStartAt.getFullYear() === eventEndtAt.getFullYear()) && (eventStartAt.getMonth() === eventEndtAt.getMonth()) && ((eventStartAt.getDate() === eventEndtAt.getDate())))
                                 ? `~ ${eventEndtAt.getFullYear()}년  
-                                    ${eventEndtAt.getMonth()}월 
+                                    ${eventEndtAt.getMonth()+1}월 
                                     ${eventEndtAt.getDate()}일 
                                     ${eventEndtAt.getHours()}시 
                                     ${eventEndtAt.getMinutes() !== 0 ? `${eventEndtAt.getMinutes()}분` : ""} `
@@ -95,7 +69,8 @@ function MobileEventDetail() {
                     <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(DATA.content)}}></div>
                 </Stack>
             </Container>
-            <MobileTicketInfo open={eventTicketDrawerValue} tickets={DATA.tickets}/>
+            <MobileTicketInfo open={eventTicketDrawerValue} tickets={DATA.tickets} isActive={DATA.isActive}/>
+            <EventDetailNavBar eventId={DATA.id} hostId={DATA.hostId} isActive={DATA.isActive}/>
         </>
     );
 }

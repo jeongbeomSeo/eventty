@@ -56,7 +56,7 @@ function Write() {
 
     const currentDate = new Date();
     const CATEGORY_LIST = [
-        {label: "콘서트", value: "conert"},
+        {label: "콘서트", value: "concert"},
         {label: "클래식", value: "classical"},
         {label: "전시", value: "exhibition"},
         {label: "스포츠", value: "sports"},
@@ -293,7 +293,7 @@ function Write() {
                                 <Image width={"280px"} height={"210px"} withPlaceholder
                                        src={imgPreview}/>
                                 <div>
-                                    <FileButton onChange={setImgFile} accept={"image/png, image/jpeg, image/webp"}>
+                                    <FileButton onChange={setImgFile} accept={"image/png, image/jpeg"}>
                                         {(props) =>
                                             <Button {...props} className={classes["btn-primary"]}>
                                                 이미지 선택

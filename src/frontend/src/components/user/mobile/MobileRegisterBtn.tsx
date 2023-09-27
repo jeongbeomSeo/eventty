@@ -1,12 +1,7 @@
 import React from "react";
 import {
-    AspectRatio,
-    Badge,
-    Box,
     Button,
-    Grid,
     Group,
-    Image,
     Paper,
     Stack,
     Text,
@@ -14,10 +9,9 @@ import {
     UnstyledButton
 } from "@mantine/core";
 import customStyle from "../../../styles/customStyle";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {IEvent} from "../../../types/IEvent";
 import {useModal} from "../../../util/hook/useModal";
-import {CheckHost} from "../../../util/CheckHost";
 
 function MobileRegisterBtn({data}: { data: IEvent }) {
     const {classes} = customStyle();
@@ -55,7 +49,7 @@ function MobileRegisterBtn({data}: { data: IEvent }) {
                 <Group grow>
                     <Button onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/applices/${data.id}`)
+                        navigate(`/users/events/applices/all/${data.id}`)
                     }}
                             className={classes["btn-primary"]}>
                         신청내역
@@ -63,7 +57,7 @@ function MobileRegisterBtn({data}: { data: IEvent }) {
                     <Group noWrap grow onClick={(e) => e.stopPropagation()}>
                         <Button onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/update/${data.id}`);
+                            navigate(`/update/${data.id}`, {state: pathname});
                         }}
                                 className={classes["btn-gray-outline"]}>
                             수정

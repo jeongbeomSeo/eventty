@@ -1,25 +1,12 @@
-import React, {useState} from "react";
-import {
-    Avatar,
-    Burger, Button,
-    Container, Divider,
-    Drawer,
-    Flex,
-    Group,
-    Navbar,
-    Stack,
-    Text,
-    Title,
-    UnstyledButton
-} from "@mantine/core";
-import {Link, Navigate, useLocation, useNavigate} from "react-router-dom";
-import {IconHome, IconLogout, IconMenu2, IconPlus, IconReceipt, IconSettings, IconUser} from "@tabler/icons-react";
+import React from "react";
+import {Avatar, Button, Container, Divider, Drawer, Flex, Group, Stack, Text, UnstyledButton} from "@mantine/core";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {IconHome, IconPlus, IconReceipt, IconUser} from "@tabler/icons-react";
 import customStyle from "../../../styles/customStyle";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {menuDrawerState} from "../../../states/menuDrawerState";
 import {CheckLogin} from "../../../util/CheckLogin";
 import {userState} from "../../../states/userState";
-import {postLogout} from "../../../service/user/fetchUser";
 import {useFetch} from "../../../util/hook/useFetch";
 
 function MobileMenuDrawer() {

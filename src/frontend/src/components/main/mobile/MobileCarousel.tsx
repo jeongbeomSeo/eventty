@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {Container, Paper, Title, UnstyledButton} from "@mantine/core";
+import {UnstyledButton} from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import {Carousel} from "@mantine/carousel";
 import {useNavigate} from "react-router-dom";
@@ -9,11 +9,11 @@ const CAROUSEL_MIN_HEIGHT = "200px";
 const CAROUSEL_MAX_HEIGHT = "400px";
 const CAROUSEL_DELAY = 4000;
 const CAROUSEL_ITEMS = [
-    {color: "#F5F5F5", bgImage: "mobile_carousel_01.webp", eventId: 1},
-    {color: "#03A9C3", bgImage: "mobile_carousel_02.webp", eventId: 2},
-    {color: "#0C90D8", bgImage: "mobile_carousel_03.webp", eventId: 3},
-    {color: "#1B1E46", bgImage: "mobile_carousel_04.webp", eventId: 4},
-    {color: "#09090D", bgImage: "mobile_carousel_05.webp", eventId: 5},
+    {color: "#F5F5F5", bgImage: "mobile_carousel_01.webp", eventId: 44},
+    {color: "#03A9C3", bgImage: "mobile_carousel_02.webp", eventId: 45},
+    {color: "#0C90D8", bgImage: "mobile_carousel_03.webp", eventId: 48},
+    {color: "#1B1E46", bgImage: "mobile_carousel_04.webp", eventId: 47},
+    {color: "#09090D", bgImage: "mobile_carousel_05.webp", eventId: 46},
 ];
 
 function MobileCarousel() {
