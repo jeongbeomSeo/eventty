@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +24,13 @@ public class EventDetailService {
 
     public EventDetailFindByIdResponseDTO findEventById(Long eventId) {
         return Optional.ofNullable(eventDetailRepository.selectEventDetailById(eventId))
-                .map(EventDetailFindByIdResponseDTO::fromEntity)
+                .map(EventDetailFindByIdResponseDTO::from)
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION);
     }
 
     // 이벤트 상세 조회 후 조회수 증가 (비동기)
     @Async("asyncExecutor")
+    @Transactional
     public void increaseView(Long eventId){
         eventDetailRepository.updateView(eventId);
     }
@@ -56,7 +58,7 @@ public class EventDetailService {
         // 업데이트 전, 해당 데이터 존재 여부 확인
         EventDetailEntity eventDetail = getEventDetailIfExists(eventId);
 
-        eventDetail.updateContent(eventUpdateRequestDTO.getContent());
+        eventDetail.updateEventDetail(eventUpdateRequestDTO);
         eventDetailRepository.updateEventDetail(eventDetail);
 
         return eventId;

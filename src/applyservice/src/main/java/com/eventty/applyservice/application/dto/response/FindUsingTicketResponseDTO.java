@@ -6,5 +6,5 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor
 public class FindUsingTicketResponseDTO {
     private Long ticketId;
-    private Long usingCount;
+    private Long appliedTicketCount;
 }

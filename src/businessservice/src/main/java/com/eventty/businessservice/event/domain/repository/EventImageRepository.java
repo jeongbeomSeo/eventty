@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface EventImageRepository {
-    void insertEventImage(EventImageEntity eventImageEntity);
     EventImageEntity selectEventImageByEventId(Long eventId);
-    void deleteEventImageByEventId(Long eventId);
+    Long insertEventImage(EventImageEntity eventImageEntity);
+    Long deleteEventImageByEventId(Long eventId);
 }

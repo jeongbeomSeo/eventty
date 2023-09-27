@@ -16,7 +16,7 @@
     <!--이벤트 이미지 조회-->
     <select id="selectEventImageByEventId" resultMap="EventImageResultMap" parameterType="java.lang.Long">
         SELECT * FROM event_image
-        WHERE event_id = #{eventId} AND is_deleted IS NULL
+        WHERE event_id = #{eventId} AND is_deleted = false
     </select>
 
     <!--이벤트 이미지 추가-->
@@ -24,13 +24,6 @@
         INSERT INTO event_image(event_id, original_file_name, stored_file_path, file_size, is_deleted)
         VALUES(#{eventId}, #{originalFileName}, #{storedFilePath}, #{fileSize}, #{isDeleted})
     </insert>
-
-    <!--이벤트 이미지 수정-->
-    <update id="updateEventImage" parameterType="com.eventty.businessservice.event.domain.entity.EventImageEntity">
-        UPDATE event_image
-        SET original_file_name = #{originalFileName}, stored_file_path = #{storedFilePath}, file_size = #{fileSize}
-        WHERE id = #{id}
-    </update>
 
     <!--이벤트 이미지 삭제-->
     <update id="deleteEventImageByEventId" parameterType="java.lang.Long">

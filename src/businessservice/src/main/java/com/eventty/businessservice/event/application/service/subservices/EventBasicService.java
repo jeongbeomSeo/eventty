@@ -32,10 +32,9 @@ public class EventBasicService {
     private final ApiClient apiClient;
 
     public List<EventBasicWithoutHostInfoResponseDTO> findAllEvents(){
-        // 메인 화면에서는 호스트 정보 노출 안함
         return Optional.ofNullable(eventBasicRepository.selectAllEvents())
                 .map(events -> events.stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList()))
                 .orElseThrow(()->EventNotFoundException.EXCEPTION);
     }
@@ -45,7 +44,7 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -54,7 +53,7 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +62,7 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
@@ -72,15 +71,16 @@ public class EventBasicService {
                 .filter(events -> !events.isEmpty())
                 .orElseThrow(() -> EventNotFoundException.EXCEPTION)
                 .stream()
-                .map(EventBasicWithoutHostInfoResponseDTO::fromEntity)
+                .map(EventBasicWithoutHostInfoResponseDTO::from)
                 .collect(Collectors.toList());
     }
 
     public EventBasicWithHostInfoResponseDTO findEventByIdWithHostInfo(Long eventId) {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
+        // 이벤트 상세 조회 시 호스트 정보도 함께 응답하기 위하여
         // User Server API 호출하여 Host 정보 가져오기
-        HostFindByIdResponseDTO hostInfo = getUserInfoForEventHost(eventBasic.getUserId());
+        HostFindByIdResponseDTO hostInfo = getUserInfoForEventHost(eventBasic.getHostId());
 
         return EventBasicWithHostInfoResponseDTO.from(eventBasic, hostInfo);
     }
@@ -88,7 +88,7 @@ public class EventBasicService {
     public EventBasicWithoutHostInfoResponseDTO findEventByIdWithoutHostInfo(Long eventId) {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
-        return EventBasicWithoutHostInfoResponseDTO.fromEntity(eventBasic);
+        return EventBasicWithoutHostInfoResponseDTO.from(eventBasic);
     }
 
 
@@ -107,17 +107,7 @@ public class EventBasicService {
         // 업데이트 전, 해당 데이터 존재 여부 확인
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
-        // 각 필드가 null 이 아닐때에만 업데이트
-        if(eventUpdateRequestDTO.getTitle() != null){
-            eventBasic.updateTitle(eventUpdateRequestDTO.getTitle());
-        }
-        if(eventUpdateRequestDTO.getCategory() != null){
-            eventBasic.updateCategory(eventUpdateRequestDTO.getCategory());
-        }
-        if(eventUpdateRequestDTO.getIsActive() != null){
-            eventBasic.updateIsActive(eventUpdateRequestDTO.getIsActive());
-        }
-
+        eventBasic.updateEventBasic(eventUpdateRequestDTO);
         eventBasicRepository.updateEvent(eventBasic);
 
         return eventId;
@@ -143,7 +133,7 @@ public class EventBasicService {
     public void checkHostId(Long hostId, Long eventId) {
         EventBasicEntity eventBasic = getEventIfExists(eventId);
 
-        if(!eventBasic.getUserId().equals(hostId)){
+        if(!eventBasic.getHostId().equals(hostId)){
             throw AccessDeniedException.EXCEPTION;
         }
     }

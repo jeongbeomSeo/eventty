@@ -20,19 +20,19 @@ public class EventBasicWithoutHostInfoResponseDTO {
     private LocalDateTime eventEndAt;
     private Long participateNum;
     private String location;
-    private String categoryName;
+    private String category;
     private Boolean isActive;
 
-    public static EventBasicWithoutHostInfoResponseDTO fromEntity(EventBasicEntity eventBasicEntity) {
+    public static EventBasicWithoutHostInfoResponseDTO from(EventBasicEntity eventBasicEntity) {
         return EventBasicWithoutHostInfoResponseDTO.builder()
                 .id(eventBasicEntity.getId())
-                .hostId(eventBasicEntity.getUserId())
+                .hostId(eventBasicEntity.getHostId())
                 .title(eventBasicEntity.getTitle())
                 .eventStartAt(eventBasicEntity.getEventStartAt())
                 .eventEndAt(eventBasicEntity.getEventEndAt())
                 .participateNum(eventBasicEntity.getParticipateNum())
                 .location(eventBasicEntity.getLocation())
-                .categoryName(Category.getNamefromId(eventBasicEntity.getCategory()))
+                .category(Category.getNamefromId(eventBasicEntity.getCategory()))
                 .isActive(eventBasicEntity.getIsActive())
                 .build();
     }

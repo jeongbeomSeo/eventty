@@ -2,7 +2,9 @@ package com.eventty.applyservice.presentation;
 
 import com.eventty.applyservice.application.ApplyService;
 import com.eventty.applyservice.application.dto.request.CreateApplyRequestDTO;
+import com.eventty.applyservice.application.dto.request.FindApplicantsListRequestDTO;
 import com.eventty.applyservice.application.dto.response.FindAppicaionListResponseDTO;
+import com.eventty.applyservice.application.dto.response.FindApplicantsListResposneDTO;
 import com.eventty.applyservice.application.dto.response.FindUsingTicketResponseDTO;
 import com.eventty.applyservice.domain.annotation.ApiErrorCode;
 import com.eventty.applyservice.domain.annotation.ApiSuccessData;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.eventty.applyservice.domain.code.ErrorCode.*;
@@ -62,7 +65,7 @@ public class ApplyController {
     }
 
     /**
-     * 행사 신청 조회
+     * 참여자 - 행사 신청 내역 조회
      * @return
      */
     @GetMapping("/applies")
@@ -73,6 +76,11 @@ public class ApplyController {
         return ResponseEntity.ok((response == null || response.size() == 0) ? null : SuccessResponseDTO.of(response));
     }
 
+    /**
+     * (API)신청 현황(Count) 조회
+     * @param eventId
+     * @return
+     */
     @GetMapping("/api/applies/count")
     public ResponseEntity<SuccessResponseDTO> getTicketCount(@RequestParam Long eventId) {
         List<FindUsingTicketResponseDTO> responses = applyService.getUsingTicketList(eventId);
@@ -82,5 +90,16 @@ public class ApplyController {
 
     private Long getUserIdBySecurityContextHolder(){
         return Long.parseLong(UserContextHolder.getContext().getUserId());
+    }
+
+    /**
+     * 주최자 - 행사 별 참여자 목록 조회
+     * @param findApplicantsListRequestDTO
+     * @return
+     */
+    @GetMapping("/applies/host")
+    public ResponseEntity<SuccessResponseDTO> getApplicantsList(FindApplicantsListRequestDTO findApplicantsListRequestDTO){
+        List<FindApplicantsListResposneDTO> response = applyService.findApplicantsList(findApplicantsListRequestDTO);
+        return ResponseEntity.ok(response == null || response.size() == 0 ? null : SuccessResponseDTO.of(response));
     }
 }

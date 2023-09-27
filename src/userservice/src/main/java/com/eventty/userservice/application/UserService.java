@@ -1,12 +1,7 @@
 package com.eventty.userservice.application;
 
-import com.eventty.userservice.application.dto.request.UserCheckRequestDTO;
-import com.eventty.userservice.application.dto.request.UserCreateRequestDTO;
-import com.eventty.userservice.application.dto.request.UserImageUpdateRequestDTO;
-import com.eventty.userservice.application.dto.request.UserUpdateRequestDTO;
-import com.eventty.userservice.application.dto.response.HostFindByIdResposneDTO;
-import com.eventty.userservice.application.dto.response.UserFindByIdResponseDTO;
-import com.eventty.userservice.application.dto.response.UserImageFindByIdResponseDTO;
+import com.eventty.userservice.application.dto.request.*;
+import com.eventty.userservice.application.dto.response.*;
 import com.eventty.userservice.domain.UserEntity;
 
 import java.util.List;
@@ -18,6 +13,12 @@ public interface UserService {
      * @return
      */
     public UserEntity signUp(UserCreateRequestDTO userCreateRequestDTO);
+    /**
+     * (API) OAuth 회원가입
+     * @param userOAuthCreateRequestDTO
+     * @return
+     */
+    public UserSaveImageResponseDTO oauthSignUp(UserOAuthCreateRequestDTO userOAuthCreateRequestDTO);
     /**
      * 내 정보 조회
      * @param id
@@ -32,7 +33,7 @@ public interface UserService {
      * @param userImageUpdateRequestDTO
      * @return
      */
-    public UserEntity updateMyInfo(Long userId, UserUpdateRequestDTO userUpdateRequestDTO, UserImageUpdateRequestDTO userImageUpdateRequestDTO);
+    public UserUpdateImageResponseDTO updateMyInfo(Long userId, UserUpdateRequestDTO userUpdateRequestDTO, UserImageUpdateRequestDTO userImageUpdateRequestDTO);
 
     /**
      * (API) 호스트 정보 조회

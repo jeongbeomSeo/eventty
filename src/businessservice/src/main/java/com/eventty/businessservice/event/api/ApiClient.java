@@ -1,6 +1,5 @@
 package com.eventty.businessservice.event.api;
 
-import com.eventty.businessservice.event.api.dto.request.QueryAppliesCountRequestDTO;
 import com.eventty.businessservice.event.api.dto.response.QueryAppliesCountResponseDTO;
 import com.eventty.businessservice.event.api.dto.response.HostFindByIdResponseDTO;
 import com.eventty.businessservice.event.api.utils.MakeUrlService;
@@ -43,18 +42,16 @@ public class ApiClient {
         );
     }
 
-    public ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> queryAppliesCountApi(
-            QueryAppliesCountRequestDTO queryAppliesCountRequestDTO
-    ) {
+    public ResponseEntity<ResponseDTO<List<QueryAppliesCountResponseDTO>>> queryAppliesCountApi(Long eventId) {
 
-        HttpEntity<QueryAppliesCountRequestDTO> entity = createHttpEntity(queryAppliesCountRequestDTO);
+        HttpEntity<Void> entity = createHttpEntity(null);
 
-        URI uri = makeUrlService.queryTicketCount();
+        URI uri = makeUrlService.queryTicketCount(eventId);
 
         logApiCall("Event server", "Apply server", "Query applies Count");
 
         return customRestTemplate.exchange(
-                uri, HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseDTO<List<QueryAppliesCountResponseDTO>>>() {}
+                uri, HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseDTO<List<QueryAppliesCountResponseDTO>>>() {}
         );
     }
 

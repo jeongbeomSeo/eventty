@@ -45,12 +45,13 @@ public class EventService {
 
         List<String> criteriaList = Arrays.asList("Views", "CreatedAt", "ApplyEndAt");
 
-        for (String criteria : criteriaList) {
+        criteriaList.forEach(criteria -> {
             String key = "Top10" + criteria;
             List<Long> eventIds = getEventIdsByCriteria(criteria);
             List<FullEventFindAllResponseDTO> eventFullList = mapEventIdListToEventFullFindAllResponseDTO(eventIds);
             result.put(key, eventFullList);
-        }
+        });
+
         return result;
     }
 
@@ -95,7 +96,7 @@ public class EventService {
         // 이벤트 이미지
         ImageResponseDTO imageInfo = imageService.findImageByEventId(eventId);
 
-        return FullEventFindByIdResponseDTO.of(eventBasic, eventDetail, tickets, imageInfo);
+        return FullEventFindByIdResponseDTO.from(eventBasic, eventDetail, tickets, imageInfo);
     }
 
     public Long createEvent(Long hostId, EventCreateRequestDTO eventCreateRequestDTO, MultipartFile image) {
@@ -123,10 +124,14 @@ public class EventService {
         // 호스트가 주최한 이벤트인지 확인
         eventBasicService.checkHostId(hostId, eventId);
 
-        // 이벤트 기본 정보 : title, category, isActive 수정 가능
+        // 티켓 정보 : title, price, quantity, description 수정 가능
+        Long newParticipateNum = ticketService.updateTickets(eventId, eventUpdateRequestDTO.getTicketList());
+        eventUpdateRequestDTO.setParticipateNum(newParticipateNum); // 업데이트된 티켓 수량을 기준으로 참가 인원수 수정
+
+        // 이벤트 기본 정보 : title, eventStartAt, eventEndAt, location, category, isActive 수정 가능
         eventBasicService.updateEvent(eventId, eventUpdateRequestDTO);
 
-        // 이벤트 상세 정보 : content 수정 가능
+        // 이벤트 상세 정보 : content, applyStartAt, applyEndAt 수정 가능
         eventDetailService.updateEventDetail(eventId, eventUpdateRequestDTO);
 
         return eventId;
@@ -199,7 +204,7 @@ public class EventService {
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return FullEventFindAllResponseDTO.of(eventBasic, imageInfo);
+                    return FullEventFindAllResponseDTO.from(eventBasic, imageInfo);
                 })
                 .toList();
     }
@@ -208,12 +213,12 @@ public class EventService {
         return eventBasicList.stream()
                 .map(eventBasic -> {
                     ImageResponseDTO imageInfo = imageService.findImageByEventId(eventBasic.getId());
-                    return FullEventFindAllResponseDTO.of(eventBasic, imageInfo);
+                    return FullEventFindAllResponseDTO.from(eventBasic, imageInfo);
                 })
                 .collect(Collectors.toList());
     }
 
-    private void checkTicketHostId(Long hostId, Long ticketId) {
+    public void checkTicketHostId(Long hostId, Long ticketId) {
         Long eventIdOfTicket = ticketService.findEventIdByTicketId(ticketId);
         eventBasicService.checkHostId(hostId, eventIdOfTicket);
     }

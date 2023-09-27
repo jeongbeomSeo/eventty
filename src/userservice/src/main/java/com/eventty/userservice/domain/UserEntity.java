@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity @Builder @Getter
+@Entity @Builder @Getter @ToString
 @AllArgsConstructor @DynamicUpdate
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -30,7 +30,6 @@ public class UserEntity {
 
     private Long imageId;               // 유저 사진
 
-    @NotNull
     private String phone;               // 유저 전화번호
 
     @CreatedDate

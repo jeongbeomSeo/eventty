@@ -34,8 +34,8 @@ public class FileHandler {
     @Value("${ncp.folderName}")
     public String folderName;
 
-    private final String absolutePath = System.getProperty("user.dir") + "\\";
-    private final String path = "image\\";
+    private final String absolutePath = System.getProperty("user.dir") + "/";
+    private final String path = "image/";
     private AmazonS3 s3;
 
     public ImageUploadRequestDTO uploadFile(Long id, MultipartFile multipartFile) throws IOException{
