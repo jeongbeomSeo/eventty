@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### application.yml ###
+application-dev.yml
+application-test.yml
+application-ncp.yml

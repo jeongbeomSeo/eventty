@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Properties ###
+application-dev.yml
+application-test.yml
+
+### Docker ###
+Dockerfile
