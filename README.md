@@ -26,14 +26,14 @@
 
 ### 프론트엔드
 
-이와 같은 방식으로 정리하면 프엔에서 유경이가 많이 적어줄 게 없으면 조금,, 차이가 날것 같은데 이 방식 별로라서 다른 방식 떠오르는 거 있으면 슬랙에 올려줘 
+- UI ➡️ [Frontend README](./src/frontend/README.md)
 
 ### 백엔드
 - 기초에 집중
     - **SOLID 원칙**
     - **ACID와 Transaction**
     - **추상화, 캡슐화, 다형성 및 관심사 분리**
-    - **예외 처리** ➡️ 예외 전환
+    - **예외 처리** ➡️ 예외 전환(Custom Exception)
 - 모놀리식과의 차별점
     - **확장성** ➡️ 서버를 어떻게 분리할 것인가 ***(페이지 정리 필요)***
     - **REST API 통신** ➡️ Restful API 통신
@@ -48,12 +48,80 @@
     - **싱글톤 패턴(Singleton Pattern)**
     - **파사드 패턴(Facade Pattern)**
     - **프록시 패턴(Proxy Pattern)**
-    - **팩토리 패턴(Factory Pattern)** 
+    - **팩토리 패턴(Factory Pattern)**
+    - **전략 패턴(Strategy Pattern)** 
 - MSA를 적용해서 고려된 기능(이부분이 조금,, 문장 자체가 좀 걸리네요)
     - **Response Format 통일** ➡️ LSP 위배 고려, ResponseBodyAdvice 도입
     - **Context 객체 도입** ➡️ User ID, Authorities, Tracking ID
-    - **Global Interceptor, AOP** ➡️ 권한 검증, Context객체 생성
+    - **Global Filter, AOP** ➡️ Context객체 생성, 권한 검증
     - **Web Flux** ➡️ 토큰 검증 요청 및 업데이트
+    - **Custon RestTemplate** ➡️ 예외 상황 발생시 클라이언트 서버에서 분기점 처리
 - 성능 개선 (유지보수성)
     - **Global Error Response** ➡️ Controller Advice, Exception Handler 도입
-    - ... 정리중 
+    - **필요한 매개변수만 건네주기** ➡️ Converter & Mapper & Utils
+    - **Error Logging 구체화** & (Loggin Level 조정)
+
+## 각 서버의 역할 
+
+해당 프로젝트는 MSA를 기반으로 구성되어 있기 때문에 각 서버의 역할이 명확히 구분되어 있습니다.
+
+### Frontend
+
+간단한 문구 정리 후 링크 (README & Notion)
+
+ex) Nginx 서버 위에서 동작하면서 사용자와 게이트웨이(서버 진입점)의 중간 다리 역할을 하면서 사용자로부터의 요청을 처리함과 동시에 사용자들로부터 백엔드 서버들을 숨겨주는 역할을 수행해 줍니다. 
+
+- [Frontend README](./src/frontend/README.md)
+- Frontend Notion Link
+
+### Gateway
+
+(작성 예정)
+
+### Auth Server
+
+(작성 예정)
+
+### User Server
+
+### Event Server
+
+### Apply Server
+
+## Trouble Shooting
+
+- [서버간의 통신 - Exception Handling](https://www.notion.so/Exception-Handling-8a80d64459334402b221dae5de17f304)
+- [서버간의 통신 - Response Format 통일 ](https://www.notion.so/Response-Format-a1484bbb86c04c1fb0c53fd0ccf475b5)
+- (작성중) 
+
+## UI
+
+### 메인
+![eventty_main](https://github.com/jeongbeomSeo/eventty/assets/90774229/e170a2a0-c842-457c-94ca-34a348d66253)
+
+
+### 로그인 & 소셜 로그인
+|  ![eventty_login](https://github.com/jeongbeomSeo/eventty/assets/90774229/ec16566f-4969-4ce9-bfa3-9f08885afc2f)  |  ![eventty_google](https://github.com/jeongbeomSeo/eventty/assets/90774229/435238d4-ac02-49dd-8c2a-53033c7c2926)  |
+|:----------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------:|
+|                                                       로그인                                                        |                                                      구글 로그인                                                       |
+
+### 카테고리 조회
+![eventty_category](https://github.com/jeongbeomSeo/eventty/assets/90774229/20309df2-cf4e-42a7-903f-d697a7e11eed)
+
+### 키워드 검색
+![eventty_keyword](https://github.com/jeongbeomSeo/eventty/assets/90774229/7a1affdb-0535-4913-bee0-73fb0cfa60f0)
+- 최근 검색어 기능
+
+### 행사 등록
+| ![eventty_write](https://github.com/jeongbeomSeo/eventty/assets/90774229/170923ca-3f7c-416d-9d2a-25163c12fe2f)  |  ![eventty_event](https://github.com/jeongbeomSeo/eventty/assets/90774229/b79c8911-eb53-4193-b35f-84f4f77af6ae)  |
+|:---------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
+|                                                      행사 등록                                                      |                                                    등록한 행사 조회                                                     |
+
+### 행사 신청
+![eventty_booking](https://github.com/jeongbeomSeo/eventty/assets/90774229/94bac571-fb67-4997-baec-42f5e103197e)
+
+### 행사 신청 내역
+![eventty_applices](https://github.com/jeongbeomSeo/eventty/assets/90774229/1257dde0-4b20-4105-a8c4-f0bc7b9e9c0d)
+
+### Responsive
+![eventty_responsive](https://github.com/jeongbeomSeo/eventty/assets/90774229/28ba69c6-2ca4-41da-96c1-a9385f1948e8)
