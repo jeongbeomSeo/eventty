@@ -95,9 +95,19 @@ Nginx 서버 위에서 동작하면서 사용자와 게이트웨이(서버 진�
 
 ## Trouble Shooting
 
-- [서버간의 통신 - Exception Handling](https://www.notion.so/Exception-Handling-8a80d64459334402b221dae5de17f304)
-- [서버간의 통신 - Response Format 통일 ](https://www.notion.so/Response-Format-a1484bbb86c04c1fb0c53fd0ccf475b5)
-- (작성중) 
+- [서버간의 통신 - Exception Handling](https://www.notion.so/Exception-Handling-ce97e33f0af643e2bf0a950898b73736)
+- [서버간의 통신 - Response Format 통일 ](https://www.notion.so/Response-Format-520c31f3fd3a41078678b328d29ea954)
+- [Response Format 최적화](https://www.notion.so/Response-Format-abfa8e86344a422fae2772bf5509cd65)
+- [Cookie 저장 문제](https://www.notion.so/Cookie-559f7ed36816430cb594b2f6591a9aa4)
+- [Docker - Front와 DNS](https://www.notion.so/Docker-Front-CORS-6dbd25a3de42429796500f34247d60a9)
+- [JWT 검증 - 게이트웨이? 인증 서버?](https://www.notion.so/JWT-de46b2e42e824e9382fe60e3f25f9da3)
+- [서버간의 통신 - 토큰 업데이트 → Reactive Programming](https://www.notion.so/Reactive-Programming-cb2090bb5ec24c74b579bfb9d0587938)
+- [불필요한 Spring Security 의존성 → Context 객체 도입](https://www.notion.so/Spring-Security-Context-db65a0a716fc4429864fdbdf5bdea1bc)
+- [서버간의 통신 - Context 객체 도입 후 API Call에서 Request 최적화 작업](https://www.notion.so/Context-API-Call-Request-8e6f8ae66608462e82634ffc67078907)
+- [서버간의 통신 - Jackson 사용시 주의점(Java Convention)](https://www.notion.so/Jackson-Java-Convention-b2c09722bd9946d7a31a380fabe0c523)
+- [MSA에서 소셜 로그인 - Acess Token은 어디에서 받아오고 User Info는 어디에서 받아와야 하나?](https://www.notion.so/MSA-Acess-Token-User-Info-fe6a873327a746f290ec33270afc51bc)
+- [비슷한 로직의 소셜 로그인 의존성 문제 → 팩토리 패턴 적용](https://www.notion.so/f586d8d54dd34416bc64482c8102618b)
+
 
 ## UI
 
