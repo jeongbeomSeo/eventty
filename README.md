@@ -16,8 +16,7 @@
 
 ## 프로젝트 구조 
 
-![](./images/eventty_architecture.png)
-**(CI/CD 미적용 단계)**
+![](./images/eventty_architecture.jpeg)
 
 ## 프로젝트 주요 관심사
 
@@ -27,7 +26,7 @@
     - **소통 방법:** Slack 
     - **학습 및 정보 공유:** Notion[(Eventty: Notion Main Page)](https://www.notion.so/eventty-25ac7c30c552480db838f366c4bc2c85)
     - **브랜치 관리:** Git Flow[(Eventty: Git Branch Model)](https://www.notion.so/Git-Branch-Model-0ae3bd6df50b4dffb946e0da68a048fb) 
-    - **API 명세서:** Notion -> Swagger[(Eventty: Notion API Specs)](https://www.notion.so/API-0165c5bd7e62499a8414b3e0c419c583) ***(스웨거 정리 페이지 필요?)***
+    - **API 명세서:** Notion -> Swagger[(Eventty: Notion API Specs)](https://www.notion.so/API-0165c5bd7e62499a8414b3e0c419c583)
     - **Code Convention:** Frontend[(Eventty: Frontend Code Convention)](https://www.notion.so/Code-Convention-Frontend-9ec1532252d44c5db1d647137e7191f5), Backend[(Eventty: Backend Code Convention)](https://www.notion.so/Code-Convention-Backend-64cfd122f4ae40e7ac599bac97131098)
 
 ### 프론트엔드
@@ -73,16 +72,16 @@
 
 ### Frontend
 
-간단한 문구 정리 후 링크 (README & Notion)
-
-ex) Nginx 서버 위에서 동작하면서 사용자와 게이트웨이(서버 진입점)의 중간 다리 역할을 하면서 사용자로부터의 요청을 처리함과 동시에 사용자들로부터 백엔드 서버들을 숨겨주는 역할을 수행해 줍니다. 
+Nginx 서버 위에서 동작하면서 사용자와 게이트웨이(서버 진입점)의 중간 다리 역할을 하면서 사용자로부터의 요청을 처리함과 동시에 사용자들로부터 백엔드 서버들을 숨겨주는 역할을 수행해 줍니다. 
 
 - [Frontend README](./src/frontend/README.md)
-- Frontend Notion Link
 
 ### Gateway
 
-(작성 예정)
+게이트웨이 서버는 웹서버와 서비스 서버들의 중간에서 통신을 전달해주는 역할을 하는 서버입니다.
+
+- [Gateway README](./src/gateway/README.md)
+- [Eventty: Gateaway Server](https://www.notion.so/Gateway-Server-22309198dd9d43b1b3ad4f79bca375c3)
 
 ### Auth Server
 
