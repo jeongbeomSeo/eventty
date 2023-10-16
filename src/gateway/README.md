@@ -41,13 +41,14 @@ gateway
 
 ![Gateway Flow Chart](../../images/gateway_flowchart.png)
 
-## Rewrite Path 
+## Routing
 
 ![Gateway Rewrite Path](../../images/gateway_rewrite_path.png)
 
 ## Custom Filter
 
 ![Custom Filter](../../images/gateway_custom_filter.png)
+
 
 ## 주요 기능 
 
@@ -58,4 +59,4 @@ gateway
 
 ## 자세한 내용 
 
-- [Eventty: Gateway Server](https://www.notion.so/Gateway-Server-22309198dd9d43b1b3ad4f79bca375c3)
+- [Eventty: Gateway Server](https://www.notion.so/Gateway-Server-2a2e134d4e6745399d50fa6a144f0d13)
