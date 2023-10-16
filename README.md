@@ -24,10 +24,10 @@
 - 짧은 기간 동안 프로젝트를 성공적으로 이끌기 위해선? 
     - **방법론:** 애자일(AGILE) 방법론
     - **소통 방법:** Slack 
-    - **학습 및 정보 공유:** Notion[(Eventty: Notion Main Page)](https://www.notion.so/eventty-25ac7c30c552480db838f366c4bc2c85)
-    - **브랜치 관리:** Git Flow[(Eventty: Git Branch Model)](https://www.notion.so/Git-Branch-Model-0ae3bd6df50b4dffb946e0da68a048fb) 
-    - **API 명세서:** Notion -> Swagger[(Eventty: Notion API Specs)](https://www.notion.so/API-0165c5bd7e62499a8414b3e0c419c583)
-    - **Code Convention:** Frontend[(Eventty: Frontend Code Convention)](https://www.notion.so/Code-Convention-Frontend-9ec1532252d44c5db1d647137e7191f5), Backend[(Eventty: Backend Code Convention)](https://www.notion.so/Code-Convention-Backend-64cfd122f4ae40e7ac599bac97131098)
+    - **학습 및 정보 공유:** Notion[(Eventty: Notion Main Page)](https://www.notion.so/Eventty-25ac7c30c552480db838f366c4bc2c85)
+    - **브랜치 관리:** Git Flow[(Eventty: Git Branch Model)](https://www.notion.so/Git-Commit-Message-Convention-0c9474b0f5904d0a9a304879d8a96cc8) 
+    - **API 명세서:** Notion과 Swagger 같이 사용 [(Eventty: API 명세서)](https://www.notion.so/API-c3690375b3254b2e91e73d0faf9982ed)
+    - **Code Convention:** Frontend[(Eventty: Frontend Code Convention)](https://www.notion.so/Code-Convention-Frontend-ae4e1017e3e6459a9e977d7af0a02405), Backend[(Eventty: Backend Code Convention)](https://www.notion.so/Code-Convention-Backend-b24e08b1a500433a8fd2bb73f7135381)
 
 ### 프론트엔드
 
