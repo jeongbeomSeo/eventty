@@ -32,6 +32,9 @@
 ### 프론트엔드
 
 - UI ➡️ [Frontend README](./src/frontend/README.md)
+- 반응형 레이어(PC, Mobile) ➡️ Media Query
+- 컴포넌트 재사용
+- 패키징 ➡️ 기능 → 페이지 → 디바이스 순
 
 ### 백엔드
 - 기초에 집중
