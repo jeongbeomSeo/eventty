@@ -20,7 +20,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UserContextInterceptor implements ClientHttpRequestInterceptor {
+    public class UserContextInterceptor implements ClientHttpRequestInterceptor {
 
     private static final String AUTH_HEADER = "X-Requires-Auth";
     private static final Logger looger = LoggerFactory.getLogger(UserContextInterceptor.class);
