@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService{
 
         // 1차 검증을 통해 userId와 Token Update 필요한지 정보 가져오기
         TokenParsingDTO tokenParsingDTO = getTokenParsingDTO(sessionTokensDTO);
-        Long userId= tokenParsingDTO.userId();
+        Long userId = tokenParsingDTO.userId();
 
         // 2차 검증 (삭제되어 있는 User인지 확인)
         AuthUserEntity AuthUserEntity = userDetailService.findAuthUser(userId);

@@ -10,10 +10,6 @@ import com.eventty.authservice.domain.entity.CsrfTokenEntity;
 import com.eventty.authservice.domain.entity.RefreshTokenEntity;
 import com.eventty.authservice.domain.exception.CsrfTokenNotFoundException;
 import com.eventty.authservice.domain.exception.InValidRefreshTokenException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,19 +20,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import static com.eventty.authservice.application.service.utils.token.TokenTestUtil.*;
+
 @ExtendWith(MockitoExtension.class)
 public class TokenProviderTest {
-    private final String ISSUER = "ISSUER";
-    private final String SECRET_KEY = "secret key";
-    private final Long VALID_EXPIRED_TIME = 2L;
-    private final Long UNVALID_EXPIRED_TIME = -10L;
 
     @InjectMocks
     TokenProvider tokenProvider;
@@ -73,7 +66,7 @@ public class TokenProviderTest {
     void getCsrfToken_FAIL() {
         // Given
         final Long userId = 1L;
-        doThrow(new CsrfTokenNotFoundException(userId)).when(csrfTokenProvider).get(userId);
+        doThrow(CsrfTokenNotFoundException.class).when(csrfTokenProvider).get(userId);
 
         // When && Then
         assertThrows(CsrfTokenNotFoundException.class, () -> tokenProvider.getCsrfToken(userId));
@@ -139,7 +132,7 @@ public class TokenProviderTest {
 
             // When
             doReturn(validateRefreshTokenDTO).when(customConverter).convertToValidationRefreshTokenDTO(userId, sessionTokensDTO);
-            doThrow(new InValidRefreshTokenException(validateRefreshTokenDTO))
+            doThrow(InValidRefreshTokenException.class)
                     .when(refreshTokenProvider).validationCheck(validateRefreshTokenDTO);
 
             // Then
@@ -168,42 +161,4 @@ public class TokenProviderTest {
 
         verify(refreshTokenProvider, times(1)).saveOrUpdate(any(String.class), any(Long.class));
     }
-
-    private SessionTokensDTO createExpiredSessionTokensDTO(String email, Long userId) {
-        return new SessionTokensDTO(createToken(email, userId, UNVALID_EXPIRED_TIME), createToken(email, userId, UNVALID_EXPIRED_TIME));
-    }
-    private SessionTokensDTO createUpdateSessionTokensDTO(String email, Long userId) {
-        return new SessionTokensDTO(createToken(email, userId, UNVALID_EXPIRED_TIME), createToken(email, userId, VALID_EXPIRED_TIME));
-    }
-    private SessionTokensDTO createSessionTokensDTO(String email, Long userId) {
-
-        return new SessionTokensDTO(createToken(email, userId, VALID_EXPIRED_TIME), createToken(email, userId, VALID_EXPIRED_TIME));
-    }
-    private String createToken(String email, Long userId, Long expired_time) {
-        Claims claims = Jwts.claims().setSubject(email);
-
-        claims.put(TokenEnum.USERID.getName(), userId);
-
-        Date now = new Date();
-        Duration expiredAt = Duration.ofHours(expired_time);
-
-        return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setHeaderParam("alg", "HS256")
-                .addClaims(claims)
-                .setIssuer(ISSUER)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + expiredAt.toMillis()))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                .compact();
-    }
-
-    private Optional<CsrfTokenEntity> createCsrfTokenEntity(Long id, Long userId, String name) {
-        return Optional.of(CsrfTokenEntity.builder()
-                .id(id)
-                .userId(userId)
-                .name(name)
-                .build());
-    }
-
 }
