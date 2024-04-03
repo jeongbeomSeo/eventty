@@ -3,10 +3,7 @@ package com.eventty.authservice.application.service.Facade;
 import com.eventty.authservice.api.ApiClient;
 import com.eventty.authservice.api.dto.request.OAuthUserCreateApiRequestDTO;
 import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
-import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
-import com.eventty.authservice.applicaiton.dto.OAuthAccessTokenDTO;
-import com.eventty.authservice.applicaiton.dto.OAuthUserInfoDTO;
-import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
+import com.eventty.authservice.applicaiton.dto.*;
 import com.eventty.authservice.applicaiton.service.Facade.UserServiceImpl;
 import com.eventty.authservice.applicaiton.service.subservices.*;
 import com.eventty.authservice.applicaiton.service.subservices.factory.OAuthService;
@@ -20,8 +17,11 @@ import com.eventty.authservice.domain.exception.InvalidPasswordException;
 import com.eventty.authservice.global.response.ResponseDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
 import com.eventty.authservice.presentation.dto.request.OAuthLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.request.UserAuthenticateRequestDTO;
 import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -237,6 +237,78 @@ public class UserServiceImplTest {
     }
 
     // 유저 검증
+    @Nested
+    class Authenticate{
+        private final Long userId = 1L;
+        private final String email = "email@mm.mm";
+        private final String csrfValue = "CSRF_TOKEN";
+        private final String newCsrfValue = "NEW_CSRF_VALUE";
+        @DisplayName("[성공] 유저 검증 성공")
+        @Test
+        void authenticateUser() {
+            // Given
+            // 전처리
+            UserAuthenticateRequestDTO userAuthenticateRequestDTO = createUserAuthenticateRequestDTO(userId, email, csrfValue);
+            SessionTokensDTO sessionTokensDTO = new SessionTokensDTO(userAuthenticateRequestDTO.getAccessToken(), userAuthenticateRequestDTO.getRefreshToken());
+            doReturn(sessionTokensDTO).when(customConverter).convertTokensDTO(userAuthenticateRequestDTO);
+
+            // 검증
+            AuthUserEntity authUserEntity = createAuthUserEntity(userId, email);
+            AuthenticationResultDTO authenticationResultDTO = new AuthenticationResultDTO(authUserEntity, false);
+            doReturn(authenticationResultDTO).when(authService).authenticate(sessionTokensDTO, userAuthenticateRequestDTO.getCsrfToken(), customConverter, userDetailService);
+
+            // CSRF 토큰만 업데이트
+            doReturn(newCsrfValue).when(authService).getUpdateCsrfToken(authUserEntity.getId());
+
+            // When
+            AuthenticationDetailsResponseDTO result = userService.authenticateUser(userAuthenticateRequestDTO);
+
+            // Then
+            assertNotEquals(csrfValue, result.getCsrfToken());
+            assertEquals(newCsrfValue, result.getCsrfToken());
+            assertEquals(userAuthenticateRequestDTO.getAccessToken(), result.getAccessToken());
+            assertEquals(userAuthenticateRequestDTO.getRefreshToken(), result.getRefreshToken());
+        }
+
+        @DisplayName("[성공] 유저 검증 성공 - 모든 토큰 업데이트")
+        @Test
+        void authenticateUser_UPDATE_ALL_TOKEN() {
+            // Given
+            UserAuthenticateRequestDTO userAuthenticateRequestDTO_update = createUserAuthenticateRequestDTO_Update(userId, email, csrfValue);
+            SessionTokensDTO sessionTokensDTO = createUpdateSessionTokensDTO(email, userId);
+            doReturn(sessionTokensDTO).when(customConverter).convertTokensDTO(userAuthenticateRequestDTO_update);
+
+            // 검증
+            AuthUserEntity authUserEntity = createAuthUserEntity(userId, email);
+            AuthenticationResultDTO authenticationResultDTO = new AuthenticationResultDTO(authUserEntity, true);
+            doReturn(authenticationResultDTO).when(authService).authenticate(sessionTokensDTO, userAuthenticateRequestDTO_update.getCsrfToken(), customConverter, userDetailService);
+
+            // 모든 토큰 업데이트
+            doReturn(newCsrfValue).when(authService).getUpdateCsrfToken(authUserEntity.getId());
+            doReturn(createNewSessionTokensDTO(email, userId)).when(authService).getToken(authUserEntity);
+
+            // When
+            AuthenticationDetailsResponseDTO result = userService.authenticateUser(userAuthenticateRequestDTO_update);
+
+            // Then
+            assertNotEquals(userAuthenticateRequestDTO_update.getAccessToken(), result.getAccessToken());
+            assertNotEquals(userAuthenticateRequestDTO_update.getRefreshToken(), result.getRefreshToken());
+        }
+
+        @DisplayName("[실패] 유저 검증 실패 - 모든 세션 토큰 만료기간 지남")
+        @Test
+        void authenticateUser_FAIL() {
+            // Given
+            UserAuthenticateRequestDTO userAuthenticateRequestDTO_expired = createUserAuthenticateRequestDTO_Expired(userId, email, csrfValue);
+            SessionTokensDTO sessionTokensDTO = createExpiredSessionTokensDTO(email, userId);
+            doReturn(sessionTokensDTO).when(customConverter).convertTokensDTO(userAuthenticateRequestDTO_expired);
+
+            doThrow(ExpiredJwtException.class).when(authService).authenticate(sessionTokensDTO, userAuthenticateRequestDTO_expired.getCsrfToken(), customConverter, userDetailService);
+
+            // When && Then
+            assertThrows(ExpiredJwtException.class, () -> userService.authenticateUser(userAuthenticateRequestDTO_expired));
+        }
+    }
 
     // 유저 패스워드 찾기에서 삭제된 유저가 안들어오는지 확인
 

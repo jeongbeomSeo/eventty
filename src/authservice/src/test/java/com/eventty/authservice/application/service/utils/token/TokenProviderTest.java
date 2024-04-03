@@ -48,10 +48,9 @@ public class TokenProviderTest {
     @Test
     void getCsrfToken_SUCCESS() {
         // Given
-        final Long id = 1L;
         final Long userId = 1L;
         final String name = "CSRF_TOKEN";
-        final Optional<CsrfTokenEntity> expectedCsrfTokenEntity = createCsrfTokenEntity(id, userId, name);
+        final Optional<CsrfTokenEntity> expectedCsrfTokenEntity = createCsrfTokenEntity(userId, name);
         doReturn(expectedCsrfTokenEntity).when(csrfTokenProvider).get(userId);
 
         // When
