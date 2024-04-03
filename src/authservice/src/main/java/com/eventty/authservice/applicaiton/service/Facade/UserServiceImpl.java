@@ -142,7 +142,7 @@ public class UserServiceImpl implements UserService {
         userDetailService.validateEmail(email);
     }
 
-    // 유저 삭제의 경우 토큰을 업데이트 해줄 필요가 없나? => 트래픽에 의한 요청 실패와 같은 경우를 고려해봤을 때, 엄데이트를 해줘 보내야 하지 않나 생각함
+    // 유저 삭제의 경우 토큰을 업데이트 해줄 필요가 없나? => 트래픽에 의한 요청 실패와 같은 경우를 고려해봤을 때, 업데이트를 해줘 보내야 하지 않나 생각함
     @Override
     @Transactional
     public Long deleteUser(SessionTokensDTO sessionTokensDTO, String csrfToken) {

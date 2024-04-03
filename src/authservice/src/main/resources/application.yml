@@ -5,7 +5,7 @@ server:
 spring:
   # SECRET
   profiles:
-    active: dev, oauth2
+    active: test, oauth2
   # MYSQL
   datasource:
     url: ${url}

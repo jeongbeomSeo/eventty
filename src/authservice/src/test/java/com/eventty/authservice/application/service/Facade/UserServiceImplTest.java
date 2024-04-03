@@ -2,6 +2,8 @@ package com.eventty.authservice.application.service.Facade;
 
 import com.eventty.authservice.api.ApiClient;
 import com.eventty.authservice.api.dto.request.OAuthUserCreateApiRequestDTO;
+import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
+import com.eventty.authservice.api.dto.request.UserIdFindApiRequestDTO;
 import com.eventty.authservice.api.dto.response.ImageQueryApiResponseDTO;
 import com.eventty.authservice.applicaiton.dto.*;
 import com.eventty.authservice.applicaiton.service.Facade.UserServiceImpl;
@@ -16,10 +18,9 @@ import com.eventty.authservice.domain.entity.OAuthUserEntity;
 import com.eventty.authservice.domain.exception.InvalidPasswordException;
 import com.eventty.authservice.global.response.ResponseDTO;
 import com.eventty.authservice.global.response.SuccessResponseDTO;
-import com.eventty.authservice.presentation.dto.request.OAuthLoginRequestDTO;
-import com.eventty.authservice.presentation.dto.request.UserAuthenticateRequestDTO;
-import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
+import com.eventty.authservice.presentation.dto.request.*;
 import com.eventty.authservice.presentation.dto.response.AuthenticationDetailsResponseDTO;
+import com.eventty.authservice.presentation.dto.response.PWFindResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.DisplayName;
@@ -311,8 +312,80 @@ public class UserServiceImplTest {
     }
 
     // 유저 패스워드 찾기에서 삭제된 유저가 안들어오는지 확인
+    @DisplayName("[성공] 삭제된 계정과 삭제되지 않은 계정의 패스워드 찾기 요청")
+    @Test
+    void queryFindPW_FAIL() {
+        // Given
+        final String email = "email@mm.mm";
+        final String name = "NAME";
+        final String phone = "000-0000-0000";
+        PWFindRequestDTO pwFindRequestDTO = new PWFindRequestDTO(email, name, phone);
+        UserIdFindApiRequestDTO userIdFindApiRequestDTO = new UserIdFindApiRequestDTO(name, phone);
+        doReturn(userIdFindApiRequestDTO).when(customConverter).convertUserIdFindApiRequestDTO(pwFindRequestDTO);
 
-    // 회원가입의 경우 연속 요청이 들어오는 경우 처리하는 로직 구성
+        List<Long> idList = createIdList(2);
+        ResponseDTO<List<Long>> reponseDTO = ResponseDTO.of(SuccessResponseDTO.of(idList));
+        ResponseEntity<ResponseDTO<List<Long>>> response = ResponseEntity.ok(reponseDTO);
+        doReturn(response).when(apiClient).findUserIdApi(userIdFindApiRequestDTO);
+
+        List<AuthUserEntity> authUserEntities = new ArrayList<>();
+        final Long userId = 1L;
+        authUserEntities.add(createAuthUserEntity(userId, "email@mm.mm"));
+        doReturn(authUserEntities).when(userDetailService).findNotDeletedAuthUserList(response.getBody().getSuccessResponseDTO().getData());
+        doReturn(true).when(authService).emailMatch(pwFindRequestDTO.getEmail(), authUserEntities.get(0));
+
+        // When
+        PWFindResponseDTO pwFindResponseDTO = userService.queryFindPW(pwFindRequestDTO);
+
+        // Then
+        assertEquals(userId, pwFindResponseDTO.getUserId());
+    }
+
+    @DisplayName("[성공] 회원 가입 성공")
+    @Test
+    void createUser() {
+        // Given
+        final String email = "신규 회원 이메일";
+        final String password = "암호화 되지 않은 비밀번호";
+        final String name = "회원 이름";
+        final String phone = "000-0000-0000";
+        final LocalDate birth = LocalDate.now();
+        final String address = "회원 주소";
+        FullUserCreateRequestDTO fullUserCreateRequestDTO = new FullUserCreateRequestDTO(email, password, name, phone, birth, address);
+        final UserRole userRole = UserRole.USER;
+
+        String encryptedPassword = "암호화 된 비밀번호";
+        doReturn(encryptedPassword).when(authService).encryptePassword(password);
+
+        AuthUserEntity authUserEntity = AuthUserEntity.builder().email(email).password(encryptedPassword).build();
+        doReturn(authUserEntity).when(customConverter).convertAuthUserEntityConvert(email, encryptedPassword);
+
+        final Long userId = 1L;
+        AuthUserEntity authUserEntity_add_id_authorities = createAuthUserEntity(userId, email);
+        doReturn(authUserEntity_add_id_authorities).when(userDetailService).create(authUserEntity, userRole);
+
+        UserCreateApiRequestDTO userCreateApiRequestDTO = new UserCreateApiRequestDTO(userId, name, address, birth, phone);
+        doReturn(userCreateApiRequestDTO).when(customConverter).convertUserCreateRequestDTO(fullUserCreateRequestDTO, authUserEntity_add_id_authorities.getId());
+
+        ResponseEntity<ResponseDTO<Void>> response = ResponseEntity.ok(new ResponseDTO<>());
+        doReturn(response).when(apiClient).createUserApi(userCreateApiRequestDTO);
+
+        // When
+        Long resultUserId = userService.createUser(fullUserCreateRequestDTO, userRole);
+
+        // Then
+        assertEquals(userId, resultUserId);
+    }
+
+
+    private List<Long> createIdList(int size) {
+        List<Long> list = new ArrayList<>();
+        for (int i = 1; i <= size; i++) {
+            list.add((long)i);
+        }
+
+        return list;
+    }
 
     private Optional<OAuthUserEntity> createOAuthUserEntityOpt(Long userId, String socialName) {
         return Optional.of(new OAuthUserEntity(1L, userId, "clientId", socialName));
