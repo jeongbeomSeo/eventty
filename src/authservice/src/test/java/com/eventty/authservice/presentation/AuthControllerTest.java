@@ -120,13 +120,17 @@ public class AuthControllerTest {
         assertTrue(refreshTokenCookieFound);
 
         // Response Body 확인하기 -> 역직렬화가 재대로 이루어지지 않고 있음.
-        TypeReference<ResponseDTO<SuccessResponseDTO<LoginResponseDTO>>> responseType = new TypeReference<>() {};
-        ResponseDTO<SuccessResponseDTO<LoginResponseDTO>> response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseType);
-        System.out.println(response.toString());
+        //TypeReference<ResponseDTO<SuccessResponseDTO<ResponseDTO>>> responseType = new TypeReference<>() {};
+        // ResponseDTO<SuccessResponseDTO<LoginResponseDTO>> response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseType);
+        //System.out.println(response.toString());
         // 결과: ResponseDTO(isSuccess=true, errorResponseDTO=null, successResponseDTO=SuccessResponseDTO(data=SuccessResponseDTO(data=null)))
+        // 위와 같이 담아서 나온 결과는 data에는 LoginResponseDTO만 담겨야 되는데, SuccessResponseDTO<LoginResponseDTO>를 제너릭 타입으로 주면서 잘못된 형태로 역직렬화를 수행한 것
+        // 그 결과를 확인해보면 data=SuccessResponseDTO이와 같은 형태로 담긴 것을 확인할 수 있다.
+        TypeReference<ResponseDTO<LoginResponseDTO>> responseType = new TypeReference<>() {};
+        ResponseDTO<LoginResponseDTO> response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseType);
         assertTrue(response.getIsSuccess());
-        // assertEquals(userId, response.getSuccessResponseDTO().getData().getData().getUserId());
-        // assertEquals(email, response.getSuccessResponseDTO().getData().getData().getEmail());
+        assertEquals(userId, response.getSuccessResponseDTO().getData().getUserId());
+        assertEquals(email, response.getSuccessResponseDTO().getData().getEmail());
     }
 
     private FullUserCreateRequestDTO createFullUserCreateRequestDTO() {
