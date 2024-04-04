@@ -1,145 +1,138 @@
 package com.eventty.authservice.presentation;
 
-import com.eventty.authservice.applicaiton.dto.LoginSuccessDTO;
-import com.eventty.authservice.applicaiton.dto.SessionTokensDTO;
-import com.eventty.authservice.applicaiton.service.Facade.UserServiceImpl;
-import com.eventty.authservice.applicaiton.service.utils.token.TokenEnum;
-import com.eventty.authservice.domain.Enum.UserRole;
+import com.eventty.authservice.api.ApiClient;
+import com.eventty.authservice.api.dto.request.UserCreateApiRequestDTO;
 import com.eventty.authservice.global.response.ResponseDTO;
-import com.eventty.authservice.global.response.SuccessResponseDTO;
-import com.eventty.authservice.infrastructure.config.BasicSecurityConfig;
-import com.eventty.authservice.infrastructure.utils.CookieUtils;
 import com.eventty.authservice.presentation.dto.request.FullUserCreateRequestDTO;
-import com.eventty.authservice.presentation.dto.request.UserLoginRequestDTO;
-import com.eventty.authservice.presentation.dto.response.LoginResponseDTO;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.nimbusds.jose.shaded.gson.Gson;
-import com.nimbusds.jose.shaded.gson.reflect.TypeToken;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.lang.reflect.Type;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import static com.eventty.authservice.application.service.utils.token.TokenTestUtil.*;
-
-@ExtendWith(MockitoExtension.class)
-@Import(BasicSecurityConfig.class)
-@WebMvcTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 public class AuthControllerTest {
-    private final String HEADER_CSRF = "X-Csrf-Token";
     @Autowired
     MockMvc mockMvc;
+
     @MockBean
-    UserServiceImpl userService;
-    @SpyBean
-    CookieUtils cookieUtils;
+    ApiClient apiClient;
     @Autowired
     ObjectMapper objectMapper;
-    /*
-    @WebMvcTest의 경우 컨트롤러 수준에서 동작하는 모듈들이 정상적으로 동작한다.
-    예를 들면, 필터, 인터셉터 리졸버 등과 같은 모듈들이 정상적으로 동작한다.
-    그렇기 때문에 Security를 사용한다면 테스트용 Security 설정을 별도로 하지 않는다면 default 설정을 가져가게 된다.
-    이로 인해서, 발생할 수 있는 것은 1. csrf 검사 2. URL에 대한 사용자 권한 검사 이와 같은 것들이 동작한다.
-    또한, 파라미터 바인딩 및 데이터 유효성 검증 어노테이션이 정상적으로 동작하기 때문에 신경써야 한다.
-     */
-    @DisplayName("[성공] 회원가입 성공")
-    @Test
-    void createUser_SUCCESS() throws Exception {
+
+    @Nested
+    class Signup {
         // Given
-        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO();
-        UserRole userRole = UserRole.USER;
-
-        // JSON으로 변환
-        String userCreateRequestDTOJson = objectMapper.writeValueAsString(fullUserCreateRequestDTO);
-
-        Long userId = 1L;
-        // userRole을 그대로 쓸 경우 UnfinishedStubbingException 발생
-        // UserRole의 경우, 커스텀 리졸버로 PathVariable에서 꺼내서 바인딩 되는데, 해당 과정에서 생성되는 Enum 객체가 해당 테스트 코드에서 생성한 userRole 객체와 다르기 때문일 것이라고 추측
-        doReturn(userId).when(userService).createUser(any(FullUserCreateRequestDTO.class), any(UserRole.class));
-
-        // When
-        mockMvc.perform(post("/me/{userRole}", userRole.name())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(userCreateRequestDTOJson))
-                .andExpect(status().isCreated());
-    }
-
-    @DisplayName("[성공] 로그인 성공")
-    @Test
-    void login() throws Exception {
-        // Given
-        final Long userId = 1L;
-        final String email = "Email@mm.mm";
-        final String password = "123123";
-        UserLoginRequestDTO userLoginRequestDTO = new UserLoginRequestDTO(email, password);
-
-        SessionTokensDTO sessionTokensDTO = createSessionTokensDTO(email, userId);
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(userId, email, "role", "", "");
-        String csrfToken = "csrf_token";
-        LoginSuccessDTO loginSuccessDTO = new LoginSuccessDTO(sessionTokensDTO, loginResponseDTO, csrfToken);
-        when(userService.login(any(UserLoginRequestDTO.class))).thenReturn(loginSuccessDTO);
-
-        // When
-        ResultActions resultActions = mockMvc.perform(post("/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(new Gson().toJson(userLoginRequestDTO)));
-
-        // Then
-        MvcResult mvcResult = resultActions.andExpect(status().isOk()).andReturn();
-        List<String> setCookieHeaders = mvcResult.getResponse().getHeaders(HttpHeaders.SET_COOKIE);
-
-        // 특정 쿠키 확인하기
-        boolean jwtCookieFound = setCookieHeaders.stream()
-                .anyMatch(header -> header.startsWith(TokenEnum.ACCESS_TOKEN.getName()));
-        boolean refreshTokenCookieFound = setCookieHeaders.stream()
-                .anyMatch(header -> header.startsWith(TokenEnum.REFRESH_TOKEN.getName()));
-
-        assertTrue(jwtCookieFound);
-        assertTrue(refreshTokenCookieFound);
-
-        // Response Body 확인하기 -> 역직렬화가 재대로 이루어지지 않고 있음.
-        //TypeReference<ResponseDTO<SuccessResponseDTO<ResponseDTO>>> responseType = new TypeReference<>() {};
-        // ResponseDTO<SuccessResponseDTO<LoginResponseDTO>> response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseType);
-        //System.out.println(response.toString());
-        // 결과: ResponseDTO(isSuccess=true, errorResponseDTO=null, successResponseDTO=SuccessResponseDTO(data=SuccessResponseDTO(data=null)))
-        // 위와 같이 담아서 나온 결과는 data에는 LoginResponseDTO만 담겨야 되는데, SuccessResponseDTO<LoginResponseDTO>를 제너릭 타입으로 주면서 잘못된 형태로 역직렬화를 수행한 것
-        // 그 결과를 확인해보면 data=SuccessResponseDTO이와 같은 형태로 담긴 것을 확인할 수 있다.
-        TypeReference<ResponseDTO<LoginResponseDTO>> responseType = new TypeReference<>() {};
-        ResponseDTO<LoginResponseDTO> response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), responseType);
-        assertTrue(response.getIsSuccess());
-        assertEquals(userId, response.getSuccessResponseDTO().getData().getUserId());
-        assertEquals(email, response.getSuccessResponseDTO().getData().getEmail());
-    }
-
-    private FullUserCreateRequestDTO createFullUserCreateRequestDTO() {
-        final String email = "신규_회원_이메일@mm.mm";
-        final String password = "암호화 되지 않은 비밀번호";
-        final String name = "회원 이름";
+        final String email = "email@mm.mm";
+        final String password = "RawPassword";
+        final String name = "name";
         final String phone = "000-0000-0000";
-        final LocalDate birth = LocalDate.now();
-        final String address = "회원 주소";
-        return new FullUserCreateRequestDTO(email, password, name, phone, birth, address);
+        FullUserCreateRequestDTO fullUserCreateRequestDTO = createFullUserCreateRequestDTO(email, password, name, phone);
+
+        @DisplayName("[성공] 회원가입 성공")
+        @Test
+        void createUser_SUCCESS() throws Exception {
+            // Given
+            String fullUserCreateRequestDTOJson = objectMapper.writeValueAsString(fullUserCreateRequestDTO);
+
+            ResponseEntity<ResponseDTO<Void>> response = ResponseEntity.ok(ResponseDTO.of(true));
+            doReturn(response).when(apiClient).createUserApi(any(UserCreateApiRequestDTO.class));
+
+            mockMvc.perform(post("/me/user")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(fullUserCreateRequestDTOJson))
+                    .andExpect(status().isCreated());
+        }
+        @DisplayName("[성공] 회원가입 순차적 요청")
+        @Test
+        void createUser_SUCCESS_Sequential() throws Exception {
+            // Given
+            String fullUserCreateRequestDTOJson = objectMapper.writeValueAsString(fullUserCreateRequestDTO);
+
+            // 5번의 순차적 요청
+            // When && Then
+            for (int i = 0; i < 5; i++) {
+                ResultActions resultActions = mockMvc.perform(post("/me/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(fullUserCreateRequestDTOJson));
+
+                if (i == 0) {
+                    resultActions.andExpect(status().isCreated());
+                } else {
+                    resultActions.andExpect(status().is(409));
+                }
+            }
+        }
+
+        /*
+        현재 500 에러가 뜨고, 전혀 예상하지 못한 방향으로 결과가 나왔음.
+         */
+
+        @DisplayName("[?] 회원가입 병렬적 요청")
+        @Test
+        void createUser_Concurrent() throws Exception {
+            // Given
+            String fullUserCreateRequestDTOJson = objectMapper.writeValueAsString(fullUserCreateRequestDTO);
+
+            int numberOfRequests = 10;
+            ExecutorService executorService = Executors.newFixedThreadPool(numberOfRequests);
+            List<Callable<Void>> tasks = new ArrayList<>();
+            tasks.add(() -> {
+                mockMvc.perform(post("/me/user")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(fullUserCreateRequestDTOJson))
+                        .andExpect(status().isCreated());
+                return null;
+            });
+            for (int i = 0; i < numberOfRequests - 1; i++) {
+                tasks.add(() -> {
+                    mockMvc.perform(post("/me/user")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(fullUserCreateRequestDTOJson))
+                            .andExpect(status().is(409));
+                   return null;
+                });
+            }
+
+            // When
+            List<Future<Void>> futures = executorService.invokeAll(tasks);
+
+            // Then
+            for (Future<Void> future : futures) {
+                future.get();
+            }
+
+            executorService.shutdown();
+        }
+    }
+    private FullUserCreateRequestDTO createFullUserCreateRequestDTO(String email, String password, String name, String phone) {
+        return FullUserCreateRequestDTO.builder()
+                .email(email)
+                .password(password)
+                .name(name)
+                .phone(phone)
+                .build();
     }
 }

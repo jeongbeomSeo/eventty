@@ -119,6 +119,9 @@ public class UserServiceImpl implements UserService {
     public Long createUser(FullUserCreateRequestDTO fullUserCreateRequestDTO, UserRole role) {
         log.debug("회원가입 서비스 시작");
 
+        // email 중복 검증 - 순차적 요청 방지
+        userDetailService.validateEmail(fullUserCreateRequestDTO.getEmail());
+
         log.debug("AuthService -> 비밀번호 암호화 및 AuthUserEntity 생성");
         // 전달 받은 DTO로 Entity로 변환
         String email = fullUserCreateRequestDTO.getEmail();

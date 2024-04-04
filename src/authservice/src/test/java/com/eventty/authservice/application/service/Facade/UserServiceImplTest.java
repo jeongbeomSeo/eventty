@@ -354,6 +354,7 @@ public class UserServiceImplTest {
         FullUserCreateRequestDTO fullUserCreateRequestDTO = new FullUserCreateRequestDTO(email, password, name, phone, birth, address);
         final UserRole userRole = UserRole.USER;
 
+        doNothing().when(userDetailService).validateEmail(fullUserCreateRequestDTO.getEmail());
         String encryptedPassword = "암호화 된 비밀번호";
         doReturn(encryptedPassword).when(authService).encryptePassword(password);
 
